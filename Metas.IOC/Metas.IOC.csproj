@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Metas.BLL\Metas.BLL.csproj" />
+    <ProjectReference Include="..\Metas.DAL\Metas.DAL.csproj" />
+  </ItemGroup>
+
+</Project>
