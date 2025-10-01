@@ -1,0 +1,24 @@
+﻿.btn-Ingresar {
+    background-color: #fdf3f6;
+    color: #741732;
+    border-radius: 5px 5px 5px 5px;
+    font-size: 20px;
+    padding-bottom: 8px;
+    padding-top: 8px;
+    padding-left: 12px;
+    padding-right: 12px;
+    font-weight: 500;
+    box-shadow: 3px 3px 1px #741732;
+    border: 1px solid #741732 !important;
+}
+
+    .btn-Ingresar:hover {
+        box-shadow: none !important;
+        cursor: pointer;
+        color: #741732 !important;
+        transition: box-shadow 0.3s ease;
+    }
+
+    .btn-Ingresar:focus {
+        border: 2px solid #741732 !important;
+    }
