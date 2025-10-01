@@ -18,26 +18,24 @@
         }
     </style>
     <!-- Jumbotron -->
-    <div class="container py-4">
+    <div class="container py-4container-fluid d-flex justify-content-center align-items-center min-vh-100">
         <div class="row g-0 align-items-center">
             <div class="col-lg-6 mb-5 mb-lg-0">
-                <div class="card cascading-right bg-body-tertiary" style="
-            backdrop-filter: blur(30px);
-            ">
+                <div class="card cascading-right glass-effect">
                     <div class="card-body p-5 shadow-5 text-center">
-                        <h2 class="fw-bold mb-5">Iniciar Sesion</h2>
+                        <h2 class="fw-bold mb-5 titulo">INICIO DE SESION</h2>
                         <!-- FORMULARIO CON EFECTO OUTLINE -->
                         <form>
                             <!-- Usuario input -->
                             <div class="form-floating mb-4">
-                                <input type="email" class="form-control" id="floatingUsuario" placeholder=" " />
-                                <label for="floatingUsuario">Usuario</label>
+                                <input type="email" class="form-control titulo input-arena" id="floatingUsuario" placeholder=" " style="border: 1px solid rgb(192, 152, 102, 0.2)" />
+                                <label style="color: #c09866" for="floatingUsuario">Usuario</label>
                             </div>
 
                             <!-- Contraseña input -->
                             <div class="form-floating mb-4">
-                                <input type="password" class="form-control" id="floatingPassword" placeholder=" " />
-                                <label for="floatingPassword">Contraseña</label>
+                                <input type="password" class="form-control titulo input-arena" id="floatingPassword" placeholder=" " style="border: 1px solid rgb(192, 152, 102, 0.2)" />
+                                <label style="color: #c09866" for="floatingPassword">Contraseña</label>
                             </div>
 
                             <!-- Submit button -->
@@ -50,8 +48,8 @@
                 </div>
             </div>
 
-            <div class="col-lg-6 mb-5 mb-lg-0">
-                <img src="https://mdbootstrap.com/img/new/ecommerce/vertical/004.jpg" class="w-100 rounded-4 shadow-4"
+            <div class="col-lg-6 mb-5 mb-lg-0 img-logo">
+                <img src="~/img/Gobierno.jpg" class="w-100 rounded-4 shadow-4"
                      alt="" />
             </div>
         </div>
