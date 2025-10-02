@@ -8,38 +8,65 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Metas.ApliccionWeb.styles.css" asp-append-version="true" />
+    <link href="~/css/Login.css" rel="stylesheet" />
+    <link href="~/css/Navbar.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Metas.ApliccionWeb</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
+    <nav class="navbar navbar-expand-lg navbar-light glass-effect" style="box-shadow: 0 8px 32px 0 rgb(33, 37, 41, .3);
+    background: rgb(33, 37, 41, .1) !important; border: none !important;">
+        <div class="container-fluid">       
+            <!-- Collapsible wrapper -->
+            <div class="collapse navbar-collapse justify-content-center" id="navbarCentrado">                
+                <!-- Navigation links -->
+                <ul class="navbar-nav mb-2 mb-lg-0">
+                    <li class="nav-item li-nav mx-2">
+                        <a class="nav-link active fw-semibold" aria-current="page" href="#">INICIO</a>
+                    </li>
+                    <li class="nav-item li-nav">
+                        <a class="nav-link fw-semibold" href="#">Apartado #1</a>
+                    </li>
+                    <li class="nav-item li-nav">
+                        <a class="nav-link fw-semibold" href="#">Apartado #2</a>
+                    </li>
+                    <li class="nav-item li-nav">
+                        <a class="nav-link fw-semibold" href="#">Apartado #3</a>
+                    </li>
+                </ul>
             </div>
-        </nav>
-    </header>
+            <!-- Navbar dropdown -->
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle p-1" href="#" id="navbarDropdown"
+                   role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="~/img/user-avatar.png" alt="Usuario"
+                         style="height: 38px; width: 38px; object-fit: cover;">
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end glass-effect" aria-labelledby="navbarDropdown">
+                    <li class="dropdown-item-text px-3 py-2">
+                        <small class="text-muted">Conectado como:</small>
+                        <div class="fw-semibold text-dark">Nombre Usuario</div>
+                    </li>
+                    <li>
+                        <a class="dropdown-item py-2 fw-semibold titulo btn-cerrar" href=" /Acceso/Login">
+                            <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+                        </a>
+                    </li>
+                </ul>
+            </li>            
+        </div>
+    </nav>
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
+    <footer class="border-top footer text-muted text-center py-3">
         <div class="container">
-            &copy; 2025 - Metas.ApliccionWeb - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            <div class="d-flex justify-content-center align-items-center gap-4 mb-2">
+                <img style="height: 40px; width: auto;" src="~/img/familias-dif.png" alt="Logo 1" />
+                <img style="height: 40px; width: auto;" src="~/img/pensargrande.png" alt="Logo 3" />
+            </div>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

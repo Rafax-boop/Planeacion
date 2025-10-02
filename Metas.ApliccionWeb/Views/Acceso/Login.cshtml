@@ -2,6 +2,8 @@
     Layout = null;
     ViewData["Title"] = "Acceso";
 }
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -9,51 +11,63 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <link href="~/css/Login.css" rel="stylesheet" />
+    <link href="~/css/SweetAlert.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
-<!-- Section: Design Block -->
-<section class="text-center text-lg-start">
-    <style>
-        .cascading-right {
-            margin-right: -50px;
-        }
-    </style>
-    <!-- Jumbotron -->
-    <div class="container py-4container-fluid d-flex justify-content-center align-items-center min-vh-100">
-        <div class="row g-0 align-items-center">
-            <div class="col-lg-6 mb-5 mb-lg-0">
-                <div class="card cascading-right glass-effect">
-                    <div class="card-body p-5 shadow-5 text-center">
-                        <h2 class="fw-bold mb-5 titulo">INICIO DE SESION</h2>
-                        <!-- FORMULARIO CON EFECTO OUTLINE -->
-                        <form>
-                            <!-- Usuario input -->
-                            <div class="form-floating mb-4">
-                                <input type="email" class="form-control titulo input-arena" id="floatingUsuario" placeholder=" " style="border: 1px solid rgb(192, 152, 102, 0.2)" />
-                                <label style="color: #c09866" for="floatingUsuario">Usuario</label>
+<body>
+    <!-- Section: Design Block -->
+    <section class="text-center text-lg-start">
+        <!-- Jumbotron -->
+        <div class="login-container">
+            <div class="container-fluid">
+                <div class="row g-0 align-items-center justify-content-center">
+                    <div class="col-lg-5 col-xl-4 mb-5 mb-lg-0">
+                        <div class="card cascading-right glass-effect">
+                            <div class="card-body p-4 p-md-5 shadow-5 text-center">
+                                <h1 class="fw-bold mb-1 titulo">INICIO DE SESION</h1>
+                                <h2 class="h5 text-muted mb-3">PUEBLA - Gobierno del Estado</h2>
+                                <div class="small text-muted mb-4">2024 - 2030</div>
+
+                                <!-- FORMULARIO CON EFECTO OUTLINE -->
+                                <form id="loginForm">
+                                    <!-- Usuario input -->
+                                    <div class="form-floating mb-4">
+                                        <input type="text" class="form-control titulo input-arena" id="floatingUsuario" placeholder=" " style="border: 1px solid rgb(192, 152, 102, 0.2)" />
+                                        <label style="color: #c09866" for="floatingUsuario">Usuario</label>
+                                    </div>
+
+                                    <!-- Contraseña input -->
+                                    <div class="form-floating mb-4">
+                                        <input type="password" class="form-control titulo input-arena" id="floatingPassword" placeholder=" " style="border: 1px solid rgb(192, 152, 102, 0.2)" />
+                                        <label style="color: #c09866" for="floatingPassword">Contraseña</label>
+                                    </div>
+
+                                    <!-- Submit button -->
+                                    <button type="submit" class="btn-Ingresar" id="btnIngresar">
+                                        INGRESAR
+                                    </button>
+                                </form>
                             </div>
+                        </div>
+                    </div>
 
-                            <!-- Contraseña input -->
-                            <div class="form-floating mb-4">
-                                <input type="password" class="form-control titulo input-arena" id="floatingPassword" placeholder=" " style="border: 1px solid rgb(192, 152, 102, 0.2)" />
-                                <label style="color: #c09866" for="floatingPassword">Contraseña</label>
-                            </div>
-
-                            <!-- Submit button -->
-                            <button type="submit" class="btn-Ingresar">
-                                INGRESAR
-                            </button>
-
-                        </form>
+                    <div class="col-lg-5 col-xl-4 mb-5 mb-lg-0 img-logo">
+                        <img src="~/img/Gobierno.jpg" class="w-100 rounded-4 shadow-4" alt="Gobierno del estado de Puebla" />
                     </div>
                 </div>
             </div>
+        </div>
+    </section>
 
-            <div class="col-lg-6 mb-5 mb-lg-0 img-logo">
-                <img src="~/img/Gobierno.jpg" class="w-100 rounded-4 shadow-4"
-                     alt="" />
+    <footer class="border-top footer text-muted text-center py-3">
+        <div class="container">
+            <div class="d-flex justify-content-center align-items-center gap-4 mb-2">
+                <img style="height: 40px; width: auto;" src="~/img/familias-dif.png" alt="Logo 1" />
+                <img style="height: 40px; width: auto;" src="~/img/pensargrande.png" alt="Logo 3" />
             </div>
         </div>
-    </div>
-    <!-- Jumbotron -->
-</section>
-<!-- Section: Design Block -->
+    </footer>
+
+    <script src="~/js/Login.js"></script>
+</body>
+</html>

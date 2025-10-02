@@ -50,3 +50,47 @@
     box-shadow: 0 8px 32px 0 rgba(116, 23, 50, 1);
     border-radius: 20px;
 }
+
+.text-center.text-lg-start {
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+footer {
+    margin-top: auto;
+}
+
+ html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .login-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 0;
+        }
+
+        footer {
+            margin-top: auto;
+            flex-shrink: 0;
+        }
+
+        .cascading-right {
+            margin-right: -50px;
+        }
+
+        .img-logo img {
+            max-height: 500px;
+            object-fit: cover;
+        }
