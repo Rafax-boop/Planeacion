@@ -1,4 +1,5 @@
-﻿@{
+﻿@model Metas.AplicacionWeb.Models.ViewModels.VMUsuarioLogin
+@{
     Layout = null;
     ViewData["Title"] = "Acceso";
 }
@@ -29,16 +30,16 @@
                                 <div class="small text-muted mb-4">2024 - 2030</div>
 
                                 <!-- FORMULARIO CON EFECTO OUTLINE -->
-                                <form id="loginForm">
+                                <form asp-controller="Acceso" asp-action="Login" method="post" id="loginForm">
                                     <!-- Usuario input -->
                                     <div class="form-floating mb-4">
-                                        <input type="text" class="form-control titulo input-arena" id="floatingUsuario" placeholder=" " style="border: 1px solid rgb(192, 152, 102, 0.2)" />
+                                        <input type="text" class="form-control titulo input-arena" id="floatingUsuario" placeholder=" " style="border: 1px solid rgb(192, 152, 102, 0.2)" asp-for="Usuario"/>
                                         <label style="color: #c09866" for="floatingUsuario">Usuario</label>
                                     </div>
 
                                     <!-- Contraseña input -->
                                     <div class="form-floating mb-4">
-                                        <input type="password" class="form-control titulo input-arena" id="floatingPassword" placeholder=" " style="border: 1px solid rgb(192, 152, 102, 0.2)" />
+                                        <input type="password" class="form-control titulo input-arena" id="floatingPassword" placeholder=" " style="border: 1px solid rgb(192, 152, 102, 0.2)" asp-for="Password"/>
                                         <label style="color: #c09866" for="floatingPassword">Contraseña</label>
                                     </div>
 
@@ -67,7 +68,20 @@
             </div>
         </div>
     </footer>
-
+    <script>
+        @if (ViewData["Mensaje"] != null)
+        {
+                <text>
+                window.mensajeError = '@ViewData["Mensaje"]';
+                </text>
+        }
+        else
+        {
+                <text>
+                window.mensajeError = '';
+                </text>
+        }
+    </script>
     <script src="~/js/Login.js"></script>
 </body>
 </html>

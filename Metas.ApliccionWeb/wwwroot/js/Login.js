@@ -1,15 +1,26 @@
 ﻿document.addEventListener('DOMContentLoaded', function () {
     const loginForm = document.getElementById('loginForm');
     const btnIngresar = document.getElementById('btnIngresar');
+    const usuarioInput = document.getElementById('floatingUsuario');
+    const passwordInput = document.getElementById('floatingPassword');
+
+    // Verificar si hay mensaje de error del servidor
+    if (window.mensajeError && window.mensajeError !== '') {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error de autenticación',
+            text: window.mensajeError,
+            confirmButtonColor: '#741732'
+        });
+    }
 
     loginForm.addEventListener('submit', function (e) {
-        e.preventDefault();
-
-        // Validar campos
-        const usuario = document.getElementById('floatingUsuario').value;
-        const password = document.getElementById('floatingPassword').value;
+        // Validar campos antes de enviar
+        const usuario = usuarioInput.value.trim();
+        const password = passwordInput.value.trim();
 
         if (!usuario || !password) {
+            e.preventDefault(); // Solo prevenir si hay error
             Swal.fire({
                 icon: 'warning',
                 title: 'Campos incompletos',
@@ -19,11 +30,8 @@
             return;
         }
 
-        // Mostrar SweetAlert de carga
-        showLoadingAlert();
-
-        // Simular proceso de login (reemplazar con tu lógica real)
-        simulateLogin(usuario, password);
+        // Si todo está bien, mostrar loading y permitir el envío
+        showLoadingAlert();        
     });
 
     function showLoadingAlert() {
@@ -44,37 +52,10 @@
             customClass: {
                 popup: 'glass-alert'
             },
-            willOpen: () => {
+            didOpen: () => {
                 btnIngresar.disabled = true;
                 btnIngresar.innerHTML = 'PROCESANDO...';
             }
         });
-    }
-
-    function simulateLogin(usuario, password) {
-        // Simular llamada al servidor (reemplazar con tu API real)
-        setTimeout(() => {
-            Swal.close();
-
-            // Aquí iría tu lógica real de autenticación
-            // Por ahora simulamos éxito siempre
-            Swal.fire({
-                icon: 'success',
-                title: '¡Bienvenido!',
-                text: 'Ha iniciado sesión correctamente',
-                confirmButtonColor: '#741732',
-                willClose: () => {
-                    // Redirigir al dashboard o página principal
-                    window.location.href = '/Home/Index';
-                }
-            });
-
-        }, 3000); // 3 segundos de simulación
-    }
-
-    // Restaurar botón si hay error
-    function restoreButton() {
-        btnIngresar.disabled = false;
-        btnIngresar.innerHTML = 'INGRESAR';
     }
 });

@@ -36,7 +36,23 @@
                 </small>
             </div>
         </div>
-    </div>
+    </div>@* 
+    @if (TempData["LoginExitoso"] != null)
+    {
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Bienvenido @TempData["NombreUsuario"]!',
+                    text: 'Ha iniciado sesión correctamente',
+                    confirmButtonColor: '#741732',
+                    timer: 2500,
+                    showConfirmButton: false
+                });
+            });
+        </script>
+    } *@
 </body>
 </html>
 
