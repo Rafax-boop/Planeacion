@@ -7,6 +7,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Views\Home\FileName.cshtml.cs" />
+    <Compile Remove="Views\Home\Inicio.cshtml.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="Views\Home\FileName.cshtml" />
+    <Content Remove="Views\Home\Inicio.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Views\Acceso\Login.css" />
+    <None Remove="Views\Home\Inicio.html" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Metas.BLL\Metas.BLL.csproj" />
     <ProjectReference Include="..\Metas.Entity\Metas.Entity.csproj" />
     <ProjectReference Include="..\Metas.IOC\Metas.IOC.csproj" />
