@@ -1,5 +1,5 @@
-﻿.text-center {
-    animation: fadeInUp 0.8s ease-out;
+﻿.animacion-home{
+    animation: fadeInUp 1.5s ease-out;
 }
 
 @keyframes fadeInUp {

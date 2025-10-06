@@ -1,11 +1,4 @@
-﻿:root {
-    --color-primary: #741732;
-    --color-secondary: #c09866;
-    --shadow-primary: 0 5px 8px 0 #741732;
-    --shadow-secondary: 0 8px 32px 0 rgba(192, 152, 102, 0.1);
-}
-
-.li-nav {
+﻿.li-nav {
     transition: all 0.3s ease;
     box-shadow: none !important;
     border-radius: 5px;
@@ -32,10 +25,10 @@
 
 .btn-cerrar:hover {
     transition: all 0.2s ease;
-    background-color: var(--color-primary);
-    color: var(--color-secondary);
+    background-color: #741732 !important;
+    color: #c09866 !important;
 }
 
 .btn-cerrar:active {
-    transform: translateY(1px) !important;
+    transform: translateY(2px) !important;
 }
