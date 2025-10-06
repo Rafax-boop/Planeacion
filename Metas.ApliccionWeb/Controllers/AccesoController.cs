@@ -45,7 +45,8 @@ namespace Metas.AplicacionWeb.Controllers
             List<Claim> claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, usuarioEncontrado.Usuario1),
-                new Claim(ClaimTypes.NameIdentifier, usuarioEncontrado.IdUsuario.ToString())
+                new Claim(ClaimTypes.NameIdentifier, usuarioEncontrado.IdUsuario.ToString()),
+                new Claim(ClaimTypes.Role, usuarioEncontrado.Definicion)
             };
 
             ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
