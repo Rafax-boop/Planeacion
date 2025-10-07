@@ -1,5 +1,6 @@
 ﻿using Metas.Entity;
-using System;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Web;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,5 +11,6 @@ namespace Metas.BLL.Interfaces
     public interface IDepartamentoService
     {
         Task<List<Departamento>> ObtenerDepartamentos();
+        Task<List<SelectListItem>> ObtenerListaPorTipo(string tipo);
     }
 }

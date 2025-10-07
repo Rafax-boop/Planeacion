@@ -1,3 +1,4 @@
+using Metas.AplicacionWeb.Utilidades.AutoMapper;
 using Metas.IOC;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
@@ -13,6 +14,8 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     });
 
 builder.Services.InyectarDependencia(builder.Configuration);
+
+builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
 var app = builder.Build();
 

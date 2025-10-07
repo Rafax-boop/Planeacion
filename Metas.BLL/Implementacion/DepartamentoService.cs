@@ -1,6 +1,7 @@
 ﻿using Metas.BLL.Interfaces;
 using Metas.DAL.Interfaces;
 using Metas.Entity;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,6 +31,57 @@ namespace Metas.BLL.Implementacion
                 .ToList();
 
             return departamentos;
+        }
+
+        public async Task<List<SelectListItem>> ObtenerListaPorTipo(string tipo)
+        {
+            var query = await _repositorio.Consultar();
+            List<SelectListItem> lista = new List<SelectListItem>();
+
+            switch (tipo)
+            {
+                case "Unidad":
+                    lista = query
+                        .Select(p => new SelectListItem
+                        {
+                            Text = p.UnidadRepresentante,
+                            Value = p.UnidadRepresentante
+                        })
+                        .GroupBy(p => p.Text)
+                        .Select(g => g.First())
+                        .ToList();
+                    break;
+
+                case "Dirección":
+                    lista = query
+                        .Select(p => new SelectListItem
+                        {
+                            Text = p.Area,
+                            Value = p.Area
+                        })
+                        .GroupBy(p => p.Text)
+                        .Select(g => g.First())
+                        .ToList();
+                    break;
+
+                case "Departamento":
+                    lista = query
+                        .Select(p => new SelectListItem
+                        {
+                            Text = p.Departamento1,
+                            Value = p.Departamento1
+                        })
+                        .GroupBy(p => p.Text)
+                        .Select(g => g.First())
+                        .ToList();
+                    break;
+
+                default:
+                    lista = new List<SelectListItem>();
+                    break;
+            }
+
+            return lista;
         }
     }
 }
