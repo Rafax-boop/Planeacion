@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
 namespace Metas.AplicacionWeb.Controllers
-{    
+{
     public class AccesoController : Controller
     {
         private readonly IUsuarioService _usuarioService;

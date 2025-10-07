@@ -163,19 +163,9 @@ public partial class LlenadoInterno
 
     public string? CargoValido { get; set; }
 
-    public virtual ICollection<EvidenciaAlimentarium> EvidenciaAlimentaria { get; set; } = new List<EvidenciaAlimentarium>();
-
-    public virtual ICollection<EvidenciaBien> EvidenciaBiens { get; set; } = new List<EvidenciaBien>();
-
-    public virtual ICollection<EvidenciaCapacitacione> EvidenciaCapacitaciones { get; set; } = new List<EvidenciaCapacitacione>();
-
     public virtual Pp? IdppNavigation { get; set; }
 
-    public virtual ICollection<LlenadoExterno> LlenadoExternos { get; set; } = new List<LlenadoExterno>();
-
     public virtual ICollection<Programacion> Programacions { get; set; } = new List<Programacion>();
-
-    public virtual ICollection<Validacione> Validaciones { get; set; } = new List<Validacione>();
 
     public virtual ICollection<Vinculacion> Vinculacions { get; set; } = new List<Vinculacion>();
 }
