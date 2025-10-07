@@ -1,0 +1,97 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title></title>
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="~/css/Programacion.css" rel="stylesheet" />
+    <link href="~/css/Login.css" rel="stylesheet" />
+</head>
+<body> 
+    <div class="mt-5 p-4 rounded-5 glass-effect">
+        <div class="row g-1">
+            <div class="col">
+                <div class="mt-2 text-center">
+                    <label class="form-label fs-3 fw-bold titulo">Año Fiscal</label>
+                </div>
+            </div>
+            <div class="col">
+                <div class="mt-2 text-center">
+                    <label class="form-label fs-3 fw-bold titulo">Departamentos</label>
+                </div>
+            </div>
+        </div>
+        <div class="row g-1">
+            <div class="col">
+                <div class="col-12">
+                    <select class="titulo form-select input-arena" id="">
+                        @{
+                            var anoActual = DateTime.Now.Year;
+                            var anoMaximo = anoActual + 1;
+                            var anoMinimo = anoActual - 5;
+
+                            for (int ano = anoMaximo; ano >= anoMinimo; ano--)
+                            {
+                                <option value="@ano">@ano</option>
+                            }
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="col">
+                <div class="col-12" style="margin-left: 6px">
+                    <select class="titulo form-select input-arena" id="selectDepartamento">
+                        <option value="">-- Seleccione un departamento --</option>
+                        @{
+                            var departamentos = new List<string>
+                                                {
+                                                "Dirección General",
+                                                "Recursos Humanos",
+                                                "Finanzas y Contabilidad",
+                                                "Tecnologías de la Información",
+                                                "Programas Sociales",
+                                                "Desarrollo Comunitario",
+                                                "Atención a la Familia",
+                                                "Servicios Médicos",
+                                                "Capacitación y Educación",
+                                                "Logística y Almacén",
+                                                "Comunicación Social",
+                                                "Planeación y Evaluación"
+                                                };
+
+                            foreach (var depto in departamentos)
+                            {
+                                <option value="@depto">@depto</option>
+                            }
+                        }
+                    </select>
+                </div>
+            </div>
+            <div>
+                <div class="mt-4 text-center">
+                    <button class="boton-rojo" type="button">Buscar</button>
+                </div>
+            </div>
+        </div>
+    </div>    
+    <div class="mt-5">
+        <h2 class="fw-semibold text-center" style="color: #424242 !important;">
+            Ejercicio Fiscal 2026
+        </h2>
+        <div>
+            <h5 class="fw-light">
+                DEPARTAMENTO DE VINCULACION EDUCATIVA
+            </h5>
+            <div>
+                <div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
