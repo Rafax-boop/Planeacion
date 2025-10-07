@@ -46,6 +46,7 @@ namespace Metas.AplicacionWeb.Controllers
             {
                 new Claim(ClaimTypes.Name, usuarioEncontrado.Usuario1),
                 new Claim(ClaimTypes.NameIdentifier, usuarioEncontrado.IdUsuario.ToString()),
+                new Claim("Departamento", usuarioEncontrado.Area),
                 new Claim(ClaimTypes.Role, usuarioEncontrado.Definicion)
             };
 

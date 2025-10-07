@@ -1,12 +1,32 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Metas.AplicacionWeb.Models.ViewModels;
+using Metas.BLL.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Metas.AplicacionWeb.Controllers
 {
+    [Authorize]
     public class MonitoreoController : Controller
     {
-        public IActionResult Monitoreo()
+        private readonly IDepartamentoService _departamentoService;
+        public MonitoreoController(IDepartamentoService departamentoService)
         {
-            return View();
+            _departamentoService = departamentoService;
+        }
+        public async Task<IActionResult> Monitoreo()
+        {
+            var departamentos = await _departamentoService.ObtenerDepartamentos();
+
+            var modelo = new VMDepartamentos
+            {
+                ListaDepartamentos = departamentos.Select(d => new SelectListItem
+                {
+                    Value = d.IdDepartamento.ToString(),
+                    Text = d.Departamento1
+                }).ToList()
+            };
+            return View(modelo);
         }
     }
 }

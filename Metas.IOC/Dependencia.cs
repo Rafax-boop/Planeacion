@@ -25,6 +25,7 @@ namespace Metas.IOC
             services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
             services.AddScoped<IUsuarioService, UsuarioService>();
+            services.AddScoped<IDepartamentoService, DepartamentoService>();
         }
     }
 }
