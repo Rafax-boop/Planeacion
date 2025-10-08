@@ -1,0 +1,240 @@
+﻿<div class="container-fluid mt-5">
+    <h1 class="text-center mb-4 titulo fw-semibold">FICHA TÉCNICA DE ACTIVIDADES</h1>
+
+    @* Datos del solicitante *@
+    <div class="d-flex border mb-4 rounded-4 shadow">
+        <div class="w-25 border-end p-3 rounded-start-4" style="background-color: #f4f4f4;">
+            <h5 class="fw-semibold titulo text-center" style="margin-top:120px">
+                Datos del solicitante
+            </h5>
+        </div>
+
+        <div class="w-75">
+            <div class="d-flex border-bottom p-2">
+                <div class="w-50 my-2">1. FECHA DE ELABORACIÓN:</div>
+                <div class="w-50 fw-semibold text-center my-2">07/10/2025</div>
+            </div>
+
+            <div class="d-flex border-bottom p-2">
+                <div class="w-50 mt-2">2. NOMBRE DEL ÁREA OPERATIVA RESPONSABLE (AOR):</div>
+                <div class="w-50">
+                    <div class="mb-3">
+                        <h5 class="fw-light">
+                           Area:   
+                        </h5>
+                        <textarea disabled class="form-control input-arena" rows="1" placeholder=""></textarea>
+                    </div>
+                    <div>
+                        <h5 class ="fw-light">
+                            Departamento:
+                        </h5>
+                        <textarea disabled class="form-control mb-2 input-arena" rows="1" placeholder=""></textarea>
+                    </div>                   
+                </div>
+            </div>
+
+            <div class="d-flex p-2">
+                <div class="w-50 mt-2">3. CORREO ELECTRÓNICO:</div>
+                <div class="w-50 my-2 mx-2">
+                    <input type="email" class="form-control form-control-sm input-arena" placeholder="ejemplo@correo.com">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* Datos de la solicitud *@
+    <div class="border p-3 mb-4 rounded-4 shadow">
+        <h5 class="mb-4 text-center border-bottom pb-3 fw-semibold titulo">Datos de la solicitud</h5>
+
+        <div class="row border-bottom">
+            <label class="col-md-4 mb-3">6. PROGRAMA PRESUPUESTARIO / AGENDA INSTITUCIONAL:</label>
+            <div class="col-md-8">
+                <select class="input-arena mt-2 form-control form-control-sm">
+                    <option value="">Seleccione opción</option>
+                    <option value="1">Putito 1</option>
+                    <option value="2">Putito 2</option>
+                    <option value="3">Putito 3</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row mb-2 border-bottom">
+            <label class="col-md-4 my-3 mb-4">8. NÚMERO DE COMPONENTE:</label>
+            <div class="col-md-8">
+                <select class="input-arena mt-3 form-control form-control-sm">
+                    <option value="">Seleccione opción</option>
+                    <option value="1">Putito 1</option>
+                    <option value="2">Putito 2</option>
+                    <option value="3">Putito 3</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row mb-2 border-bottom">
+            <label class="col-md-4 my-3 mb-4">9. NÚMERO DE ACTIVIDAD:</label>
+            <div class="col-md-8">               
+                <input type="number" class="input-arena mt-3 form-control form-control-sm" value="0">
+            </div>
+        </div>       
+    </div>
+
+    <hr>
+
+    @* Justificacion *@
+    <div class="mb-4">
+        <label>10. JUSTIFICACIÓN</label>
+        <textarea class="input-arena form-control" rows="2" placeholder=""></textarea>
+    </div>
+
+    @* Documentacion soporte de la justificacion *@
+    <div class="mb-4">
+        <label>11. DOCUMENTACIÓN SOPORTE DE LA JUSTIFICACIÓN</label>
+        <textarea class="input-arena form-control" rows="2" placeholder=""></textarea>
+    </div>
+    
+    @* Origen de recursos *@
+    <div class="mb-4 d-flex align-items-center my-2 py-2 pb-4">
+        <div class="w-50 pe-3 mt-2 align-items-center">
+            <label>12. ORIGEN DE RECURSOS</label>
+        </div>
+
+        <div class="w-50 mt-2">
+            <div class="row g-2">
+                <div class="col-6">
+                    <h5 class ="fw-light">Recurso Federal</h5>
+                    <select class="form-select form-select-sm input-arena">
+                        <option value="">Seleccione</option>
+                        <option value="Si">Sí</option>
+                        <option value="No">No</option>
+                    </select>
+                </div>
+
+                <div class="col-6">
+                    <h5 class="fw-light">Recurso Estatal</h5>
+                    <select class="form-select form-select-sm input-arena">
+                        <option value="">Seleccione</option>
+                        <option value="Si">Sí</option>
+                        <option value="No">No</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    @* Datos generales *@
+    <h2 class="text-center my-4 titulo fw-semibold">DATOS GENERALES</h2>   
+    <div class="row border-bottom">
+        <label class="col-md-4 align-content-center">13. PROGRAMA SOCIAL, SERVICIO Y/O PROYECTO</label>
+        <div class="col-md-8 mb-3">
+            <textarea class="input-arena form-control" rows="2" placeholder=""></textarea>
+        </div>
+    </div>
+    <div class="row border-bottom">
+        <label class="col-md-4 align-content-center">14. DESCRIPCIÓN DE LA ACTIVIDAD</label>
+        <div class="col-md-8 my-3">
+            <textarea class="input-arena form-control" rows="2" placeholder=""></textarea>
+        </div>
+    </div>
+    <div class="row border-bottom">
+        <label class="col-md-4 align-content-center">15. NOMBRE DEL INCICADOR</label>
+        <div class="col-md-8 my-3">
+            <textarea class="input-arena form-control" rows="2" placeholder=""></textarea>
+        </div>
+    </div>
+    <div class="row border-bottom">
+        <label class="col-md-4 align-content-center">16. DEFINICIÓN DEL INCICADOR</label>
+        <div class="col-md-8 my-3">
+            <textarea class="input-arena form-control" rows="2" placeholder=""></textarea>
+        </div>
+    </div>   
+
+    @* Calendarización *@
+    <div class="border p-3 mb-4 mt-4 rounded-4 shadow">
+        <div class="row border-bottom pb-3 mb-3">
+            <div class="col-md-4">
+                <label>17. CALENDARIZACIÓN</label>
+            </div>
+        </div>
+
+        <div class="row">
+            @* Encabezados de trimestres *@
+            <div class="col-md-3 mb-3">
+                <div class="text-center fw-semibold text-muted">TRIMESTRES</div>
+            </div>
+            <div class="col-md-2 mb-3">
+                <div class="text-center titulo fw-semibold border-bottom pb-1">1ER TRIMESTRE</div>
+            </div>                       
+            <div class="col-md-2 mb-3">  
+                <div class="text-center titulo fw-semibold border-bottom pb-1">2DO. TRIMESTRE</div>
+            </div>                       
+            <div class="col-md-2 mb-3">  
+                <div class="text-center titulo fw-semibold border-bottom pb-1">3ER. TRIMESTRE</div>
+            </div>                       
+            <div class="col-md-2 mb-3">  
+                <div class="text-center titulo fw-semibold border-bottom pb-1">4TO. TRIMESTRE</div>
+            </div>
+        </div>
+
+        @* Fila para SERVICIOS *@
+        <div class="row align-items-center border-bottom pb-2 mb-2">
+            <div class="col-md-3 text-center">
+                <label class="fw-light">SERVICIOS</label>
+            </div>
+            <div class="col-md-2">
+                <input type="number" class="form-control form-control-sm input-arena text-center" value="0" min="0">
+            </div>
+            <div class="col-md-2">
+                <input type="number" class="form-control form-control-sm input-arena text-center" value="0" min="0">
+            </div>
+            <div class="col-md-2">
+                <input type="number" class="form-control form-control-sm input-arena text-center" value="0" min="0">
+            </div>
+            <div class="col-md-2">
+                <input type="number" class="form-control form-control-sm input-arena text-center" value="0" min="0">
+            </div>
+        </div>
+
+        @* Fila para PERSONAS *@
+        <div class="row align-items-center">
+            <div class="col-md-3 text-center">
+                <label class="fw-light">PERSONAS</label>
+            </div>
+            <div class="col-md-2">
+                <input type="number" class="form-control form-control-sm input-arena text-center" value="0" min="0">
+            </div>
+            <div class="col-md-2">
+                <input type="number" class="form-control form-control-sm input-arena text-center" value="0" min="0">
+            </div>
+            <div class="col-md-2">
+                <input type="number" class="form-control form-control-sm input-arena text-center" value="0" min="0">
+            </div>
+            <div class="col-md-2">
+                <input type="number" class="form-control form-control-sm input-arena text-center" value="0" min="0">
+            </div>
+        </div>
+    </div>
+
+    <div class="row border-bottom border-top">
+        <label class="col-md-4 align-content-center">17. UNIDAD DE MEDIDA</label>
+        <div class="col-md-8 my-3">
+            <textarea class="input-arena form-control" rows="2" placeholder=""></textarea>
+        </div>
+    </div>
+    <div class="row border-bottom">
+        <label class="col-md-4 align-content-center">18. MEDIOS DE VERIFICACIÓN</label>
+        <div class="col-md-8 my-3">
+            <textarea class="input-arena form-control" rows="2" placeholder=""></textarea>
+        </div>
+    </div>
+    <div class="row border-bottom">
+        <label class="col-md-4 align-content-center">19. SERIE DE INFORMACIÓN DISPONIBLE</label>
+        <div class="col-md-4 my-3">
+            <textarea class="input-arena form-control" rows="2" placeholder=""></textarea>
+        </div>
+        <div class="col-md-4 my-3">
+            <textarea class="input-arena form-control" rows="2" placeholder=""></textarea>
+        </div>
+    </div>
+</div>

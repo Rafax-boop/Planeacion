@@ -7,7 +7,7 @@ using System.Security.Claims;
 
 namespace Metas.AplicacionWeb.Controllers
 {
-    [Authorize]
+    //[Authorize]
     public class ProgramacionController : Controller
     {
         private readonly IDepartamentoService _departamentoService;
@@ -29,5 +29,13 @@ namespace Metas.AplicacionWeb.Controllers
             }; 
             return View(modelo);
         }
+
+        public async Task<IActionResult> RegistrarProgramacion()
+        {
+            
+            return View();
+        }
     }
+
+    
 }
