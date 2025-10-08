@@ -1,0 +1,113 @@
+﻿@using Metas.AplicacionWeb.Models.ViewModels
+@model List<VMFechas>
+@{
+    ViewData["Title"] = "Fecha Captura";
+}
+<h1>Fechacaptura</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Fecha Inicio</th>
+            <th>Fecha Termino</th>
+            <th>Mes</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var fecha in Model)
+        {
+            <tr>
+                <td>@fecha.FechaInicio</td>
+                <td>@fecha.FechaFin</td>
+                <td>@fecha.Mes</td>
+                <td>
+                    <button class="btn btn-sm btn-primary"
+                            data-bs-toggle="modal"
+                            data-bs-target="#ModalFecha"
+                            onclick="cargarDatosFecha('@fecha.IdFechaCaptura', '@fecha.FechaInicio.ToString("yyyy-MM-dd")', '@fecha.FechaFin.ToString("yyyy-MM-dd")')">
+                        Editar
+                    </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="modal fade" id="ModalFecha" tabindex="-1" aria-labelledby="miModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="miModalLabel">Editar fechas</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="formEditar">
+                <div class="modal-body">
+                    <input type="hidden" id="txtIdFechaCaptura" name="IdFechaCaptura" />
+
+                    <label class="form-label">Fecha Inicio</label>
+                    <input type="date" class="form-control" id="txtFechaInicio" name="FechaInicio" required />
+
+                    <label class="form-label">Fecha Termino</label>
+                    <input type="date" class="form-control" id="txtFechaFin" name="FechaFin" required />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary" id="btnEditar">Editar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function cargarDatosFecha(id, fechaInicio, fechaFin, ano) {
+            document.getElementById('txtIdFechaCaptura').value = id;
+            document.getElementById('txtFechaInicio').value = fechaInicio;
+            document.getElementById('txtFechaFin').value = fechaFin;
+        }
+
+        // Limpiar el formulario cuando se cierra el modal
+        document.getElementById('ModalFecha').addEventListener('hidden.bs.modal', function () {
+            document.getElementById('formEditar').reset();
+        });
+
+        $("#formEditar").submit(function (e) {
+            e.preventDefault();
+            var formData = $(this).serialize();
+            $("#btnEditar").prop('disabled', true).text('Editando...');
+
+            $.ajax({
+                type: 'PUT',
+                url: '/Admin/Editar',
+                data: formData,
+                dataType: 'json',
+                success: function (response) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Éxito!',
+                        text: response.mensaje,
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        $("#ModalFecha").modal('hide');
+                        $("#formEditar")[0].reset();
+                        location.reload();
+                    });
+                },
+                error: function (xhr) {
+                    var error = xhr.responseJSON;
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: error?.mensaje || 'Error al editar fechas'
+                    });
+                },
+                complete: function() {
+                    $("#btnEditar").prop('disabled', false).text('Editar');
+                }
+            });
+        });
+    </script>
+}

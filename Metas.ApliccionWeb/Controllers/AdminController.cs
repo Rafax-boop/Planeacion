@@ -16,11 +16,13 @@ namespace Metas.AplicacionWeb.Controllers
         private readonly IMapper _mapper;
         private readonly IUsuarioService _usuarioService;
         private readonly IDepartamentoService _departamentoService;
-        public AdminController(IUsuarioService usuarioService, IMapper mapper, IDepartamentoService departamentoService)
+        private readonly IFechasService _fechasService;
+        public AdminController(IUsuarioService usuarioService, IMapper mapper, IDepartamentoService departamentoService, IFechasService fechasService)
         {
             _usuarioService = usuarioService;
             _mapper = mapper;
             _departamentoService = departamentoService;
+            _fechasService = fechasService;
         }
         public async Task<ActionResult> Usuarios()
         {
@@ -102,6 +104,75 @@ namespace Metas.AplicacionWeb.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new { mensaje = "Error al eliminar", error = ex.Message });
+            }
+        }
+
+        public async Task<IActionResult> FechaCaptura()
+        {
+            List<VMFechas> vmFechas = _mapper.Map<List<VMFechas>>(await _fechasService.Lista());
+            return View(vmFechas);
+        }
+
+        public async Task<IActionResult> FechaProgramacion()
+        {
+            List<VMFechas> vmFechas = _mapper.Map<List<VMFechas>>(await _fechasService.ListaProgramacion());
+            return View(vmFechas);
+            return View();
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> Editar(VMFechas model)
+        {
+            try
+            {
+                var entidad = _mapper.Map<FechaCaptura>(model);
+
+                FechaCaptura resultado = await _fechasService.Editar(entidad);
+
+                if (resultado != null)
+                {
+                    return Ok(new { mensaje = "Fecha editada exitosamente" });
+                }
+                else
+                {
+                    return BadRequest(new { mensaje = "No se pudo editar la fecha" });
+                }
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { mensaje = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Error al editar", error = ex.Message });
+            }
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> EditarProgramacion(VMFechas model)
+        {
+            try
+            {
+                var entidad = _mapper.Map<CapturaProgramacion>(model);
+
+                CapturaProgramacion resultado = await _fechasService.EditarProgramacion(entidad);
+
+                if (resultado != null)
+                {
+                    return Ok(new { mensaje = "Fecha editada exitosamente" });
+                }
+                else
+                {
+                    return BadRequest(new { mensaje = "No se pudo editar la fecha" });
+                }
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { mensaje = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Error al editar", error = ex.Message });
             }
         }
     }

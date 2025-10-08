@@ -74,8 +74,6 @@ public partial class MetasContext : DbContext
             entity.HasKey(e => e.IdFechaCaptura).HasName("PK__CapturaP__0096601FA19851CD");
 
             entity.ToTable("CapturaProgramacion");
-
-            entity.Property(e => e.Concepto).HasMaxLength(20);
         });
 
         modelBuilder.Entity<Comentario>(entity =>

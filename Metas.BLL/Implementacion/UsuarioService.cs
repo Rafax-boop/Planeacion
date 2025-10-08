@@ -58,10 +58,8 @@ namespace Metas.BLL.Implementacion
         {
             try
             {
-                // Buscar el usuario
                 var usuarioEncontrado = await _repositorio.Obtener(u => u.IdUsuario == idUsuario);
 
-                // Eliminar el usuario
                 bool resultado = await _repositorio.Eliminar(usuarioEncontrado);
 
                 return resultado;

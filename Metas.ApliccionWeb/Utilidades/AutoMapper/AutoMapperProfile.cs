@@ -10,6 +10,12 @@ namespace Metas.AplicacionWeb.Utilidades.AutoMapper
         {
             CreateMap<VMUsuario, Usuario>()
                 .ReverseMap();
+
+            CreateMap<VMFechas, CapturaProgramacion>()
+                .ReverseMap();
+
+            CreateMap<VMFechas, FechaCaptura>()
+                .ReverseMap();
         }
     }
 }

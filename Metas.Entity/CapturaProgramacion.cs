@@ -12,6 +12,4 @@ public partial class CapturaProgramacion
     public DateOnly? FechaFin { get; set; }
 
     public int? Ano { get; set; }
-
-    public string? Concepto { get; set; }
 }
