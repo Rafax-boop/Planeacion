@@ -22,6 +22,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="14.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Metas.BLL\Metas.BLL.csproj" />
     <ProjectReference Include="..\Metas.Entity\Metas.Entity.csproj" />
     <ProjectReference Include="..\Metas.IOC\Metas.IOC.csproj" />

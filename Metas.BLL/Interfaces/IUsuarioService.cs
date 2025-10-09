@@ -10,5 +10,8 @@ namespace Metas.BLL.Interfaces
     public interface IUsuarioService
     {
         Task<Usuario> ObtenerPorCredenciales(string usuario, string clave);
+        Task<List<Usuario>> Lista();
+        Task<bool> Crear(Usuario entidad);
+        Task<bool> Eliminar(int idUsuario);
     }
 }

@@ -1,0 +1,201 @@
+﻿@using Metas.AplicacionWeb.Models.ViewModels
+@model List<VMUsuario>
+@{
+    ViewData["Title"] = "Creación de Usuarios";
+}
+
+<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ModalUsuario">Crear usuario</button>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id Usuario</th>
+            <th>Usuario</th>
+            <th>Contraseña</th>
+            <th>Area</th>
+            <th>Rol</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody id="tablaUsuarios">
+        @foreach (var usuario in Model)
+        {
+            <tr>
+                <td>@usuario.IdUsuario</td>
+                <td>@usuario.Usuario1</td>
+                <td>@usuario.Pass</td>
+                <td>@usuario.Area</td>
+                <td>@usuario.Definicion</td>
+                <td>
+                    <button class="btn btn-sm btn-danger" onclick="eliminarUsuario(@usuario.IdUsuario, '@usuario.Usuario1')">
+                        Eliminar
+                    </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="modal fade" id="ModalUsuario" tabindex="-1" aria-labelledby="miModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="miModalLabel">Creación de usuario</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="formCrearUsuario">
+                <div class="modal-body">
+                    <label class="form-label">Nombre</label>
+                    <input type="text" class="form-control" id="txtUsuario" name="Usuario1" required />
+
+                    <label class="form-label">Contraseña</label>
+                    <input type="text" class="form-control" id="txtPassword" name="Pass" required />
+
+                    <label class="form-label">Tipo</label>
+                    <select class="form-select" id="selectTipo" name="Definicion" required>
+                        <option value="">Seleccione Tipo de Usuario</option>
+                        <option value="Dirección">Dirección</option>
+                        <option value="Unidad">Unidad</option>
+                        <option value="Departamento">Departamento</option>
+                    </select>
+
+                    <label class="form-label">Area</label>
+                    <select class="form-select" id="selectArea" name="Area" required>
+                        <option value="">Seleccione Area</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary" id="btnGuardar">Crear Usuario</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Cargar áreas según el tipo
+            $("#selectTipo").change(function () {
+                $("#selectArea").empty();
+                $("#selectArea").append('<option value="">Seleccione Area</option>');
+
+                var selected = $(this).val();
+
+                if (selected != "") {
+                    $.ajax({
+                        type: 'POST',
+                        url: '/Admin/GetTipo',
+                        data: { id: selected },
+                        dataType: 'json',
+                        success: function (states) {
+                            $.each(states, function (i, state) {
+                                $("#selectArea").append('<option value="' + state.value + '">' +
+                                    state.text + '</option>');
+                            });
+                        },
+                        error: function (xhr) {
+                            console.error('Error:', xhr);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Error al cargar las áreas'
+                            });
+                        }
+                    });
+                }
+            });
+
+            // Crear usuario con AJAX
+            $("#formCrearUsuario").submit(function (e) {
+                e.preventDefault();
+                var formData = $(this).serialize();
+                $("#btnGuardar").prop('disabled', true).text('Guardando...');
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/Admin/Crear',
+                    data: formData,
+                    dataType: 'json',
+                    success: function (response) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Éxito!',
+                            text: response.mensaje,
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(() => {
+                            $("#ModalUsuario").modal('hide');
+                            $("#formCrearUsuario")[0].reset();
+                            location.reload();
+                        });
+                    },
+                    error: function (xhr) {
+                        var error = xhr.responseJSON;
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: error?.mensaje || 'Error al crear usuario'
+                        });
+                    },
+                    complete: function() {
+                        $("#btnGuardar").prop('disabled', false).text('Crear Usuario');
+                    }
+                });
+            });
+        });
+
+        // FUNCIÓN ELIMINAR CON SWEETALERT2
+        function eliminarUsuario(idUsuario, nombreUsuario) {
+            Swal.fire({
+                title: '¿Está seguro?',
+                text: `¿Desea eliminar al usuario "${nombreUsuario}"?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Mostrar loading
+                    Swal.fire({
+                        title: 'Eliminando...',
+                        text: 'Por favor espere',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    $.ajax({
+                        type: 'POST',
+                        url: '/Admin/Eliminar',
+                        data: { id: idUsuario },
+                        dataType: 'json',
+                        success: function (response) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: '¡Eliminado!',
+                                text: response.mensaje,
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(() => {
+                                location.reload();
+                            });
+                        },
+                        error: function (xhr) {
+                            var error = xhr.responseJSON;
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: error?.mensaje || 'Error al eliminar usuario'
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+}
