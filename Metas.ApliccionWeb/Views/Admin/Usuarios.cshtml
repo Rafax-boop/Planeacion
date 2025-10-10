@@ -4,71 +4,74 @@
     ViewData["Title"] = "Creación de Usuarios";
 }
 
-<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ModalUsuario">Crear usuario</button>
+<div class="mt-4 shadow border p-4 rounded-4 text-center">
+    <button class="boton-amarillo fw-light fs-6" data-bs-toggle="modal" data-bs-target="#ModalUsuario">Crear usuario</button>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Id Usuario</th>
-            <th>Usuario</th>
-            <th>Contraseña</th>
-            <th>Area</th>
-            <th>Rol</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody id="tablaUsuarios">
-        @foreach (var usuario in Model)
-        {
+    <table class="table">
+        <thead>
             <tr>
-                <td>@usuario.IdUsuario</td>
-                <td>@usuario.Usuario1</td>
-                <td>@usuario.Pass</td>
-                <td>@usuario.Area</td>
-                <td>@usuario.Definicion</td>
-                <td>
-                    <button class="btn btn-sm btn-danger" onclick="eliminarUsuario(@usuario.IdUsuario, '@usuario.Usuario1')">
-                        Eliminar
-                    </button>
-                </td>
+                <th class="fw-semibold" style="color:#741732">Id Usuario</th>
+                <th class="fw-semibold" style="color:#741732">Usuario</th>
+                <th class="fw-semibold" style="color:#741732">Contraseña</th>
+                <th class="fw-semibold" style="color:#741732">Area</th>
+                <th class="fw-semibold" style="color:#741732">Rol</th>
+                <th></th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody id="tablaUsuarios">
+            @foreach (var usuario in Model)
+            {
+                <tr>
+                    <td class="fw-light align-middle">@usuario.IdUsuario</td>
+                    <td class="fw-light align-middle border-start">@usuario.Usuario1</td>
+                    <td class="fw-light align-middle border-start">@usuario.Pass</td>
+                    <td class="fw-light align-middle border-start text-start">@usuario.Area</td>
+                    <td class="fw-light align-middle border-start">@usuario.Definicion</td>
+                    <td class="border-start align-middle">
+                        <button class="boton-rojo fw-light fs-6 ms-3 me-2" onclick="eliminarUsuario(@usuario.IdUsuario, '@usuario.Usuario1')">
+                            Eliminar
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 
-<div class="modal fade" id="ModalUsuario" tabindex="-1" aria-labelledby="miModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="miModalLabel">Creación de usuario</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="modal fade" id="ModalUsuario" tabindex="-1" aria-labelledby="miModalLabel"
+         data-bs-backdrop="false" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content glass-effect" style="box-shadow: 0 0 40px 2px #c09866 !important">
+                <div class="modal-header">
+                    <h5 class="modal-title titulo fw-semibold" style="margin-left: 140px" id="miModalLabel">Creación de usuario</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="formCrearUsuario">
+                    <div class="modal-body">
+                        <label class="form-label titulo fw-semibold">Nombre</label>
+                        <input type="text" class="form-control mb-3 input-arena fw-light" style="color:#c09866" id="txtUsuario" name="Usuario1" required />
+
+                        <label class="form-label titulo fw-semibold">Contraseña</label>
+                        <input type="text" class="form-control mb-3 input-arena fw-light" style="color:#c09866" id="txtPassword" name="Pass" required />
+
+                        <label class="form-label titulo fw-semibold">Tipo</label>
+                        <select class="form-control mb-3 input-arena fw-light" style="color:#c09866" id="selectTipo" name="Definicion" required>
+                            <option value="">Seleccione Tipo de Usuario</option>
+                            <option value="Dirección">Dirección</option>
+                            <option value="Unidad">Unidad</option>
+                            <option value="Departamento">Departamento</option>
+                        </select>
+
+                        <label class="form-label titulo fw-semibold">Area</label>
+                        <select class="form-control mb-3 input-arena fw-light" style="color:#c09866" id="selectArea" name="Area" required>
+                            <option value="">Seleccione Area</option>
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="boton-rojo fs-6 fw-light" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="boton-amarillo fs-6 fw-light" id="btnGuardar">Crear Usuario</button>
+                    </div>
+                </form>
             </div>
-            <form id="formCrearUsuario">
-                <div class="modal-body">
-                    <label class="form-label">Nombre</label>
-                    <input type="text" class="form-control" id="txtUsuario" name="Usuario1" required />
-
-                    <label class="form-label">Contraseña</label>
-                    <input type="text" class="form-control" id="txtPassword" name="Pass" required />
-
-                    <label class="form-label">Tipo</label>
-                    <select class="form-select" id="selectTipo" name="Definicion" required>
-                        <option value="">Seleccione Tipo de Usuario</option>
-                        <option value="Dirección">Dirección</option>
-                        <option value="Unidad">Unidad</option>
-                        <option value="Departamento">Departamento</option>
-                    </select>
-
-                    <label class="form-label">Area</label>
-                    <select class="form-select" id="selectArea" name="Area" required>
-                        <option value="">Seleccione Area</option>
-                    </select>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="submit" class="btn btn-primary" id="btnGuardar">Crear Usuario</button>
-                </div>
-            </form>
         </div>
     </div>
 </div>
