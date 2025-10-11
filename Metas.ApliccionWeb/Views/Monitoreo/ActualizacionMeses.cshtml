@@ -1,0 +1,115 @@
+﻿<div class="glass-effect rounded-5 mt-4">
+    @* Encabezado *@
+    <div class="">
+        <h1 class="fw-semibold text-center p-1 titulo">
+            MESES
+        </h1>
+    </div>    
+</div>
+<div class="text-center mb-4 mt-3">
+    <small class="text-muted">
+        <i class="fas fa-calendar titulo me-1"></i>
+        @DateTime.Now.ToString("dddd, dd MMMM yyyy")
+    </small>
+</div>
+@* Fin Encabezado *@   
+
+@* Primera tabla *@
+<div class="container-gris mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="row g-3 text-center mt-1 mx-2 pb-3 border-bottom">
+
+                <div class="col-2 border-end">
+                    <label for="input1" class="form-label fw-semibold titulo">Meta Programada</label>
+                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#c09866; opacity: 0.2" disabled id="input1">
+                </div>
+
+                <div class="col-2 border-end">
+                    <label for="input2" class="form-label fw-semibold titulo">Personas Programadas</label>
+                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#c09866; opacity: 0.2" disabled id="input2">
+                </div>
+
+                <div class="col-2 border-end">
+                    <label for="input3" class="form-label fw-semibold titulo">Pp</label>
+                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#c09866; opacity: 0.2" disabled id="input3">
+                </div>
+
+                <div class="col-2 border-end">
+                    <label for="input4" class="form-label fw-semibold titulo">Componentes</label>
+                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#c09866; opacity: 0.2" disabled id="input4">
+                </div>
+
+                <div class="col-2 border-end">
+                    <label for="input5" class="form-label fw-semibold titulo">Actividad</label>
+                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#c09866; opacity: 0.2" disabled id="input5">
+                </div>
+
+                <div class="col-2">
+                    <label for="input6" class="form-label fw-semibold titulo">Unidad de Medida</label>
+                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#c09866; opacity: 0.2" disabled id="input6">
+                </div>
+
+            </div>
+
+            <div class="row g-3 text-center mt-1 mx-2 border-bottom pb-3">
+
+                <div class="col-4 border-end">
+                    <label for="input1" class="form-label fw-semibold titulo"> Programa o servicio de asistencia social </label>
+                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#c09866; opacity: 0.2" disabled id="input1">
+                </div>
+
+                <div class="col-4 border-end">
+                    <label for="input2" class="form-label fw-semibold titulo">Área</label>
+                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#c09866; opacity: 0.2" disabled id="input2">
+                </div>
+
+                <div class="col-4">
+                    <label for="input3" class="form-label fw-semibold titulo">Departamento</label>
+                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#c09866; opacity: 0.2" disabled id="input3">
+                </div>
+                
+            </div>
+
+            <div class="text-center mt-3 mx-3 mb-4">
+
+                <div class="">
+                    <label for="input1" class="form-label fw-semibold titulo">Descripción de la Actividad</label>
+                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#c09866; opacity: 0.2" disabled id="input1">
+                </div>               
+
+            </div>
+
+        </div>
+    </div>
+</div>
+@* Fin Primera tabla *@
+
+@* tabla metas *@
+<div class="container-gris mt-4">
+    <div class="glass-effect rounded-5 m-3">
+        <h3 class="fw-semibold text-center m-2 titulo">
+            METAS
+        </h3>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="row g-3 text-center mt-1 mx-2 pb-3 border-bottom">
+
+                <div class="col-6 border-end">
+                    <label for="input1" class="form-label fw-semibold titulo">Meta Programada</label>
+                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#c09866; opacity: 0.2" disabled id="input1">
+                </div>
+
+                <div class="col-6 border-end">
+                    <label for="input2" class="form-label fw-semibold titulo">Personas Programadas</label>
+                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#c09866; opacity: 0.2" disabled id="input2">
+                </div>                
+
+            </div>
+            
+        </div>
+    </div>
+</div>
+@* Fin tabla metas *@
+
