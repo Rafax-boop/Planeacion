@@ -1,4 +1,9 @@
-﻿<div class="container-fluid mt-5">
+﻿@model Metas.AplicacionWeb.Models.ViewModels.VMProgramacion
+
+@{
+    ViewData["Titlte"] = "Registrar Programación";
+}
+<div class="container-fluid mt-5">
     <h1 class="text-center mb-4 titulo fw-semibold pt-2 glass-effect rounded pb-2">FICHA TÉCNICA DE ACTIVIDADES</h1>
 
     @* Datos del solicitante *@
@@ -12,7 +17,7 @@
         <div class="w-75">
             <div class="d-flex border-bottom p-2">
                 <div class="w-50 my-2">1. FECHA DE ELABORACIÓN:</div>
-                <div class="w-50 fw-semibold text-center my-2">07/10/2025</div>
+                <div class="w-50 fw-semibold text-center my-2">@DateTime.Now.ToString("dd/MM/yyyy")</div>
             </div>
 
             <div class="d-flex p-2 row">
@@ -22,13 +27,13 @@
                         <h5 class="fw-light">
                            Area:   
                         </h5>
-                        <textarea disabled class="form-control input-arena titulo fw-semibold" rows="1" placeholder=""></textarea>
+                        <textarea disabled class="form-control input-arena titulo fw-semibold" rows="1">@Model.AreaNombre</textarea>
                     </div>
                     <div class="col-md-6">
                         <h5 class="fw-light">
                             Departamento:
                         </h5>
-                        <textarea disabled class="form-control input-arena titulo fw-semibold" rows="1" placeholder=""></textarea>
+                        <textarea disabled class="form-control input-arena titulo fw-semibold" rows="1">@Model.DepartamentoNombre</textarea>
                     </div>                   
                 </div>
             </div>
@@ -36,7 +41,7 @@
             <div class="d-flex p-2">
                 <div class="w-50 align-content-center">3. CORREO ELECTRÓNICO:</div>
                 <div class="w-50 my-2 mx-2">
-                    <input type="email" class="input-arena form-control titulo" placeholder="ejemplo@correo.com">
+                    <input type="email" class="input-arena form-control titulo" placeholder="ejemplo@correo.com" value="@Model.CorreoContacto">
                 </div>
             </div>
         </div>
@@ -62,10 +67,11 @@
             <label class="align-content-center col-md-6">5. NÚMERO DE COMPONENTE:</label>
             <div class="col-md-6 align-content-center">
                 <select class="input-arena form-control titulo">
-                    <option value="">Seleccione opción</option>
-                    <option value="1">Putito 1</option>
-                    <option value="2">Putito 2</option>
-                    <option value="3">Putito 3</option>
+                    <option value="">-- Selecciona componente --</option>
+                    @foreach (var act in Model.ListaComponentes)
+                    {
+                        <option value="@act.Value">@act.Text</option>
+                    }
                 </select>
             </div>
         </div>

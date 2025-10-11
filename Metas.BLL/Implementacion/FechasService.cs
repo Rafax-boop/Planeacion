@@ -86,5 +86,46 @@ namespace Metas.BLL.Implementacion
             IQueryable<CapturaProgramacion> query = await _repositorioProgramacion.Consultar();
             return query.ToList();
         }
+
+        public async Task<CapturaProgramacion> ObtenerFechasPorAno(int anoFiscal)
+        {
+            try
+            {
+                return await _repositorioProgramacion.Obtener(x => x.Ano == anoFiscal);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<bool> ValidarFechaHabilitada(int anoFiscal)
+        {
+            try
+            {
+                var fechaActual = DateTime.Now.Date;
+
+                // Buscar el registro de fechas para el año fiscal
+                var captura = await _repositorioProgramacion.Obtener(x => x.Ano == anoFiscal);
+
+                if (captura == null)
+                    return false;
+
+                // Validar que la fecha actual esté dentro del rango
+                if (captura.FechaInicio.HasValue && captura.FechaFin.HasValue)
+                {
+                    var fechaInicio = captura.FechaInicio.Value.ToDateTime(TimeOnly.MinValue);
+                    var fechaFin = captura.FechaFin.Value.ToDateTime(TimeOnly.MaxValue);
+
+                    return fechaActual >= fechaInicio && fechaActual <= fechaFin;
+                }
+
+                return false;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

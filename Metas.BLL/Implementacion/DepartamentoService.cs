@@ -13,10 +13,32 @@ namespace Metas.BLL.Implementacion
     public class DepartamentoService : IDepartamentoService
     {
         private readonly IGenericRepository<Departamento> _repositorio;
-        public DepartamentoService(IGenericRepository<Departamento> repositorio)
+        private readonly IGenericRepository<Pp> _repositorioProgramas;
+        private readonly IGenericRepository<PpCompuesto> _repositorioComponentes;
+        public DepartamentoService(IGenericRepository<Departamento> repositorio, IGenericRepository<Pp> repositorioProgramas, IGenericRepository<PpCompuesto> repositorioComponentes)
         {
             _repositorio = repositorio;
+            _repositorioProgramas = repositorioProgramas;
+            _repositorioComponentes = repositorioComponentes;
         }
+
+        public async Task<List<PpCompuesto>> ObtenerComponentes()
+        {
+            var query = await _repositorioComponentes.Consultar();
+
+            var programas = query
+                .Select(d => new PpCompuesto
+                {
+                    IdPp = d.IdPp,
+                    PpCompuesto1 = d.PpCompuesto1,
+                    ComponenteCompuesto = d.ComponenteCompuesto
+                })
+                .Distinct()
+                .ToList();
+
+            return programas;
+        }
+
         public async Task<List<Departamento>> ObtenerDepartamentos()
         {
             var query = await _repositorio.Consultar();
@@ -26,6 +48,7 @@ namespace Metas.BLL.Implementacion
                 {
                     IdDepartamento = d.IdDepartamento,
                     Departamento1 = d.Departamento1,
+                    Area = d.Area
                 })
                 .Distinct()
                 .ToList();

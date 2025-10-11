@@ -13,5 +13,6 @@ namespace Metas.BLL.Interfaces
         Task<List<CapturaProgramacion>> ListaProgramacion();
         Task<FechaCaptura> Editar(FechaCaptura entidad);
         Task<CapturaProgramacion> EditarProgramacion(CapturaProgramacion entidad);
+        Task<bool> ValidarFechaHabilitada(int anoFiscal);
     }
 }

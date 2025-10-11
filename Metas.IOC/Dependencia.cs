@@ -27,6 +27,7 @@ namespace Metas.IOC
             services.AddScoped<IUsuarioService, UsuarioService>();
             services.AddScoped<IDepartamentoService, DepartamentoService>();
             services.AddScoped<IFechasService, FechasService>();
+            services.AddScoped<IProgramacionService, ProgramacionService>();
         }
     }
 }
