@@ -22,32 +22,32 @@
 
                 <div class="col-2 border-end">
                     <label for="input1" class="form-label fw-semibold titulo">Meta Programada</label>
-                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#c09866; opacity: 0.2" disabled id="input1">
+                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" id="metaProgramada" value="20" readonly>
                 </div>
 
                 <div class="col-2 border-end">
                     <label for="input2" class="form-label fw-semibold titulo">Personas Programadas</label>
-                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#c09866; opacity: 0.2" disabled id="input2">
+                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" readonly id="input2">
                 </div>
 
                 <div class="col-2 border-end">
                     <label for="input3" class="form-label fw-semibold titulo">Pp</label>
-                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#c09866; opacity: 0.2" disabled id="input3">
+                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" readonly id="input3">
                 </div>
 
                 <div class="col-2 border-end">
                     <label for="input4" class="form-label fw-semibold titulo">Componentes</label>
-                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#c09866; opacity: 0.2" disabled id="input4">
+                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" readonly id="input4">
                 </div>
 
                 <div class="col-2 border-end">
                     <label for="input5" class="form-label fw-semibold titulo">Actividad</label>
-                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#c09866; opacity: 0.2" disabled id="input5">
+                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" readonly id="input5">
                 </div>
 
                 <div class="col-2">
                     <label for="input6" class="form-label fw-semibold titulo">Unidad de Medida</label>
-                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#c09866; opacity: 0.2" disabled id="input6">
+                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" readonly id="input6">
                 </div>
 
             </div>
@@ -56,17 +56,17 @@
 
                 <div class="col-4 border-end">
                     <label for="input1" class="form-label fw-semibold titulo"> Programa o servicio de asistencia social </label>
-                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#c09866; opacity: 0.2" disabled id="input1">
+                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed" readonly id="input1">
                 </div>
 
                 <div class="col-4 border-end">
                     <label for="input2" class="form-label fw-semibold titulo">Área</label>
-                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#c09866; opacity: 0.2" disabled id="input2">
+                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed" readonly id="input2">
                 </div>
 
                 <div class="col-4">
                     <label for="input3" class="form-label fw-semibold titulo">Departamento</label>
-                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#c09866; opacity: 0.2" disabled id="input3">
+                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed" readonly id="input3">
                 </div>
                 
             </div>
@@ -75,7 +75,7 @@
 
                 <div class="">
                     <label for="input1" class="form-label fw-semibold titulo">Descripción de la Actividad</label>
-                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#c09866; opacity: 0.2" disabled id="input1">
+                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" readonly id="input1">
                 </div>               
 
             </div>
@@ -85,7 +85,8 @@
 </div>
 @* Fin Primera tabla *@
 
-@* tabla metas *@
+@* tabla Secundaria *@
+@* metas *@
 <div class="container-gris mt-4">
     <div class="glass-effect rounded-5 m-3">
         <h3 class="fw-semibold text-center m-2 titulo">
@@ -94,22 +95,251 @@
     </div>
     <div class="row">
         <div class="col-12">
-            <div class="row g-3 text-center mt-1 mx-2 pb-3 border-bottom">
+            <div class="row g-3 mt-1 mx-2 pb-3 border-bottom">
 
                 <div class="col-6 border-end">
-                    <label for="input1" class="form-label fw-semibold titulo">Meta Programada</label>
-                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#c09866; opacity: 0.2" disabled id="input1">
+                    <label for="realizadoInput" class="form-label fw-semibold titulo">Realizado</label>
+                    <input type="number" class="form-control fw-light input-arena titulo" id="realizadoInput" value="0">
                 </div>
 
-                <div class="col-6 border-end">
-                    <label for="input2" class="form-label fw-semibold titulo">Personas Programadas</label>
-                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#c09866; opacity: 0.2" disabled id="input2">
+                <div class="col-6">
+                    <label for="totalPorcentaje" class="form-label fw-semibold titulo">Total de porcentaje:</label>
+                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" readonly id="totalPorcentaje" value="0%">
                 </div>                
 
-            </div>
-            
+            </div>            
         </div>
     </div>
-</div>
-@* Fin tabla metas *@
+    @* personas *@
+    <div class="glass-effect rounded-5 m-3">
+        <h4 class="fw-semibold text-center m-2 titulo">
+            PERSONAS
+        </h4>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="row g-3 mt-1 mx-2 pb-3 border-bottom">
 
+                <div class="col-4">
+                    <label for="mujeresAtendidas" class="form-label fw-semibold titulo">Mujeres Atendidas</label>
+                    <input type="number" class="form-control fw-light input-arena titulo personas-input" disabled id="mujeresAtendidas" value="0">
+                </div>
+
+                <div class="col-4 border-end">
+                    <label for="hombresAtendidos" class="form-label fw-semibold titulo">Hombres Atendidos</label>
+                    <input type="number" class="form-control fw-light input-arena titulo personas-input" disabled id="hombresAtendidos" value="0">
+                </div>
+
+                <div class="col-4">
+                    <label for="personasAtendidas" class="form-label fw-semibold titulo">Personas Atendidas</label>
+                    <input type="number" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" readonly id="personasAtendidas" value="0">
+                </div>
+
+            </div>
+        </div>
+    </div>
+    @* Rango de edad *@
+    <div class="glass-effect rounded-5 m-3">
+        <h4 class="fw-semibold text-center m-2 titulo">
+            RANGO DE EDAD
+        </h4>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="row g-3 mt-1 mx-2 pb-3">
+
+                <div class="col-3">
+                    <label for="rango0a3" class="form-label fw-semibold titulo">0 - 3 AÑOS</label>
+                    <input type="number" class="form-control fw-light input-arena titulo rango-input" disabled id="rango0a3" value="0">
+                </div>
+
+                <div class="col-3">
+                    <label for="rango4a8" class="form-label fw-semibold titulo">4 - 8 AÑOS</label>
+                    <input type="number" class="form-control fw-light input-arena titulo rango-input" disabled id="rango4a8" value="0">
+                </div>
+
+                <div class="col-3">
+                    <label for="rango9a12" class="form-label fw-semibold titulo">9 - 12 AÑOS</label>
+                    <input type="number" class="form-control fw-light input-arena titulo rango-input" disabled id="rango9a12" value="0">
+                </div>
+
+                <div class="col-3">
+                    <label for="rango13a17" class="form-label fw-semibold titulo">13 - 17 AÑOS</label>
+                    <input type="number" class="form-control fw-light input-arena titulo rango-input" disabled id="rango13a17" value="0">
+                </div>
+
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="row g-3 mt-1 mx-2 pb-3 border-bottom">
+
+                <div class="col-3">
+                    <label for="rango18a29" class="form-label fw-semibold titulo">18 - 29 AÑOS</label>
+                    <input type="number" class="form-control fw-light input-arena titulo rango-input" disabled id="rango18a29" value="0">
+                </div>
+
+                <div class="col-3">
+                    <label for="rango30a59" class="form-label fw-semibold titulo">30 - 59 AÑOS</label>
+                    <input type="number" class="form-control fw-light input-arena titulo rango-input" disabled id="rango30a59" value="0">
+                </div>
+
+                <div class="col-3">
+                    <label for="rango60adelante" class="form-label fw-semibold titulo">DE 60 AÑOS EN ADELANTE</label>
+                    <input type="number" class="form-control fw-light input-arena titulo rango-input" disabled id="rango60adelante" value="0">
+                </div>
+
+                <div class="col-3">
+                    <label for="rangoNoEspecifica" class="form-label fw-semibold titulo">NO SE ESPECIFICA</label>
+                    <input type="number" class="form-control fw-light input-arena titulo rango-input" disabled id="rangoNoEspecifica" value="0">
+                </div>
+
+            </div>
+        </div>
+        
+        <div class="col-12">
+            <div class="row g-3 mt-1 mx-2 pb-3 border-bottom text-center">                
+
+                <div class="col-12">
+                    <label for="totalPersonas" class="form-label fw-semibold titulo">TOTAL</label>
+                    <input type="number" class="form-control fw-light input-arena titulo" style="background-color:#c09866; opacity: 0.1" disabled id="totalPersonas" value="0">
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="row g-3 mt-1 mx-2 pb-3 border-bottom">
+
+                @* tipo de poblacion *@
+                <div class="col-4 border-end">
+                    <div class="glass-effect rounded-5 mb-4">
+                        <h5 class="fw-semibold text-center m-2 titulo">
+                            TIPO DE POBLACIÓN
+                        </h5>
+                    </div>
+                    <label for="input2" class="form-label fw-semibold titulo">Indígena</label>
+                    <input type="number" class="form-control fw-light input-arena titulo" id="input2">
+                </div>
+
+                @* evidencia *@
+                <div class="col-4 border-end">
+                    <div class="glass-effect rounded-5 mb-4">
+                        <h5 class="fw-semibold text-center m-2 titulo">
+                            EVIDENCIA
+                        </h5>
+                    </div>
+                    <label for="input2" class="form-label fw-semibold titulo">Evidencia Realizada</label>
+                    <input type="number" class="form-control fw-light input-arena titulo" id="input2">
+                </div>
+
+                @* justificacion *@
+                <div class="col-4 border-end">
+                    <div class="glass-effect rounded-5 mb-4">
+                        <h5 class="fw-semibold text-center m-2 titulo">
+                            JUSTIFICACIÓN
+                        </h5>
+                    </div>
+                    
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    @* realizo y autorizo *@
+    <div class="row">
+        <div class="col-12">
+            <div class="row g-3 mt-1 mx-2 pb-3 border-bottom">
+                <div class="col-6 border-end">
+                    <div class="glass-effect rounded-5 mb-4">
+                        <h5 class="fw-semibold text-center m-2 titulo">
+                            Realizó
+                        </h5>
+                    </div>
+                    <input type="text" class="form-control fw-light input-arena titulo mb-2" placeholder="Nombre de quien realiza" id="input2">
+                    <input type="text" class="form-control fw-light input-arena titulo" placeholder="Puesto de quien realiza" id="input2">
+                </div>
+                <div class="col-6 border-end">
+                    <div class="glass-effect rounded-5 mb-4">
+                        <h5 class="fw-semibold text-center m-2 titulo">
+                            Autorizó
+                        </h5>
+                    </div>
+                    <input type="text" class="form-control fw-light input-arena titulo mb-2" placeholder="Nombre de quien realiza" id="input2">
+                    <input type="text" class="form-control fw-light input-arena titulo" placeholder="Puesto de quien realiza" id="input2">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* botones *@
+    <div class="text-center m-4">
+        <button class="boton-rojo mx-2 fw-light w-25">Guardar</button>
+        <button class="boton-amarillo mx-2 fw-light w-25">Enviar</button>
+    </div>
+</div>
+@* Fin tabla secundaria *@
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('input:disabled').css('background-color', '#f7f2ed');
+
+            $('#realizadoInput').on('input', function() {
+                let meta = parseInt($('#metaProgramada').val()) || 0;
+                let realizado = parseInt($(this).val()) || 0;
+
+                let porcentaje = 0;
+                if (meta > 0 && realizado > 0) {
+                    porcentaje = Math.round((realizado / meta) * 100);
+                }
+                $('#totalPorcentaje').val(porcentaje + '%');
+
+                if (realizado > 0) {
+                    $('.personas-input, .rango-input').prop('disabled', false).css('background-color', '');
+                } else {
+                    $('.personas-input, .rango-input').prop('disabled', true).val('0').css('background-color', '#f7f2ed');
+                    $('#personasAtendidas, #totalPersonas').val('0');
+                }
+            });
+
+            $('#mujeresAtendidas, #hombresAtendidos').on('input', function() {
+                let mujeres = parseInt($('#mujeresAtendidas').val()) || 0;
+                let hombres = parseInt($('#hombresAtendidos').val()) || 0;
+                let total = mujeres + hombres;
+                let realizado = parseInt($('#realizadoInput').val()) || 0;
+
+                $('#personasAtendidas').val(total);
+
+                if (total > realizado) {
+                    alert('La suma de personas no puede exceder el realizado: ' + realizado);
+                    $(this).val('0');
+                    mujeres = parseInt($('#mujeresAtendidas').val()) || 0;
+                    hombres = parseInt($('#hombresAtendidos').val()) || 0;
+                    $('#personasAtendidas').val(mujeres + hombres);
+                }
+            });
+
+            $('.rango-input').on('input', function() {
+                let total = 0;
+                $('.rango-input').each(function() {
+                    total += parseInt($(this).val()) || 0;
+                });
+
+                let realizado = parseInt($('#realizadoInput').val()) || 0;
+                $('#totalPersonas').val(total);
+
+                if (total > realizado) {
+                    alert('El total de personas por edad no puede exceder el realizado: ' + realizado);
+                    $(this).val('0');
+                    total = 0;
+                    $('.rango-input').each(function() {
+                        total += parseInt($(this).val()) || 0;
+                    });
+                    $('#totalPersonas').val(total);
+                }
+            });
+        });
+    </script>
+}
