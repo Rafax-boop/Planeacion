@@ -15,10 +15,12 @@ namespace Metas.BLL.Implementacion
     public class UsuarioService : IUsuarioService
     {
         private readonly IGenericRepository<Usuario> _repositorio;
+        private readonly IGenericRepository<CorreosInstitucionale> _repositorioCorreos;
 
-        public UsuarioService(IGenericRepository<Usuario> repositorio)
+        public UsuarioService(IGenericRepository<Usuario> repositorio, IGenericRepository<CorreosInstitucionale> repositorioCorreos)
         {
             _repositorio = repositorio;
+            _repositorioCorreos = repositorioCorreos;
         }
 
         public async Task<Usuario> ObtenerPorCredenciales(string usuario, string clave)
@@ -68,6 +70,14 @@ namespace Metas.BLL.Implementacion
             {
                 throw;
             }
+        }
+
+        public async Task<CorreosInstitucionale> ObtenerCorreos(string departamento)
+        {
+            CorreosInstitucionale correoEncontrado = await _repositorioCorreos.Obtener(
+                u => u.Departamentos.Equals(departamento));
+
+            return correoEncontrado;
         }
     }
 }
