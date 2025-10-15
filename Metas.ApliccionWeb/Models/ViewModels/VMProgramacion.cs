@@ -11,5 +11,7 @@ namespace Metas.AplicacionWeb.Models.ViewModels
         public string CorreoContacto { get; set; }
         public List<SelectListItem> ListaProgramas { get; set; } = new();
         public List<SelectListItem> ListaComponentes { get; set; } = new();
+        public List<SelectListItem> ListaMedidas { get; set; } = new();
+        public List<SelectListItem> ListaMunicipios { get; set; } = new();
     }
 }

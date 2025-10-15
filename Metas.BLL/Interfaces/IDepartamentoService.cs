@@ -13,5 +13,7 @@ namespace Metas.BLL.Interfaces
         Task<List<Departamento>> ObtenerDepartamentos();
         Task<List<SelectListItem>> ObtenerListaPorTipo(string tipo);
         Task<List<PpCompuesto>> ObtenerComponentes();
+        Task<List<UnidadMedidum>> ObtenerMedidas();
+        Task<List<Municipio>> ObtenerMunicipios();
     }
 }

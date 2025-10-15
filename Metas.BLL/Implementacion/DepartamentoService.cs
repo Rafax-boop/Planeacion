@@ -13,13 +13,16 @@ namespace Metas.BLL.Implementacion
     public class DepartamentoService : IDepartamentoService
     {
         private readonly IGenericRepository<Departamento> _repositorio;
-        private readonly IGenericRepository<Pp> _repositorioProgramas;
         private readonly IGenericRepository<PpCompuesto> _repositorioComponentes;
-        public DepartamentoService(IGenericRepository<Departamento> repositorio, IGenericRepository<Pp> repositorioProgramas, IGenericRepository<PpCompuesto> repositorioComponentes)
+        private readonly IGenericRepository<UnidadMedidum> _repositorioMedidas;
+        private readonly IGenericRepository<Municipio> _repositorioMunicipios;
+        public DepartamentoService(IGenericRepository<Departamento> repositorio, IGenericRepository<PpCompuesto> repositorioComponentes, IGenericRepository<UnidadMedidum> repositorioMedidas,
+            IGenericRepository<Municipio> repositorioMunicipios)
         {
             _repositorio = repositorio;
-            _repositorioProgramas = repositorioProgramas;
             _repositorioComponentes = repositorioComponentes;
+            _repositorioMedidas = repositorioMedidas;
+            _repositorioMunicipios = repositorioMunicipios;
         }
 
         public async Task<List<PpCompuesto>> ObtenerComponentes()
@@ -105,6 +108,41 @@ namespace Metas.BLL.Implementacion
             }
 
             return lista;
+        }
+
+        public async Task<List<UnidadMedidum>> ObtenerMedidas()
+        {
+            var query = await _repositorioMedidas.Consultar();
+
+            var medidas = query
+                .Select(d => new UnidadMedidum
+                {
+                    IdUnidad = d.IdUnidad,
+                    Valor = d.Valor
+                })
+                .Distinct()
+                .ToList();
+
+            return medidas;
+        }
+
+        public async Task<List<Municipio>> ObtenerMunicipios()
+        {
+            var query = await _repositorioMunicipios.Consultar();
+
+            var municipios = query
+                .Select(d => new Municipio
+                {
+                    IdMunicipio = d.IdMunicipio,
+                    NumeroRegion = d.NumeroRegion,
+                    NombreMunicipios = d.NombreMunicipios,
+                    NombreRegion = d.NombreRegion,
+                    ClaveMuni = d.ClaveMuni
+                })
+                .Distinct()
+                .ToList();
+
+            return municipios;
         }
     }
 }

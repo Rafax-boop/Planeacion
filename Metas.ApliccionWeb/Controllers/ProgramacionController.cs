@@ -43,6 +43,8 @@ namespace Metas.AplicacionWeb.Controllers
         {
             var componentes = await _departamentoService.ObtenerComponentes();
             var departamentos = await _departamentoService.ObtenerDepartamentos();
+            var medidas = await _departamentoService.ObtenerMedidas();
+            var municipios = await _departamentoService.ObtenerMunicipios();
             var departamento = departamentos
                 .FirstOrDefault(d => d.IdDepartamento == departamentoId);
 
@@ -54,11 +56,39 @@ namespace Metas.AplicacionWeb.Controllers
                 AreaNombre = departamento?.Area ?? "Área Desconocida",
                 DepartamentoNombre = departamento?.Departamento1 ?? "Departamento Desconocido",
 
-                ListaComponentes = componentes.Select(a => new SelectListItem
-                {
-                    Value = a.IdPp.ToString(),
-                    Text = a.ComponenteCompuesto
-                }).ToList(),
+                ListaProgramas = componentes
+                    .GroupBy(x => x.PpCompuesto1)
+                    .Select(g => new SelectListItem
+                    {
+                        Value = g.First().PpCompuesto1,
+                        Text = g.First().PpCompuesto1
+                    })
+                    .ToList(),
+
+                ListaComponentes = componentes
+                    .Select(c => new SelectListItem
+                    {
+                        Value = c.IdPp.ToString(),
+                        Text = c.ComponenteCompuesto,
+                        Group = new SelectListGroup { Name = c.PpCompuesto1 }
+                    })
+                    .ToList(),
+
+                ListaMedidas = medidas
+                    .Select(g => new SelectListItem
+                    {
+                        Value = g.IdUnidad.ToString(),
+                        Text = g.Valor
+                    })
+                    .ToList(),
+
+                ListaMunicipios = municipios
+                    .Select(g => new SelectListItem
+                    {
+                        Value = g.IdMunicipio.ToString(),
+                        Text = g.NombreMunicipios
+                    })
+                    .ToList()
             };
             var correo = await _usuarioService.ObtenerCorreos(modelo.DepartamentoNombre);
             modelo.CorreoContacto = correo?.CorreoElectronico ?? "";
@@ -94,6 +124,30 @@ namespace Metas.AplicacionWeb.Controllers
             catch (Exception ex)
             {
                 return Json(new { success = false, mensaje = $"Error al obtener datos: {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ObtenerMunicipiosJson()
+        {
+            try
+            {
+                var municipios = await _departamentoService.ObtenerMunicipios();
+
+                var municipiosJson = municipios.Select(m => new
+                {
+                    id = m.IdMunicipio.ToString(),
+                    municipio = m.NombreMunicipios,
+                    region = m.NombreRegion,
+                    numeroRegion = m.NumeroRegion,
+                    clave = m.ClaveMuni
+                }).ToList();
+
+                return Json(municipiosJson);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
             }
         }
 

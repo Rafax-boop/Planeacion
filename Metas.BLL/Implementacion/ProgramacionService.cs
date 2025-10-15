@@ -30,9 +30,8 @@ namespace Metas.BLL.Implementacion
                 if (departamento == null)
                     return new List<LlenadoInterno>();
 
-                string nombreDepartamento = departamento.Departamento1; // Ajusta según tu propiedad
+                string nombreDepartamento = departamento.Departamento1;
 
-                // Ahora buscar por el nombre en DatosInternos
                 var query = await _repositorioLlenadoInterno.Consultar(x =>
                     x.Ano == anoFiscal &&
                     x.Departamento == nombreDepartamento

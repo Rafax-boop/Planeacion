@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Metas.AplicacionWeb.Controllers
 {
-    [Authorize]
     public class MonitoreoController : Controller
     {
         private readonly IDepartamentoService _departamentoService;
@@ -27,6 +26,11 @@ namespace Metas.AplicacionWeb.Controllers
                 }).ToList()
             };
             return View(modelo);
+        }
+
+        public async Task<IActionResult> ActualizacionMeses()
+        {
+            return View();
         }
     }
 }
