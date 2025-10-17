@@ -1,4 +1,5 @@
 ﻿using Metas.AplicacionWeb.Models.ViewModels;
+using Metas.BLL.DTO;
 using Metas.BLL.Implementacion;
 using Metas.BLL.Interfaces;
 using Metas.Entity;
@@ -151,7 +152,58 @@ namespace Metas.AplicacionWeb.Controllers
             }
         }
 
-    }
+        [HttpPost]
+        public async Task<IActionResult> GuardarProgramacion([FromBody] ProgramacionDTO modelo)
+        {
+            try
+            {
+                // Validar que el modelo no sea nulo
+                if (modelo == null)
+                {
+                    return BadRequest(new { success = false, message = "Los datos del formulario no fueron recibidos correctamente." });
+                }
 
-    
+                // Validar campos requeridos
+                if (string.IsNullOrWhiteSpace(modelo.Pp))
+                    return BadRequest(new { success = false, message = "El programa presupuestario es requerido." });
+
+                if (string.IsNullOrWhiteSpace(modelo.NComponente))
+                    return BadRequest(new { success = false, message = "El número de componente es requerido." });
+
+                if (modelo.NActividad <= 0)
+                    return BadRequest(new { success = false, message = "El número de actividad debe ser mayor a 0." });
+
+                if (string.IsNullOrWhiteSpace(modelo.DescripcionActividad))
+                    return BadRequest(new { success = false, message = "La descripción de la actividad es requerida." });
+
+                if (modelo.MesesServicios == null || modelo.MesesServicios.Count != 12)
+                    return BadRequest(new { success = false, message = "Debe proporcionar los 12 meses de servicios." });
+
+                if (modelo.MesesPersonas == null || modelo.MesesPersonas.Count != 12)
+                    return BadRequest(new { success = false, message = "Debe proporcionar los 12 meses de personas." });
+
+                // Validar que haya acciones (mínimo 3, máximo 6)
+                if (modelo.Acciones == null || modelo.Acciones.Count < 3 || modelo.Acciones.Count > 6)
+                    return BadRequest(new { success = false, message = "Debe haber entre 3 y 6 acciones." });
+
+                // Llamar al servicio para guardar
+                bool resultado = await _programacionService.GuardarProgramacion(modelo);
+
+                if (resultado)
+                {
+                    return Ok(new { success = true, message = "Programación guardada correctamente." });
+                }
+                else
+                {
+                    return BadRequest(new { success = false, message = "Error al guardar la programación. Por favor intente nuevamente." });
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log del error (aquí podrías usar un logger)
+                Console.WriteLine($"Error en GuardarProgramacion: {ex.Message}");
+                return StatusCode(500, new { success = false, message = "Error interno del servidor.", error = ex.Message });
+            }
+        }
+    }    
 }
