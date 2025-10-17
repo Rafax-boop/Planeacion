@@ -190,16 +190,16 @@
                 <label class="fw-light">SERVICIOS</label>
             </div>
             <div class="col-md-2">
-                <input type="number" id="primerServicio" class="input-arena form-control titulo text-center" value="0" min="0">
+                <input type="number" disabled id="primerServicio" class="input-arena form-control titulo text-center" value="0" min="0">
             </div>
             <div class="col-md-2">
-                <input type="number" id="segundoServicio" class="input-arena form-control titulo text-center" value="0" min="0">
+                <input type="number" disabled id="segundoServicio" class="input-arena form-control titulo text-center" value="0" min="0">
             </div>
             <div class="col-md-2">
-                <input type="number" id="tercerServicio" class="input-arena form-control titulo text-center" value="0" min="0">
+                <input type="number" disabled id="tercerServicio" class="input-arena form-control titulo text-center" value="0" min="0">
             </div>
             <div class="col-md-2">
-                <input type="number" id="cuartoServicio" class="input-arena form-control titulo text-center" value="0" min="0">
+                <input type="number" disabled id="cuartoServicio" class="input-arena form-control titulo text-center" value="0" min="0">
             </div>
         </div>
 
@@ -209,16 +209,16 @@
                 <label class="fw-light">PERSONAS</label>
             </div>
             <div class="col-md-2">
-                <input type="number" id="primerPersona" class="input-arena form-control titulo text-center" value="0" min="0">
+                <input type="number" disabled id="primerPersona" class="input-arena form-control titulo text-center" value="0" min="0">
             </div>
             <div class="col-md-2">
-                <input type="number" id="segundoPersona" class="input-arena form-control titulo text-center" value="0" min="0">
+                <input type="number" disabled id="segundoPersona" class="input-arena form-control titulo text-center" value="0" min="0">
             </div>
             <div class="col-md-2">
-                <input type="number" id="tercerPersona" class="input-arena form-control titulo text-center" value="0" min="0">
+                <input type="number" disabled id="tercerPersona" class="input-arena form-control titulo text-center" value="0" min="0">
             </div>
             <div class="col-md-2">
-                <input type="number" id="cuartoPersona" class="input-arena form-control titulo text-center" value="0" min="0">
+                <input type="number" disabled id="cuartoPersona" class="input-arena form-control titulo text-center" value="0" min="0">
             </div>
         </div>
 
@@ -384,7 +384,7 @@
                         <label class="mb-0">26. PORCENTAJE DE CUMPLIMIENTO</label>
                     </div>
                     <div class="col-md-6">
-                        <input id="inputPorcentajeMeta" type="number" class="input-arena form-control titulo text-center" value="0" min="0" max="100">
+                        <input id="inputPorcentajeMeta" disabled type="number" class="input-arena form-control titulo text-center" value="0" min="0" max="100">
                     </div>
                 </div>
 
@@ -393,7 +393,7 @@
                         <label class="mb-0">27. NO. DE BIEN O SERVICIO A ENTREGAR</label>
                     </div>
                     <div class="col-md-6">
-                        <input id="inputServicioMeta" type="number" class="input-arena form-control titulo text-center" value="0" min="0">
+                        <input id="inputServicioMeta" disabled type="number" class="input-arena form-control titulo text-center" value="0" min="0">
                     </div>
                 </div>
 
@@ -402,7 +402,7 @@
                         <label class="mb-0">28. NO. DE PERSONAS POR ATENDER</label>
                     </div>
                     <div class="col-md-6">
-                        <input id="inputServicioMetas" type="number" class="input-arena form-control titulo text-center" value="0" min="0">
+                        <input id="inputServicioMetas" disabled type="number" class="input-arena form-control titulo text-center" value="0" min="0">
                     </div>
                 </div>
             </div>
@@ -583,7 +583,7 @@
                     </div>
 
                     <div class="text-center mt-2">
-                        <button class="titulo boton-rojo fs-6" id="btnAgregarGrupo1">Agregar</button>
+                        <button class="titulo boton-rojo fs-6" id="btnAgregarGrupo1" type="button">Agregar</button>
                     </div>
 
                     @* Tabla Grupo 1 *@
@@ -637,7 +637,6 @@
 
                 @* Sección Grupo 2 *@
                 <div class="mt-4">
-                    
                     <div class="row align-items-center py-3">
                         <div class="col-md-8">
                             <select class="input-arena form-control titulo" id="selectEstadoGrupo2">
@@ -655,7 +654,7 @@
                     </div>
 
                     <div class="text-center mt-2">
-                        <button class="titulo boton-rojo fs-6" id="btnAgregarGrupo2">Agregar</button>
+                        <button class="titulo boton-rojo fs-6" id="btnAgregarGrupo2" type="button">Agregar</button>
                     </div>
 
                     @* Tabla Grupo 2  *@
@@ -831,7 +830,7 @@
     </div>
 
     <div class="text-center mb-2">
-        <button class="boton-rojo">Guardar</button>
+        <button class="boton-rojo" id="btnGuardarProgramacion">Guardar</button>
     </div>
 
 </div>
@@ -928,7 +927,6 @@
             const btnAgregar = document.getElementById('btnAgregarAccion');
             const btnEliminar = document.getElementById('btnEliminarAccion');
 
-            // Agregar acción
             btnAgregar.addEventListener('click', function() {
                 if (contadorAcciones < MAX_ACCIONES) {
                     contadorAcciones++;
@@ -938,7 +936,6 @@
                 }
             });
 
-            // Eliminar acción
             btnEliminar.addEventListener('click', function() {
                 if (contadorAcciones > MIN_ACCIONES) {
                     document.querySelector('.accion-item:last-child').remove();
@@ -948,7 +945,6 @@
                 }
             });
 
-            // Inicializar botones
             actualizarBotones(btnAgregar, btnEliminar);
         }
 
@@ -984,7 +980,6 @@
 
             actualizarMaximosPersonas(sumaGrupo1, sumaGrupo2);
             actualizarServiciosPorMunicipio();
-
             actualizarCamposMeta();
             calcularTrimestres();
         }
@@ -994,7 +989,6 @@
             let totalPersonasGrupo2 = calcularTotalPersonas('Grupo2');
             const totalPersonasMunicipios = totalPersonasGrupo1 + totalPersonasGrupo2;
             document.getElementById('valorServiciosMunicipio').value = totalPersonasMunicipios;
-
             actualizarCamposMeta();
         }
 
@@ -1012,38 +1006,27 @@
             return (totalActual + cantidad) <= maxServicios;
         }
 
-        // ========================================
-        // FUNCIONES DE ACTUALIZACIÓN DE METAS
-        // ========================================
         function actualizarCamposMeta() {
             const valorServicios = parseInt(document.getElementById('valorServicios').value) || 0;
             const valorPersonas = parseInt(document.getElementById('valorPersonas').value) || 0;
 
-            // Asignar los valores a los campos de meta
             document.getElementById('inputServicioMeta').value = valorServicios;
             document.getElementById('inputServicioMetas').value = valorPersonas;
 
-            // Calcular el porcentaje
             let porcentaje = 0;
             if (valorServicios > 0) {
                 if (valorPersonas > 0) {
-                    // Caso normal: calcular proporción
                     porcentaje = (valorPersonas / valorServicios) * 100;
                 } else {
-                    // Si valorPersonas es 0, considerar 100% de servicios
                     porcentaje = 100;
                 }
-            porcentaje = Math.round(porcentaje * 100) / 100;
+                porcentaje = Math.round(porcentaje * 100) / 100;
             }
 
             document.getElementById('inputPorcentajeMeta').value = porcentaje;
         }
 
-                // ========================================
-        // FUNCIONES DE CÁLCULO DE TRIMESTRES
-        // ========================================
         function calcularTrimestres() {
-            // Definir los meses por trimestre
             const trimestres = {
                 1: ['ENE', 'FEB', 'MAR'],
                 2: ['ABR', 'MAY', 'JUN'],
@@ -1051,7 +1034,6 @@
                 4: ['OCT', 'NOV', 'DIC']
             };
 
-            // Calcular trimestres para SERVICIOS (grupo1)
             for (let i = 1; i <= 4; i++) {
                 let suma = 0;
                 trimestres[i].forEach(mes => {
@@ -1061,7 +1043,6 @@
                     }
                 });
 
-                // Mapear al campo correspondiente
                 const campos = {
                     1: 'primerServicio',
                     2: 'segundoServicio',
@@ -1072,7 +1053,6 @@
                 document.getElementById(campos[i]).value = suma;
             }
 
-            // Calcular trimestres para PERSONAS (grupo2)
             for (let i = 1; i <= 4; i++) {
                 let suma = 0;
                 trimestres[i].forEach(mes => {
@@ -1082,7 +1062,6 @@
                     }
                 });
 
-                // Mapear al campo correspondiente
                 const campos = {
                     1: 'primerPersona',
                     2: 'segundoPersona',
@@ -1137,6 +1116,8 @@
                 }
 
                 const nuevaFila = document.createElement('tr');
+                nuevaFila.setAttribute('data-id-municipio', estado);
+                nuevaFila.setAttribute('data-cantidad', personas);
                 nuevaFila.innerHTML = `
                     <td>${personas}</td>
                     <td>${datos.municipio}</td>
@@ -1261,36 +1242,211 @@
         }
 
         // ========================================
+        // FUNCIÓN PARA GUARDAR PROGRAMACIÓN
+        // ========================================
+        async function guardarProgramacion() {
+            try {
+                const datosGenerales = {
+                    area: document.getElementById('inputArea').value,
+                    correoContacto: document.getElementById('inputCorreo').value,
+                    pp: document.getElementById('selectPrograma').value,
+                    nComponente: document.getElementById('selectComponente').value,
+                    nActividad: parseInt(document.getElementById('inputActividad').value) || 0,
+                    justificacion: document.getElementById('inputJustificacion').value,
+                    descripcionDocumento: document.getElementById('inputDocumentacion').value,
+                    recursoFederal: document.getElementById('selectFederal').value,
+                    recursoEstatal: document.getElementById('selectEstatal').value,
+                    programaSocial: document.getElementById('inputPrograma').value,
+                    descripcionActividad: document.getElementById('inputDescripcion').value,
+                    nombreIndicador: document.getElementById('inputIndicador').value,
+                    definicionIndicador: document.getElementById('inputDefinicion').value,
+                    unidadMedida: document.getElementById('selectMedida').value,
+                    mediosVerificacion: document.getElementById('inputMedios').value,
+                    serieInformacionDesde: document.getElementById('selectDesde').value,
+                    serieInformacionHasta: parseInt(document.getElementById('selectHasta').value) || 0,
+                    fuenteInformacion: document.getElementById('inputFuentes').value,
+                    intervienenDelegaciones: document.getElementById('selectDelegaciones').value,
+                    intervienenDelegacionesManera: document.getElementById('inputDelegaciones').value
+                };
+
+                const lineaBase = {
+                    anoBase: parseInt(document.getElementById('selectAnoBase').value) || 0,
+                    porcentajeBase: parseFloat(document.getElementById('inputPorcentajeBase').value) || 0,
+                    servicioBase: parseInt(document.getElementById('inputServicioBase').value) || 0,
+                    personasBase: parseInt(document.getElementById('inputPersonasBase').value) || 0
+                };
+
+                const metaAnual = {
+                    anoMeta: parseInt(document.getElementById('inputAnoMeta').value) || 0,
+                    porcentajeMeta: parseFloat(document.getElementById('inputPorcentajeMeta').value) || 0,
+                    servicioMeta: parseInt(document.getElementById('inputServicioMeta').value) || 0,
+                    personasMeta: parseInt(document.getElementById('inputServicioMetas').value) || 0
+                };
+
+                const trimestresServicios = {
+                    primerServicio: parseInt(document.getElementById('primerServicio').value) || 0,
+                    segundoServicio: parseInt(document.getElementById('segundoServicio').value) || 0,
+                    tercerServicio: parseInt(document.getElementById('tercerServicio').value) || 0,
+                    cuartoServicio: parseInt(document.getElementById('cuartoServicio').value) || 0
+                };
+
+                const trimestresPersonas = {
+                    primerPersona: parseInt(document.getElementById('primerPersona').value) || 0,
+                    segundoPersona: parseInt(document.getElementById('segundoPersona').value) || 0,
+                    tercerPersona: parseInt(document.getElementById('tercerPersona').value) || 0,
+                    cuartoPersona: parseInt(document.getElementById('cuartoPersona').value) || 0
+                };
+
+                const mesesServicios = [];
+                document.querySelectorAll('.mes-grupo1').forEach(input => {
+                    mesesServicios.push(parseInt(input.value) || 0);
+                });
+
+                const mesesPersonas = [];
+                document.querySelectorAll('.mes-grupo2').forEach(input => {
+                    mesesPersonas.push(parseInt(input.value) || 0);
+                });
+
+                const municipiosServicios = [];
+                document.querySelectorAll('#tbodyGrupo1 tr').forEach(fila => {
+                    const idMunicipio = parseInt(fila.getAttribute('data-id-municipio')) || 0;
+                    const cantidad = parseInt(fila.getAttribute('data-cantidad')) || 0;
+
+                    municipiosServicios.push({
+                        idMunicipio: idMunicipio,
+                        cantidad: cantidad
+                    });
+                });
+
+                const municipiosPersonas = [];
+                document.querySelectorAll('#tbodyGrupo2 tr').forEach(fila => {
+                    const idMunicipio = parseInt(fila.getAttribute('data-id-municipio')) || 0;
+                    const cantidad = parseInt(fila.getAttribute('data-cantidad')) || 0;
+
+                    municipiosPersonas.push({
+                        idMunicipio: idMunicipio,
+                        cantidad: cantidad
+                    });
+                });
+
+                const acciones = [];
+                document.querySelectorAll('.accion-item').forEach(accion => {
+                    const descripcion = accion.querySelector('textarea').value;
+                    const frecuencia = accion.querySelector('select').value;
+                    const fechaStr = accion.querySelector('.fecha-inicio').value;
+
+                    if (descripcion.trim() !== '') {
+                        // Convertir string de fecha (YYYY-MM-DD) a DateOnly
+                        let fechaInicio = null;
+                        if (fechaStr) {
+                            const [year, month, day] = fechaStr.split('-');
+                            fechaInicio = `${year}-${month}-${day}`;
+                        }
+
+                        acciones.push({
+                            descripcion: descripcion,
+                            frecuencia: frecuencia,
+                            fechaInicio: fechaInicio
+                        });
+                    }
+                });
+
+                const firmas = {
+                    elaboraNombre: document.getElementById('inputElaboro').value,
+                    elaboroCargo: document.getElementById('inputElaboroCargo').value,
+                    revisionNombre: document.getElementById('inputReviso').value,
+                    revisionCargo: document.getElementById('inputRevisoCargo').value,
+                    autorizacionNombre: document.getElementById('inputAutorizo').value,
+                    autorizacionCargo: document.getElementById('inputAutorizoCargo').value
+                };
+
+                const datosCompletos = {
+                    ...datosGenerales,
+                    ...lineaBase,
+                    ...metaAnual,
+                    ...trimestresServicios,
+                    ...trimestresPersonas,
+                    mesesServicios: mesesServicios,
+                    mesesPersonas: mesesPersonas,
+                    municipiosServicios: municipiosServicios,
+                    municipiosPersonas: municipiosPersonas,
+                    acciones: acciones,
+                    ...firmas
+                };
+
+                if (!datosCompletos.pp) {
+                    alert('Debe seleccionar un programa presupuestario');
+                    return;
+                }
+
+                if (!datosCompletos.nComponente) {
+                    alert('Debe seleccionar un componente');
+                    return;
+                }
+
+                if (datosCompletos.nActividad <= 0) {
+                    alert('Debe ingresar un número de actividad válido');
+                    return;
+                }
+
+                if (acciones.length < 3 || acciones.length > 6) {
+                    alert('Debe haber entre 3 y 6 acciones');
+                    return;
+                }
+
+                if (!datosCompletos.elaboraNombre || !datosCompletos.elaboroCargo) {
+                    alert('Los datos de quién elaboró son requeridos');
+                    return;
+                }
+
+                console.log('Datos a enviar:', datosCompletos);
+
+                const response = await fetch('/Programacion/GuardarProgramacion', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(datosCompletos)
+                });
+
+                const resultado = await response.json();
+
+                if (resultado.success) {
+                    alert('Programación guardada correctamente');
+                    window.location.href = '/Programacion/Index';
+                } else {
+                    alert(`Error: ${resultado.message}`);
+                }
+
+            } catch (error) {
+                console.error('Error al guardar:', error);
+                alert(`Error al guardar la programación: ${error.message}`);
+            }
+        }
+
+        // ========================================
         // INICIALIZACIÓN PRINCIPAL
         // ========================================
         document.addEventListener('DOMContentLoaded', async function() {
-            // 1. Cargar datos externos
             await cargarMunicipios();
-
-            // 2. Configurar acciones
             configurarAcciones();
-
-            // 3. Configurar selects
             configurarSelectDelegaciones();
             configurarSelectPersonas();
             configurarSelectAcumulable();
-
-            // 4. Configurar personas/municipios
+            configurarSelectProgramaComponente();
             configurarAgregarPersonas('Grupo1');
             configurarAgregarPersonas('Grupo2');
 
-            // 5. Configurar listeners de inputs
             document.querySelectorAll('.mes-grupo1, .mes-grupo2').forEach(input => {
                 input.addEventListener('input', calcularSumatorias);
             });
 
-            // 6. Cálculo inicial
-            calcularSumatorias();
-        });
+            const btnGuardar = document.getElementById('btnGuardarProgramacion');
+            if (btnGuardar) {
+                btnGuardar.addEventListener('click', guardarProgramacion);
+            }
 
-        // Inicialización de jQuery (debe ejecutarse después del DOM)
-        $(document).ready(function() {
-            configurarSelectProgramaComponente();
+            calcularSumatorias();
         });
     </script>
 }

@@ -1,4 +1,5 @@
-﻿using Metas.Entity;
+﻿using Metas.BLL.DTO;
+using Metas.Entity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,5 +11,6 @@ namespace Metas.BLL.Interfaces
     public interface IProgramacionService
     {
         Task<List<LlenadoInterno>> ObtenerDatosProgramacion(int anoFiscal, int departamentoId);
+        Task<bool> GuardarProgramacion(ProgramacionDTO modelo);
     }
 }
