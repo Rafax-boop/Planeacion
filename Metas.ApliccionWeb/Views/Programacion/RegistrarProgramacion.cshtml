@@ -28,13 +28,13 @@
                         <h5 class="fw-light">
                            Area:   
                         </h5>
-                        <textarea disabled class="form-control input-arena titulo fw-semibold" rows="1" id="inputArea">@Model.AreaNombre</textarea>
+                        <textarea disabled class="form-control input-arena titulo fw-semibold" rows="2" id="inputArea">@Model.AreaNombre</textarea>
                     </div>
                     <div class="col-md-6">
                         <h5 class="fw-light">
                             Departamento:
                         </h5>
-                        <textarea disabled class="form-control input-arena titulo fw-semibold" rows="1" id="inputDepartamento">@Model.DepartamentoNombre</textarea>
+                        <textarea disabled class="form-control input-arena titulo fw-semibold" rows="2" id="inputDepartamento">@Model.DepartamentoNombre</textarea>
                     </div>                   
                 </div>
             </div>
@@ -42,7 +42,7 @@
             <div class="d-flex p-2">
                 <div class="w-50 align-content-center">3. CORREO ELECTRÓNICO:</div>
                 <div class="w-50 my-2 mx-2">
-                    <input type="email" class="input-arena form-control titulo" placeholder="ejemplo@correo.com" id="inputCorreo" value="@Model.CorreoContacto">
+                    <input type="email" class="input-arena form-control titulo" readonly placeholder="ejemplo@correo.com" id="inputCorreo" value="@Model.CorreoContacto">
                 </div>
             </div>
         </div>
@@ -55,7 +55,7 @@
         <div class="row my-3 border-bottom pb-3">
             <label class="col-md-6 align-content-center">4. PROGRAMA PRESUPUESTARIO / AGENDA INSTITUCIONAL:</label>
             <div class="col-md-6 align-content-center">
-                <select class="input-arena form-control titulo" id="selectPrograma" name="selectPrograma">
+                <select class="input-arena form-control titulo" required id="selectPrograma" name="selectPrograma">
                     <option value="">Seleccione Programa</option>
                     @foreach (var act in Model.ListaProgramas)
                     {
@@ -83,19 +83,19 @@
         <div class="row pb-1 border-bottom mb-3 pb-3">
             <label class="align-content-center col-md-6">6. NÚMERO DE ACTIVIDAD:</label>
             <div class="col-md-6 align-content-center">
-                <input type="number" class="input-arena form-control titulo" id="inputActividad">
+                <input type="number" required class="input-arena form-control titulo" id="inputActividad">
             </div>
         </div>   
         @* Justificacion *@
         <div class="border-bottom mb-3 pb-3">
             <label>7. JUSTIFICACIÓN</label>
-            <textarea class="input-arena form-control" rows="2" id="inputJustificacion"></textarea>
+            <textarea required class="input-arena form-control" rows="2" id="inputJustificacion"></textarea>
         </div>
 
         @* Documentacion soporte de la justificacion *@
         <div class="mb-3 pb-3 border-bottom">
             <label>8. DOCUMENTACIÓN SOPORTE DE LA JUSTIFICACIÓN</label>
-            <textarea class="input-arena form-control" rows="2" id="inputDocumentacion"></textarea>
+            <textarea required class="input-arena form-control" rows="2" id="inputDocumentacion"></textarea>
         </div>
 
         @* Origen de recursos *@
@@ -108,7 +108,7 @@
                 <div class="row g-2">
                     <div class="col-6">
                         <h5 class="fw-light">Recurso Federal</h5>
-                        <select class="input-arena form-control titulo" id="selectFederal">
+                        <select required class="input-arena form-control titulo" id="selectFederal">
                             <option value="">Seleccione</option>
                             <option value="Si">Sí</option>
                             <option value="No">No</option>
@@ -117,7 +117,7 @@
 
                     <div class="col-6">
                         <h5 class="fw-light">Recurso Estatal</h5>
-                        <select class="input-arena form-control titulo" id="selectEstatal">
+                        <select required class="input-arena form-control titulo" id="selectEstatal">
                             <option value="">Seleccione</option>
                             <option value="Si">Sí</option>
                             <option value="No">No</option>
@@ -137,25 +137,25 @@
         <div class="row border-bottom">
             <label class="col-md-4 align-content-center">10. PROGRAMA SOCIAL, SERVICIO Y/O PROYECTO</label>
             <div class="col-md-8 mb-3">
-                <textarea id="inputPrograma" class="input-arena form-control" rows="2" placeholder=""></textarea>
+                <textarea required id="inputPrograma" class="input-arena form-control" rows="2" placeholder=""></textarea>
             </div>
         </div>
         <div class="row border-bottom">
             <label class="col-md-4 align-content-center">11. DESCRIPCIÓN DE LA ACTIVIDAD</label>
             <div class="col-md-8 my-3">
-                <textarea id="inputDescripcion" class="input-arena form-control" rows="2" placeholder=""></textarea>
+                <textarea required id="inputDescripcion" class="input-arena form-control" rows="2" placeholder=""></textarea>
             </div>
         </div>
         <div class="row border-bottom">
-            <label class="col-md-4 align-content-center">12. NOMBRE DEL INCICADOR</label>
+            <label class="col-md-4 align-content-center">12. NOMBRE DEL INDICADOR</label>
             <div class="col-md-8 my-3">
-                <textarea id="inputIndicador" class="input-arena form-control" rows="2" placeholder=""></textarea>
+                <textarea required id="inputIndicador" class="input-arena form-control" rows="2" placeholder=""></textarea>
             </div>
         </div>
         <div class="row border-bottom">
-            <label class="col-md-4 align-content-center">13. DEFINICIÓN DEL INCICADOR</label>
+            <label class="col-md-4 align-content-center">13. DEFINICIÓN DEL INDICADOR</label>
             <div class="col-md-8 my-3">
-                <textarea id="inputDefinicion" class="input-arena form-control" rows="2" placeholder=""></textarea>
+                <textarea required id="inputDefinicion" class="input-arena form-control" rows="2" placeholder=""></textarea>
             </div>
         </div>
 
@@ -225,7 +225,7 @@
         <div class="row border-bottom border-top">
             <label class="col-md-4 align-content-center">15. UNIDAD DE MEDIDA</label>
             <div class="col-md-8 my-3">
-                <select class="input-arena mt-2 form-control titulo" id="selectMedida">
+                <select required class="input-arena mt-2 form-control titulo" id="selectMedida">
                     <option value="">Seleccione opción</option>
                     @foreach (var act in Model.ListaMedidas)
                     {
@@ -238,14 +238,14 @@
         <div class="row border-bottom">
             <label class="col-md-4 align-content-center">16. MEDIOS DE VERIFICACIÓN</label>
             <div class="col-md-8 my-3">
-                <textarea id="inputMedios" class="input-arena form-control" rows="2" placeholder=""></textarea>
+                <textarea required id="inputMedios" class="input-arena form-control" rows="2" placeholder=""></textarea>
             </div>
         </div>
 
         <div class="row border-bottom">
             <label class="col-md-4 align-content-center">17. SERIE DE INFORMACIÓN DISPONIBLE</label>
             <div class="col-md-4 my-3">
-                <select class="titulo form-select input-arena" id="selectDesde">
+                <select required class="titulo form-select input-arena" id="selectDesde">
                     <option value="">Seleccione Desde</option>
                     @{
                         var anoActual = DateTime.Now.Year;
@@ -275,7 +275,7 @@
         <div class="row border-bottom mb-2">
             <label class="col-md-4 align-content-center">18. FUENTES DE INFORMACIÓN</label>
             <div class="col-md-8 my-3">
-                <textarea id="inputFuentes" class="input-arena form-control" rows="2" placeholder=""></textarea>
+                <textarea required id="inputFuentes" class="input-arena form-control" rows="2" placeholder=""></textarea>
             </div>
         </div>
 
@@ -842,7 +842,7 @@
         // ========================================
         let datosEstados = {};
         let contadorAcciones = 3;
-        const MAX_ACCIONES = 6;
+        const MAX_ACCIONES = 5;
         const MIN_ACCIONES = 3;
 
         // ========================================
@@ -1241,11 +1241,32 @@
             });
         }
 
-        // ========================================
+               // ========================================
         // FUNCIÓN PARA GUARDAR PROGRAMACIÓN
         // ========================================
         async function guardarProgramacion() {
+            const btnGuardar = document.getElementById('btnGuardarProgramacion');
+            const textoOriginal = btnGuardar.innerHTML;
+
             try {
+                // ========================================
+                // VALIDACIONES INMEDIATAS (ANTES DE CARGAR)
+                // ========================================
+                const erroresValidacion = validarDatosAntesDeGuardar();
+                if (erroresValidacion.length > 0) {
+                    alert('Por favor complete los siguientes campos:\n\n' + erroresValidacion.join('\n'));
+                    return; // Sale aquí sin cambiar el botón
+                }
+
+                // ========================================
+                // SOLO SI PASÓ LAS VALIDACIONES, MOSTRAR LOADING
+                // ========================================
+                btnGuardar.disabled = true;
+                btnGuardar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+
+                // ========================================
+                // RECOLECCIÓN DE DATOS
+                // ========================================
                 const datosGenerales = {
                     area: document.getElementById('inputArea').value,
                     correoContacto: document.getElementById('inputCorreo').value,
@@ -1297,6 +1318,7 @@
                     cuartoPersona: parseInt(document.getElementById('cuartoPersona').value) || 0
                 };
 
+                // Recolectar meses
                 const mesesServicios = [];
                 document.querySelectorAll('.mes-grupo1').forEach(input => {
                     mesesServicios.push(parseInt(input.value) || 0);
@@ -1307,28 +1329,35 @@
                     mesesPersonas.push(parseInt(input.value) || 0);
                 });
 
+                // Recolectar municipios del Grupo 1 (Servicios)
                 const municipiosServicios = [];
                 document.querySelectorAll('#tbodyGrupo1 tr').forEach(fila => {
                     const idMunicipio = parseInt(fila.getAttribute('data-id-municipio')) || 0;
                     const cantidad = parseInt(fila.getAttribute('data-cantidad')) || 0;
 
-                    municipiosServicios.push({
-                        idMunicipio: idMunicipio,
-                        cantidad: cantidad
-                    });
+                    if (idMunicipio > 0 && cantidad > 0) {
+                        municipiosServicios.push({
+                            idMunicipio: idMunicipio,
+                            cantidad: cantidad
+                        });
+                    }
                 });
 
+                // Recolectar municipios del Grupo 2 (Personas)
                 const municipiosPersonas = [];
                 document.querySelectorAll('#tbodyGrupo2 tr').forEach(fila => {
                     const idMunicipio = parseInt(fila.getAttribute('data-id-municipio')) || 0;
                     const cantidad = parseInt(fila.getAttribute('data-cantidad')) || 0;
 
-                    municipiosPersonas.push({
-                        idMunicipio: idMunicipio,
-                        cantidad: cantidad
-                    });
+                    if (idMunicipio > 0 && cantidad > 0) {
+                        municipiosPersonas.push({
+                            idMunicipio: idMunicipio,
+                            cantidad: cantidad
+                        });
+                    }
                 });
 
+                // Recolectar acciones
                 const acciones = [];
                 document.querySelectorAll('.accion-item').forEach(accion => {
                     const descripcion = accion.querySelector('textarea').value;
@@ -1336,7 +1365,6 @@
                     const fechaStr = accion.querySelector('.fecha-inicio').value;
 
                     if (descripcion.trim() !== '') {
-                        // Convertir string de fecha (YYYY-MM-DD) a DateOnly
                         let fechaInicio = null;
                         if (fechaStr) {
                             const [year, month, day] = fechaStr.split('-');
@@ -1351,6 +1379,7 @@
                     }
                 });
 
+                // Recolectar firmas
                 const firmas = {
                     elaboraNombre: document.getElementById('inputElaboro').value,
                     elaboroCargo: document.getElementById('inputElaboroCargo').value,
@@ -1360,6 +1389,7 @@
                     autorizacionCargo: document.getElementById('inputAutorizoCargo').value
                 };
 
+                // Consolidar todos los datos
                 const datosCompletos = {
                     ...datosGenerales,
                     ...lineaBase,
@@ -1374,33 +1404,24 @@
                     ...firmas
                 };
 
-                if (!datosCompletos.pp) {
-                    alert('Debe seleccionar un programa presupuestario');
-                    return;
-                }
+                // ========================================
+                // VALIDACIONES FINALES (DESPUÉS DE RECOLECTAR)
+                // ========================================
+                const erroresFinales = validarDatosCompletos(datosCompletos);
+                if (erroresFinales.length > 0) {
+                    // Restaurar botón inmediatamente si hay errores
+                    btnGuardar.disabled = false;
+                    btnGuardar.innerHTML = textoOriginal;
 
-                if (!datosCompletos.nComponente) {
-                    alert('Debe seleccionar un componente');
-                    return;
-                }
-
-                if (datosCompletos.nActividad <= 0) {
-                    alert('Debe ingresar un número de actividad válido');
-                    return;
-                }
-
-                if (acciones.length < 3 || acciones.length > 6) {
-                    alert('Debe haber entre 3 y 6 acciones');
-                    return;
-                }
-
-                if (!datosCompletos.elaboraNombre || !datosCompletos.elaboroCargo) {
-                    alert('Los datos de quién elaboró son requeridos');
+                    alert('Errores en el formulario:\n\n' + erroresFinales.join('\n'));
                     return;
                 }
 
                 console.log('Datos a enviar:', datosCompletos);
 
+                // ========================================
+                // ENVÍO AL SERVIDOR (SOLO SI TODO ESTÁ BIEN)
+                // ========================================
                 const response = await fetch('/Programacion/GuardarProgramacion', {
                     method: 'POST',
                     headers: {
@@ -1409,19 +1430,142 @@
                     body: JSON.stringify(datosCompletos)
                 });
 
+                if (!response.ok) {
+                    throw new Error(`Error HTTP: ${response.status}`);
+                }
+
                 const resultado = await response.json();
 
                 if (resultado.success) {
-                    alert('Programación guardada correctamente');
-                    window.location.href = '/Programacion/Index';
+                    // Mostrar mensaje de éxito
+                    btnGuardar.innerHTML = '<i class="fas fa-check"></i> ¡Guardado!';
+                    btnGuardar.classList.remove('boton-rojo');
+                    btnGuardar.classList.add('btn-success');
+
+                    setTimeout(() => {
+                        alert('Programación guardada correctamente');
+                        window.location.href = '/Programacion/Index';
+                    }, 1000);
+
                 } else {
-                    alert(`Error: ${resultado.message}`);
+                    throw new Error(resultado.message || 'Error desconocido al guardar');
                 }
 
             } catch (error) {
                 console.error('Error al guardar:', error);
-                alert(`Error al guardar la programación: ${error.message}`);
+
+                // Restaurar botón en caso de error
+                btnGuardar.disabled = false;
+                btnGuardar.innerHTML = textoOriginal;
+                btnGuardar.classList.remove('btn-success');
+                btnGuardar.classList.add('boton-rojo');
+
+                // Mostrar error específico
+                let mensajeError = 'Error al guardar la programación';
+                if (error.message.includes('HTTP')) {
+                    mensajeError = 'Error de conexión con el servidor';
+                } else if (error.message.includes('JSON')) {
+                    mensajeError = 'Error en el formato de datos';
+                } else {
+                    mensajeError = error.message;
+                }
+
+                alert(`${mensajeError}\n\nPor favor, intente nuevamente.`);
+
             }
+        }
+
+        // ========================================
+        // FUNCIONES DE VALIDACIÓN (MISMO CÓDIGO)
+        // ========================================
+        function validarDatosAntesDeGuardar() {
+            const errores = [];
+
+            // Validar campos obligatorios básicos
+            if (!document.getElementById('selectPrograma').value) {
+                errores.push('• Programa presupuestario');
+            }
+
+            if (!document.getElementById('selectComponente').value) {
+                errores.push('• Número de componente');
+            }
+
+            if (!document.getElementById('inputActividad').value || parseInt(document.getElementById('inputActividad').value) <= 0) {
+                errores.push('• Número de actividad válido');
+            }
+
+            if (!document.getElementById('inputJustificacion').value.trim()) {
+                errores.push('• Justificación');
+            }
+
+            if (!document.getElementById('inputDescripcion').value.trim()) {
+                errores.push('• Descripción de la actividad');
+            }
+
+            if (!document.getElementById('selectMedida').value) {
+                errores.push('• Unidad de medida');
+            }
+
+            // Validar que haya al menos 3 acciones completas
+            const accionesCompletas = document.querySelectorAll('.accion-item').length;
+            if (accionesCompletas < 3) {
+                errores.push('• Mínimo 3 acciones necesarias');
+            }
+
+            // Validar firmas
+            if (!document.getElementById('inputElaboro').value.trim()) {
+                errores.push('• Nombre de quien elabora');
+            }
+
+            if (!document.getElementById('inputElaboroCargo').value.trim()) {
+                errores.push('• Cargo de quien elabora');
+            }
+
+            return errores;
+        }
+
+        function validarDatosCompletos(datosCompletos) {
+            const errores = [];
+
+            if (!datosCompletos.pp) {
+                errores.push('• Debe seleccionar un programa presupuestario');
+            }
+
+            if (!datosCompletos.nComponente) {
+                errores.push('• Debe seleccionar un componente');
+            }
+
+            if (datosCompletos.nActividad <= 0) {
+                errores.push('• Debe ingresar un número de actividad válido');
+            }
+
+            if (datosCompletos.acciones.length < 3 || datosCompletos.acciones.length > 5) {
+                errores.push('• Debe haber entre 3 y 5 acciones completas');
+            }
+
+            // Validar que las acciones tengan descripción
+            const accionesIncompletas = datosCompletos.acciones.filter(a => !a.descripcion.trim());
+            if (accionesIncompletas.length > 0) {
+                errores.push('• Todas las acciones deben tener descripción');
+            }
+
+            if (!datosCompletos.elaboraNombre || !datosCompletos.elaboroCargo) {
+                errores.push('• Los datos de quién elaboró son requeridos');
+            }
+
+            // Validar que los totales de municipios no excedan los totales de servicios/personas
+            const totalServiciosMunicipios = datosCompletos.municipiosServicios.reduce((sum, m) => sum + m.cantidad, 0);
+            const totalPersonasMunicipios = datosCompletos.municipiosPersonas.reduce((sum, m) => sum + m.cantidad, 0);
+
+            if (totalServiciosMunicipios > datosCompletos.servicioMeta) {
+                errores.push(`• Los servicios por municipio (${totalServiciosMunicipios}) exceden el total de servicios (${datosCompletos.servicioMeta})`);
+            }
+
+            if (totalPersonasMunicipios > datosCompletos.personasMeta) {
+                errores.push(`• Las personas por municipio (${totalPersonasMunicipios}) exceden el total de personas (${datosCompletos.personasMeta})`);
+            }
+
+            return errores;
         }
 
         // ========================================
