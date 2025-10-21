@@ -157,6 +157,8 @@
                             // Limpiar el tbody
                             $('#tbodyDatos').empty();
 
+                            var esAdmin = response.esAdmin;
+
                             // Llenar la tabla con los datos
                             $.each(response.datos, function(index, item) {
                                 var prefijoActividad = '';
@@ -167,7 +169,10 @@
                                 // Concatenar componente + actividad (con T solo si es agenda)
                                 var actividadCompleta = prefijoActividad + (item.componente || '') + '.' + (item.actividad || '');
 
-                                var btnEliminar = '<br><button type="button" class="btn btn-danger btn-sm btn-eliminar" data-id="' + item.idProceso + '">Eliminar</button>';
+                                var btnEliminar = '';
+                                if(esAdmin){
+                                    btnEliminar = '<br><button type="button" class="btn btn-danger btn-sm btn-eliminar" data-id="' + item.idProceso + '">Eliminar</button>';
+                                }
                                 var btnEditar = '<button type="button" class="btn btn-primary btn-sm btn-editar" data-id="' + item.idProceso + '">Editar</button>';
 
                                 var fila = '<tr>' +
@@ -194,6 +199,37 @@
                         alert('Error al cargar los datos: ' + error);
                     }
                 });
+            });
+
+            $(document).on('click', '.btn-eliminar', function() {
+                // 1. Obtener el ID del registro a eliminar
+                var idProceso = $(this).data('id');
+                console.log(idProceso);
+
+                // 2. Confirmación al usuario
+                if (confirm('¿Está seguro de que desea eliminar este registro? Esta acción es irreversible y eliminará datos en 4 tablas.')) {
+
+                    // 3. Llamada AJAX al controlador
+                    $.ajax({
+                        url: '@Url.Action("EliminarRegistro", "Programacion")',
+                        type: 'POST', // Usamos POST como lo definimos en el controlador
+                        data: {
+                            id: idProceso // Enviamos el ID al controlador
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                alert(response.mensaje);
+                                // Opcional: Recargar la tabla sin recargar la página
+                                $('#btnBuscar').click();
+                            } else {
+                                alert('Error: ' + response.mensaje);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            alert('Error en la comunicación con el servidor al intentar eliminar.');
+                        }
+                    });
+                }
             });
 
             $('#btnIniciarProgramacion').click(function() {

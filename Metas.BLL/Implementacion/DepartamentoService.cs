@@ -33,6 +33,7 @@ namespace Metas.BLL.Implementacion
                 .Select(d => new PpCompuesto
                 {
                     IdPp = d.IdPp,
+                    Pp = d.Pp,
                     PpCompuesto1 = d.PpCompuesto1,
                     ComponenteCompuesto = d.ComponenteCompuesto
                 })

@@ -11,6 +11,8 @@ namespace Metas.BLL.DTO
         // ========================================
         [JsonPropertyName("area")]
         public string Area { get; set; }
+        [JsonPropertyName("departamento")]
+        public string Departamento { get; set; }
 
         [JsonPropertyName("correoContacto")]
         public string CorreoContacto { get; set; }
@@ -58,7 +60,7 @@ namespace Metas.BLL.DTO
         public string SerieInformacionDesde { get; set; }
 
         [JsonPropertyName("serieInformacionHasta")]
-        public int SerieInformacionHasta { get; set; }
+        public string SerieInformacionHasta { get; set; }
 
         [JsonPropertyName("fuenteInformacion")]
         public string FuenteInformacion { get; set; }
@@ -68,7 +70,14 @@ namespace Metas.BLL.DTO
 
         [JsonPropertyName("intervienenDelegacionesManera")]
         public string IntervienenDelegacionesManera { get; set; }
+        [JsonPropertyName("selectAcumulable")]
+        public string SelectAcumulable { get; set; }
 
+        [JsonPropertyName("estatus")]
+        public int Estatus { get; set; }
+
+        [JsonPropertyName("beneficiarios")]
+        public string Beneficiarios { get; set; }
         // ========================================
         // LÍNEA BASE
         // ========================================
@@ -134,12 +143,16 @@ namespace Metas.BLL.DTO
         // ========================================
         [JsonPropertyName("mesesServicios")]
         public List<int> MesesServicios { get; set; } = new List<int>();
+        [JsonPropertyName("totalAnos")]
+        public int TotalAnos { get; set; }
 
         // ========================================
         // MESES PERSONAS (Grupo 2) - 12 meses
         // ========================================
         [JsonPropertyName("mesesPersonas")]
         public List<int> MesesPersonas { get; set; } = new List<int>();
+        [JsonPropertyName("totalAnos2")]
+        public int TotalAnos2 { get; set; }
 
         // ========================================
         // MUNICIPIOS SERVICIOS (Grupo 1)

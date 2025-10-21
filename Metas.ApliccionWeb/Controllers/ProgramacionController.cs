@@ -58,18 +58,19 @@ namespace Metas.AplicacionWeb.Controllers
                 DepartamentoNombre = departamento?.Departamento1 ?? "Departamento Desconocido",
 
                 ListaProgramas = componentes
-                    .GroupBy(x => x.PpCompuesto1)
+                    .GroupBy(x => x.Pp)
                     .Select(g => new SelectListItem
                     {
-                        Value = g.First().PpCompuesto1,
+                        Value = g.Key.ToString(),
                         Text = g.First().PpCompuesto1
                     })
+                    .OrderBy(item => item.Text)
                     .ToList(),
 
                 ListaComponentes = componentes
                     .Select(c => new SelectListItem
                     {
-                        Value = c.IdPp.ToString(),
+                        Value = c.Componente.ToString(),
                         Text = c.ComponenteCompuesto,
                         Group = new SelectListGroup { Name = c.PpCompuesto1 }
                     })
@@ -102,6 +103,7 @@ namespace Metas.AplicacionWeb.Controllers
         {
             try
             {
+                bool esAdmin = User.IsInRole("Administrador");
                 var datos = await _programacionService.ObtenerDatosProgramacion(anoFiscal, departamento);
 
                 // Proyectar los datos a un DTO o modelo anónimo
@@ -120,7 +122,7 @@ namespace Metas.AplicacionWeb.Controllers
 
                 var fecha = await _fechasService.ValidarFechaHabilitada(anoFiscal);
 
-                return Json(new { success = true, datos = resultado, fechaHabilitada = fecha });
+                return Json(new { success = true, datos = resultado, fechaHabilitada = fecha, esAdmin = esAdmin });
             }
             catch (Exception ex)
             {
@@ -203,6 +205,31 @@ namespace Metas.AplicacionWeb.Controllers
                 // Log del error (aquí podrías usar un logger)
                 Console.WriteLine($"Error en GuardarProgramacion: {ex.Message}");
                 return StatusCode(500, new { success = false, message = "Error interno del servidor.", error = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> EliminarRegistro(int id)
+        {
+            try
+            {
+                // Llamar a la función del servicio
+                bool eliminado = await _programacionService.EliminarProgramacion(id);
+
+                if (eliminado)
+                {
+                    return Json(new { success = true, mensaje = "Registro eliminado correctamente." });
+                }
+                else
+                {
+                    return Json(new { success = false, mensaje = "No se pudo encontrar o eliminar el registro." });
+                }
+            }
+            catch (Exception ex)
+            {
+                // Registrar la excepción (recomendado)
+                return Json(new { success = false, mensaje = $"Error al eliminar el registro: {ex.Message}" });
             }
         }
     }    

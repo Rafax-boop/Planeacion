@@ -1,5 +1,6 @@
 ﻿using Metas.BLL.DTO;
 using Metas.BLL.Interfaces;
+using Metas.DAL.DBContext;
 using Metas.DAL.Interfaces;
 using Metas.Entity;
 using Microsoft.EntityFrameworkCore;
@@ -18,31 +19,45 @@ namespace Metas.BLL.Implementacion
         private readonly IGenericRepository<Programacion> _repositorioProgramacion;
         private readonly IGenericRepository<ServiciosMunicipio> _repositorioServicios;
         private readonly IGenericRepository<PersonasMunicipio> _repositorioPersonas;
+        private readonly MetasContext _context;
 
         public ProgramacionService(IGenericRepository<LlenadoInterno> repositorioLlenadoInterno,
             IGenericRepository<Departamento> repositoryDepartamento,
             IGenericRepository<Programacion> repositorioProgramacion,
             IGenericRepository<ServiciosMunicipio> repositorioServicios,
-            IGenericRepository<PersonasMunicipio> repositorioPersonas)
+            IGenericRepository<PersonasMunicipio> repositorioPersonas,
+            MetasContext context)
         {
             _repositorioLlenadoInterno = repositorioLlenadoInterno;
             _repositoryDepartamento = repositoryDepartamento;
             _repositorioProgramacion = repositorioProgramacion;
             _repositorioServicios = repositorioServicios;
             _repositorioPersonas = repositorioPersonas;
+            _context = context;
         }
 
         public async Task<bool> GuardarProgramacion(ProgramacionDTO modelo)
         {
+            using var transaction = await _context.Database.BeginTransactionAsync();
+
             try
             {
+                var componenteTexto = await _context.PpCompuestos
+                .Where(x => x.IdPp == int.Parse(modelo.NComponente))
+                .Select(x => x.ComponenteCompuesto)
+                .FirstOrDefaultAsync();
+
+                var idPp = await _context.Pps // o _context.PPS según tu DbContext
+                .Where(x => x.Clave == modelo.Pp) // Ajusta según el nombre de la columna
+                .Select(x => x.IdPp)
+                .FirstOrDefaultAsync();
                 var programacion = new Programacion
                 {
                     FechaSolicitud = DateOnly.FromDateTime(DateTime.Now),
                     Area = modelo.Area,
                     CorreoElectro = modelo.CorreoContacto,
                     Pp = modelo.Pp,
-                    NComponente = modelo.NComponente,
+                    NComponente = componenteTexto,
                     NActividad = modelo.NActividad,
                     Justificacion = modelo.Justificacion,
                     DescripcionDocumento = modelo.DescripcionDocumento,
@@ -55,35 +70,31 @@ namespace Metas.BLL.Implementacion
                     UnidadMedida = modelo.UnidadMedida,
                     MediosVerificac = modelo.MediosVerificacion,
                     SerieInfo = modelo.SerieInformacionDesde,
+                    SerieInfo2 = modelo.SerieInformacionHasta,
                     FuenteInfo = modelo.FuenteInformacion,
                     IntervienenDelegaciones = modelo.IntervienenDelegaciones,
                     IntervienenDelegacionesManera = modelo.IntervienenDelegacionesManera,
 
-                    // Línea Base
                     Anos = modelo.AnoBase,
                     Valor = modelo.PorcentajeBase,
                     BienServicio = modelo.ServicioBase,
                     NoPersonas = modelo.PersonasBase,
 
-                    // Meta Anual
                     Anos2 = modelo.AnoMeta,
                     Valor2 = modelo.PorcentajeMeta,
                     BienServicio2 = modelo.ServicioMeta,
                     NoPersonas2 = modelo.PersonasMeta,
 
-                    // Trimestres Servicios
                     Servicio1 = modelo.PrimerServicio,
                     Servicio2 = modelo.SegundoServicio,
                     Servicio3 = modelo.TercerServicio,
                     Servicio4 = modelo.CuartoServicio,
 
-                    // Trimestres Personas
                     Personas1 = modelo.PrimerPersona,
                     Personas2 = modelo.SegundoPersona,
                     Personas3 = modelo.TercerPersona,
                     Personas4 = modelo.CuartoPersona,
 
-                    // Meses Servicios (Grupo 1)
                     Mes1 = modelo.MesesServicios[0],
                     Mes2 = modelo.MesesServicios[1],
                     Mes3 = modelo.MesesServicios[2],
@@ -97,7 +108,6 @@ namespace Metas.BLL.Implementacion
                     Mes11 = modelo.MesesServicios[10],
                     Mes12 = modelo.MesesServicios[11],
 
-                    // Meses Personas (Grupo 2)
                     Mes13 = modelo.MesesPersonas[0],
                     Mes14 = modelo.MesesPersonas[1],
                     Mes15 = modelo.MesesPersonas[2],
@@ -111,7 +121,6 @@ namespace Metas.BLL.Implementacion
                     Mes121 = modelo.MesesPersonas[10],
                     Mes19 = modelo.MesesPersonas[11],
 
-                    // Acciones
                     Actividad1 = modelo.Acciones.Count > 0 ? modelo.Acciones[0].Descripcion : null,
                     Frecuencia1 = modelo.Acciones.Count > 0 ? modelo.Acciones[0].Frecuencia : null,
                     FechaProgramacion1 = modelo.Acciones.Count > 0 ? modelo.Acciones[0].FechaInicio : null,
@@ -132,17 +141,21 @@ namespace Metas.BLL.Implementacion
                     Frecuencia5 = modelo.Acciones.Count > 4 ? modelo.Acciones[4].Frecuencia : null,
                     FechaProgramacion5 = modelo.Acciones.Count > 4 ? modelo.Acciones[4].FechaInicio : null,
 
-                    // Firmas
                     ElaboraNombre = modelo.ElaboraNombre,
                     ElaboroCargo = modelo.ElaboroCargo,
                     ValidoNombre = modelo.RevisionNombre,
                     ValidoCargo = modelo.RevisionCargo,
                     AutorizoNombre = modelo.AutorizacionNombre,
-                    AutorizoCargo = modelo.AutorizacionCargo
+                    AutorizoCargo = modelo.AutorizacionCargo,
+
+                    IdEstatus = 1,
+                    Acumulable = modelo.SelectAcumulable,
+                    Totalanos = modelo.TotalAnos,
+                    Totalanos2 = modelo.TotalAnos2,
+                    Beneficiarios = modelo.Beneficiarios
                 };
 
                 var programacionGuardada = await _repositorioProgramacion.Crear(programacion);
-
                 int idProgramacion = programacionGuardada.IdRegistro;
 
                 var llenadoInterno = new LlenadoInterno
@@ -152,11 +165,37 @@ namespace Metas.BLL.Implementacion
                     Actividad = modelo.NActividad,
                     DescripcionActividad = modelo.DescripcionActividad,
                     Area = modelo.Area,
+                    Departamento = modelo.Departamento,
                     ProgramaSocial = modelo.ProgramaSocial,
                     Ano = modelo.AnoMeta,
+                    TotalEnero = modelo.MesesServicios[0],
+                    TotalFebrero = modelo.MesesServicios[1],
+                    TotalMarzo = modelo.MesesServicios[2],
+                    TotalAbril = modelo.MesesServicios[3],
+                    TotalMayo = modelo.MesesServicios[4],
+                    TotalJunio = modelo.MesesServicios[5],
+                    TotalJulio = modelo.MesesServicios[6],
+                    TotalAgosto = modelo.MesesServicios[7],
+                    TotalSeptiembre = modelo.MesesServicios[8],
+                    TotalOctubre = modelo.MesesServicios[9],
+                    TotalNoviembre = modelo.MesesServicios[10],
+                    TotalDiciembre = modelo.MesesServicios[11],
                     UnidadMedida = modelo.UnidadMedida,
                     TotalProgramado = modelo.PrimerServicio + modelo.SegundoServicio + modelo.TercerServicio + modelo.CuartoServicio,
-                    PersonasProgramadas = modelo.PrimerPersona + modelo.SegundoPersona + modelo.TercerPersona + modelo.CuartoPersona,
+                    TotalPersona = modelo.PrimerPersona + modelo.SegundoPersona + modelo.TercerPersona + modelo.CuartoPersona,
+                    EneroPersona = modelo.MesesPersonas[0],
+                    FebreroPersona = modelo.MesesPersonas[1],
+                    MarzoPersona = modelo.MesesPersonas[2],
+                    AbrilPersona = modelo.MesesPersonas[3],
+                    MayoPersona = modelo.MesesPersonas[4],
+                    JunioPersona = modelo.MesesPersonas[5],
+                    JulioPersona = modelo.MesesPersonas[6],
+                    AgostoPersona = modelo.MesesPersonas[7],
+                    SeptiembrePersona = modelo.MesesPersonas[8],
+                    OctubrePersona = modelo.MesesPersonas[9],
+                    NoviembrePersona = modelo.MesesPersonas[10],
+                    DiciembrePersona = modelo.MesesPersonas[11],
+                    Idpp = idPp,
                     NombreRealizo = modelo.ElaboraNombre,
                     CargoRealizo = modelo.ElaboroCargo
                 };
@@ -188,10 +227,15 @@ namespace Metas.BLL.Implementacion
                     await _repositorioPersonas.Crear(personaMunicipio);
                 }
 
+                // Si todo salió bien, confirmar la transacción
+                await transaction.CommitAsync();
                 return true;
             }
             catch (Exception ex)
             {
+                // Si algo falla, hacer rollback
+                await transaction.RollbackAsync();
+
                 Console.WriteLine($"Error al guardar programación: {ex.Message}");
                 Console.WriteLine($"Inner Exception: {ex.InnerException?.Message}");
                 Console.WriteLine($"Stack Trace: {ex.StackTrace}");
@@ -225,6 +269,47 @@ namespace Metas.BLL.Implementacion
             catch (Exception)
             {
                 throw;
+            }
+        }
+
+        public async Task<bool> EliminarProgramacion(int idLlenado)
+        {
+            try
+            {
+                var programacionEntidad = await _repositorioProgramacion.Obtener(p => p.IdLlenado.HasValue && p.IdLlenado.Value == idLlenado);
+
+                if (programacionEntidad == null)
+                {
+                    return false;
+                }
+
+                int idProgramacion = programacionEntidad.IdRegistro;
+
+                var personasMunicipios = await _repositorioPersonas.Consultar(pm => pm.IdLlenado == idProgramacion);
+                foreach (var pm in personasMunicipios)
+                {
+                    await _repositorioPersonas.Eliminar(pm);
+                }
+
+                var serviciosMunicipios = await _repositorioServicios.Consultar(sm => sm.IdLlenado == idProgramacion);
+                foreach (var sm in serviciosMunicipios)
+                {
+                    await _repositorioServicios.Eliminar(sm);
+                }
+                
+                await _repositorioProgramacion.Eliminar(programacionEntidad);
+
+                var llenadoInternoEntidad = await _repositorioLlenadoInterno.Obtener(l => l.IdProceso == idLlenado);
+                if (llenadoInternoEntidad != null)
+                {
+                    await _repositorioLlenadoInterno.Eliminar(llenadoInternoEntidad);
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
             }
         }
     }

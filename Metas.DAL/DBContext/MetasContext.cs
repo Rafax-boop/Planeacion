@@ -58,7 +58,9 @@ public partial class MetasContext : DbContext
 
     public virtual DbSet<Vinculacion> Vinculacions { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Server=(local);Database=METAS;User Id=sa;Password=root;TrustServerCertificate=true;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -144,7 +146,6 @@ public partial class MetasContext : DbContext
             entity.Property(e => e.Idpp).HasColumnName("IDPP");
             entity.Property(e => e.NombreRealizo).HasMaxLength(200);
             entity.Property(e => e.NombreValido).HasMaxLength(200);
-            entity.Property(e => e.Pp).HasMaxLength(30);
             entity.Property(e => e.UnidadMedida).HasMaxLength(100);
 
             entity.HasOne(d => d.IdppNavigation).WithMany(p => p.LlenadoInternos)
