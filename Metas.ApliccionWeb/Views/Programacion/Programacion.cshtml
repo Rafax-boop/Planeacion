@@ -170,10 +170,15 @@
                                 var actividadCompleta = prefijoActividad + (item.componente || '') + '.' + (item.actividad || '');
 
                                 var btnEliminar = '';
+                                var btnEditar = '';
                                 if(esAdmin){
-                                    btnEliminar = '<br><button type="button" class="btn btn-danger btn-sm btn-eliminar" data-id="' + item.idProceso + '">Eliminar</button>';
+                                    btnEliminar = '<br><button type="button" class="btn btn-danger btn-sm btn-eliminar" id="btnEliminar-' + item.idProceso + '" data-id="' + item.idProceso + '">Eliminar</button>';
+                                    btnEditar = '<button type="button" class="btn btn-primary btn-sm btn-editar" id="btnEditar-' + item.idProceso + '" data-id="' + item.idProceso + '">Editar</button>';
                                 }
-                                var btnEditar = '<button type="button" class="btn btn-primary btn-sm btn-editar" data-id="' + item.idProceso + '">Editar</button>';
+                                else if(item.idEstatus == 2)
+                                {
+                                    btnEditar = '<button type="button" class="btn btn-primary btn-sm btn-editar" id="btnEditar-' + item.idProceso + '" data-id="' + item.idProceso + '">Editar</button>';
+                                }
 
                                 var fila = '<tr>' +
                                     '<td>' + item.pp + btnEliminar + '</td>' +
@@ -183,7 +188,7 @@
                                     '<td>' + item.programaSocial + '</td>' +
                                     '<td>' + item.area + '</td>' +
                                     '<td>' + item.departamento + '</td>' +
-                                    '<td>' + item.idEstatus + btnEditar + '</td>' +
+                                    '<td>' + item.nombreEstatus + btnEditar + '</td>' +
                                 '</tr>';
                                 $('#tbodyDatos').append(fila);
                             });
@@ -201,7 +206,7 @@
                 });
             });
 
-            $(document).on('click', '.btn-eliminar', function() {
+            $(document).on('click', '[id^="btnEliminar-"]', function() {
                 // 1. Obtener el ID del registro a eliminar
                 var idProceso = $(this).data('id');
                 console.log(idProceso);
@@ -230,6 +235,12 @@
                         }
                     });
                 }
+            });
+
+            $(document).on('click', '[id^="btnEditar-"]', function() {
+                var idProceso = $(this).data('id');
+                    var urlEditar = '@Url.Action("EditarProgramacion", "Programacion")' + '?id=' + idProceso;
+                    window.location.href = urlEditar;
             });
 
             $('#btnIniciarProgramacion').click(function() {

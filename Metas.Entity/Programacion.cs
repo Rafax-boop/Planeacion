@@ -193,6 +193,8 @@ public partial class Programacion
 
     public virtual ICollection<Comentario> Comentarios { get; set; } = new List<Comentario>();
 
+    public virtual Estatus? IdEstatusNavigation { get; set; }
+
     public virtual LlenadoInterno? IdLlenadoNavigation { get; set; }
 
     public virtual ICollection<ServiciosMunicipio> ServiciosMunicipios { get; set; } = new List<ServiciosMunicipio>();

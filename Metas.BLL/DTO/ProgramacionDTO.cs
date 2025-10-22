@@ -106,7 +106,7 @@ namespace Metas.BLL.DTO
         public int ServicioMeta { get; set; }
 
         [JsonPropertyName("personasMeta")]
-        public int PersonasMeta { get; set; }
+        public decimal PersonasMeta { get; set; }
 
         // ========================================
         // TRIMESTRES SERVICIOS (Grupo 1)
@@ -152,7 +152,7 @@ namespace Metas.BLL.DTO
         [JsonPropertyName("mesesPersonas")]
         public List<int> MesesPersonas { get; set; } = new List<int>();
         [JsonPropertyName("totalAnos2")]
-        public int TotalAnos2 { get; set; }
+        public decimal TotalAnos2 { get; set; }
 
         // ========================================
         // MUNICIPIOS SERVICIOS (Grupo 1)

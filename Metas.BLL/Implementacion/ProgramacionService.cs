@@ -262,6 +262,7 @@ namespace Metas.BLL.Implementacion
 
                 var resultado = await query
                     .Include(x => x.Programacions)
+                        .ThenInclude(p => p.IdEstatusNavigation)
                     .ToListAsync();
 
                 return resultado;
@@ -276,7 +277,8 @@ namespace Metas.BLL.Implementacion
         {
             try
             {
-                var programacionEntidad = await _repositorioProgramacion.Obtener(p => p.IdLlenado.HasValue && p.IdLlenado.Value == idLlenado);
+                var programacionEntidad = await _repositorioProgramacion.Obtener(
+                    p => p.IdLlenado.HasValue && p.IdLlenado.Value == idLlenado);
 
                 if (programacionEntidad == null)
                 {
@@ -285,21 +287,27 @@ namespace Metas.BLL.Implementacion
 
                 int idProgramacion = programacionEntidad.IdRegistro;
 
-                var personasMunicipios = await _repositorioPersonas.Consultar(pm => pm.IdLlenado == idProgramacion);
+                var personasMunicipios = (await _repositorioPersonas.Consultar(
+                    pm => pm.IdLlenado == idProgramacion)).ToList();
+
                 foreach (var pm in personasMunicipios)
                 {
                     await _repositorioPersonas.Eliminar(pm);
                 }
 
-                var serviciosMunicipios = await _repositorioServicios.Consultar(sm => sm.IdLlenado == idProgramacion);
+                var serviciosMunicipios = (await _repositorioServicios.Consultar(
+                    sm => sm.IdLlenado == idProgramacion)).ToList();
+
                 foreach (var sm in serviciosMunicipios)
                 {
                     await _repositorioServicios.Eliminar(sm);
                 }
-                
+
                 await _repositorioProgramacion.Eliminar(programacionEntidad);
 
-                var llenadoInternoEntidad = await _repositorioLlenadoInterno.Obtener(l => l.IdProceso == idLlenado);
+                var llenadoInternoEntidad = await _repositorioLlenadoInterno.Obtener(
+                    l => l.IdProceso == idLlenado);
+
                 if (llenadoInternoEntidad != null)
                 {
                     await _repositorioLlenadoInterno.Eliminar(llenadoInternoEntidad);
@@ -307,9 +315,191 @@ namespace Metas.BLL.Implementacion
 
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine($"Error: {ex.Message}");
                 return false;
+            }
+        }
+
+        public async Task<ProgramacionDTO> ObtenerDatosCompletos(int idLlenado)
+        {
+            try
+            {
+                // 1. Obtener la programación principal
+                var programacionEntidad = await _repositorioProgramacion.Obtener(
+                    p => p.IdLlenado.HasValue && p.IdLlenado.Value == idLlenado);
+
+                if (programacionEntidad == null)
+                    return null;
+
+                int idProgramacion = programacionEntidad.IdRegistro;
+
+                // 2. Obtener PersonasMunicipio relacionadas
+                var personasMunicipios = (await _repositorioPersonas.Consultar(
+                    pm => pm.IdLlenado == idProgramacion)).ToList();
+
+                // 3. Obtener ServiciosMunicipio relacionados
+                var serviciosMunicipios = (await _repositorioServicios.Consultar(
+                    sm => sm.IdLlenado == idProgramacion)).ToList();
+
+                // 4. Obtener LlenadoInterno
+                var llenadoInterno = await _repositorioLlenadoInterno.Obtener(
+                    l => l.IdProceso == idLlenado);
+
+                // 5. Mapear a DTO
+                var dto = new ProgramacionDTO
+                {
+                    // Datos generales
+                    Area = programacionEntidad.Area,
+                    Departamento = llenadoInterno?.Departamento,
+                    CorreoContacto = programacionEntidad.CorreoElectro,
+                    Pp = llenadoInterno?.Pp,
+                    NComponente = programacionEntidad.NComponente,
+                    NActividad = programacionEntidad.NActividad ?? 0,
+                    Justificacion = programacionEntidad.Justificacion,
+                    DescripcionDocumento = programacionEntidad.DescripcionDocumento,
+                    RecursoFederal = programacionEntidad.RecursoFederal,
+                    RecursoEstatal = programacionEntidad.RecursoEstatal,
+                    ProgramaSocial = programacionEntidad.ProgramaSocial,
+                    DescripcionActividad = programacionEntidad.DescripcionActividad,
+                    NombreIndicador = programacionEntidad.NombreIndicador,
+                    DefinicionIndicador = programacionEntidad.DefinicionIndicador,
+                    UnidadMedida = programacionEntidad.UnidadMedida,
+                    MediosVerificacion = programacionEntidad.MediosVerificac,
+                    SerieInformacionDesde = programacionEntidad.SerieInfo,
+                    SerieInformacionHasta = programacionEntidad.SerieInfo2,
+                    FuenteInformacion = programacionEntidad.FuenteInfo,
+                    IntervienenDelegaciones = programacionEntidad.IntervienenDelegaciones,
+                    IntervienenDelegacionesManera = programacionEntidad.IntervienenDelegacionesManera,
+                    SelectAcumulable = programacionEntidad.Acumulable,
+                    Estatus = programacionEntidad.IdEstatus ?? 0,
+                    Beneficiarios = programacionEntidad.Beneficiarios,
+
+                    // Línea Base
+                    AnoBase = programacionEntidad.Anos ?? 0,
+                    PorcentajeBase = programacionEntidad.Valor ?? 0,
+                    ServicioBase = programacionEntidad.BienServicio ?? 0,
+                    PersonasBase = programacionEntidad.NoPersonas ?? 0,
+
+                    // Meta Anual
+                    AnoMeta = programacionEntidad.Anos2 ?? 0,
+                    PorcentajeMeta = programacionEntidad.Valor2 ?? 0,
+                    ServicioMeta = programacionEntidad.BienServicio2 ?? 0,
+                    PersonasMeta = programacionEntidad.NoPersonas2 ?? 0,
+
+                    // Trimestres Servicios
+                    PrimerServicio = programacionEntidad.Primero ?? 0,
+                    SegundoServicio = programacionEntidad.Segundo ?? 0,
+                    TercerServicio = programacionEntidad.Tercero ?? 0,
+                    CuartoServicio = programacionEntidad.Cuarto ?? 0,
+
+                    // Trimestres Personas
+                    PrimerPersona = programacionEntidad.Personas1 ?? 0,
+                    SegundoPersona = programacionEntidad.Personas2 ?? 0,
+                    TercerPersona = programacionEntidad.Personas3 ?? 0,
+                    CuartoPersona = programacionEntidad.Personas4 ?? 0,
+
+                    // Meses Servicios (12 meses)
+                    MesesServicios = new List<int>
+            {
+                programacionEntidad.Mes1 ?? 0,
+                programacionEntidad.Mes2 ?? 0,
+                programacionEntidad.Mes3 ?? 0,
+                programacionEntidad.Mes4 ?? 0,
+                programacionEntidad.Mes5 ?? 0,
+                programacionEntidad.Mes6 ?? 0,
+                programacionEntidad.Mes7 ?? 0,
+                programacionEntidad.Mes8 ?? 0,
+                programacionEntidad.Mes9 ?? 0,
+                programacionEntidad.Mes10 ?? 0,
+                programacionEntidad.Mes11 ?? 0,
+                programacionEntidad.Mes12 ?? 0
+            },
+                    TotalAnos = programacionEntidad.Totalanos ?? 0,
+
+                    // Meses Personas (12 meses)
+                    MesesPersonas = new List<int>
+            {
+                programacionEntidad.Mes111 ?? 0,
+                programacionEntidad.Mes121 ?? 0,
+                programacionEntidad.Mes13 ?? 0,
+                programacionEntidad.Mes14 ?? 0,
+                programacionEntidad.Mes15 ?? 0,
+                programacionEntidad.Mes16 ?? 0,
+                programacionEntidad.Mes17 ?? 0,
+                programacionEntidad.Mes18 ?? 0,
+                programacionEntidad.Mes19 ?? 0,
+                programacionEntidad.Mes110 ?? 0,
+                programacionEntidad.Mes1111 ?? 0,
+                programacionEntidad.Mes112 ?? 0
+            },
+                    TotalAnos2 = programacionEntidad.Totalanos2 ?? 0,
+
+                    // Municipios Servicios
+                    MunicipiosServicios = serviciosMunicipios.Select(sm => new DTOMunicipioAgregado
+                    {
+                        IdMunicipio = sm.IdMunicipio ?? 0,
+                        Cantidad = sm.NumeroBien ?? 0 
+                    }).ToList(),
+
+                    // Municipios Personas
+                    MunicipiosPersonas = personasMunicipios.Select(pm => new DTOMunicipioAgregado
+                    {
+                        IdMunicipio = pm.IdMunicipio ?? 0,
+                        Cantidad = pm.NumeroBien ?? 0
+                    }).ToList(),
+
+                    // Acciones (1-5)
+                    Acciones = new List<DTOAccion>
+            {
+                new DTOAccion
+                {
+                    Descripcion = programacionEntidad.Actividad1,
+                    Frecuencia = programacionEntidad.Frecuencia1,
+                    FechaInicio = programacionEntidad.FechaProgramacion1
+                },
+                new DTOAccion
+                {
+                    Descripcion = programacionEntidad.Actividad2,
+                    Frecuencia = programacionEntidad.Frecuencia2,
+                    FechaInicio = programacionEntidad.FechaProgramacion2
+                },
+                new DTOAccion
+                {
+                    Descripcion = programacionEntidad.Actividad3,
+                    Frecuencia = programacionEntidad.Frecuencia3,
+                    FechaInicio = programacionEntidad.FechaProgramacion3
+                },
+                new DTOAccion
+                {
+                    Descripcion = programacionEntidad.Actividad4,
+                    Frecuencia = programacionEntidad.Frecuencia4,
+                    FechaInicio = programacionEntidad.FechaProgramacion4
+                },
+                new DTOAccion
+                {
+                    Descripcion = programacionEntidad.Actividad5,
+                    Frecuencia = programacionEntidad.Frecuencia5,
+                    FechaInicio = programacionEntidad.FechaProgramacion5
+                }
+            }.Where(a => !string.IsNullOrEmpty(a.Descripcion)).ToList(), // Solo incluir acciones con descripción
+
+                    // Firmas
+                    ElaboraNombre = programacionEntidad.ElaboraNombre,
+                    ElaboroCargo = programacionEntidad.ElaboroCargo,
+                    RevisionNombre = programacionEntidad.ValidoNombre,
+                    RevisionCargo = programacionEntidad.ValidoCargo,
+                    AutorizacionNombre = programacionEntidad.AutorizoNombre,
+                    AutorizacionCargo = programacionEntidad.AutorizoCargo
+                };
+
+                return dto;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error en ObtenerDatosCompletos: {ex.Message}");
+                return null;
             }
         }
     }

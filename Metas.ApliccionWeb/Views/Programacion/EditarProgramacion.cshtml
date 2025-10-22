@@ -1,0 +1,1529 @@
+﻿@model Metas.BLL.DTO.ProgramacionDTO
+
+@{
+    ViewData["Title"] = "Editar Programación";
+}
+
+<div class="container-fluid mt-5">
+    <h1 class="text-center mb-4 titulo fw-semibold pt-2 glass-effect rounded-5 pb-2">EDITAR FICHA TÉCNICA DE ACTIVIDADES</h1>
+
+    @* Datos del solicitante *@
+    <div class="d-flex border mb-4 rounded-4 shadow">
+        <div class="w-25 p-3 rounded-start-4 align-content-center glass-effect">
+            <h5 class="fw-semibold titulo text-center">
+                Datos del solicitante
+            </h5>
+        </div>
+
+        <div class="w-75">
+            <div class="d-flex border-bottom p-2">
+                <div class="w-50 my-2">1. FECHA DE ELABORACIÓN:</div>
+                <div class="w-50 fw-semibold text-center my-2">@DateTime.Now.ToString("dd/MM/yyyy")</div>
+            </div>
+
+            <div class="d-flex p-2 row">
+                <label class="col-md-4 align-content-center">2. NOMBRE DEL ÁREA OPERATIVA <br /> RESPONSABLE (AOR):</label>
+                <div class="col-8 row">
+                    <div class="col-md-6">
+                        <h5 class="fw-light">
+                           Area:   
+                        </h5>
+                        <textarea disabled class="form-control input-arena titulo fw-semibold" rows="2" id="inputArea">@Model.Area</textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <h5 class="fw-light">
+                            Departamento:
+                        </h5>
+                        <textarea disabled class="form-control input-arena titulo fw-semibold" rows="2" id="inputDepartamento">@Model.Departamento</textarea>
+                    </div>                   
+                </div>
+            </div>
+
+            <div class="d-flex p-2">
+                <div class="w-50 align-content-center">3. CORREO ELECTRÓNICO:</div>
+                <div class="w-50 my-2 mx-2">
+                    <input type="email" class="input-arena form-control titulo" readonly placeholder="ejemplo@correo.com" id="inputCorreo" value="@Model.CorreoContacto">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* Datos de la solicitud *@
+    <div class="p-3 mb-4 rounded-4 shadow">
+        <h5 class="mb-2 text-center border-bottom pb-3 fw-semibold titulo pt-2 glass-effect rounded-5">DATOS DE LA SOLICITUD</h5>
+
+        <div class="row my-3 border-bottom pb-3">
+            <label class="col-md-6 align-content-center">4. PROGRAMA PRESUPUESTARIO / AGENDA INSTITUCIONAL:</label>
+            <div class="col-md-6 align-content-center">
+                <input type="text" class="input-arena form-control titulo" id="selectPrograma" value="@Model.Pp" readonly>
+            </div>
+        </div>
+
+        <div class="row mb-3 border-bottom pb-3">
+            <label class="align-content-center col-md-6">5. NÚMERO DE COMPONENTE:</label>
+            <div class="col-md-6 align-content-center">
+                <input type="text" class="input-arena form-control titulo" id="selectComponente" value="@Model.NComponente" readonly>
+            </div>
+        </div>
+
+        <div class="row pb-1 border-bottom mb-3 pb-3">
+            <label class="align-content-center col-md-6">6. NÚMERO DE ACTIVIDAD:</label>
+            <div class="col-md-6 align-content-center">
+                <input type="number" required class="input-arena form-control titulo" id="inputActividad" value="@Model.NActividad">
+            </div>
+        </div>   
+        @* Justificacion *@
+        <div class="border-bottom mb-3 pb-3">
+            <label>7. JUSTIFICACIÓN</label>
+            <textarea required class="input-arena form-control" rows="2" id="inputJustificacion">@Model.Justificacion</textarea>
+        </div>
+
+        @* Documentacion soporte de la justificacion *@
+        <div class="mb-3 pb-3 border-bottom">
+            <label>8. DOCUMENTACIÓN SOPORTE DE LA JUSTIFICACIÓN</label>
+            <textarea required class="input-arena form-control" rows="2" id="inputDocumentacion">@Model.DescripcionDocumento</textarea>
+        </div>
+
+        @* Origen de recursos *@
+        <div class="d-flex align-items-center py-2 pb-4">
+            <div class="w-50 pe-3 mt-2 align-items-center">
+                <label>9. ORIGEN DE RECURSOS</label>
+            </div>
+
+            <div class="w-50 mt-2">
+                <div class="row g-2">
+                    <div class="col-6">
+                        <h5 class="fw-light">Recurso Federal</h5>
+                        <select required class="input-arena form-control titulo" id="selectFederal">
+                            <option value="">Seleccione</option>
+                            <option value="Si" @(Model.RecursoFederal == "Si" ? "selected" : "")>Sí</option>
+                            <option value="No" @(Model.RecursoFederal == "No" ? "selected" : "")>No</option>
+                        </select>
+                    </div>
+
+                    <div class="col-6">
+                        <h5 class="fw-light">Recurso Estatal</h5>
+                        <select required class="input-arena form-control titulo" id="selectEstatal">
+                            <option value="">Seleccione</option>
+                            <option value="Si" @(Model.RecursoEstatal == "Si" ? "selected" : "")>Sí</option>
+                            <option value="No" @(Model.RecursoEstatal == "No" ? "selected" : "")>No</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    
+
+    <hr>
+
+    @* Datos generales *@
+    <h2 class="text-center my-4 titulo fw-semibold pt-2 pb-2 glass-effect rounded-5 ">DATOS GENERALES</h2>
+    
+    <div class="border p-3 mb-4 mt-4 rounded-4 shadow">
+        <div class="row border-bottom">
+            <label class="col-md-4 align-content-center">10. PROGRAMA SOCIAL, SERVICIO Y/O PROYECTO</label>
+            <div class="col-md-8 mb-3">
+                <textarea required id="inputPrograma" class="input-arena form-control" rows="2">@Model.ProgramaSocial</textarea>
+            </div>
+        </div>
+        <div class="row border-bottom">
+            <label class="col-md-4 align-content-center">11. DESCRIPCIÓN DE LA ACTIVIDAD</label>
+            <div class="col-md-8 my-3">
+                <textarea required id="inputDescripcion" class="input-arena form-control" rows="2">@Model.DescripcionActividad</textarea>
+            </div>
+        </div>
+        <div class="row border-bottom">
+            <label class="col-md-4 align-content-center">12. NOMBRE DEL INDICADOR</label>
+            <div class="col-md-8 my-3">
+                <textarea required id="inputIndicador" class="input-arena form-control" rows="2">@Model.NombreIndicador</textarea>
+            </div>
+        </div>
+        <div class="row border-bottom">
+            <label class="col-md-4 align-content-center">13. DEFINICIÓN DEL INDICADOR</label>
+            <div class="col-md-8 my-3">
+                <textarea required id="inputDefinicion" class="input-arena form-control" rows="2">@Model.DefinicionIndicador</textarea>
+            </div>
+        </div>
+
+        @* Calendarización *@
+        <div class="row border-bottom py-3 mb-3">
+            <label class="col-md-4 align-content-center">14. CALENDARIZACIÓN</label>
+        </div>
+
+        <div class="row">
+            @* Encabezados de trimestres *@
+            <div class="col-md-3 mb-3">
+                <div class="text-center fw-semibold text-muted">TRIMESTRES</div>
+            </div>
+            <div class="col-md-2 mb-3">
+                <div class="text-center titulo fw-semibold border-bottom pb-1">1ER TRIMESTRE</div>
+            </div>
+            <div class="col-md-2 mb-3">
+                <div class="text-center titulo fw-semibold border-bottom pb-1">2DO. TRIMESTRE</div>
+            </div>
+            <div class="col-md-2 mb-3">
+                <div class="text-center titulo fw-semibold border-bottom pb-1">3ER. TRIMESTRE</div>
+            </div>
+            <div class="col-md-2 mb-3">
+                <div class="text-center titulo fw-semibold border-bottom pb-1">4TO. TRIMESTRE</div>
+            </div>
+        </div>
+
+        @* Fila para SERVICIOS *@
+        <div class="row align-items-center pb-2 mb-2">
+            <div class="col-md-3 text-center">
+                <label class="fw-light">SERVICIOS</label>
+            </div>
+            <div class="col-md-2">
+                <input type="number" disabled id="primerServicio" class="input-arena form-control titulo text-center" value="@Model.PrimerServicio" min="0">
+            </div>
+            <div class="col-md-2">
+                <input type="number" disabled id="segundoServicio" class="input-arena form-control titulo text-center" value="@Model.SegundoServicio" min="0">
+            </div>
+            <div class="col-md-2">
+                <input type="number" disabled id="tercerServicio" class="input-arena form-control titulo text-center" value="@Model.TercerServicio" min="0">
+            </div>
+            <div class="col-md-2">
+                <input type="number" disabled id="cuartoServicio" class="input-arena form-control titulo text-center" value="@Model.CuartoServicio" min="0">
+            </div>
+        </div>
+
+        @* Fila para PERSONAS *@
+        <div class="row align-items-center mb-3">
+            <div class="col-md-3 text-center">
+                <label class="fw-light">PERSONAS</label>
+            </div>
+            <div class="col-md-2">
+                <input type="number" disabled id="primerPersona" class="input-arena form-control titulo text-center" value="@Model.PrimerPersona" min="0">
+            </div>
+            <div class="col-md-2">
+                <input type="number" disabled id="segundoPersona" class="input-arena form-control titulo text-center" value="@Model.SegundoPersona" min="0">
+            </div>
+            <div class="col-md-2">
+                <input type="number" disabled id="tercerPersona" class="input-arena form-control titulo text-center" value="@Model.TercerPersona" min="0">
+            </div>
+            <div class="col-md-2">
+                <input type="number" disabled id="cuartoPersona" class="input-arena form-control titulo text-center" value="@Model.CuartoPersona" min="0">
+            </div>
+        </div>
+
+        <div class="row border-bottom border-top">
+            <label class="col-md-4 align-content-center">15. UNIDAD DE MEDIDA</label>
+            <div class="col-md-8 my-3">
+                <input type="text" class="input-arena form-control titulo" id="selectMedida" value="@Model.UnidadMedida" readonly>
+            </div>
+        </div>
+
+        <div class="row border-bottom">
+            <label class="col-md-4 align-content-center">16. MEDIOS DE VERIFICACIÓN</label>
+            <div class="col-md-8 my-3">
+                <textarea required id="inputMedios" class="input-arena form-control" rows="2">@Model.MediosVerificacion</textarea>
+            </div>
+        </div>
+
+        <div class="row border-bottom">
+            <label class="col-md-4 align-content-center">17. SERIE DE INFORMACIÓN DISPONIBLE</label>
+            <div class="col-md-4 my-3">
+                <input type="text" class="input-arena form-control titulo" value="@Model.SerieInformacionDesde" readonly>
+            </div>
+
+            <div class="col-md-4 my-3">
+                <input type="text" class="input-arena form-control titulo" value="@Model.SerieInformacionHasta" readonly>
+            </div>
+        </div>
+
+        <div class="row border-bottom mb-2">
+            <label class="col-md-4 align-content-center">18. FUENTES DE INFORMACIÓN</label>
+            <div class="col-md-8 my-3">
+                <textarea required id="inputFuentes" class="input-arena form-control" rows="2">@Model.FuenteInformacion</textarea>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 border-end my-3">
+                <div class="row align-items-center h-100">
+                    <div class="col-md-6">
+                        <label class="mb-0 d-flex align-items-center h-100">19. INTERVIENEN DELEGACIONES REGIONALES</label>
+                    </div>
+                    <div class="col-md-6">
+                        <select id="selectDelegaciones" class="input-arena form-control titulo">
+                            <option value="">Seleccione</option>
+                            <option value="Si" @(Model.IntervienenDelegaciones == "Si" ? "selected" : "")>Sí</option>
+                            <option value="No" @(Model.IntervienenDelegaciones == "No" ? "selected" : "")>No</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="row align-items-center h-100">
+                    <div class="col-md-6">
+                        <label class="mb-0 d-flex align-items-center h-100">20. ¿DE QUÉ MANERA?</label>
+                    </div>
+                    <div class="col-md-6">
+                        <textarea id="inputDelegaciones" class="input-arena form-control" rows="2">@Model.IntervienenDelegacionesManera</textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* Determinación de Metas *@
+    <div class="border p-3 mb-4 rounded-4 shadow">
+        <h5 class="pt-2 glass-effect rounded-5 text-center border-bottom pb-2 fw-semibold titulo">DETERMINACIÓN DE METAS</h5>
+
+        <div class="row">
+            <div class="col-md-6 border-end">
+                <div class="text-center fw-light py-2 border-bottom" style="background-color: #F4F4F4">
+                    LÍNEA BASE
+                </div>
+
+                <div class="row align-items-center border-bottom py-2">
+                    <div class="col-md-6">
+                        <label class="mb-0">21. AÑO</label>
+                    </div>
+                    <div class="col-md-6">
+                        <input type="text" class="input-arena form-control titulo" value="@Model.AnoBase" readonly>
+                    </div>
+                </div>
+
+                <div class="row align-items-center border-bottom py-2">
+                    <div class="col-md-6">
+                        <label class="mb-0">22. PORCENTAJE DE CUMPLIMIENTO</label>
+                    </div>
+                    <div class="col-md-6">
+                        <input id="inputPorcentajeBase" type="number" class="input-arena form-control titulo text-center" value="@Model.PorcentajeBase" min="0" max="100">
+                    </div>
+                </div>
+
+                <div class="row align-items-center border-bottom py-2">
+                    <div class="col-md-6">
+                        <label class="mb-0">23. NO. DE BIEN O SERVICIO ENTREGADO</label>
+                    </div>
+                    <div class="col-md-6">
+                        <input id="inputServicioBase" type="number" class="input-arena form-control titulo text-center" value="@Model.ServicioBase" min="0">
+                    </div>
+                </div>
+
+                <div class="row align-items-center py-2">
+                    <div class="col-md-6">
+                        <label class="mb-0">24. NO. DE PERSONAS ATENDIDAS</label>
+                    </div>
+                    <div class="col-md-6">
+                        <input id="inputPersonasBase" type="number" class="input-arena form-control titulo text-center" value="@Model.PersonasBase" min="0">
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="text-center fw-light py-2 border-bottom" style="background-color: #F4F4F4">
+                    META Y PERIODO DE CUMPLIMIENTO
+                </div>
+
+                <div class="row align-items-center border-bottom py-2">
+                    <div class="col-md-6">
+                        <label class="mb-0">25. AÑO</label>
+                    </div>
+                    <div class="col-md-6">
+                        <input id="inputAnoMeta" type="text" class="input-arena form-control titulo text-center fw-semibold" value="@Model.AnoMeta" disabled readonly>
+                    </div>
+                </div>
+
+                <div class="row align-items-center border-bottom py-2">
+                    <div class="col-md-6">
+                        <label class="mb-0">26. PORCENTAJE DE CUMPLIMIENTO</label>
+                    </div>
+                    <div class="col-md-6">
+                        <input id="inputPorcentajeMeta" disabled type="number" class="input-arena form-control titulo text-center" value="@Model.PorcentajeMeta" min="0" max="100">
+                    </div>
+                </div>
+
+                <div class="row align-items-center border-bottom py-2">
+                    <div class="col-md-6">
+                        <label class="mb-0">27. NO. DE BIEN O SERVICIO A ENTREGAR</label>
+                    </div>
+                    <div class="col-md-6">
+                        <input id="inputServicioMeta" disabled type="number" class="input-arena form-control titulo text-center" value="@Model.ServicioMeta" min="0">
+                    </div>
+                </div>
+
+                <div class="row align-items-center py-2">
+                    <div class="col-md-6">
+                        <label class="mb-0">28. NO. DE PERSONAS POR ATENDER</label>
+                    </div>
+                    <div class="col-md-6">
+                        <input id="inputServicioMetas" disabled type="number" class="input-arena form-control titulo text-center" value="@Model.PersonasMeta" min="0">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* Meta Anual *@
+    <div class="border p-3 mb-4 rounded-4 shadow" id="metaAnualForm">
+        <h5 class="mb-2 text-center border-bottom pb-3 fw-semibold titulo pt-2 glass-effect rounded-5">META ANUAL</h5>
+
+        @* Sección Bien/Servicio y Personas *@
+        <div class="border-bottom pb-3">
+            <div class="row">
+                <div class="col-md-6 border-end align-content-center">
+                    <div class="row align-items-center py-2 ">
+                        <div class="col-md-12">
+                            <label class="mb-0 align-content-center">29. BIEN O SERVICIO</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="row align-items-center py-2">
+                        <div class="col-md-4">
+                            <label class="mb-0">30. PERSONAS</label>
+                        </div>
+                        <div class="col-md-8">
+                            <select class="input-arena form-control titulo" id="selectPersonas">
+                                <option value="">Seleccione Personas / Instituciones</option>
+                                <option value="Personas" @(Model.Beneficiarios == "Personas" ? "selected" : "")>Personas</option>
+                                <option value="Instituciones" @(Model.Beneficiarios == "Instituciones" ? "selected" : "")>Instituciones</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row align-items-center py-2">
+                        <div class="col-md-4">
+                            <label class="mb-0">Acumulable</label>
+                        </div>
+                        <div class="col-md-8">
+                            <select class="input-arena form-control titulo" id="selectAcumulable">
+                                <option value="">Seleccione opción</option>
+                                <option value="no" @(Model.SelectAcumulable == "no" ? "selected" : "")>No</option>
+                                <option value="si" @(Model.SelectAcumulable == "si" ? "selected" : "")>Sí</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @* Sección Meses - Se llenará con JavaScript *@
+        <div class="mt-4">
+            @{
+                var mesesPrimerSemestre = new[] { "ENE", "FEB", "MAR", "ABR", "MAY", "JUN" };
+                var mesesSegundoSemestre = new[] { "JUL", "AGO", "SEP", "OCT", "NOV", "DIC" };
+            }
+
+            <div class="row mt-3">              
+                <div class="col-md-6 border-end">
+                    <div class="row text-center ">
+                        @for (int i = 0; i < 6; i++)
+                        {
+                            <div class="col-2 p-1 glass-effect rounded">@mesesPrimerSemestre[i]</div>
+                        }
+                    </div>
+                    <div class="row text-center">
+                        @for (int i = 0; i < 6; i++)
+                        {
+                            <div class="col-2 p-1">
+                                <input type="number" class="input-arena form-control titulo text-center mes-grupo1"
+                                       value="@(Model.MesesServicios != null && Model.MesesServicios.Count > i ? Model.MesesServicios[i] : 0)" 
+                                       min="0" data-mes="@mesesPrimerSemestre[i]">
+                            </div>
+                        }
+                    </div>
+
+                    <div class="row text-center mt-2">
+                        @for (int i = 0; i < 6; i++)
+                        {
+                            <div class="col-2 p-1 glass-effect rounded">@mesesSegundoSemestre[i]</div>
+                        }
+                    </div>
+                    <div class="row text-center">
+                        @for (int i = 0; i < 6; i++)
+                        {
+                            var index = i + 6;
+                            <div class="col-2 p-1">
+                                <input type="number" class="input-arena form-control titulo text-center mes-grupo1"
+                                       value="@(Model.MesesServicios != null && Model.MesesServicios.Count > index ? Model.MesesServicios[index] : 0)" 
+                                       min="0" data-mes="@mesesSegundoSemestre[i]">
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="row text-center">
+                        @for (int i = 0; i < 6; i++)
+                        {
+                            <div class="col-2 p-1 glass-effect rounded">@mesesPrimerSemestre[i]</div>
+                        }
+                    </div>
+                    <div class="row text-center">
+                        @for (int i = 0; i < 6; i++)
+                        {
+                            <div class="col-2 p-1">
+                                <input type="number" class="input-arena form-control titulo text-center mes-grupo2"
+                                       value="@(Model.MesesPersonas != null && Model.MesesPersonas.Count > i ? Model.MesesPersonas[i] : 0)" 
+                                       min="0" disabled data-mes="@mesesPrimerSemestre[i]">
+                            </div>
+                        }
+                    </div>
+
+                    <div class="row text-center mt-2">
+                        @for (int i = 0; i < 6; i++)
+                        {
+                            <div class="col-2 p-1 glass-effect rounded">@mesesSegundoSemestre[i]</div>
+                        }
+                    </div>
+                    <div class="row text-center">
+                        @for (int i = 0; i < 6; i++)
+                        {
+                            var index = i + 6;
+                            <div class="col-2 p-1">
+                                <input type="number" class="input-arena form-control titulo text-center mes-grupo2"
+                                       value="@(Model.MesesPersonas != null && Model.MesesPersonas.Count > index ? Model.MesesPersonas[index] : 0)" 
+                                       min="0" disabled data-mes="@mesesSegundoSemestre[i]">
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @* Sección Valores y Resultados *@
+        <div class="row mt-4 border-top pt-3">
+            <div class="col-md-6 border-end pe-3">
+                <div class="row align-items-center border-bottom py-2">
+                    <div class="col-md-8">
+                        <label class="mb-0 fw-semibold">Valor de servicios</label>
+                    </div>
+                    <div class="col-md-4">
+                        <input class="input-arena form-control titulo text-center fw-bold"
+                               id="valorServicios" value="@Model.TotalAnos" disabled>
+                    </div>
+                </div>
+
+                <div class="row align-items-center border-bottom py-2">
+                    <div class="col-md-8">
+                        <label class="mb-0 fw-semibold">Valor de servicios por municipio</label>
+                    </div>
+                    <div class="col-md-4">
+                        <input class="input-arena form-control titulo text-center"
+                               id="valorServiciosMunicipio" disabled value="0">
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <div class="row align-items-center py-3">
+                        <div class="col-md-8">
+                            <select class="input-arena form-control titulo" id="selectEstadoGrupo1">
+                                <option value="">Seleccione un municipio</option>
+                                @* Se llenará con JavaScript *@
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="number" class="input-arena form-control titulo text-center"
+                                   id="personasAtendidasGrupo1" value="0" min="0" placeholder="Número">
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-2">
+                        <button class="titulo boton-rojo fs-6" id="btnAgregarGrupo1" type="button">Agregar</button>
+                    </div>
+
+                    <div class="mt-3" id="tablaGrupo1" style="display: none;">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-sm">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th>Personas Atendidas</th>
+                                        <th>Municipio</th>
+                                        <th>Región</th>
+                                        <th>Número de región</th>
+                                        <th>Clave del municipio</th>
+                                        <th>Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbodyGrupo1">
+                                </tbody>
+                                <tfoot>
+                                    <tr class="fw-bold" style="background-color: #e9ecef;">
+                                        <td id="totalGrupo1">0</td>
+                                        <td colspan="5" class="text-end">Total Grupo Principal</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 ps-3">
+                <div class="row align-items-center border-bottom py-2">
+                    <div class="col-md-8">
+                        <label class="mb-0 fw-semibold">Valor de personas</label>
+                    </div>
+                    <div class="col-md-4">
+                        <input class="input-arena form-control titulo text-center fw-bold"
+                               id="valorPersonas" disabled value="@Model.TotalAnos2">
+                    </div>
+                </div>
+
+                <div class="row align-items-center border-bottom py-2">
+                    <div class="col-md-8">
+                        <label class="mb-0 fw-semibold">Valor de personas por municipio</label>
+                    </div>
+                    <div class="col-md-4">
+                        <input class="input-arena form-control titulo text-center"
+                               id="valorPersonasMunicipio" disabled value="0">
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <div class="row align-items-center py-3">
+                        <div class="col-md-8">
+                            <select class="input-arena form-control titulo" id="selectEstadoGrupo2">
+                                <option value="">Seleccione un municipio</option>
+                                @* Se llenará con JavaScript *@
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="number" class="input-arena form-control titulo text-center"
+                                   id="personasAtendidasGrupo2" value="0" min="0" placeholder="Número">
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-2">
+                        <button class="titulo boton-rojo fs-6" id="btnAgregarGrupo2" type="button">Agregar</button>
+                    </div>
+
+                    <div class="mt-3" id="tablaGrupo2" style="display: none;">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-sm">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th>Personas Atendidas</th>
+                                        <th>Municipio</th>
+                                        <th>Región</th>
+                                        <th>Número de región</th>
+                                        <th>Clave del municipio</th>
+                                        <th>Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbodyGrupo2">
+                                </tbody>
+                                <tfoot>
+                                    <tr class="fw-bold" style="background-color: #e9ecef;">
+                                        <td id="totalGrupo2">0</td>
+                                        <td colspan="5" class="text-end">Total Grupo Acumulable</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> 
+
+    @* Acciones necesarias *@
+    <div class="border p-3 mb-4 rounded-4 shadow" id="accionesContainer">
+        <div class="mb-2 text-center pb-1">
+            <h5 class="pt-2 glass-effect rounded-5 mb-2 text-center border-bottom pb-3 fw-semibold titulo">
+                ACCIONES NECESARIAS PARA REALIZAR LA ACTIVIDAD PRINCIPAL
+            </h5>
+        </div>
+
+        <div id="accionesList">
+            @* Se llenarán dinámicamente con JavaScript *@
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-md-12 text-center">
+                <button class="boton-rojo me-2" id="btnAgregarAccion" style="width: 50px; height: 50px;">
+                    <i class="fas fa-plus"></i>
+                </button>
+                <button class="boton-amarillo" id="btnEliminarAccion" style="width: 50px; height: 50px;">
+                    <i class="fas fa-minus"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="p-3 mb-4 rounded-4 shadow">
+        <div class="row p-3">            
+            <div class="col-md-4 text-center border-end">
+                <label class="fw-semibold d-block mb-2">Elaboró</label>
+                <input type="text" id="inputElaboro" class="form-control text-center mb-2 input-arena" value="@Model.ElaboraNombre" />
+                <input type="text" id="inputElaboroCargo" class="form-control text-center input-arena" value="@Model.ElaboroCargo" />
+            </div>
+
+            <div class="col-md-4 text-center border-end">
+                <label class="fw-semibold d-block mb-2">Revisó</label>
+                <input type="text" id="inputReviso" class="form-control text-center mb-2 input-arena" value="@Model.RevisionNombre" />
+                <input type="text" id="inputRevisoCargo" class="form-control text-center  input-arena" value="@Model.RevisionCargo" />
+            </div>
+
+            <div class="col-md-4 text-center">
+                <label class="fw-semibold d-block mb-2">Autorizó</label>
+                <input type="text" id="inputAutorizo" class="form-control text-center mb-2 input-arena" value="@Model.AutorizacionNombre" />
+                <input type="text" id="inputAutorizoCargo" class="form-control text-center input-arena" value="@Model.AutorizacionCargo" />
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mb-2">
+        <button class="boton-rojo" id="btnActualizarProgramacion">Actualizar</button>
+    </div>
+
+</div>
+
+@section Scripts {
+    <script>
+        let datosEstados = {};
+        let contadorAcciones = 0;
+        const MAX_ACCIONES = 5;
+        const MIN_ACCIONES = 3;
+
+        // Datos del modelo para JavaScript
+        const modelData = @Html.Raw(Json.Serialize(Model));
+
+        // ========================================
+        // CARGAR DATOS DEL MODELO
+        // ========================================
+        async function cargarMunicipios() {
+            try {
+                const response = await fetch('/Programacion/ObtenerMunicipiosJson');
+                if (!response.ok) throw new Error('Error al cargar municipios');
+
+                const municipios = await response.json();
+
+                datosEstados = {};
+                municipios.forEach(m => {
+                    datosEstados[m.id] = {
+                        municipio: m.municipio,
+                        region: m.region,
+                        numeroRegion: m.numeroRegion,
+                        clave: m.clave
+                    };
+                });
+
+                // Llenar los selects de municipios
+                const selectGrupo1 = document.getElementById('selectEstadoGrupo1');
+                const selectGrupo2 = document.getElementById('selectEstadoGrupo2');
+                
+                municipios.forEach(m => {
+                    const option1 = new Option(m.municipio, m.id);
+                    const option2 = new Option(m.municipio, m.id);
+                    selectGrupo1.add(option1);
+                    selectGrupo2.add(option2);
+                });
+
+            } catch (error) {
+                console.error('Error al cargar municipios:', error);
+                alert('Error al cargar los municipios. Por favor, recargue la página.');
+            }
+        }
+
+        function cargarMunicipiosExistentes() {
+            // Cargar municipios de servicios (Grupo 1)
+            if (modelData.municipiosServicios && modelData.municipiosServicios.length > 0) {
+                const tbody = document.getElementById('tbodyGrupo1');
+                const tabla = document.getElementById('tablaGrupo1');
+                
+                modelData.municipiosServicios.forEach(mun => {
+                    const datos = datosEstados[mun.idMunicipio];
+                    if (datos) {
+                        const nuevaFila = document.createElement('tr');
+                        nuevaFila.setAttribute('data-id-municipio', mun.idMunicipio);
+                        nuevaFila.setAttribute('data-cantidad', mun.cantidad);
+                        nuevaFila.innerHTML = `
+                            <td>${mun.cantidad}</td>
+                            <td>${datos.municipio}</td>
+                            <td>${datos.region}</td>
+                            <td>${datos.numeroRegion}</td>
+                            <td>${datos.clave}</td>
+                            <td><button class="btn btn-sm btn-outline-danger btn-eliminar">Eliminar</button></td>
+                        `;
+                        tbody.appendChild(nuevaFila);
+                        
+                        nuevaFila.querySelector('.btn-eliminar').addEventListener('click', function() {
+                            nuevaFila.remove();
+                            calcularTotalPersonas('Grupo1');
+                            actualizarServiciosPorMunicipio();
+                            if (tbody.children.length === 0) {
+                                tabla.style.display = 'none';
+                            }
+                        });
+                    }
+                });
+                
+                tabla.style.display = 'block';
+                calcularTotalPersonas('Grupo1');
+            }
+
+            // Cargar municipios de personas (Grupo 2)
+            if (modelData.municipiosPersonas && modelData.municipiosPersonas.length > 0) {
+                const tbody = document.getElementById('tbodyGrupo2');
+                const tabla = document.getElementById('tablaGrupo2');
+                
+                modelData.municipiosPersonas.forEach(mun => {
+                    const datos = datosEstados[mun.idMunicipio];
+                    if (datos) {
+                        const nuevaFila = document.createElement('tr');
+                        nuevaFila.setAttribute('data-id-municipio', mun.idMunicipio);
+                        nuevaFila.setAttribute('data-cantidad', mun.cantidad);
+                        nuevaFila.innerHTML = `
+                            <td>${mun.cantidad}</td>
+                            <td>${datos.municipio}</td>
+                            <td>${datos.region}</td>
+                            <td>${datos.numeroRegion}</td>
+                            <td>${datos.clave}</td>
+                            <td><button class="btn btn-sm btn-outline-danger btn-eliminar">Eliminar</button></td>
+                        `;
+                        tbody.appendChild(nuevaFila);
+                        
+                        nuevaFila.querySelector('.btn-eliminar').addEventListener('click', function() {
+                            nuevaFila.remove();
+                            calcularTotalPersonas('Grupo2');
+                            actualizarServiciosPorMunicipio();
+                            if (tbody.children.length === 0) {
+                                tabla.style.display = 'none';
+                            }
+                        });
+                    }
+                });
+                
+                tabla.style.display = 'block';
+                calcularTotalPersonas('Grupo2');
+            }
+
+            actualizarServiciosPorMunicipio();
+        }
+
+        function cargarAccionesExistentes() {
+            const accionesList = document.getElementById('accionesList');
+            accionesList.innerHTML = '';
+            
+            if (modelData.acciones && modelData.acciones.length > 0) {
+                contadorAcciones = modelData.acciones.length;
+                
+                modelData.acciones.forEach((accion, index) => {
+                    const numero = index + 1;
+                    const fechaValue = accion.fechaInicio || '';
+                    
+                    const accionHTML = `
+                        <div class="border rounded p-3 mb-3 accion-item" data-numero="${numero}">
+                            <div class="row align-items-center mb-3">
+                                <div class="col-md-12">
+                                    <h6 class="fw-semibold mb-0 titulo">${numero}. ACCIÓN</h6>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <label class="form-label fw-semibold small">DESCRIPCIÓN DE LA ACCIÓN</label>
+                                    <textarea class="form-control titulo input-arena" rows="3">${accion.descripcion || ''}</textarea>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold small">FRECUENCIA DE REALIZACIÓN</label>
+                                    <select class="form-control titulo input-arena">
+                                        <option value="">Seleccione la frecuencia</option>
+                                        <option value="mensual" ${accion.frecuencia === 'mensual' ? 'selected' : ''}>MENSUAL</option>
+                                        <option value="trimestral" ${accion.frecuencia === 'trimestral' ? 'selected' : ''}>TRIMESTRAL</option>
+                                        <option value="anual" ${accion.frecuencia === 'anual' ? 'selected' : ''}>ANUAL</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-8">
+                                    <label class="form-label fw-semibold small">FECHA INICIO</label>
+                                    <input type="date" class="form-control titulo input-arena fecha-inicio" value="${fechaValue}">
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    accionesList.insertAdjacentHTML('beforeend', accionHTML);
+                });
+            } else {
+                // Si no hay acciones, crear 3 por defecto
+                contadorAcciones = 3;
+                for (let i = 1; i <= 3; i++) {
+                    accionesList.insertAdjacentHTML('beforeend', getAccionTemplate(i));
+                }
+            }
+            
+            const btnAgregar = document.getElementById('btnAgregarAccion');
+            const btnEliminar = document.getElementById('btnEliminarAccion');
+            actualizarBotones(btnAgregar, btnEliminar);
+        }
+
+        // ========================================
+        // FUNCIONES DE ACCIONES
+        // ========================================
+        function getAccionTemplate(numero) {
+            return `
+                <div class="border rounded p-3 mb-3 accion-item" data-numero="${numero}">
+                    <div class="row align-items-center mb-3">
+                        <div class="col-md-12">
+                            <h6 class="fw-semibold mb-0 titulo">${numero}. ACCIÓN</h6>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold small">DESCRIPCIÓN DE LA ACCIÓN</label>
+                            <textarea class="form-control titulo input-arena" rows="3" placeholder="Describa la acción necesaria..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold small">FRECUENCIA DE REALIZACIÓN</label>
+                            <select class="form-control titulo input-arena">
+                                <option value="">Seleccione la frecuencia</option>
+                                <option value="mensual">MENSUAL</option>
+                                <option value="trimestral">TRIMESTRAL</option>
+                                <option value="anual">ANUAL</option>
+                            </select>
+                        </div>
+                        <div class="col-md-8">
+                            <label class="form-label fw-semibold small">FECHA INICIO</label>
+                            <input type="date" class="form-control titulo input-arena fecha-inicio">
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function actualizarNumeros() {
+            document.querySelectorAll('.accion-item').forEach((accion, index) => {
+                const numero = index + 1;
+                accion.setAttribute('data-numero', numero);
+                accion.querySelector('h6').textContent = `${numero}. ACCIÓN`;
+            });
+        }
+
+        function actualizarBotones(btnAgregar, btnEliminar) {
+            btnAgregar.disabled = contadorAcciones >= MAX_ACCIONES;
+            btnEliminar.disabled = contadorAcciones <= MIN_ACCIONES;
+        }
+
+        function configurarAcciones() {
+            const accionesList = document.getElementById('accionesList');
+            const btnAgregar = document.getElementById('btnAgregarAccion');
+            const btnEliminar = document.getElementById('btnEliminarAccion');
+
+            btnAgregar.addEventListener('click', function() {
+                if (contadorAcciones < MAX_ACCIONES) {
+                    contadorAcciones++;
+                    accionesList.insertAdjacentHTML('beforeend', getAccionTemplate(contadorAcciones));
+                    actualizarNumeros();
+                    actualizarBotones(btnAgregar, btnEliminar);
+                }
+            });
+
+            btnEliminar.addEventListener('click', function() {
+                if (contadorAcciones > MIN_ACCIONES) {
+                    document.querySelector('.accion-item:last-child').remove();
+                    contadorAcciones--;
+                    actualizarNumeros();
+                    actualizarBotones(btnAgregar, btnEliminar);
+                }
+            });
+
+            actualizarBotones(btnAgregar, btnEliminar);
+        }
+
+        // ========================================
+        // FUNCIONES DE CÁLCULO (IGUALES A LA VISTA DE CREAR)
+        // ========================================
+        function calcularTotalPersonas(grupo) {
+            let total = 0;
+            document.querySelectorAll(`#tbody${grupo} tr`).forEach(fila => {
+                total += parseInt(fila.cells[0].textContent) || 0;
+            });
+            document.getElementById(`total${grupo}`).textContent = total;
+            return total;
+        }
+
+        function calcularSumatorias() {
+            const selectAcumulable = document.getElementById('selectAcumulable');
+            let sumaGrupo1 = 0;
+            let sumaGrupo2 = 0;
+
+            document.querySelectorAll('.mes-grupo1').forEach(input => {
+                sumaGrupo1 += parseInt(input.value) || 0;
+            });
+
+            if (selectAcumulable.value === 'si') {
+                document.querySelectorAll('.mes-grupo2').forEach(input => {
+                    sumaGrupo2 += parseInt(input.value) || 0;
+                });
+            }
+
+            document.getElementById('valorServicios').value = sumaGrupo1;
+            document.getElementById('valorPersonas').value = sumaGrupo2;
+
+            actualizarMaximosPersonas(sumaGrupo1, sumaGrupo2);
+            actualizarServiciosPorMunicipio();
+            actualizarCamposMeta();
+            calcularTrimestres();
+        }
+
+        function actualizarServiciosPorMunicipio() {
+            let totalPersonasGrupo1 = calcularTotalPersonas('Grupo1');
+            let totalPersonasGrupo2 = calcularTotalPersonas('Grupo2');
+            const totalPersonasMunicipios = totalPersonasGrupo1 + totalPersonasGrupo2;
+            document.getElementById('valorServiciosMunicipio').value = totalPersonasMunicipios;
+            actualizarCamposMeta();
+        }
+
+        function actualizarMaximosPersonas(maxGrupo1, maxGrupo2) {
+            document.getElementById('personasAtendidasGrupo1').max = maxGrupo1;
+            document.getElementById('personasAtendidasGrupo2').max = maxGrupo2;
+        }
+
+        function puedeAgregarPersonas(grupo, cantidad) {
+            const maxServicios = grupo === 'Grupo1'
+                ? parseInt(document.getElementById('valorServicios').value) || 0
+                : parseInt(document.getElementById('valorPersonas').value) || 0;
+
+            const totalActual = calcularTotalPersonas(grupo);
+            return (totalActual + cantidad) <= maxServicios;
+        }
+
+        function actualizarCamposMeta() {
+            const valorServicios = parseInt(document.getElementById('valorServicios').value) || 0;
+            const valorPersonas = parseInt(document.getElementById('valorPersonas').value) || 0;
+
+            document.getElementById('inputServicioMeta').value = valorServicios;
+            document.getElementById('inputServicioMetas').value = valorPersonas;
+
+            let porcentaje = 0;
+            if (valorServicios > 0) {
+                if (valorPersonas > 0) {
+                    porcentaje = (valorPersonas / valorServicios) * 100;
+                } else {
+                    porcentaje = 100;
+                }
+                porcentaje = Math.round(porcentaje * 100) / 100;
+            }
+
+            document.getElementById('inputPorcentajeMeta').value = porcentaje;
+        }
+
+        function calcularTrimestres() {
+            const trimestres = {
+                1: ['ENE', 'FEB', 'MAR'],
+                2: ['ABR', 'MAY', 'JUN'],
+                3: ['JUL', 'AGO', 'SEP'],
+                4: ['OCT', 'NOV', 'DIC']
+            };
+
+            for (let i = 1; i <= 4; i++) {
+                let suma = 0;
+                trimestres[i].forEach(mes => {
+                    const input = document.querySelector(`.mes-grupo1[data-mes="${mes}"]`);
+                    if (input) {
+                        suma += parseInt(input.value) || 0;
+                    }
+                });
+
+                const campos = {
+                    1: 'primerServicio',
+                    2: 'segundoServicio',
+                    3: 'tercerServicio',
+                    4: 'cuartoServicio'
+                };
+
+                document.getElementById(campos[i]).value = suma;
+            }
+
+            for (let i = 1; i <= 4; i++) {
+                let suma = 0;
+                trimestres[i].forEach(mes => {
+                    const input = document.querySelector(`.mes-grupo2[data-mes="${mes}"]`);
+                    if (input) {
+                        suma += parseInt(input.value) || 0;
+                    }
+                });
+
+                const campos = {
+                    1: 'primerPersona',
+                    2: 'segundoPersona',
+                    3: 'tercerPersona',
+                    4: 'cuartoPersona'
+                };
+
+                document.getElementById(campos[i]).value = suma;
+            }
+        }
+
+        // ========================================
+        // FUNCIONES DE PERSONAS/MUNICIPIOS
+        // ========================================
+        function configurarAgregarPersonas(grupo) {
+            const btnAgregar = document.getElementById(`btnAgregar${grupo}`);
+            const selectEstado = document.getElementById(`selectEstado${grupo}`);
+            const inputPersonas = document.getElementById(`personasAtendidas${grupo}`);
+            const tbody = document.getElementById(`tbody${grupo}`);
+            const tabla = document.getElementById(`tabla${grupo}`);
+
+            btnAgregar.addEventListener('click', function() {
+                const estado = selectEstado.value;
+                const personas = parseInt(inputPersonas.value) || 0;
+
+                if (!estado) {
+                    alert('Por favor, seleccione un municipio');
+                    return;
+                }
+
+                if (personas <= 0) {
+                    alert('Por favor, ingrese un número válido de personas');
+                    return;
+                }
+
+                if (!puedeAgregarPersonas(grupo, personas)) {
+                    const maxServicios = grupo === 'Grupo1'
+                        ? parseInt(document.getElementById('valorServicios').value) || 0
+                        : parseInt(document.getElementById('valorPersonas').value) || 0;
+
+                    const totalActual = calcularTotalPersonas(grupo);
+                    const disponibles = maxServicios - totalActual;
+                    alert(`No se pueden agregar ${personas} personas. Solo hay ${disponibles} disponibles.`);
+                    return;
+                }
+
+                const datos = datosEstados[estado];
+
+                if (!datos) {
+                    alert('Error: No se encontraron datos para el municipio seleccionado');
+                    return;
+                }
+
+                const nuevaFila = document.createElement('tr');
+                nuevaFila.setAttribute('data-id-municipio', estado);
+                nuevaFila.setAttribute('data-cantidad', personas);
+                nuevaFila.innerHTML = `
+                    <td>${personas}</td>
+                    <td>${datos.municipio}</td>
+                    <td>${datos.region}</td>
+                    <td>${datos.numeroRegion}</td>
+                    <td>${datos.clave}</td>
+                    <td><button class="btn btn-sm btn-outline-danger btn-eliminar">Eliminar</button></td>
+                `;
+
+                tbody.appendChild(nuevaFila);
+
+                if (tabla.style.display === 'none') {
+                    tabla.style.display = 'block';
+                }
+
+                nuevaFila.querySelector('.btn-eliminar').addEventListener('click', function() {
+                    nuevaFila.remove();
+                    calcularTotalPersonas(grupo);
+                    actualizarServiciosPorMunicipio();
+                    if (tbody.children.length === 0) {
+                        tabla.style.display = 'none';
+                    }
+                });
+
+                calcularTotalPersonas(grupo);
+                actualizarServiciosPorMunicipio();
+                inputPersonas.value = '0';
+                selectEstado.value = '';
+            });
+        }
+
+        // ========================================
+        // CONFIGURACIÓN DE EVENTOS DE SELECTS
+        // ========================================
+        function configurarSelectDelegaciones() {
+            const selectDelegaciones = document.getElementById('selectDelegaciones');
+            const inputDelegaciones = document.getElementById('inputDelegaciones');
+
+            if (selectDelegaciones.value === 'No') {
+                inputDelegaciones.disabled = true;
+            } else if (selectDelegaciones.value === 'Si') {
+                inputDelegaciones.disabled = false;
+            }
+
+            selectDelegaciones.addEventListener('change', function() {
+                const valorSeleccionado = this.value;
+
+                if (valorSeleccionado === 'No') {
+                    inputDelegaciones.value = 'N/A';
+                    inputDelegaciones.disabled = true;
+                } else if (valorSeleccionado === 'Si') {
+                    inputDelegaciones.value = '';
+                    inputDelegaciones.disabled = false;
+                } else {
+                    inputDelegaciones.value = '';
+                    inputDelegaciones.disabled = true;
+                }
+            });
+        }
+
+        function configurarSelectPersonas() {
+            const selectPersonas = document.getElementById('selectPersonas');
+            const selectAcumulable = document.getElementById('selectAcumulable');
+            const inputsGrupo2 = document.querySelectorAll('.mes-grupo2');
+
+            // Habilitar selectAcumulable si ya hay un valor seleccionado
+            if (selectPersonas.value === 'Personas' || selectPersonas.value === 'Instituciones') {
+                selectAcumulable.disabled = false;
+                
+                // Si acumulable es "si", habilitar inputs del grupo 2
+                if (selectAcumulable.value === 'si') {
+                    inputsGrupo2.forEach(input => input.disabled = false);
+                }
+            } else {
+                selectAcumulable.disabled = true;
+            }
+
+            selectPersonas.addEventListener('change', function() {
+                if (this.value === 'Personas' || this.value === 'Instituciones') {
+                    selectAcumulable.disabled = false;
+                } else {
+                    selectAcumulable.disabled = true;
+                    selectAcumulable.value = '';
+
+                    inputsGrupo2.forEach(input => {
+                        input.disabled = true;
+                        input.value = 0;
+                    });
+
+                    calcularSumatorias();
+                }
+            });
+        }
+
+        function configurarSelectAcumulable() {
+            const selectAcumulable = document.getElementById('selectAcumulable');
+            const inputsGrupo2 = document.querySelectorAll('.mes-grupo2');
+
+            selectAcumulable.addEventListener('change', function() {
+                const habilitar = this.value === 'si';
+
+                inputsGrupo2.forEach(input => {
+                    input.disabled = !habilitar;
+                    if (!habilitar) {
+                        input.value = 0;
+                    }
+                });
+
+                calcularSumatorias();
+            });
+        }
+
+        // ========================================
+        // FUNCIÓN PARA ACTUALIZAR PROGRAMACIÓN
+        // ========================================
+        async function actualizarProgramacion() {
+            const btnActualizar = document.getElementById('btnActualizarProgramacion');
+            const textoOriginal = btnActualizar.innerHTML;
+
+            try {
+                const erroresValidacion = validarDatosAntesDeGuardar();
+                if (erroresValidacion.length > 0) {
+                    alert('Por favor complete los siguientes campos:\n\n' + erroresValidacion.join('\n'));
+                    return;
+                }
+
+                btnActualizar.disabled = true;
+                btnActualizar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Actualizando...';
+
+                // Recolectar todos los datos (igual que en guardar)
+                const datosGenerales = {
+                    area: document.getElementById('inputArea').value,
+                    departamento: document.getElementById('inputDepartamento').value,
+                    correoContacto: document.getElementById('inputCorreo').value,
+                    pp: document.getElementById('selectPrograma').value,
+                    nComponente: document.getElementById('selectComponente').value,
+                    nActividad: parseInt(document.getElementById('inputActividad').value) || 0,
+                    justificacion: document.getElementById('inputJustificacion').value,
+                    descripcionDocumento: document.getElementById('inputDocumentacion').value,
+                    recursoFederal: document.getElementById('selectFederal').value,
+                    recursoEstatal: document.getElementById('selectEstatal').value,
+                    programaSocial: document.getElementById('inputPrograma').value,
+                    descripcionActividad: document.getElementById('inputDescripcion').value,
+                    nombreIndicador: document.getElementById('inputIndicador').value,
+                    definicionIndicador: document.getElementById('inputDefinicion').value,
+                    unidadMedida: document.getElementById('selectMedida').value,
+                    mediosVerificacion: document.getElementById('inputMedios').value,
+                    serieInformacionDesde: modelData.serieInformacionDesde,
+                    serieInformacionHasta: modelData.serieInformacionHasta,
+                    fuenteInformacion: document.getElementById('inputFuentes').value,
+                    intervienenDelegaciones: document.getElementById('selectDelegaciones').value,
+                    intervienenDelegacionesManera: document.getElementById('inputDelegaciones').value,
+                    selectAcumulable: document.getElementById('selectAcumulable').value,
+                    totalAnos: document.getElementById('valorServicios').value,
+                    totalAnos2: document.getElementById('valorPersonas').value,
+                    beneficiarios: document.getElementById('selectPersonas').value,
+                    estatus: modelData.estatus
+                };
+
+                const lineaBase = {
+                    anoBase: modelData.anoBase,
+                    porcentajeBase: parseFloat(document.getElementById('inputPorcentajeBase').value) || 0,
+                    servicioBase: parseInt(document.getElementById('inputServicioBase').value) || 0,
+                    personasBase: parseInt(document.getElementById('inputPersonasBase').value) || 0
+                };
+
+                const metaAnual = {
+                    anoMeta: parseInt(document.getElementById('inputAnoMeta').value) || 0,
+                    porcentajeMeta: parseFloat(document.getElementById('inputPorcentajeMeta').value) || 0,
+                    servicioMeta: parseInt(document.getElementById('inputServicioMeta').value) || 0,
+                    personasMeta: parseInt(document.getElementById('inputServicioMetas').value) || 0
+                };
+
+                const trimestresServicios = {
+                    primerServicio: parseInt(document.getElementById('primerServicio').value) || 0,
+                    segundoServicio: parseInt(document.getElementById('segundoServicio').value) || 0,
+                    tercerServicio: parseInt(document.getElementById('tercerServicio').value) || 0,
+                    cuartoServicio: parseInt(document.getElementById('cuartoServicio').value) || 0
+                };
+
+                const trimestresPersonas = {
+                    primerPersona: parseInt(document.getElementById('primerPersona').value) || 0,
+                    segundoPersona: parseInt(document.getElementById('segundoPersona').value) || 0,
+                    tercerPersona: parseInt(document.getElementById('tercerPersona').value) || 0,
+                    cuartoPersona: parseInt(document.getElementById('cuartoPersona').value) || 0
+                };
+
+                const mesesServicios = [];
+                document.querySelectorAll('.mes-grupo1').forEach(input => {
+                    mesesServicios.push(parseInt(input.value) || 0);
+                });
+
+                const mesesPersonas = [];
+                document.querySelectorAll('.mes-grupo2').forEach(input => {
+                    mesesPersonas.push(parseInt(input.value) || 0);
+                });
+
+                const municipiosServicios = [];
+                document.querySelectorAll('#tbodyGrupo1 tr').forEach(fila => {
+                    const idMunicipio = parseInt(fila.getAttribute('data-id-municipio')) || 0;
+                    const cantidad = parseInt(fila.getAttribute('data-cantidad')) || 0;
+
+                    if (idMunicipio > 0 && cantidad > 0) {
+                        municipiosServicios.push({
+                            idMunicipio: idMunicipio,
+                            cantidad: cantidad
+                        });
+                    }
+                });
+
+                const municipiosPersonas = [];
+                document.querySelectorAll('#tbodyGrupo2 tr').forEach(fila => {
+                    const idMunicipio = parseInt(fila.getAttribute('data-id-municipio')) || 0;
+                    const cantidad = parseInt(fila.getAttribute('data-cantidad')) || 0;
+
+                    if (idMunicipio > 0 && cantidad > 0) {
+                        municipiosPersonas.push({
+                            idMunicipio: idMunicipio,
+                            cantidad: cantidad
+                        });
+                    }
+                });
+
+                const acciones = [];
+                document.querySelectorAll('.accion-item').forEach(accion => {
+                    const descripcion = accion.querySelector('textarea').value;
+                    const frecuencia = accion.querySelector('select').value;
+                    const fechaStr = accion.querySelector('.fecha-inicio').value;
+
+                    if (descripcion.trim() !== '') {
+                        let fechaInicio = null;
+                        if (fechaStr) {
+                            const [year, month, day] = fechaStr.split('-');
+                            fechaInicio = `${year}-${month}-${day}`;
+                        }
+
+                        acciones.push({
+                            descripcion: descripcion,
+                            frecuencia: frecuencia,
+                            fechaInicio: fechaInicio
+                        });
+                    }
+                });
+
+                const firmas = {
+                    elaboraNombre: document.getElementById('inputElaboro').value,
+                    elaboroCargo: document.getElementById('inputElaboroCargo').value,
+                    revisionNombre: document.getElementById('inputReviso').value,
+                    revisionCargo: document.getElementById('inputRevisoCargo').value,
+                    autorizacionNombre: document.getElementById('inputAutorizo').value,
+                    autorizacionCargo: document.getElementById('inputAutorizoCargo').value
+                };
+
+                const datosCompletos = {
+                    ...datosGenerales,
+                    ...lineaBase,
+                    ...metaAnual,
+                    ...trimestresServicios,
+                    ...trimestresPersonas,
+                    mesesServicios: mesesServicios,
+                    mesesPersonas: mesesPersonas,
+                    municipiosServicios: municipiosServicios,
+                    municipiosPersonas: municipiosPersonas,
+                    acciones: acciones,
+                    ...firmas
+                };
+
+                const erroresFinales = validarDatosCompletos(datosCompletos);
+                if (erroresFinales.length > 0) {
+                    btnActualizar.disabled = false;
+                    btnActualizar.innerHTML = textoOriginal;
+                    alert('Errores en el formulario:\n\n' + erroresFinales.join('\n'));
+                    return;
+                }
+
+                console.log('Datos a actualizar:', datosCompletos);
+
+                // CAMBIAR EL ENDPOINT A ActualizarProgramacion
+                const response = await fetch('/Programacion/ActualizarProgramacion', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(datosCompletos)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error HTTP: ${response.status}`);
+                }
+
+                const resultado = await response.json();
+
+                if (resultado.success) {
+                    btnActualizar.innerHTML = '<i class="fas fa-check"></i> ¡Actualizado!';
+                    btnActualizar.classList.remove('boton-rojo');
+                    btnActualizar.classList.add('btn-success');
+
+                    setTimeout(() => {
+                        alert('Programación actualizada correctamente');
+                        window.location.href = '/Programacion/Programacion';
+                    }, 1000);
+
+                } else {
+                    throw new Error(resultado.message || 'Error desconocido al actualizar');
+                }
+
+            } catch (error) {
+                console.error('Error al actualizar:', error);
+
+                btnActualizar.disabled = false;
+                btnActualizar.innerHTML = textoOriginal;
+                btnActualizar.classList.remove('btn-success');
+                btnActualizar.classList.add('boton-rojo');
+
+                let mensajeError = 'Error al actualizar la programación';
+                if (error.message.includes('HTTP')) {
+                    mensajeError = 'Error de conexión con el servidor';
+                } else if (error.message.includes('JSON')) {
+                    mensajeError = 'Error en el formato de datos';
+                } else {
+                    mensajeError = error.message;
+                }
+
+                alert(`${mensajeError}\n\nPor favor, intente nuevamente.`);
+            }
+        }
+
+        // ========================================
+        // FUNCIONES DE VALIDACIÓN
+        // ========================================
+        function validarDatosAntesDeGuardar() {
+            const errores = [];
+            
+            if (!document.getElementById('inputActividad').value || parseInt(document.getElementById('inputActividad').value) <= 0) {
+                errores.push('• Número de actividad válido');
+            }
+
+            if (!document.getElementById('inputJustificacion').value.trim()) {
+                errores.push('• Justificación');
+            }
+
+            if (!document.getElementById('inputDescripcion').value.trim()) {
+                errores.push('• Descripción de la actividad');
+            }
+
+            const accionesCompletas = document.querySelectorAll('.accion-item').length;
+            if (accionesCompletas < 3) {
+                errores.push('• Mínimo 3 acciones necesarias');
+            }
+
+            if (!document.getElementById('inputElaboro').value.trim()) {
+                errores.push('• Nombre de quien elabora');
+            }
+
+            if (!document.getElementById('inputElaboroCargo').value.trim()) {
+                errores.push('• Cargo de quien elabora');
+            }
+
+            return errores;
+        }
+
+        function validarDatosCompletos(datosCompletos) {
+            const errores = [];
+
+            if (datosCompletos.nActividad <= 0) {
+                errores.push('• Debe ingresar un número de actividad válido');
+            }
+
+            if (datosCompletos.acciones.length < 3 || datosCompletos.acciones.length > 5) {
+                errores.push('• Debe haber entre 3 y 5 acciones completas');
+            }
+
+            const accionesIncompletas = datosCompletos.acciones.filter(a => !a.descripcion.trim());
+            if (accionesIncompletas.length > 0) {
+                errores.push('• Todas las acciones deben tener descripción');
+            }
+
+            if (!datosCompletos.elaboraNombre || !datosCompletos.elaboroCargo) {
+                errores.push('• Los datos de quién elaboró son requeridos');
+            }
+
+            const totalServiciosMunicipios = datosCompletos.municipiosServicios.reduce((sum, m) => sum + m.cantidad, 0);
+            const totalPersonasMunicipios = datosCompletos.municipiosPersonas.reduce((sum, m) => sum + m.cantidad, 0);
+
+            if (totalServiciosMunicipios > datosCompletos.servicioMeta) {
+                errores.push(`• Los servicios por municipio (${totalServiciosMunicipios}) exceden el total de servicios (${datosCompletos.servicioMeta})`);
+            }
+
+            if (totalPersonasMunicipios > datosCompletos.personasMeta) {
+                errores.push(`• Las personas por municipio (${totalPersonasMunicipios}) exceden el total de personas (${datosCompletos.personasMeta})`);
+            }
+
+            return errores;
+        }
+
+        // ========================================
+        // INICIALIZACIÓN PRINCIPAL
+        // ========================================
+        document.addEventListener('DOMContentLoaded', async function() {
+            await cargarMunicipios();
+            configurarAcciones();
+            cargarAccionesExistentes();
+            cargarMunicipiosExistentes();
+            configurarSelectDelegaciones();
+            configurarSelectPersonas();
+            configurarSelectAcumulable();
+            configurarAgregarPersonas('Grupo1');
+            configurarAgregarPersonas('Grupo2');
+
+            document.querySelectorAll('.mes-grupo1, .mes-grupo2').forEach(input => {
+                input.addEventListener('input', calcularSumatorias);
+            });
+
+            const btnActualizar = document.getElementById('btnActualizarProgramacion');
+            if (btnActualizar) {
+                btnActualizar.addEventListener('click', actualizarProgramacion);
+            }
+
+            calcularSumatorias();
+        });
+    </script>
+}

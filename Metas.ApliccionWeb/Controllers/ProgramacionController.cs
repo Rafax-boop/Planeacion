@@ -18,6 +18,7 @@ namespace Metas.AplicacionWeb.Controllers
         private readonly IProgramacionService _programacionService;
         private readonly IFechasService _fechasService;
         private readonly IUsuarioService _usuarioService;
+
         public ProgramacionController(IDepartamentoService departamentoService, IProgramacionService programacionService, IFechasService fechasService, IUsuarioService usuarioService)
         {
             _departamentoService = departamentoService;
@@ -25,6 +26,8 @@ namespace Metas.AplicacionWeb.Controllers
             _fechasService = fechasService;
             _usuarioService = usuarioService;
         }
+
+        [HttpGet]
         public async Task<IActionResult> Programacion()
         {
             var departamentos = await _departamentoService.ObtenerDepartamentos();
@@ -40,6 +43,7 @@ namespace Metas.AplicacionWeb.Controllers
             return View(modelo);
         }
 
+        [HttpGet]
         public async Task<IActionResult> RegistrarProgramacion(int anoFiscal, int departamentoId)
         {
             var componentes = await _departamentoService.ObtenerComponentes();
@@ -117,7 +121,8 @@ namespace Metas.AplicacionWeb.Controllers
                     Area = x.Area,
                     Departamento = x.Departamento,
                     ProgramaSocial = x.ProgramaSocial,
-                    IdEstatus = x.Programacions.FirstOrDefault()?.IdEstatus
+                    IdEstatus = x.Programacions.FirstOrDefault()?.IdEstatus,
+                    NombreEstatus = x.Programacions.FirstOrDefault()?.IdEstatusNavigation.Valor
                 }).ToList();
 
                 var fecha = await _fechasService.ValidarFechaHabilitada(anoFiscal);
@@ -231,6 +236,18 @@ namespace Metas.AplicacionWeb.Controllers
                 // Registrar la excepción (recomendado)
                 return Json(new { success = false, mensaje = $"Error al eliminar el registro: {ex.Message}" });
             }
+        }
+
+        public async Task<IActionResult> EditarProgramacion(int id)
+        {
+            var datosCompletos = await _programacionService.ObtenerDatosCompletos(id);
+
+            if(datosCompletos == null)
+            {
+                TempData["Error"] = "No se encontraron datos para la programación solicitada.";
+                return RedirectToAction("Programacion");
+            }
+            return View(datosCompletos);
         }
     }    
 }
