@@ -42,7 +42,7 @@
             <div class="d-flex p-2">
                 <div class="w-50 align-content-center">3. CORREO ELECTRÓNICO:</div>
                 <div class="w-50 my-2 mx-2">
-                    <input type="email" class="input-arena form-control titulo" readonly placeholder="ejemplo@correo.com" id="inputCorreo" value="@Model.CorreoContacto">
+                    <input type="email" class="input-arena form-control titulo"  placeholder="ejemplo@correo.com" id="inputCorreo" value="@Model.CorreoContacto">
                 </div>
             </div>
         </div>
@@ -1013,15 +1013,7 @@
             document.getElementById('inputServicioMeta').value = valorServicios;
             document.getElementById('inputServicioMetas').value = valorPersonas;
 
-            let porcentaje = 0;
-            if (valorServicios > 0) {
-                if (valorPersonas > 0) {
-                    porcentaje = (valorPersonas / valorServicios) * 100;
-                } else {
-                    porcentaje = 100;
-                }
-                porcentaje = Math.round(porcentaje * 100) / 100;
-            }
+            let porcentaje = 100;
 
             document.getElementById('inputPorcentajeMeta').value = porcentaje;
         }
@@ -1201,6 +1193,9 @@
         function configurarSelectAcumulable() {
             const selectAcumulable = document.getElementById('selectAcumulable');
             const inputsGrupo2 = document.querySelectorAll('.mes-grupo2');
+            const selectEstadoGrupo2 = document.getElementById('selectEstadoGrupo2');
+            const personasAtendidasGrupo2 = document.getElementById('personasAtendidasGrupo2');
+            const btnAgregarGrupo2 = document.getElementById('btnAgregarGrupo2');
 
             selectAcumulable.addEventListener('change', function() {
                 const habilitar = this.value === 'si';
@@ -1211,6 +1206,15 @@
                         input.value = 0;
                     }
                 });
+
+                selectEstadoGrupo2.disabled = !habilitar;
+                personasAtendidasGrupo2.disabled = !habilitar;
+                btnAgregarGrupo2.disabled = !habilitar;
+
+                if (!habilitar) {
+                    selectEstadoGrupo2.value = '';
+                    personasAtendidasGrupo2.value = 0;
+                }
 
                 calcularSumatorias();
             });
@@ -1272,7 +1276,8 @@
                     departamento: document.getElementById('inputDepartamento').value,
                     correoContacto: document.getElementById('inputCorreo').value,
                     pp: document.getElementById('selectPrograma').value,
-                    nComponente: document.getElementById('selectComponente').value,
+                    nComponente: document.getElementById('selectComponente').selectedOptions[0].text,
+                    componente: document.getElementById('selectComponente').value,
                     nActividad: parseInt(document.getElementById('inputActividad').value) || 0,
                     justificacion: document.getElementById('inputJustificacion').value,
                     descripcionDocumento: document.getElementById('inputDocumentacion').value,

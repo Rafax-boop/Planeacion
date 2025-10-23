@@ -42,11 +42,6 @@ namespace Metas.BLL.Implementacion
 
             try
             {
-                var componenteTexto = await _context.PpCompuestos
-                .Where(x => x.IdPp == int.Parse(modelo.NComponente))
-                .Select(x => x.ComponenteCompuesto)
-                .FirstOrDefaultAsync();
-
                 var idPp = await _context.Pps // o _context.PPS según tu DbContext
                 .Where(x => x.Clave == modelo.Pp) // Ajusta según el nombre de la columna
                 .Select(x => x.IdPp)
@@ -57,7 +52,7 @@ namespace Metas.BLL.Implementacion
                     Area = modelo.Area,
                     CorreoElectro = modelo.CorreoContacto,
                     Pp = modelo.Pp,
-                    NComponente = componenteTexto,
+                    NComponente = modelo.NComponente,
                     NActividad = modelo.NActividad,
                     Justificacion = modelo.Justificacion,
                     DescripcionDocumento = modelo.DescripcionDocumento,
@@ -161,7 +156,7 @@ namespace Metas.BLL.Implementacion
                 var llenadoInterno = new LlenadoInterno
                 {
                     Pp = modelo.Pp,
-                    Componente = int.Parse(modelo.NComponente),
+                    Componente = modelo.Componente,
                     Actividad = modelo.NActividad,
                     DescripcionActividad = modelo.DescripcionActividad,
                     Area = modelo.Area,
@@ -195,9 +190,7 @@ namespace Metas.BLL.Implementacion
                     OctubrePersona = modelo.MesesPersonas[9],
                     NoviembrePersona = modelo.MesesPersonas[10],
                     DiciembrePersona = modelo.MesesPersonas[11],
-                    Idpp = idPp,
-                    NombreRealizo = modelo.ElaboraNombre,
-                    CargoRealizo = modelo.ElaboroCargo
+                    Idpp = idPp
                 };
 
                 await _repositorioLlenadoInterno.Crear(llenadoInterno);
@@ -389,10 +382,10 @@ namespace Metas.BLL.Implementacion
                     PersonasMeta = programacionEntidad.NoPersonas2 ?? 0,
 
                     // Trimestres Servicios
-                    PrimerServicio = programacionEntidad.Primero ?? 0,
-                    SegundoServicio = programacionEntidad.Segundo ?? 0,
-                    TercerServicio = programacionEntidad.Tercero ?? 0,
-                    CuartoServicio = programacionEntidad.Cuarto ?? 0,
+                    PrimerServicio = programacionEntidad.Servicio1 ?? 0,
+                    SegundoServicio = programacionEntidad.Servicio2 ?? 0,
+                    TercerServicio = programacionEntidad.Servicio3 ?? 0,
+                    CuartoServicio = programacionEntidad.Servicio4 ?? 0,
 
                     // Trimestres Personas
                     PrimerPersona = programacionEntidad.Personas1 ?? 0,

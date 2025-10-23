@@ -96,8 +96,8 @@
                         <h5 class="fw-light">Recurso Federal</h5>
                         <select required class="input-arena form-control titulo" id="selectFederal">
                             <option value="">Seleccione</option>
-                            <option value="Si" @(Model.RecursoFederal == "Si" ? "selected" : "")>Sí</option>
-                            <option value="No" @(Model.RecursoFederal == "No" ? "selected" : "")>No</option>
+                            <option value="Si" selected="@(Model.RecursoFederal == "Si")">Sí</option>
+                            <option value="No" selected="@(Model.RecursoFederal == "No")">No</option>
                         </select>
                     </div>
 
@@ -105,8 +105,8 @@
                         <h5 class="fw-light">Recurso Estatal</h5>
                         <select required class="input-arena form-control titulo" id="selectEstatal">
                             <option value="">Seleccione</option>
-                            <option value="Si" @(Model.RecursoEstatal == "Si" ? "selected" : "")>Sí</option>
-                            <option value="No" @(Model.RecursoEstatal == "No" ? "selected" : "")>No</option>
+                            <option value="Si" selected="@(Model.RecursoEstatal == "Si")">Sí</option>
+                            <option value="No" selected="@(Model.RecursoEstatal == "No")">No</option>
                         </select>
                     </div>
                 </div>
@@ -248,8 +248,8 @@
                     <div class="col-md-6">
                         <select id="selectDelegaciones" class="input-arena form-control titulo">
                             <option value="">Seleccione</option>
-                            <option value="Si" @(Model.IntervienenDelegaciones == "Si" ? "selected" : "")>Sí</option>
-                            <option value="No" @(Model.IntervienenDelegaciones == "No" ? "selected" : "")>No</option>
+                            <option value="Si" selected="@(Model.IntervienenDelegaciones == "Si")">Sí</option>
+                            <option value="No" selected="@(Model.IntervienenDelegaciones == "No")">No</option>
                         </select>
                     </div>
                 </div>
@@ -382,8 +382,8 @@
                         <div class="col-md-8">
                             <select class="input-arena form-control titulo" id="selectPersonas">
                                 <option value="">Seleccione Personas / Instituciones</option>
-                                <option value="Personas" @(Model.Beneficiarios == "Personas" ? "selected" : "")>Personas</option>
-                                <option value="Instituciones" @(Model.Beneficiarios == "Instituciones" ? "selected" : "")>Instituciones</option>
+                                <option value="Personas" selected="@(Model.Beneficiarios == "Personas")">Personas</option>
+                                <option value="Instituciones" selected="@(Model.Beneficiarios == "Instituciones")">Instituciones</option>
                             </select>
                         </div>
                     </div>
@@ -395,8 +395,8 @@
                         <div class="col-md-8">
                             <select class="input-arena form-control titulo" id="selectAcumulable">
                                 <option value="">Seleccione opción</option>
-                                <option value="no" @(Model.SelectAcumulable == "no" ? "selected" : "")>No</option>
-                                <option value="si" @(Model.SelectAcumulable == "si" ? "selected" : "")>Sí</option>
+                                <option value="no" selected="@(Model.SelectAcumulable == "no")">No</option>
+                                <option value="si" selected="@(Model.SelectAcumulable == "si")">Sí</option>
                             </select>
                         </div>
                     </div>
@@ -512,22 +512,6 @@
                 </div>
 
                 <div class="mt-4">
-                    <div class="row align-items-center py-3">
-                        <div class="col-md-8">
-                            <select class="input-arena form-control titulo" id="selectEstadoGrupo1">
-                                <option value="">Seleccione un municipio</option>
-                                @* Se llenará con JavaScript *@
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <input type="number" class="input-arena form-control titulo text-center"
-                                   id="personasAtendidasGrupo1" value="0" min="0" placeholder="Número">
-                        </div>
-                    </div>
-
-                    <div class="text-center mt-2">
-                        <button class="titulo boton-rojo fs-6" id="btnAgregarGrupo1" type="button">Agregar</button>
-                    </div>
 
                     <div class="mt-3" id="tablaGrupo1" style="display: none;">
                         <div class="table-responsive">
@@ -539,7 +523,6 @@
                                         <th>Región</th>
                                         <th>Número de región</th>
                                         <th>Clave del municipio</th>
-                                        <th>Acción</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tbodyGrupo1">
@@ -578,22 +561,7 @@
                 </div>
 
                 <div class="mt-4">
-                    <div class="row align-items-center py-3">
-                        <div class="col-md-8">
-                            <select class="input-arena form-control titulo" id="selectEstadoGrupo2">
-                                <option value="">Seleccione un municipio</option>
-                                @* Se llenará con JavaScript *@
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <input type="number" class="input-arena form-control titulo text-center"
-                                   id="personasAtendidasGrupo2" value="0" min="0" placeholder="Número">
-                        </div>
-                    </div>
-
-                    <div class="text-center mt-2">
-                        <button class="titulo boton-rojo fs-6" id="btnAgregarGrupo2" type="button">Agregar</button>
-                    </div>
+                    
 
                     <div class="mt-3" id="tablaGrupo2" style="display: none;">
                         <div class="table-responsive">
@@ -605,7 +573,6 @@
                                         <th>Región</th>
                                         <th>Número de región</th>
                                         <th>Clave del municipio</th>
-                                        <th>Acción</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tbodyGrupo2">
@@ -706,17 +673,6 @@
                     };
                 });
 
-                // Llenar los selects de municipios
-                const selectGrupo1 = document.getElementById('selectEstadoGrupo1');
-                const selectGrupo2 = document.getElementById('selectEstadoGrupo2');
-                
-                municipios.forEach(m => {
-                    const option1 = new Option(m.municipio, m.id);
-                    const option2 = new Option(m.municipio, m.id);
-                    selectGrupo1.add(option1);
-                    selectGrupo2.add(option2);
-                });
-
             } catch (error) {
                 console.error('Error al cargar municipios:', error);
                 alert('Error al cargar los municipios. Por favor, recargue la página.');
@@ -741,18 +697,8 @@
                             <td>${datos.region}</td>
                             <td>${datos.numeroRegion}</td>
                             <td>${datos.clave}</td>
-                            <td><button class="btn btn-sm btn-outline-danger btn-eliminar">Eliminar</button></td>
                         `;
-                        tbody.appendChild(nuevaFila);
-                        
-                        nuevaFila.querySelector('.btn-eliminar').addEventListener('click', function() {
-                            nuevaFila.remove();
-                            calcularTotalPersonas('Grupo1');
-                            actualizarServiciosPorMunicipio();
-                            if (tbody.children.length === 0) {
-                                tabla.style.display = 'none';
-                            }
-                        });
+                        tbody.appendChild(nuevaFila);   
                     }
                 });
                 
@@ -777,18 +723,8 @@
                             <td>${datos.region}</td>
                             <td>${datos.numeroRegion}</td>
                             <td>${datos.clave}</td>
-                            <td><button class="btn btn-sm btn-outline-danger btn-eliminar">Eliminar</button></td>
                         `;
                         tbody.appendChild(nuevaFila);
-                        
-                        nuevaFila.querySelector('.btn-eliminar').addEventListener('click', function() {
-                            nuevaFila.remove();
-                            calcularTotalPersonas('Grupo2');
-                            actualizarServiciosPorMunicipio();
-                            if (tbody.children.length === 0) {
-                                tabla.style.display = 'none';
-                            }
-                        });
                     }
                 });
                 
@@ -961,543 +897,14 @@
                     sumaGrupo2 += parseInt(input.value) || 0;
                 });
             }
-
-            document.getElementById('valorServicios').value = sumaGrupo1;
-            document.getElementById('valorPersonas').value = sumaGrupo2;
-
-            actualizarMaximosPersonas(sumaGrupo1, sumaGrupo2);
             actualizarServiciosPorMunicipio();
-            actualizarCamposMeta();
-            calcularTrimestres();
         }
 
         function actualizarServiciosPorMunicipio() {
             let totalPersonasGrupo1 = calcularTotalPersonas('Grupo1');
             let totalPersonasGrupo2 = calcularTotalPersonas('Grupo2');
-            const totalPersonasMunicipios = totalPersonasGrupo1 + totalPersonasGrupo2;
-            document.getElementById('valorServiciosMunicipio').value = totalPersonasMunicipios;
-            actualizarCamposMeta();
-        }
-
-        function actualizarMaximosPersonas(maxGrupo1, maxGrupo2) {
-            document.getElementById('personasAtendidasGrupo1').max = maxGrupo1;
-            document.getElementById('personasAtendidasGrupo2').max = maxGrupo2;
-        }
-
-        function puedeAgregarPersonas(grupo, cantidad) {
-            const maxServicios = grupo === 'Grupo1'
-                ? parseInt(document.getElementById('valorServicios').value) || 0
-                : parseInt(document.getElementById('valorPersonas').value) || 0;
-
-            const totalActual = calcularTotalPersonas(grupo);
-            return (totalActual + cantidad) <= maxServicios;
-        }
-
-        function actualizarCamposMeta() {
-            const valorServicios = parseInt(document.getElementById('valorServicios').value) || 0;
-            const valorPersonas = parseInt(document.getElementById('valorPersonas').value) || 0;
-
-            document.getElementById('inputServicioMeta').value = valorServicios;
-            document.getElementById('inputServicioMetas').value = valorPersonas;
-
-            let porcentaje = 0;
-            if (valorServicios > 0) {
-                if (valorPersonas > 0) {
-                    porcentaje = (valorPersonas / valorServicios) * 100;
-                } else {
-                    porcentaje = 100;
-                }
-                porcentaje = Math.round(porcentaje * 100) / 100;
-            }
-
-            document.getElementById('inputPorcentajeMeta').value = porcentaje;
-        }
-
-        function calcularTrimestres() {
-            const trimestres = {
-                1: ['ENE', 'FEB', 'MAR'],
-                2: ['ABR', 'MAY', 'JUN'],
-                3: ['JUL', 'AGO', 'SEP'],
-                4: ['OCT', 'NOV', 'DIC']
-            };
-
-            for (let i = 1; i <= 4; i++) {
-                let suma = 0;
-                trimestres[i].forEach(mes => {
-                    const input = document.querySelector(`.mes-grupo1[data-mes="${mes}"]`);
-                    if (input) {
-                        suma += parseInt(input.value) || 0;
-                    }
-                });
-
-                const campos = {
-                    1: 'primerServicio',
-                    2: 'segundoServicio',
-                    3: 'tercerServicio',
-                    4: 'cuartoServicio'
-                };
-
-                document.getElementById(campos[i]).value = suma;
-            }
-
-            for (let i = 1; i <= 4; i++) {
-                let suma = 0;
-                trimestres[i].forEach(mes => {
-                    const input = document.querySelector(`.mes-grupo2[data-mes="${mes}"]`);
-                    if (input) {
-                        suma += parseInt(input.value) || 0;
-                    }
-                });
-
-                const campos = {
-                    1: 'primerPersona',
-                    2: 'segundoPersona',
-                    3: 'tercerPersona',
-                    4: 'cuartoPersona'
-                };
-
-                document.getElementById(campos[i]).value = suma;
-            }
-        }
-
-        // ========================================
-        // FUNCIONES DE PERSONAS/MUNICIPIOS
-        // ========================================
-        function configurarAgregarPersonas(grupo) {
-            const btnAgregar = document.getElementById(`btnAgregar${grupo}`);
-            const selectEstado = document.getElementById(`selectEstado${grupo}`);
-            const inputPersonas = document.getElementById(`personasAtendidas${grupo}`);
-            const tbody = document.getElementById(`tbody${grupo}`);
-            const tabla = document.getElementById(`tabla${grupo}`);
-
-            btnAgregar.addEventListener('click', function() {
-                const estado = selectEstado.value;
-                const personas = parseInt(inputPersonas.value) || 0;
-
-                if (!estado) {
-                    alert('Por favor, seleccione un municipio');
-                    return;
-                }
-
-                if (personas <= 0) {
-                    alert('Por favor, ingrese un número válido de personas');
-                    return;
-                }
-
-                if (!puedeAgregarPersonas(grupo, personas)) {
-                    const maxServicios = grupo === 'Grupo1'
-                        ? parseInt(document.getElementById('valorServicios').value) || 0
-                        : parseInt(document.getElementById('valorPersonas').value) || 0;
-
-                    const totalActual = calcularTotalPersonas(grupo);
-                    const disponibles = maxServicios - totalActual;
-                    alert(`No se pueden agregar ${personas} personas. Solo hay ${disponibles} disponibles.`);
-                    return;
-                }
-
-                const datos = datosEstados[estado];
-
-                if (!datos) {
-                    alert('Error: No se encontraron datos para el municipio seleccionado');
-                    return;
-                }
-
-                const nuevaFila = document.createElement('tr');
-                nuevaFila.setAttribute('data-id-municipio', estado);
-                nuevaFila.setAttribute('data-cantidad', personas);
-                nuevaFila.innerHTML = `
-                    <td>${personas}</td>
-                    <td>${datos.municipio}</td>
-                    <td>${datos.region}</td>
-                    <td>${datos.numeroRegion}</td>
-                    <td>${datos.clave}</td>
-                    <td><button class="btn btn-sm btn-outline-danger btn-eliminar">Eliminar</button></td>
-                `;
-
-                tbody.appendChild(nuevaFila);
-
-                if (tabla.style.display === 'none') {
-                    tabla.style.display = 'block';
-                }
-
-                nuevaFila.querySelector('.btn-eliminar').addEventListener('click', function() {
-                    nuevaFila.remove();
-                    calcularTotalPersonas(grupo);
-                    actualizarServiciosPorMunicipio();
-                    if (tbody.children.length === 0) {
-                        tabla.style.display = 'none';
-                    }
-                });
-
-                calcularTotalPersonas(grupo);
-                actualizarServiciosPorMunicipio();
-                inputPersonas.value = '0';
-                selectEstado.value = '';
-            });
-        }
-
-        // ========================================
-        // CONFIGURACIÓN DE EVENTOS DE SELECTS
-        // ========================================
-        function configurarSelectDelegaciones() {
-            const selectDelegaciones = document.getElementById('selectDelegaciones');
-            const inputDelegaciones = document.getElementById('inputDelegaciones');
-
-            if (selectDelegaciones.value === 'No') {
-                inputDelegaciones.disabled = true;
-            } else if (selectDelegaciones.value === 'Si') {
-                inputDelegaciones.disabled = false;
-            }
-
-            selectDelegaciones.addEventListener('change', function() {
-                const valorSeleccionado = this.value;
-
-                if (valorSeleccionado === 'No') {
-                    inputDelegaciones.value = 'N/A';
-                    inputDelegaciones.disabled = true;
-                } else if (valorSeleccionado === 'Si') {
-                    inputDelegaciones.value = '';
-                    inputDelegaciones.disabled = false;
-                } else {
-                    inputDelegaciones.value = '';
-                    inputDelegaciones.disabled = true;
-                }
-            });
-        }
-
-        function configurarSelectPersonas() {
-            const selectPersonas = document.getElementById('selectPersonas');
-            const selectAcumulable = document.getElementById('selectAcumulable');
-            const inputsGrupo2 = document.querySelectorAll('.mes-grupo2');
-
-            // Habilitar selectAcumulable si ya hay un valor seleccionado
-            if (selectPersonas.value === 'Personas' || selectPersonas.value === 'Instituciones') {
-                selectAcumulable.disabled = false;
-                
-                // Si acumulable es "si", habilitar inputs del grupo 2
-                if (selectAcumulable.value === 'si') {
-                    inputsGrupo2.forEach(input => input.disabled = false);
-                }
-            } else {
-                selectAcumulable.disabled = true;
-            }
-
-            selectPersonas.addEventListener('change', function() {
-                if (this.value === 'Personas' || this.value === 'Instituciones') {
-                    selectAcumulable.disabled = false;
-                } else {
-                    selectAcumulable.disabled = true;
-                    selectAcumulable.value = '';
-
-                    inputsGrupo2.forEach(input => {
-                        input.disabled = true;
-                        input.value = 0;
-                    });
-
-                    calcularSumatorias();
-                }
-            });
-        }
-
-        function configurarSelectAcumulable() {
-            const selectAcumulable = document.getElementById('selectAcumulable');
-            const inputsGrupo2 = document.querySelectorAll('.mes-grupo2');
-
-            selectAcumulable.addEventListener('change', function() {
-                const habilitar = this.value === 'si';
-
-                inputsGrupo2.forEach(input => {
-                    input.disabled = !habilitar;
-                    if (!habilitar) {
-                        input.value = 0;
-                    }
-                });
-
-                calcularSumatorias();
-            });
-        }
-
-        // ========================================
-        // FUNCIÓN PARA ACTUALIZAR PROGRAMACIÓN
-        // ========================================
-        async function actualizarProgramacion() {
-            const btnActualizar = document.getElementById('btnActualizarProgramacion');
-            const textoOriginal = btnActualizar.innerHTML;
-
-            try {
-                const erroresValidacion = validarDatosAntesDeGuardar();
-                if (erroresValidacion.length > 0) {
-                    alert('Por favor complete los siguientes campos:\n\n' + erroresValidacion.join('\n'));
-                    return;
-                }
-
-                btnActualizar.disabled = true;
-                btnActualizar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Actualizando...';
-
-                // Recolectar todos los datos (igual que en guardar)
-                const datosGenerales = {
-                    area: document.getElementById('inputArea').value,
-                    departamento: document.getElementById('inputDepartamento').value,
-                    correoContacto: document.getElementById('inputCorreo').value,
-                    pp: document.getElementById('selectPrograma').value,
-                    nComponente: document.getElementById('selectComponente').value,
-                    nActividad: parseInt(document.getElementById('inputActividad').value) || 0,
-                    justificacion: document.getElementById('inputJustificacion').value,
-                    descripcionDocumento: document.getElementById('inputDocumentacion').value,
-                    recursoFederal: document.getElementById('selectFederal').value,
-                    recursoEstatal: document.getElementById('selectEstatal').value,
-                    programaSocial: document.getElementById('inputPrograma').value,
-                    descripcionActividad: document.getElementById('inputDescripcion').value,
-                    nombreIndicador: document.getElementById('inputIndicador').value,
-                    definicionIndicador: document.getElementById('inputDefinicion').value,
-                    unidadMedida: document.getElementById('selectMedida').value,
-                    mediosVerificacion: document.getElementById('inputMedios').value,
-                    serieInformacionDesde: modelData.serieInformacionDesde,
-                    serieInformacionHasta: modelData.serieInformacionHasta,
-                    fuenteInformacion: document.getElementById('inputFuentes').value,
-                    intervienenDelegaciones: document.getElementById('selectDelegaciones').value,
-                    intervienenDelegacionesManera: document.getElementById('inputDelegaciones').value,
-                    selectAcumulable: document.getElementById('selectAcumulable').value,
-                    totalAnos: document.getElementById('valorServicios').value,
-                    totalAnos2: document.getElementById('valorPersonas').value,
-                    beneficiarios: document.getElementById('selectPersonas').value,
-                    estatus: modelData.estatus
-                };
-
-                const lineaBase = {
-                    anoBase: modelData.anoBase,
-                    porcentajeBase: parseFloat(document.getElementById('inputPorcentajeBase').value) || 0,
-                    servicioBase: parseInt(document.getElementById('inputServicioBase').value) || 0,
-                    personasBase: parseInt(document.getElementById('inputPersonasBase').value) || 0
-                };
-
-                const metaAnual = {
-                    anoMeta: parseInt(document.getElementById('inputAnoMeta').value) || 0,
-                    porcentajeMeta: parseFloat(document.getElementById('inputPorcentajeMeta').value) || 0,
-                    servicioMeta: parseInt(document.getElementById('inputServicioMeta').value) || 0,
-                    personasMeta: parseInt(document.getElementById('inputServicioMetas').value) || 0
-                };
-
-                const trimestresServicios = {
-                    primerServicio: parseInt(document.getElementById('primerServicio').value) || 0,
-                    segundoServicio: parseInt(document.getElementById('segundoServicio').value) || 0,
-                    tercerServicio: parseInt(document.getElementById('tercerServicio').value) || 0,
-                    cuartoServicio: parseInt(document.getElementById('cuartoServicio').value) || 0
-                };
-
-                const trimestresPersonas = {
-                    primerPersona: parseInt(document.getElementById('primerPersona').value) || 0,
-                    segundoPersona: parseInt(document.getElementById('segundoPersona').value) || 0,
-                    tercerPersona: parseInt(document.getElementById('tercerPersona').value) || 0,
-                    cuartoPersona: parseInt(document.getElementById('cuartoPersona').value) || 0
-                };
-
-                const mesesServicios = [];
-                document.querySelectorAll('.mes-grupo1').forEach(input => {
-                    mesesServicios.push(parseInt(input.value) || 0);
-                });
-
-                const mesesPersonas = [];
-                document.querySelectorAll('.mes-grupo2').forEach(input => {
-                    mesesPersonas.push(parseInt(input.value) || 0);
-                });
-
-                const municipiosServicios = [];
-                document.querySelectorAll('#tbodyGrupo1 tr').forEach(fila => {
-                    const idMunicipio = parseInt(fila.getAttribute('data-id-municipio')) || 0;
-                    const cantidad = parseInt(fila.getAttribute('data-cantidad')) || 0;
-
-                    if (idMunicipio > 0 && cantidad > 0) {
-                        municipiosServicios.push({
-                            idMunicipio: idMunicipio,
-                            cantidad: cantidad
-                        });
-                    }
-                });
-
-                const municipiosPersonas = [];
-                document.querySelectorAll('#tbodyGrupo2 tr').forEach(fila => {
-                    const idMunicipio = parseInt(fila.getAttribute('data-id-municipio')) || 0;
-                    const cantidad = parseInt(fila.getAttribute('data-cantidad')) || 0;
-
-                    if (idMunicipio > 0 && cantidad > 0) {
-                        municipiosPersonas.push({
-                            idMunicipio: idMunicipio,
-                            cantidad: cantidad
-                        });
-                    }
-                });
-
-                const acciones = [];
-                document.querySelectorAll('.accion-item').forEach(accion => {
-                    const descripcion = accion.querySelector('textarea').value;
-                    const frecuencia = accion.querySelector('select').value;
-                    const fechaStr = accion.querySelector('.fecha-inicio').value;
-
-                    if (descripcion.trim() !== '') {
-                        let fechaInicio = null;
-                        if (fechaStr) {
-                            const [year, month, day] = fechaStr.split('-');
-                            fechaInicio = `${year}-${month}-${day}`;
-                        }
-
-                        acciones.push({
-                            descripcion: descripcion,
-                            frecuencia: frecuencia,
-                            fechaInicio: fechaInicio
-                        });
-                    }
-                });
-
-                const firmas = {
-                    elaboraNombre: document.getElementById('inputElaboro').value,
-                    elaboroCargo: document.getElementById('inputElaboroCargo').value,
-                    revisionNombre: document.getElementById('inputReviso').value,
-                    revisionCargo: document.getElementById('inputRevisoCargo').value,
-                    autorizacionNombre: document.getElementById('inputAutorizo').value,
-                    autorizacionCargo: document.getElementById('inputAutorizoCargo').value
-                };
-
-                const datosCompletos = {
-                    ...datosGenerales,
-                    ...lineaBase,
-                    ...metaAnual,
-                    ...trimestresServicios,
-                    ...trimestresPersonas,
-                    mesesServicios: mesesServicios,
-                    mesesPersonas: mesesPersonas,
-                    municipiosServicios: municipiosServicios,
-                    municipiosPersonas: municipiosPersonas,
-                    acciones: acciones,
-                    ...firmas
-                };
-
-                const erroresFinales = validarDatosCompletos(datosCompletos);
-                if (erroresFinales.length > 0) {
-                    btnActualizar.disabled = false;
-                    btnActualizar.innerHTML = textoOriginal;
-                    alert('Errores en el formulario:\n\n' + erroresFinales.join('\n'));
-                    return;
-                }
-
-                console.log('Datos a actualizar:', datosCompletos);
-
-                // CAMBIAR EL ENDPOINT A ActualizarProgramacion
-                const response = await fetch('/Programacion/ActualizarProgramacion', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(datosCompletos)
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Error HTTP: ${response.status}`);
-                }
-
-                const resultado = await response.json();
-
-                if (resultado.success) {
-                    btnActualizar.innerHTML = '<i class="fas fa-check"></i> ¡Actualizado!';
-                    btnActualizar.classList.remove('boton-rojo');
-                    btnActualizar.classList.add('btn-success');
-
-                    setTimeout(() => {
-                        alert('Programación actualizada correctamente');
-                        window.location.href = '/Programacion/Programacion';
-                    }, 1000);
-
-                } else {
-                    throw new Error(resultado.message || 'Error desconocido al actualizar');
-                }
-
-            } catch (error) {
-                console.error('Error al actualizar:', error);
-
-                btnActualizar.disabled = false;
-                btnActualizar.innerHTML = textoOriginal;
-                btnActualizar.classList.remove('btn-success');
-                btnActualizar.classList.add('boton-rojo');
-
-                let mensajeError = 'Error al actualizar la programación';
-                if (error.message.includes('HTTP')) {
-                    mensajeError = 'Error de conexión con el servidor';
-                } else if (error.message.includes('JSON')) {
-                    mensajeError = 'Error en el formato de datos';
-                } else {
-                    mensajeError = error.message;
-                }
-
-                alert(`${mensajeError}\n\nPor favor, intente nuevamente.`);
-            }
-        }
-
-        // ========================================
-        // FUNCIONES DE VALIDACIÓN
-        // ========================================
-        function validarDatosAntesDeGuardar() {
-            const errores = [];
-            
-            if (!document.getElementById('inputActividad').value || parseInt(document.getElementById('inputActividad').value) <= 0) {
-                errores.push('• Número de actividad válido');
-            }
-
-            if (!document.getElementById('inputJustificacion').value.trim()) {
-                errores.push('• Justificación');
-            }
-
-            if (!document.getElementById('inputDescripcion').value.trim()) {
-                errores.push('• Descripción de la actividad');
-            }
-
-            const accionesCompletas = document.querySelectorAll('.accion-item').length;
-            if (accionesCompletas < 3) {
-                errores.push('• Mínimo 3 acciones necesarias');
-            }
-
-            if (!document.getElementById('inputElaboro').value.trim()) {
-                errores.push('• Nombre de quien elabora');
-            }
-
-            if (!document.getElementById('inputElaboroCargo').value.trim()) {
-                errores.push('• Cargo de quien elabora');
-            }
-
-            return errores;
-        }
-
-        function validarDatosCompletos(datosCompletos) {
-            const errores = [];
-
-            if (datosCompletos.nActividad <= 0) {
-                errores.push('• Debe ingresar un número de actividad válido');
-            }
-
-            if (datosCompletos.acciones.length < 3 || datosCompletos.acciones.length > 5) {
-                errores.push('• Debe haber entre 3 y 5 acciones completas');
-            }
-
-            const accionesIncompletas = datosCompletos.acciones.filter(a => !a.descripcion.trim());
-            if (accionesIncompletas.length > 0) {
-                errores.push('• Todas las acciones deben tener descripción');
-            }
-
-            if (!datosCompletos.elaboraNombre || !datosCompletos.elaboroCargo) {
-                errores.push('• Los datos de quién elaboró son requeridos');
-            }
-
-            const totalServiciosMunicipios = datosCompletos.municipiosServicios.reduce((sum, m) => sum + m.cantidad, 0);
-            const totalPersonasMunicipios = datosCompletos.municipiosPersonas.reduce((sum, m) => sum + m.cantidad, 0);
-
-            if (totalServiciosMunicipios > datosCompletos.servicioMeta) {
-                errores.push(`• Los servicios por municipio (${totalServiciosMunicipios}) exceden el total de servicios (${datosCompletos.servicioMeta})`);
-            }
-
-            if (totalPersonasMunicipios > datosCompletos.personasMeta) {
-                errores.push(`• Las personas por municipio (${totalPersonasMunicipios}) exceden el total de personas (${datosCompletos.personasMeta})`);
-            }
-
-            return errores;
+            document.getElementById('valorServiciosMunicipio').value = totalPersonasGrupo1;
+            document.getElementById('valorPersonasMunicipio').value = totalPersonasGrupo2;
         }
 
         // ========================================
@@ -1508,20 +915,10 @@
             configurarAcciones();
             cargarAccionesExistentes();
             cargarMunicipiosExistentes();
-            configurarSelectDelegaciones();
-            configurarSelectPersonas();
-            configurarSelectAcumulable();
-            configurarAgregarPersonas('Grupo1');
-            configurarAgregarPersonas('Grupo2');
 
             document.querySelectorAll('.mes-grupo1, .mes-grupo2').forEach(input => {
                 input.addEventListener('input', calcularSumatorias);
             });
-
-            const btnActualizar = document.getElementById('btnActualizarProgramacion');
-            if (btnActualizar) {
-                btnActualizar.addEventListener('click', actualizarProgramacion);
-            }
 
             calcularSumatorias();
         });

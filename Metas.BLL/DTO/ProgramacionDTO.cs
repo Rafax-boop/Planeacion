@@ -20,6 +20,9 @@ namespace Metas.BLL.DTO
         [JsonPropertyName("pp")]
         public string Pp { get; set; }
 
+        [JsonPropertyName("componente")]
+        public int Componente { get; set; }
+
         [JsonPropertyName("nComponente")]
         public string NComponente { get; set; }
 

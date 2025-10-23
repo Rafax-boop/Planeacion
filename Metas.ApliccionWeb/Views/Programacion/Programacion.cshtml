@@ -239,7 +239,7 @@
 
             $(document).on('click', '[id^="btnEditar-"]', function() {
                 var idProceso = $(this).data('id');
-                    var urlEditar = '@Url.Action("EditarProgramacion", "Programacion")' + '?id=' + idProceso;
+                    var urlEditar = '@Url.Action("RevisarProgramacion", "Programacion")' + '?id=' + idProceso;
                     window.location.href = urlEditar;
             });
 

@@ -238,7 +238,7 @@ namespace Metas.AplicacionWeb.Controllers
             }
         }
 
-        public async Task<IActionResult> EditarProgramacion(int id)
+        public async Task<IActionResult> RevisarProgramacion(int id)
         {
             var datosCompletos = await _programacionService.ObtenerDatosCompletos(id);
 
