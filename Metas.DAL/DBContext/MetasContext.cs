@@ -58,8 +58,10 @@ public partial class MetasContext : DbContext
 
     public virtual DbSet<Vinculacion> Vinculacions { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
 
+    }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<AnoHabilitar>(entity =>
@@ -144,7 +146,6 @@ public partial class MetasContext : DbContext
             entity.Property(e => e.Idpp).HasColumnName("IDPP");
             entity.Property(e => e.NombreRealizo).HasMaxLength(200);
             entity.Property(e => e.NombreValido).HasMaxLength(200);
-            entity.Property(e => e.Pp).HasMaxLength(30);
             entity.Property(e => e.UnidadMedida).HasMaxLength(100);
 
             entity.HasOne(d => d.IdppNavigation).WithMany(p => p.LlenadoInternos)

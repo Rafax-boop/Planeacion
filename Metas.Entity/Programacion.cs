@@ -11,15 +11,9 @@ public partial class Programacion
 
     public string? Area { get; set; }
 
-    public string? NombreTitular { get; set; }
-
-    public string? TelefonoExt { get; set; }
-
     public string? CorreoElectro { get; set; }
 
     public string? Pp { get; set; }
-
-    public string? TipoMovimiento { get; set; }
 
     public string? NComponente { get; set; }
 
@@ -37,21 +31,9 @@ public partial class Programacion
 
     public string? DescripcionActividad { get; set; }
 
-    public string? Supuesto { get; set; }
-
     public string? NombreIndicador { get; set; }
 
     public string? DefinicionIndicador { get; set; }
-
-    public string? TipoIndicador { get; set; }
-
-    public string? Dimension { get; set; }
-
-    public string? TipoFormula { get; set; }
-
-    public string? MetodoCalculo { get; set; }
-
-    public string? FrecuenciaMedicion { get; set; }
 
     public decimal? Primero { get; set; }
 
@@ -159,24 +141,6 @@ public partial class Programacion
 
     public decimal? Totalanos2 { get; set; }
 
-    public string? NombreVariable { get; set; }
-
-    public string? NombreVariable2 { get; set; }
-
-    public string? UnidadMedidaS { get; set; }
-
-    public string? UnidadMedidaS2 { get; set; }
-
-    public string? FuenteInformacion { get; set; }
-
-    public string? FuenteInformacion2 { get; set; }
-
-    public string? Factibilidad { get; set; }
-
-    public string? DescFactibilidad { get; set; }
-
-    public string? Comportamiento { get; set; }
-
     public string? Actividad1 { get; set; }
 
     public DateOnly? FechaProgramacion1 { get; set; }
@@ -196,26 +160,6 @@ public partial class Programacion
     public string? Actividad5 { get; set; }
 
     public DateOnly? FechaProgramacion5 { get; set; }
-
-    public int? Anosuv1 { get; set; }
-
-    public int? Anosuv2 { get; set; }
-
-    public int? Anosuv3 { get; set; }
-
-    public int? Anosuv4 { get; set; }
-
-    public int? Anosuv5 { get; set; }
-
-    public int? Anosuv6 { get; set; }
-
-    public int? Anosuv7 { get; set; }
-
-    public int? Anosuv8 { get; set; }
-
-    public int? Anosuv9 { get; set; }
-
-    public int? Anosuv10 { get; set; }
 
     public int? IdLlenado { get; set; }
 
@@ -245,13 +189,7 @@ public partial class Programacion
 
     public string? AutorizoCargo { get; set; }
 
-    public bool? Validar { get; set; }
-
-    public DateOnly? Fechaprorroga { get; set; }
-
     public int? IdEstatus { get; set; }
-
-    public bool? ValorNuevo { get; set; }
 
     public virtual ICollection<Comentario> Comentarios { get; set; } = new List<Comentario>();
 

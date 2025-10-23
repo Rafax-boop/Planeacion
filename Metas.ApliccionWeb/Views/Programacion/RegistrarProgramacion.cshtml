@@ -435,7 +435,7 @@
                             <select class="input-arena form-control titulo" id="selectPersonas">
                                 <option value="">Seleccione Personas / Instituciones</option>
                                 <option value="Personas">Personas</option>
-                                <option value="instituciones">Instituciones</option>
+                                <option value="Instituciones">Instituciones</option>
                             </select>
                         </div>
                     </div>
@@ -1182,7 +1182,7 @@
             selectAcumulable.disabled = true;
 
             selectPersonas.addEventListener('change', function() {
-                if (this.value === 'Personas' || this.value === 'instituciones') {
+                if (this.value === 'Personas' || this.value === 'Instituciones') {
                     selectAcumulable.disabled = false;
                 } else {
                     selectAcumulable.disabled = true;
@@ -1223,7 +1223,7 @@
             const todasOpciones = $selectComponente.find('option:not(:first)').clone();
 
             $selectPrograma.on('change', function() {
-                const programaSeleccionado = $(this).val();
+                const programaSeleccionado = $(this).find('option:selected').text();
 
                 $selectComponente.find('option:not(:first)').remove();
 
@@ -1280,6 +1280,7 @@
                 // ========================================
                 const datosGenerales = {
                     area: document.getElementById('inputArea').value,
+                    departamento: document.getElementById('inputDepartamento').value,
                     correoContacto: document.getElementById('inputCorreo').value,
                     pp: document.getElementById('selectPrograma').value,
                     nComponente: document.getElementById('selectComponente').value,
@@ -1292,13 +1293,17 @@
                     descripcionActividad: document.getElementById('inputDescripcion').value,
                     nombreIndicador: document.getElementById('inputIndicador').value,
                     definicionIndicador: document.getElementById('inputDefinicion').value,
-                    unidadMedida: document.getElementById('selectMedida').value,
+                    unidadMedida: document.getElementById('selectMedida').selectedOptions[0].text,
                     mediosVerificacion: document.getElementById('inputMedios').value,
                     serieInformacionDesde: document.getElementById('selectDesde').value,
-                    serieInformacionHasta: parseInt(document.getElementById('selectHasta').value) || 0,
+                    serieInformacionHasta: document.getElementById('selectHasta').value,
                     fuenteInformacion: document.getElementById('inputFuentes').value,
                     intervienenDelegaciones: document.getElementById('selectDelegaciones').value,
-                    intervienenDelegacionesManera: document.getElementById('inputDelegaciones').value
+                    intervienenDelegacionesManera: document.getElementById('inputDelegaciones').value,
+                    selectAcumulable: document.getElementById('selectAcumulable').value,
+                    totalAnos: document.getElementById('valorServicios').value,
+                    totalAnos2: document.getElementById('valorPersonas').value,
+                    beneficiarios: document.getElementById('selectPersonas').value
                 };
 
                 const lineaBase = {
@@ -1561,7 +1566,7 @@
         // ========================================
         function validarDatosAntesDeGuardar() {
             const errores = [];
-
+            
             // Validar campos obligatorios básicos
             if (!document.getElementById('selectPrograma').value) {
                 errores.push('• Programa presupuestario');
