@@ -14,5 +14,6 @@ namespace Metas.BLL.Interfaces
         Task<bool> GuardarProgramacion(ProgramacionDTO modelo);
         Task<bool> EliminarProgramacion(int idLlenado);
         Task<ProgramacionDTO> ObtenerDatosCompletos(int id);
+        Task<LlenadoInterno> ObtenerporId(int idLlenado);
     }
 }

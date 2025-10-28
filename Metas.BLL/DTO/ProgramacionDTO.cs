@@ -9,6 +9,8 @@ namespace Metas.BLL.DTO
         // ========================================
         // DATOS GENERALES
         // ========================================
+        [JsonPropertyName("id")]
+        public int Id { get; set; }
         [JsonPropertyName("area")]
         public string Area { get; set; }
         [JsonPropertyName("departamento")]

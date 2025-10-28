@@ -87,18 +87,6 @@ namespace Metas.BLL.Implementacion
             return query.ToList();
         }
 
-        public async Task<CapturaProgramacion> ObtenerFechasPorAno(int anoFiscal)
-        {
-            try
-            {
-                return await _repositorioProgramacion.Obtener(x => x.Ano == anoFiscal);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
         public async Task<bool> ValidarFechaHabilitada(int anoFiscal)
         {
             try

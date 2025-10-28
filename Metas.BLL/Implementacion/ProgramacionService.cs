@@ -344,6 +344,7 @@ namespace Metas.BLL.Implementacion
                 var dto = new ProgramacionDTO
                 {
                     // Datos generales
+                    Id = idProgramacion,
                     Area = programacionEntidad.Area,
                     Departamento = llenadoInterno?.Departamento,
                     CorreoContacto = programacionEntidad.CorreoElectro,
@@ -493,6 +494,20 @@ namespace Metas.BLL.Implementacion
             {
                 Console.WriteLine($"Error en ObtenerDatosCompletos: {ex.Message}");
                 return null;
+            }
+        }
+
+        public async Task<LlenadoInterno> ObtenerporId(int idLlenado)
+        {
+            try
+            {
+                var llenadoInterno = await _repositorioLlenadoInterno.Obtener(
+                    l => l.IdProceso == idLlenado);
+                return llenadoInterno;
+            }
+            catch (Exception)
+            {
+                throw;
             }
         }
     }

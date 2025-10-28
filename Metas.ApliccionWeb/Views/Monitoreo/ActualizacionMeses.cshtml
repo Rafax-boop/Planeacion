@@ -1,15 +1,21 @@
-﻿<div class="glass-effect rounded-5 mt-4">
+﻿@model Metas.AplicacionWeb.Models.ViewModels.VMDatosInternos
+
+@{
+        ViewData["Title"] = "Actualización Mensual de Metas";
+}
+
+<div class="glass-effect rounded-5 mt-4">
     @* Encabezado *@
     <div class="">
         <h1 class="fw-semibold text-center p-1 titulo">
-            MESES
+            @Model.Mes
         </h1>
     </div>    
 </div>
 <div class="text-center mb-4 mt-3">
     <small class="text-muted">
         <i class="fas fa-calendar titulo me-1"></i>
-        @DateTime.Now.ToString("dddd, dd MMMM yyyy")
+        @Model.FechaFin
     </small>
 </div>
 @* Fin Encabezado *@   
@@ -22,7 +28,7 @@
 
                 <div class="col-2 border-end">
                     <label for="input1" class="form-label fw-semibold titulo">Meta Programada</label>
-                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" id="metaProgramada" value="20" readonly>
+                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" id="metaProgramada" value="@Model.Total" readonly>
                 </div>
 
                 <div class="col-2 border-end">
@@ -32,22 +38,22 @@
 
                 <div class="col-2 border-end">
                     <label for="input3" class="form-label fw-semibold titulo">Pp</label>
-                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" readonly id="input3">
+                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" readonly id="input3" value="@Model.pp">
                 </div>
 
                 <div class="col-2 border-end">
-                    <label for="input4" class="form-label fw-semibold titulo">Componentes</label>
-                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" readonly id="input4">
+                    <label for="input4" class="form-label fw-semibold titulo">Componente</label>
+                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" readonly id="input4" value="@Model.Componente">
                 </div>
 
                 <div class="col-2 border-end">
                     <label for="input5" class="form-label fw-semibold titulo">Actividad</label>
-                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" readonly id="input5">
+                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" readonly id="input5" value="@Model.Actividad">
                 </div>
 
                 <div class="col-2">
                     <label for="input6" class="form-label fw-semibold titulo">Unidad de Medida</label>
-                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" readonly id="input6">
+                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" readonly id="input6" value="@Model.UnidadMedida">
                 </div>
 
             </div>
@@ -56,17 +62,17 @@
 
                 <div class="col-4 border-end">
                     <label for="input1" class="form-label fw-semibold titulo"> Programa o servicio de asistencia social </label>
-                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed" readonly id="input1">
+                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed" readonly id="input1" value="@Model.ProgramaSocial">
                 </div>
 
                 <div class="col-4 border-end">
                     <label for="input2" class="form-label fw-semibold titulo">Área</label>
-                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed" readonly id="input2">
+                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed" readonly id="input2" value="@Model.Area">
                 </div>
 
                 <div class="col-4">
                     <label for="input3" class="form-label fw-semibold titulo">Departamento</label>
-                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed" readonly id="input3">
+                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed" readonly id="input3" value="@Model.Departamento">
                 </div>
                 
             </div>
@@ -75,7 +81,7 @@
 
                 <div class="">
                     <label for="input1" class="form-label fw-semibold titulo">Descripción de la Actividad</label>
-                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" readonly id="input1">
+                    <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" readonly id="input1" value="@Model.DescripcionActividad">
                 </div>               
 
             </div>
