@@ -121,7 +121,10 @@
 @section Scripts {
     <script>
         $(document).ready(function() {
-            // Evento click del botón Buscar
+
+            // ========================================
+            // BUSCAR REGISTROS
+            // ========================================
             $('#btnBuscar').click(function() {
                 var anoFiscal = $('#selectAnoFiscal').val();
                 var departamento = $('#selectDepartamento').val();
@@ -151,41 +154,54 @@
                     success: function(response) {
                         $('#mensajeCarga').hide();
 
-                        // 1. Mostrar/Ocultar el botón basado en el rango de fechas
+                        // Mostrar/Ocultar el botón "Iniciar Programación" según fecha habilitada
                         if (response.fechaHabilitada) {
-                            $('#btnIniciarProgramacion').show(); // La fecha actual está en el rango
+                            $('#btnIniciarProgramacion').show();
                         } else {
-                            // 💡 Es buena práctica deshabilitarlo si no se puede usar, aunque ya esté oculto
                             $('#btnIniciarProgramacion').hide().prop('disabled', true);
                         }
 
+                        // Verificar si hay datos
                         if (response.success && response.datos && response.datos.length > 0) {
-                            // Limpiar el tbody
                             $('#tbodyDatos').empty();
 
                             var esAdmin = response.esAdmin;
 
                             // Llenar la tabla con los datos
                             $.each(response.datos, function(index, item) {
+
+                                // Construir nombre de actividad
                                 var prefijoActividad = '';
                                 if (item.pp && item.pp.toLowerCase() === 'agenda') {
                                     prefijoActividad = 'T';
                                 }
-
-                                // Concatenar componente + actividad (con T solo si es agenda)
                                 var actividadCompleta = prefijoActividad + (item.componente || '') + '.' + (item.actividad || '');
 
+                                // ========================================
+                                // LÓGICA DE BOTONES SEGÚN ROL Y ESTATUS
+                                // ========================================
                                 var btnEliminar = '';
                                 var btnEditar = '';
-                                if(esAdmin){
-                                    btnEliminar = '<br><button type="button" class="btn btn-danger btn-sm btn-eliminar" id="btnEliminar-' + item.idProceso + '" data-id="' + item.idProceso + '">Eliminar</button>';
-                                    btnEditar = '<button type="button" class="btn btn-primary btn-sm btn-editar" id="btnEditar-' + item.idProceso + '" data-id="' + item.idProceso + '">Editar</button>';
+
+                                // ========================================
+                                // BOTONES SEGÚN ROL Y ESTATUS - CORREGIDO
+                                // ========================================
+                                if (esAdmin) {
+                                    // ✅ ADMIN: Siempre puede editar excepto en validado
+                                    if (item.idEstatus != 3) {
+                                        btnEditar = '<button type="button" class="btn btn-primary btn-sm btn-editar" data-id="' + item.idProceso + '">Editar</button>';
+                                    }
+                                    btnEliminar = '<br><button type="button" class="btn btn-danger btn-sm btn-eliminar" data-id="' + item.idProceso + '">Eliminar</button>';
                                 }
-                                else if(item.idEstatus == 2)
-                                {
-                                    btnEditar = '<button type="button" class="btn btn-primary btn-sm btn-editar" id="btnEditar-' + item.idProceso + '" data-id="' + item.idProceso + '">Editar</button>';
+                                else {
+                                    // ✅ USUARIO NORMAL: Solo puede editar cuando está "Con Comentarios" (estatus 2)
+                                    if (item.idEstatus == 2) {
+                                        btnEditar = '<button type="button" class="btn btn-primary btn-sm btn-editar" data-id="' + item.idProceso + '">Editar</button>';
+                                    }
+                                    // En estatus 1 (En Revisión) no ve ningún botón
                                 }
 
+                                // Construir la fila de la tabla
                                 var fila = '<tr>' +
                                     '<td>' + item.pp + btnEliminar + '</td>' +
                                     '<td>' + item.componente + '</td>' +
@@ -194,13 +210,14 @@
                                     '<td>' + item.programaSocial + '</td>' +
                                     '<td>' + item.area + '</td>' +
                                     '<td>' + item.departamento + '</td>' +
-                                    '<td>' + item.nombreEstatus + btnEditar + '</td>' +
+                                    '<td>' + item.nombreEstatus + '<br>' + btnEditar + '</td>' +
                                 '</tr>';
+
                                 $('#tbodyDatos').append(fila);
                             });
 
                             $('#tablaDatos').show();
-                            
+
                         } else {
                             $('#mensajeSinDatos').show();
                         }
@@ -212,25 +229,22 @@
                 });
             });
 
-            $(document).on('click', '[id^="btnEliminar-"]', function() {
-                // 1. Obtener el ID del registro a eliminar
+            // ========================================
+            // ELIMINAR REGISTRO (Solo Admin)
+            // ========================================
+            $(document).on('click', '.btn-eliminar', function() {
                 var idProceso = $(this).data('id');
-                console.log(idProceso);
 
-                // 2. Confirmación al usuario
+                // Confirmación antes de eliminar
                 if (confirm('¿Está seguro de que desea eliminar este registro? Esta acción es irreversible y eliminará datos en 4 tablas.')) {
-
-                    // 3. Llamada AJAX al controlador
                     $.ajax({
                         url: '@Url.Action("EliminarRegistro", "Programacion")',
-                        type: 'POST', // Usamos POST como lo definimos en el controlador
-                        data: {
-                            id: idProceso // Enviamos el ID al controlador
-                        },
+                        type: 'POST',
+                        data: { id: idProceso },
                         success: function(response) {
                             if (response.success) {
                                 alert(response.mensaje);
-                                // Opcional: Recargar la tabla sin recargar la página
+                                // Recargar la tabla
                                 $('#btnBuscar').click();
                             } else {
                                 alert('Error: ' + response.mensaje);
@@ -243,12 +257,18 @@
                 }
             });
 
-            $(document).on('click', '[id^="btnEditar-"]', function() {
+            // ========================================
+            // EDITAR REGISTRO (Admin o Usuario según estatus)
+            // ========================================
+            $(document).on('click', '.btn-editar', function() {
                 var idProceso = $(this).data('id');
-                    var urlEditar = '@Url.Action("RevisarProgramacion", "Programacion")' + '?id=' + idProceso;
-                    window.location.href = urlEditar;
+                var urlEditar = '@Url.Action("RevisarProgramacion", "Programacion")' + '?id=' + idProceso;
+                window.location.href = urlEditar;
             });
 
+            // ========================================
+            // INICIAR NUEVA PROGRAMACIÓN
+            // ========================================
             $('#btnIniciarProgramacion').click(function() {
                 var anoFiscal = $('#selectAnoFiscal').val();
                 var departamento = $('#selectDepartamento').val();

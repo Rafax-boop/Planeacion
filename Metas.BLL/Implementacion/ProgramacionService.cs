@@ -19,6 +19,7 @@ namespace Metas.BLL.Implementacion
         private readonly IGenericRepository<Programacion> _repositorioProgramacion;
         private readonly IGenericRepository<ServiciosMunicipio> _repositorioServicios;
         private readonly IGenericRepository<PersonasMunicipio> _repositorioPersonas;
+        private readonly IGenericRepository<Comentario> _repositorioComentario;
         private readonly MetasContext _context;
 
         public ProgramacionService(IGenericRepository<LlenadoInterno> repositorioLlenadoInterno,
@@ -26,6 +27,7 @@ namespace Metas.BLL.Implementacion
             IGenericRepository<Programacion> repositorioProgramacion,
             IGenericRepository<ServiciosMunicipio> repositorioServicios,
             IGenericRepository<PersonasMunicipio> repositorioPersonas,
+            IGenericRepository<Comentario> repositorioComentario,
             MetasContext context)
         {
             _repositorioLlenadoInterno = repositorioLlenadoInterno;
@@ -33,9 +35,9 @@ namespace Metas.BLL.Implementacion
             _repositorioProgramacion = repositorioProgramacion;
             _repositorioServicios = repositorioServicios;
             _repositorioPersonas = repositorioPersonas;
+            _repositorioComentario = repositorioComentario;
             _context = context;
         }
-
         public async Task<bool> GuardarProgramacion(ProgramacionDTO modelo)
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
@@ -434,7 +436,7 @@ namespace Metas.BLL.Implementacion
                     MunicipiosServicios = serviciosMunicipios.Select(sm => new DTOMunicipioAgregado
                     {
                         IdMunicipio = sm.IdMunicipio ?? 0,
-                        Cantidad = sm.NumeroBien ?? 0 
+                        Cantidad = sm.NumeroBien ?? 0
                     }).ToList(),
 
                     // Municipios Personas
@@ -494,6 +496,120 @@ namespace Metas.BLL.Implementacion
             {
                 Console.WriteLine($"Error en ObtenerDatosCompletos: {ex.Message}");
                 return null;
+            }
+        }
+        public async Task<bool> GuardarComentarios(List<ComentarioDTO> comentarios)
+        {
+            try
+            {
+                Console.WriteLine("🔍 INICIO GuardarComentarios");
+
+                // Validar que lleguen comentarios
+                if (comentarios == null || !comentarios.Any())
+                {
+                    Console.WriteLine("❌ Lista de comentarios vacía o nula");
+                    return false;
+                }
+
+                var idRegistro = comentarios.First().IdProgramacion;
+                Console.WriteLine($"🔍 IdProgramacion: {idRegistro}");
+                Console.WriteLine($"🔍 Cantidad de comentarios: {comentarios.Count}");
+
+                // Buscar si ya existe un registro de comentarios para esta programación
+                var comentarioExistente = await _context.Comentarios
+                    .FirstOrDefaultAsync(c => c.IdProgramacion == idRegistro);
+
+                // Si no existe, crear uno nuevo
+                if (comentarioExistente == null)
+                {
+                    Console.WriteLine("🔍 No existe registro, creando nuevo...");
+                    comentarioExistente = new Comentario { IdProgramacion = idRegistro };
+                    _context.Comentarios.Add(comentarioExistente);
+                    await _context.SaveChangesAsync();
+                    Console.WriteLine("✅ Registro creado");
+                }
+                else
+                {
+                    Console.WriteLine($"🔍 Registro existente encontrado: Id={comentarioExistente.IdComentario}");
+                }
+
+                // Asignar cada comentario a su propiedad correspondiente usando reflexión
+                foreach (var com in comentarios)
+                {
+                    Console.WriteLine($"🔍 Procesando ComentarioId: {com.ComentarioId}, Texto: {com.Texto}");
+
+                    // Construir el nombre de la propiedad: "Comentario1", "Comentario2", etc.
+                    var nombrePropiedad = $"Comentario{com.ComentarioId}";
+
+                    // Obtener la propiedad de la clase Comentario
+                    var propiedad = typeof(Comentario).GetProperty(nombrePropiedad);
+
+                    // Si la propiedad existe, asignar el valor
+                    if (propiedad != null && propiedad.CanWrite)
+                    {
+                        propiedad.SetValue(comentarioExistente, com.Texto);
+                    }
+                    else
+                    {
+                        Console.WriteLine($"⚠️ Advertencia: Propiedad {nombrePropiedad} no encontrada");
+                    }
+                }
+
+                Console.WriteLine("🔍 Guardando cambios en BD...");
+                await _context.SaveChangesAsync();
+                Console.WriteLine("✅ Cambios guardados correctamente");
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ ERROR GuardarComentarios: {ex.Message}");
+                Console.WriteLine($"❌ StackTrace: {ex.StackTrace}");
+                return false;
+            }
+        }
+
+        public async Task<Comentario> ObtenerComentariosPorProgramacion(int idProgramacion)
+        {
+            try
+            {
+                // Buscar comentarios existentes para esta programación
+                var comentarios = await _context.Comentarios
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(c => c.IdProgramacion == idProgramacion);
+
+                // Si no existen, retornar un objeto vacío con el ID
+                return comentarios ?? new Comentario { IdProgramacion = idProgramacion };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Error obteniendo comentarios: {ex.Message}");
+                return new Comentario { IdProgramacion = idProgramacion };
+            }
+        }
+
+        public async Task<bool> ActualizarEstatusProgramacion(int idProgramacion, int nuevoEstatus)
+        {
+            try
+            {
+                // Buscar la programación por ID
+                var programacion = await _repositorioProgramacion.Obtener(p => p.IdRegistro == idProgramacion);
+
+                if (programacion != null)
+                {
+                    // Actualizar el estatus
+                    programacion.IdEstatus = nuevoEstatus;
+                    await _repositorioProgramacion.Editar(programacion);
+                    return true;
+                }
+
+                Console.WriteLine($"⚠️ No se encontró programación con ID: {idProgramacion}");
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Error: {ex.Message}");
+                return false;
             }
         }
 

@@ -39,7 +39,7 @@ namespace Metas.AplicacionWeb.Controllers
                     Value = d.IdDepartamento.ToString(),
                     Text = d.Departamento1
                 }).ToList()
-            }; 
+            };
             return View(modelo);
         }
 
@@ -240,14 +240,63 @@ namespace Metas.AplicacionWeb.Controllers
 
         public async Task<IActionResult> RevisarProgramacion(int id)
         {
+            Console.WriteLine($"ID recibido: {id}"); // DEBUG
             var datosCompletos = await _programacionService.ObtenerDatosCompletos(id);
+            var idProgramacion = datosCompletos.Id;
 
-            if(datosCompletos == null)
+            if (datosCompletos == null)
             {
                 TempData["Error"] = "No se encontraron datos para la programación solicitada.";
                 return RedirectToAction("Programacion");
             }
+
+            // Obtener comentarios existentes para esta programación
+            var comentariosExistentes = await _programacionService.ObtenerComentariosPorProgramacion(idProgramacion);
+            ViewBag.ComentariosExistentes = comentariosExistentes;
+            ViewBag.IdProgramacion = idProgramacion;
+
+            // Pasar el ID de programación a la vista para usarlo en el guardado
+            ViewData["IdProgramacion"] = idProgramacion;
+
             return View(datosCompletos);
         }
-    }    
+
+        [HttpPost]
+        public async Task<IActionResult> GuardarComentarios([FromBody] List<ComentarioDTO> comentarios)
+        {
+            try
+            {
+                var resultado = await _programacionService.GuardarComentarios(comentarios);
+
+                // CAMBIO: Retornar objeto JSON en lugar de bool directo
+                return Ok(new
+                {
+                    success = resultado,
+                    message = resultado ? "Comentarios guardados correctamente" : "Error al guardar comentarios"
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = ex.Message
+                });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ObtenerComentariosPorProgramacion(int idProgramacion)
+        {
+            try
+            {
+                var comentarios = await _programacionService.ObtenerComentariosPorProgramacion(idProgramacion);
+                return Ok(comentarios);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = ex.Message });
+            }
+        }
+    }
 }

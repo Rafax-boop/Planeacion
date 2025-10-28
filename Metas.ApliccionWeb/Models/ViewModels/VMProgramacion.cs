@@ -13,5 +13,14 @@ namespace Metas.AplicacionWeb.Models.ViewModels
         public List<SelectListItem> ListaComponentes { get; set; } = new();
         public List<SelectListItem> ListaMedidas { get; set; } = new();
         public List<SelectListItem> ListaMunicipios { get; set; } = new();
+
+    }
+    public class ComentarioViewModel
+    {
+        public int ComentarioId { get; set; } // 1-27
+        public int Campo { get; set; } // 4-30
+        public string Texto { get; set; }
+        public string FechaHora { get; set; }
+        public string Descripcion { get; set; }
     }
 }

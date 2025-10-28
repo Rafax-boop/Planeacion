@@ -221,4 +221,12 @@ namespace Metas.BLL.DTO
         [JsonPropertyName("fechaInicio")]
         public DateOnly? FechaInicio { get; set; }
     }
+    public class ComentarioDTO
+    {
+        public int ComentarioId { get; set; }
+        public int Campo { get; set; }
+        public string Texto { get; set; }
+        public int IdProgramacion { get; set; }
+    }
+
 }

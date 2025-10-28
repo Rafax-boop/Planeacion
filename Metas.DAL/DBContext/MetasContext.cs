@@ -5,6 +5,7 @@ using Metas.Entity;
 
 namespace Metas.DAL.DBContext;
 
+
 public partial class MetasContext : DbContext
 {
     public MetasContext()
@@ -15,6 +16,7 @@ public partial class MetasContext : DbContext
         : base(options)
     {
     }
+
 
     public virtual DbSet<AnoHabilitar> AnoHabilitars { get; set; }
 
@@ -58,8 +60,8 @@ public partial class MetasContext : DbContext
 
     public virtual DbSet<Vinculacion> Vinculacions { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder){}
-
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
+   
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<AnoHabilitar>(entity =>
