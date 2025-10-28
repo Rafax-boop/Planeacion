@@ -1,12 +1,18 @@
 using Metas.AplicacionWeb.Utilidades.AutoMapper;
+using Metas.BLL.Implementacion;
+using Metas.BLL.Interfaces;
+using Metas.DAL.Implementacion;
+using Metas.DAL.Interfaces;
+using Metas.Entity;
 using Metas.IOC;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
-
+builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+builder.Services.AddScoped<IGenericRepository<Comentario>, GenericRepository<Comentario>>();
+builder.Services.AddScoped<IProgramacionService, ProgramacionService>();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(option => {
         option.LoginPath = "/Acceso/Login";
@@ -14,6 +20,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     });
 
 builder.Services.InyectarDependencia(builder.Configuration);
+
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 

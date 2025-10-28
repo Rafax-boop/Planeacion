@@ -9,6 +9,8 @@ namespace Metas.BLL.DTO
         // ========================================
         // DATOS GENERALES
         // ========================================
+        [JsonPropertyName("id")]
+        public int Id { get; set; }
         [JsonPropertyName("area")]
         public string Area { get; set; }
         [JsonPropertyName("departamento")]
@@ -19,6 +21,9 @@ namespace Metas.BLL.DTO
 
         [JsonPropertyName("pp")]
         public string Pp { get; set; }
+
+        [JsonPropertyName("componente")]
+        public int Componente { get; set; }
 
         [JsonPropertyName("nComponente")]
         public string NComponente { get; set; }
@@ -106,7 +111,7 @@ namespace Metas.BLL.DTO
         public int ServicioMeta { get; set; }
 
         [JsonPropertyName("personasMeta")]
-        public int PersonasMeta { get; set; }
+        public decimal PersonasMeta { get; set; }
 
         // ========================================
         // TRIMESTRES SERVICIOS (Grupo 1)
@@ -152,7 +157,7 @@ namespace Metas.BLL.DTO
         [JsonPropertyName("mesesPersonas")]
         public List<int> MesesPersonas { get; set; } = new List<int>();
         [JsonPropertyName("totalAnos2")]
-        public int TotalAnos2 { get; set; }
+        public decimal TotalAnos2 { get; set; }
 
         // ========================================
         // MUNICIPIOS SERVICIOS (Grupo 1)
@@ -216,4 +221,12 @@ namespace Metas.BLL.DTO
         [JsonPropertyName("fechaInicio")]
         public DateOnly? FechaInicio { get; set; }
     }
+    public class ComentarioDTO
+    {
+        public int ComentarioId { get; set; }
+        public int Campo { get; set; }
+        public string Texto { get; set; }
+        public int IdProgramacion { get; set; }
+    }
+
 }

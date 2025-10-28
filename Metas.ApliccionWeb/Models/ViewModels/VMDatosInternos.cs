@@ -11,5 +11,6 @@
         public string Departamento { get; set; }
         public string ProgramaSocial { get; set; }
         public int? IdEstatus { get; set; }
+        public string NombreEstatus { get; set; }
     }
 }

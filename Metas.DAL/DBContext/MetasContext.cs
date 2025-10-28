@@ -5,6 +5,7 @@ using Metas.Entity;
 
 namespace Metas.DAL.DBContext;
 
+
 public partial class MetasContext : DbContext
 {
     public MetasContext()
@@ -15,6 +16,7 @@ public partial class MetasContext : DbContext
         : base(options)
     {
     }
+
 
     public virtual DbSet<AnoHabilitar> AnoHabilitars { get; set; }
 
@@ -58,10 +60,8 @@ public partial class MetasContext : DbContext
 
     public virtual DbSet<Vinculacion> Vinculacions { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-
-    }
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
+   
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<AnoHabilitar>(entity =>
@@ -244,6 +244,10 @@ public partial class MetasContext : DbContext
             entity.Property(e => e.Totalanos2).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.Valor).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.Valor2).HasColumnType("decimal(18, 2)");
+
+            entity.HasOne(d => d.IdEstatusNavigation).WithMany(p => p.Programacions)
+                .HasForeignKey(d => d.IdEstatus)
+                .HasConstraintName("FK_Programacion_Estatus");
 
             entity.HasOne(d => d.IdLlenadoNavigation).WithMany(p => p.Programacions)
                 .HasForeignKey(d => d.IdLlenado)
