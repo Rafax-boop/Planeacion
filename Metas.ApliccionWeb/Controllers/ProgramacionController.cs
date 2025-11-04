@@ -11,7 +11,7 @@ using System.Security.Claims;
 
 namespace Metas.AplicacionWeb.Controllers
 {
-    //[Authorize]
+    [Authorize]
     public class ProgramacionController : Controller
     {
         private readonly IDepartamentoService _departamentoService;

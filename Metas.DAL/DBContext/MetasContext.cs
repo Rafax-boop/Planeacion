@@ -5,7 +5,6 @@ using Metas.Entity;
 
 namespace Metas.DAL.DBContext;
 
-
 public partial class MetasContext : DbContext
 {
     public MetasContext()
@@ -16,7 +15,6 @@ public partial class MetasContext : DbContext
         : base(options)
     {
     }
-
 
     public virtual DbSet<AnoHabilitar> AnoHabilitars { get; set; }
 
@@ -33,6 +31,8 @@ public partial class MetasContext : DbContext
     public virtual DbSet<Evidencia> Evidencias { get; set; }
 
     public virtual DbSet<FechaCaptura> FechaCapturas { get; set; }
+
+    public virtual DbSet<LlenadoExterno> LlenadoExternos { get; set; }
 
     public virtual DbSet<LlenadoInterno> LlenadoInternos { get; set; }
 
@@ -60,8 +60,8 @@ public partial class MetasContext : DbContext
 
     public virtual DbSet<Vinculacion> Vinculacions { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
-   
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder){}
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<AnoHabilitar>(entity =>
@@ -133,6 +133,28 @@ public partial class MetasContext : DbContext
             entity.ToTable("FechaCaptura");
 
             entity.Property(e => e.Mes).HasMaxLength(15);
+        });
+
+        modelBuilder.Entity<LlenadoExterno>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToTable("LlenadoExterno");
+
+            entity.Property(e => e.Evidencia).HasMaxLength(300);
+            entity.Property(e => e.IdLlenado).ValueGeneratedOnAdd();
+            entity.Property(e => e.Justificacion).HasMaxLength(300);
+            entity.Property(e => e._03anos).HasColumnName("0-3ANOS");
+            entity.Property(e => e._1317anos).HasColumnName("13-17ANOS");
+            entity.Property(e => e._1829anos).HasColumnName("18-29ANOS");
+            entity.Property(e => e._3059anos).HasColumnName("30-59ANOS");
+            entity.Property(e => e._48anos).HasColumnName("4-8ANOS");
+            entity.Property(e => e._60amasanos).HasColumnName("60AMASANOS");
+            entity.Property(e => e._912anos).HasColumnName("9-12ANOS");
+
+            entity.HasOne(d => d.IdProcesoNavigation).WithMany()
+                .HasForeignKey(d => d.IdProceso)
+                .HasConstraintName("FK_LlenadoExterno_LlenadoInterno");
         });
 
         modelBuilder.Entity<LlenadoInterno>(entity =>
