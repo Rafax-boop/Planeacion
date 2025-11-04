@@ -183,14 +183,10 @@
                                 var btnEliminar = '';
                                 var btnEditar = '';
 
-                                // ========================================
-                                // BOTONES SEGÚN ROL Y ESTATUS - CORREGIDO
-                                // ========================================
+                                // Para ADMINISTRADOR
                                 if (esAdmin) {
-                                    // ✅ ADMIN: Siempre puede editar excepto en validado
-                                    if (item.idEstatus != 3) {
-                                        btnEditar = '<button type="button" class="btn btn-primary btn-sm btn-editar" data-id="' + item.idProceso + '">Editar</button>';
-                                    }
+                                    // ✅ ADMIN: Siempre puede editar sin importar el estatus
+                                    btnEditar = '<button type="button" class="btn btn-primary btn-sm btn-editar" data-id="' + item.idProceso + '">Editar</button>';
                                     btnEliminar = '<br><button type="button" class="btn btn-danger btn-sm btn-eliminar" data-id="' + item.idProceso + '">Eliminar</button>';
                                 }
                                 else {
@@ -198,7 +194,7 @@
                                     if (item.idEstatus == 2) {
                                         btnEditar = '<button type="button" class="btn btn-primary btn-sm btn-editar" data-id="' + item.idProceso + '">Editar</button>';
                                     }
-                                    // En estatus 1 (En Revisión) no ve ningún botón
+                                    // En estatus 1 (En Revisión) no ve botón de edición
                                 }
 
                                 // Construir la fila de la tabla

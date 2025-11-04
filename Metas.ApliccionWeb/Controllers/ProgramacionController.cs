@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using System.Text.Json;
 
 namespace Metas.AplicacionWeb.Controllers
 {
@@ -240,7 +241,49 @@ namespace Metas.AplicacionWeb.Controllers
 
         public async Task<IActionResult> RevisarProgramacion(int id)
         {
-            Console.WriteLine($"ID recibido: {id}"); // DEBUG
+            var componentes = await _departamentoService.ObtenerComponentes();
+            var departamentos = await _departamentoService.ObtenerDepartamentos();
+            var medidas = await _departamentoService.ObtenerMedidas();
+            var municipios = await _departamentoService.ObtenerMunicipios();
+
+            // 1. Construir el ViewModel
+            var modelo = new VMProgramacion
+            {
+                ListaProgramas = componentes
+                    .GroupBy(x => x.Pp)
+                    .Select(g => new SelectListItem
+                    {
+                        Value = g.Key.ToString(),
+                        Text = g.First().PpCompuesto1
+                    })
+                    .OrderBy(item => item.Text)
+                    .ToList(),
+
+                ListaComponentes = componentes
+                    .Select(c => new SelectListItem
+                    {
+                        Value = c.Componente.ToString(),
+                        Text = c.ComponenteCompuesto,
+                        Group = new SelectListGroup { Name = c.PpCompuesto1 }
+                    })
+                    .ToList(),
+
+                ListaMedidas = medidas
+                    .Select(g => new SelectListItem
+                    {
+                        Value = g.IdUnidad.ToString(),
+                        Text = g.Valor
+                    })
+                    .ToList(),
+
+                ListaMunicipios = municipios
+                    .Select(g => new SelectListItem
+                    {
+                        Value = g.IdMunicipio.ToString(),
+                        Text = g.NombreMunicipios
+                    })
+                    .ToList()
+            };
             var datosCompletos = await _programacionService.ObtenerDatosCompletos(id);
             var idProgramacion = datosCompletos.Id;
 
@@ -257,6 +300,10 @@ namespace Metas.AplicacionWeb.Controllers
 
             // Pasar el ID de programación a la vista para usarlo en el guardado
             ViewData["IdProgramacion"] = idProgramacion;
+
+            // ✅ DETECTAR TIPO DE USUARIO
+            var esAdministrador = User.IsInRole("Administrador"); // Ajusta según tu sistema de roles
+            ViewBag.EsAdministrador = esAdministrador;
 
             return View(datosCompletos);
         }
@@ -291,7 +338,20 @@ namespace Metas.AplicacionWeb.Controllers
             try
             {
                 var comentarios = await _programacionService.ObtenerComentariosPorProgramacion(idProgramacion);
-                return Ok(comentarios);
+
+                if (comentarios == null)
+                {
+                    comentarios = new Comentario { IdProgramacion = idProgramacion };
+                }
+
+                // Forzar serialización con camelCase
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                    WriteIndented = true
+                };
+
+                return Json(comentarios, options);
             }
             catch (Exception ex)
             {

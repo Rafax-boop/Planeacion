@@ -55,7 +55,7 @@
         <div class="row my-3 border-bottom pb-3">
             <label class="col-md-6 align-content-center">4. PROGRAMA PRESUPUESTARIO:</label>
             <div class="col-md-5 align-content-center">
-                <input type="text" disabled class="input-arena form-control titulo" value="@Model.Pp" readonly>
+                <input type="text" disabled class="input-arena form-control titulo" value="@Model.Pp" readonly data-campo="4">
             </div>
             <div class="col-md-1 align-content-center">
                 <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
@@ -68,7 +68,7 @@
         <div class="row mb-3 border-bottom pb-3">
             <label class="align-content-center col-md-6">5. NÚMERO DE COMPONENTE:</label>
             <div class="col-md-5 align-content-center">
-                <input type="text" disabled class="input-arena form-control titulo" value="@Model.Pp" readonly>
+                <input type="text" disabled class="input-arena form-control titulo" value="@Model.Pp" readonly data-campo="5">
             </div>
             <div class="col-md-1 align-content-center">
                 <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
@@ -872,7 +872,8 @@
     </button>
 </div>
 
-<input type="hidden" id="idProgramacionHidden" value="@ViewBag.IdProgramacion" />
+<input type="hidden" id="esAdministrador" value="@ViewBag.EsAdministrador">
+<input type="hidden" id="idProgramacionHidden" value="@ViewData["IdProgramacion"]">
 
 @section Scripts {
     <script>
@@ -909,10 +910,13 @@
         // Inicializar el sistema de comentarios
         // ========================================
         function inicializarComentarios() {
-            // Configurar el modal de Bootstrap
+            const esAdministrador = document.getElementById('esAdministrador').value === 'True';
+
+            console.log('👤 Tipo de usuario:', esAdministrador ? 'Administrador' : 'Usuario');
+
+            // Configurar modal y eventos
             modalComentario = new bootstrap.Modal(document.getElementById('modalComentario'));
 
-            // Configurar los botones de comentario en el formulario
             document.querySelectorAll('.btn-comentario').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const campo = this.getAttribute('data-campo');
@@ -920,19 +924,121 @@
                 });
             });
 
-            // Configurar los botones dentro del modal
+            // Configurar eventos del modal
             document.getElementById('btnGuardarComentario').addEventListener('click', guardarComentarioIndividual);
             document.getElementById('btnEliminarComentario').addEventListener('click', eliminarComentario);
             document.getElementById('btnGuardarTodosComentarios').addEventListener('click', guardarTodosComentarios);
 
-            // Cargar comentarios que ya existen en la base de datos
+            // ✅ BLOQUEAR CAMPOS PARA USUARIOS SI NO TIENEN COMENTARIOS
+            if (!esAdministrador) {
+                bloquearCamposSinComentarios();
+            }
+
+            // ✅ AGREGAR EVENTOS PARA BORRAR COMENTARIOS AL EDITAR
+            configurarEventosEdicionCampos();
+
+            // Cargar comentarios existentes
             cargarComentariosExistentes();
+        }
+
+        // ========================================
+        // Bloquear campos para usuarios si no tienen comentarios
+        // ========================================
+        function bloquearCamposSinComentarios() {
+            console.log('🔒 Bloqueando campos sin comentarios para usuario...');
+
+            // Para cada campo del 4 al 30
+            for (let campo = 4; campo <= 30; campo++) {
+                const tieneComentario = comentariosTemp[campo]?.texto?.trim() !== '';
+
+                if (!tieneComentario) {
+                    // Buscar todos los inputs/selects/textarea de este campo
+                    const elementosCampo = document.querySelectorAll(`[data-campo="${campo}"]`);
+
+                    elementosCampo.forEach(elemento => {
+                        if (elemento.tagName === 'INPUT' || elemento.tagName === 'SELECT' || elemento.tagName === 'TEXTAREA') {
+                            elemento.disabled = true;
+                            elemento.title = 'Este campo está bloqueado. Solo se puede editar si tiene comentarios del administrador.';
+
+                            // Agregar estilo visual
+                            elemento.style.backgroundColor = '#f8f9fa';
+                            elemento.style.cursor = 'not-allowed';
+                        }
+                    });
+                }
+            }
+        }
+
+        // ========================================
+        // Configurar eventos para borrar comentarios al editar campos
+        // ========================================
+        function configurarEventosEdicionCampos() {
+            console.log('🎯 Configurando eventos para borrar comentarios al editar...');
+
+            // Para cada campo del 4 al 30
+            for (let campo = 4; campo <= 30; campo++) {
+                // Buscar todos los elementos editables de este campo
+                const elementosEditables = document.querySelectorAll(`
+                    input[data-campo="${campo}"],
+                    select[data-campo="${campo}"],
+                    textarea[data-campo="${campo}"]
+                `);
+
+                elementosEditables.forEach(elemento => {
+                    // Evento cuando el campo pierde el foco (después de editar)
+                    elemento.addEventListener('blur', function() {
+                        const valorOriginal = this.getAttribute('data-valor-original');
+                        const valorActual = this.value;
+
+                        // Si el valor cambió, borrar el comentario
+                        if (valorOriginal !== valorActual) {
+                            borrarComentarioAlEditar(campo);
+                        }
+                    });
+
+                    // Guardar valor original al enfocar
+                    elemento.addEventListener('focus', function() {
+                        this.setAttribute('data-valor-original', this.value);
+                    });
+                });
+            }
+        }
+
+        // ========================================
+        // Borrar comentario cuando se edita un campo
+        // ========================================
+        function borrarComentarioAlEditar(campo) {
+            // Verificar si existe comentario para este campo
+            if (comentariosTemp[campo]) {
+                console.log(`🗑️ Borrando comentario del campo ${campo} porque fue editado`);
+
+                // Eliminar de memoria temporal
+                delete comentariosTemp[campo];
+
+                // Actualizar botón de comentario
+                actualizarBotonComentario(campo, false);
+
+                // Mostrar notificación
+                Swal.fire({
+                    title: 'Comentario eliminado',
+                    text: `El comentario del campo ${campo} se eliminó automáticamente porque editaste este campo.`,
+                    icon: 'info',
+                    timer: 3000,
+                    showConfirmButton: false
+                });
+
+                // ✅ OPCIONAL: Guardar automáticamente en BD
+                // guardarTodosComentarios();
+            }
         }
 
         // ========================================
         // Abrir el modal para agregar/editar comentario
         // ========================================
         function abrirModalComentario(campo) {
+            console.log('🔍 Abriendo modal para campo:', campo);
+            console.log('📝 Comentario actual en memoria:', comentariosTemp[campo]);
+
             // Obtener elementos del DOM
             const campoActual = document.getElementById('campoActual');
             const infoCampo = document.getElementById('infoCampo');
@@ -941,17 +1047,21 @@
 
             // Configurar el campo actual
             campoActual.value = campo;
-            infoCampo.textContent = `Campo ${campo}: ${descripcionesCampos[campo]}`;
+            infoCampo.textContent = `Campo ${campo}: ${descripcionesCampos[campo] || 'Desconocido'}`;
 
             // Cargar el comentario si ya existe
-            textoComentario.value = comentariosTemp[campo]?.texto || '';
+            const comentarioExistente = comentariosTemp[campo];
+            textoComentario.value = comentarioExistente?.texto || '';
+
+            console.log('📋 Texto cargado en textarea:', textoComentario.value);
 
             // Mostrar/ocultar botón eliminar según si hay comentario
-            btnEliminar.style.display = comentariosTemp[campo] ? 'block' : 'none';
+            btnEliminar.style.display = comentarioExistente ? 'block' : 'none';
+            console.log('👁️ Botón eliminar visible:', btnEliminar.style.display);
 
             // Abrir el modal y enfocar el textarea
             modalComentario.show();
-            textoComentario.focus();
+            setTimeout(() => textoComentario.focus(), 500);
         }
 
         // ========================================
@@ -982,7 +1092,7 @@
         }
 
         // ========================================
-        // Eliminar un comentario
+        // Eliminar un comentario INDIVIDUAL
         // ========================================
         function eliminarComentario() {
             const campo = document.getElementById('campoActual').value;
@@ -998,8 +1108,10 @@
             modalComentario.hide();
 
             Swal.fire('Éxito', 'Comentario eliminado', 'success');
-        }
 
+            // ✅ OPCIONAL: Guardar automáticamente después de eliminar
+            // guardarTodosComentarios();
+        }
         // ========================================
         // Actualizar la apariencia del botón de comentario
         // ========================================
@@ -1024,34 +1136,27 @@
             const comentariosArray = [];
             const idProgramacion = document.getElementById('idProgramacionHidden').value;
 
-            // Validar que haya comentarios para guardar
-            if (Object.keys(comentariosTemp).length === 0) {
-                Swal.fire('Info', 'No hay comentarios para guardar', 'info');
-                return;
-            }
-
-            // Preparar los comentarios en el formato que espera el backend
-            for (let campo in comentariosTemp) {
-                const campoVista = parseInt(campo);
-                const comentarioBD = campoVista - 3; // Convertir campo vista (4-30) a BD (1-27)
+            // ✅ PREPARAR COMENTARIOS - INCLUIR CAMPOS VACÍOS
+            for (let campo = 4; campo <= 30; campo++) {
+                const comentarioBD = campo - 3;
+                const texto = comentariosTemp[campo]?.texto || ''; // Si no existe, texto vacío
 
                 comentariosArray.push({
                     ComentarioId: comentarioBD,
-                    Campo: campoVista,
-                    Texto: comentariosTemp[campo].texto,
+                    Campo: campo,
+                    Texto: texto,
                     IdProgramacion: parseInt(idProgramacion)
                 });
             }
 
-            // Obtener el botón de guardar
+            console.log('📤 Enviando TODOS los comentarios:', comentariosArray);
+
             const btn = document.getElementById('btnGuardarTodosComentarios');
 
             try {
-                // Deshabilitar botón y mostrar loading
                 btn.disabled = true;
                 btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
 
-                // Enviar los comentarios al servidor
                 const response = await fetch('/Programacion/GuardarComentarios', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -1060,7 +1165,6 @@
 
                 const resultado = await response.json();
 
-                // Verificar si se guardó correctamente
                 if (resultado.success) {
                     await Swal.fire('Éxito', resultado.message || 'Comentarios guardados correctamente', 'success');
                     window.location.href = '/Programacion/Programacion';
@@ -1071,7 +1175,6 @@
             } catch (error) {
                 Swal.fire('Error', 'Error de conexión: ' + error.message, 'error');
             } finally {
-                // Rehabilitar el botón
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fas fa-save"></i> Guardar Todos los Comentarios';
             }
@@ -1083,8 +1186,8 @@
         async function cargarComentariosExistentes() {
             try {
                 const idProgramacion = document.getElementById('idProgramacionHidden').value;
+                const esAdministrador = document.getElementById('esAdministrador').value === 'True';
 
-                // Obtener comentarios del servidor
                 const response = await fetch(
                     `/Programacion/ObtenerComentariosPorProgramacion?idProgramacion=${idProgramacion}`
                 );
@@ -1093,17 +1196,21 @@
 
                 const comentarioObj = await response.json();
 
-                // Procesar comentarios: BD (Comentario1-27) → Vista (campo 4-30)
+                // Procesar comentarios
                 for (let comentarioBD = 1; comentarioBD <= 27; comentarioBD++) {
-                    const propiedad = `Comentario${comentarioBD}`;
+                    const propiedad = `comentario${comentarioBD}`;
                     const texto = comentarioObj[propiedad];
-                    const campoVista = comentarioBD + 3; // Convertir BD (1-27) a Vista (4-30)
+                    const campoVista = comentarioBD + 3;
 
-                    // Si hay texto, cargarlo en memoria y actualizar botón
                     if (texto && texto.trim() !== '') {
                         comentariosTemp[campoVista] = { texto: texto };
                         actualizarBotonComentario(campoVista, true);
                     }
+                }
+
+                // ✅ BLOQUEAR CAMPOS DESPUÉS DE CARGAR COMENTARIOS
+                if (!esAdministrador) {
+                    setTimeout(() => bloquearCamposSinComentarios(), 100);
                 }
 
             } catch (error) {
