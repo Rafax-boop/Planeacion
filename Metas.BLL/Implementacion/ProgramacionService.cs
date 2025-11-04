@@ -498,77 +498,78 @@ namespace Metas.BLL.Implementacion
                 return null;
             }
         }
-        public async Task<bool> GuardarComentarios(List<ComentarioDTO> comentarios)
+
+        public async Task<LlenadoInterno> ObtenerporId(int idLlenado)
         {
             try
             {
-                Console.WriteLine("🔍 INICIO GuardarComentarios");
+                var llenadoInterno = await _repositorioLlenadoInterno.Obtener(
+                    l => l.IdProceso == idLlenado);
+                return llenadoInterno;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public async Task<bool> GuardarComentarios(List<ComentarioDTO> comentarios)
+        {
+            using var transaction = await _context.Database.BeginTransactionAsync();
 
-                // Validar que lleguen comentarios
+            try
+            {
                 if (comentarios == null || !comentarios.Any())
                 {
-                    Console.WriteLine("❌ Lista de comentarios vacía o nula");
                     return false;
                 }
 
-                var idRegistro = comentarios.First().IdProgramacion;
-                Console.WriteLine($"🔍 IdProgramacion: {idRegistro}");
-                Console.WriteLine($"🔍 Cantidad de comentarios: {comentarios.Count}");
+                var idProgramacion = comentarios.First().IdProgramacion;
 
-                // Buscar si ya existe un registro de comentarios para esta programación
+                // ✅ NUEVA LÓGICA: Si NO hay comentarios con texto → Estatus 1 (En Revisión)
+                //                 Si SÍ hay comentarios con texto → Estatus 2 (Comentarios)
+                bool tieneComentarios = comentarios.Any(c => !string.IsNullOrWhiteSpace(c.Texto));
+
+                var programacion = await _repositorioProgramacion.Obtener(p => p.IdRegistro == idProgramacion);
+                if (programacion != null)
+                {
+                    programacion.IdEstatus = tieneComentarios ? 2 : 1; // 2=Comentarios, 1=En Revisión
+                    await _repositorioProgramacion.Editar(programacion);
+                }
+
+                // Resto del código para guardar comentarios...
                 var comentarioExistente = await _context.Comentarios
-                    .FirstOrDefaultAsync(c => c.IdProgramacion == idRegistro);
+                    .FirstOrDefaultAsync(c => c.IdProgramacion == idProgramacion);
 
-                // Si no existe, crear uno nuevo
                 if (comentarioExistente == null)
                 {
-                    Console.WriteLine("🔍 No existe registro, creando nuevo...");
-                    comentarioExistente = new Comentario { IdProgramacion = idRegistro };
+                    comentarioExistente = new Comentario { IdProgramacion = idProgramacion };
                     _context.Comentarios.Add(comentarioExistente);
                     await _context.SaveChangesAsync();
-                    Console.WriteLine("✅ Registro creado");
-                }
-                else
-                {
-                    Console.WriteLine($"🔍 Registro existente encontrado: Id={comentarioExistente.IdComentario}");
                 }
 
-                // Asignar cada comentario a su propiedad correspondiente usando reflexión
+                // Asignar comentarios a propiedades
                 foreach (var com in comentarios)
                 {
-                    Console.WriteLine($"🔍 Procesando ComentarioId: {com.ComentarioId}, Texto: {com.Texto}");
-
-                    // Construir el nombre de la propiedad: "Comentario1", "Comentario2", etc.
                     var nombrePropiedad = $"Comentario{com.ComentarioId}";
-
-                    // Obtener la propiedad de la clase Comentario
                     var propiedad = typeof(Comentario).GetProperty(nombrePropiedad);
 
-                    // Si la propiedad existe, asignar el valor
                     if (propiedad != null && propiedad.CanWrite)
                     {
                         propiedad.SetValue(comentarioExistente, com.Texto);
                     }
-                    else
-                    {
-                        Console.WriteLine($"⚠️ Advertencia: Propiedad {nombrePropiedad} no encontrada");
-                    }
                 }
 
-                Console.WriteLine("🔍 Guardando cambios en BD...");
                 await _context.SaveChangesAsync();
-                Console.WriteLine("✅ Cambios guardados correctamente");
-
+                await transaction.CommitAsync();
                 return true;
+
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Console.WriteLine($"❌ ERROR GuardarComentarios: {ex.Message}");
-                Console.WriteLine($"❌ StackTrace: {ex.StackTrace}");
+                await transaction.RollbackAsync();
                 return false;
             }
         }
-
         public async Task<Comentario> ObtenerComentariosPorProgramacion(int idProgramacion)
         {
             try
