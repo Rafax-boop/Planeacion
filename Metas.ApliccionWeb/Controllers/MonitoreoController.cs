@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Metas.AplicacionWeb.Controllers
 {
+    [Authorize]
     public class MonitoreoController : Controller
     {
         private readonly IDepartamentoService _departamentoService;

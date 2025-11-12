@@ -32,3 +32,77 @@
 .btn-cerrar:active {
     transform: translateY(2px) !important;
 }
+
+/* Estilos personalizados para la tabla */
+#tablaDatos {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-size: 0.9rem;
+}
+
+    #tablaDatos thead th {
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+    }
+
+    #tablaDatos tbody tr {
+        transition: all 0.2s ease-in-out;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+
+        #tablaDatos tbody tr:hover {
+            background-color: rgba(220, 53, 69, 0.08) !important;
+            transform: translateY(-1px);
+        }
+
+    #tablaDatos tbody td {
+        padding: 12px 8px;
+        vertical-align: middle;
+        border-right: 1px solid rgba(0,0,0,0.05);
+    }
+
+        #tablaDatos tbody td:last-child {
+            border-right: none;
+        }
+
+/* Botones dentro de la tabla */
+.btn-editar, .btn-eliminar {
+    font-size: 0.75rem;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+    .btn-editar:hover, .btn-eliminar:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+/* Para mantener la coherencia con tu diseño glass */
+.glass-table {
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.7);
+}
+
+/* Estilos para los iconos de meses */
+.clickable-icon {
+    transition: all 0.2s ease;
+}
+
+    .clickable-icon:hover {
+        transform: scale(1.2);
+        color: #0d6efd !important;
+    }
+
+.text-success {
+    color: #198754 !important;
+}
+
+.text-primary {
+    color: #0d6efd !important;
+}
+
+.text-danger {
+    color: #dc3545 !important;
+}
