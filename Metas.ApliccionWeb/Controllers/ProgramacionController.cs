@@ -2,6 +2,7 @@
 using Metas.BLL.DTO;
 using Metas.BLL.Implementacion;
 using Metas.BLL.Interfaces;
+using Metas.DAL.DBContext;
 using Metas.Entity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,13 +20,67 @@ namespace Metas.AplicacionWeb.Controllers
         private readonly IProgramacionService _programacionService;
         private readonly IFechasService _fechasService;
         private readonly IUsuarioService _usuarioService;
+        private readonly MetasContext _context;
 
-        public ProgramacionController(IDepartamentoService departamentoService, IProgramacionService programacionService, IFechasService fechasService, IUsuarioService usuarioService)
+        public ProgramacionController(IDepartamentoService departamentoService, IProgramacionService programacionService, IFechasService fechasService, IUsuarioService usuarioService, MetasContext context)
         {
             _departamentoService = departamentoService;
             _programacionService = programacionService;
             _fechasService = fechasService;
             _usuarioService = usuarioService;
+            _context = context;
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> ValidarProgramacion([FromBody] ValidacionRequest request)
+        {
+            try
+            {
+                // 1. Eliminar todos los comentarios de esta programación
+                var comentarios = await _context.Comentarios
+                    .FirstOrDefaultAsync(c => c.IdProgramacion == request.IdProgramacion);
+
+                if (comentarios != null)
+                {
+                    _context.Comentarios.Remove(comentarios);
+                    await _context.SaveChangesAsync();
+                }
+
+                // 2. Cambiar estatus a 3 (Validado/Aprobado)
+                var resultado = await _programacionService.ActualizarEstatusProgramacion(request.IdProgramacion, 3);
+
+                if (resultado)
+                {
+                    return Json(new
+                    {
+                        success = true,
+                        message = "Programación validada correctamente. Comentarios eliminados."
+                    });
+                }
+                else
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Error al validar la programación"
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = $"Error: {ex.Message}"
+                });
+            }
+        }
+
+        // Clase para el request (agregar fuera del controller)
+        public class ValidacionRequest
+        {
+            public int IdProgramacion { get; set; }
         }
 
         [HttpGet]
@@ -302,8 +357,11 @@ namespace Metas.AplicacionWeb.Controllers
             ViewData["IdProgramacion"] = idProgramacion;
 
             // ✅ DETECTAR TIPO DE USUARIO
-            var esAdministrador = User.IsInRole("Administrador"); // Ajusta según tu sistema de roles
+            var esAdministrador = User.IsInRole("Administrador");
             ViewBag.EsAdministrador = esAdministrador;
+
+            // ✅ PASAR EL ESTATUS ACTUAL A LA VISTA
+            ViewBag.EstatusActual = datosCompletos.Estatus;
 
             return View(datosCompletos);
         }

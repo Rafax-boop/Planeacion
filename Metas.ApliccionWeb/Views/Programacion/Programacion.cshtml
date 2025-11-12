@@ -84,22 +84,21 @@
     <div class="text-center mb-3">
         <button class="boton-rojo" type="button" id="btnIniciarProgramacion" >Iniciar Programación</button>
     </div>
-    
     <div class="table-responsive">
-        <table class="table table-striped table-hover" id="tablaDatos">
-            <thead class="table-dark">
+        <table class="table table-hover table-borderless align-middle shadow-sm rounded-3 overflow-hidden" id="tablaDatos">
+            <thead class="bg-danger text-white">
                 <tr>
-                    <th>Pp</th>
-                    <th>Componente</th>
-                    <th>Actividad</th>
-                    <th>Descripción de la Actividad</th>
-                    <th>Programa o servicio de asistencia social</th>
-                    <th>Área</th>
-                    <th>Departamento</th>
-                    <th>Estatus</th>
+                    <th scope="col" class="text-center px-3 py-3 border-end border-light border-opacity-25">Pp</th>
+                    <th scope="col" class="text-center px-3 py-3 border-end border-light border-opacity-25">Componente</th>
+                    <th scope="col" class="text-center px-3 py-3 border-end border-light border-opacity-25">Actividad</th>
+                    <th scope="col" class="text-center px-3 py-3 border-end border-light border-opacity-25">Descripción de la Actividad</th>
+                    <th scope="col" class="text-center px-3 py-3 border-end border-light border-opacity-25">Programa o servicio de asistencia social</th>
+                    <th scope="col" class="text-center px-3 py-3 border-end border-light border-opacity-25">Área</th>
+                    <th scope="col" class="text-center px-3 py-3 border-end border-light border-opacity-25">Departamento</th>
+                    <th scope="col" class="text-center px-3 py-3">Estatus</th>
                 </tr>
             </thead>
-            <tbody id="tbodyDatos">
+            <tbody id="tbodyDatos" class="bg-light bg-opacity-50">
                 <!-- Los datos se cargarán aquí dinámicamente -->
             </tbody>
         </table>
@@ -173,51 +172,70 @@
 
                             var esAdmin = response.esAdmin;
 
-                            // Llenar la tabla con los datos
-                            $.each(response.datos, function(index, item) {
+                         // Llenar la tabla con los datos
+                        $.each(response.datos, function(index, item) {
+                            // Construir nombre de actividad
+                            var prefijoActividad = '';
+                            if (item.pp && item.pp.toLowerCase() === 'agenda') {
+                                prefijoActividad = 'T';
+                            }
+                            var actividadCompleta = prefijoActividad + (item.componente || '') + '.' + (item.actividad || '');
 
-                                // Construir nombre de actividad
-                                var prefijoActividad = '';
-                                if (item.pp && item.pp.toLowerCase() === 'agenda') {
-                                    prefijoActividad = 'T';
+                            // ========================================
+                            // LÓGICA DE BOTONES SEGÚN ROL Y ESTATUS
+                            // ========================================
+                            var btnEliminar = '';
+                            var btnEditar = '';
+
+                            // Para ADMINISTRADOR
+                            if (esAdmin) {
+                                btnEditar = '<button type="button" class="btn btn-primary btn-sm btn-editar me-1" data-id="' + item.idProceso + '"><i class="fa-solid fa-pen-to-square"></i></button>';
+                                btnEliminar = '<button type="button" class="btn btn-danger btn-sm btn-eliminar" data-id="' + item.idProceso + '"><i class="fa-solid fa-trash"></i></button>';
+                            }
+                            else {
+                                // Para USUARIO NORMAL
+                                if (item.idEstatus == 2) {
+                                    btnEditar = '<button type="button" class="btn btn-primary btn-sm btn-editar" data-id="' + item.idProceso + '"><i class="fa-solid fa-pen-to-square"></i></button>';
                                 }
-                                var actividadCompleta = prefijoActividad + (item.componente || '') + '.' + (item.actividad || '');
+                            }
 
-                                // ========================================
-                                // LÓGICA DE BOTONES SEGÚN ROL Y ESTATUS
-                                // ========================================
-                                var btnEliminar = '';
-                                var btnEditar = '';
+                            var badgeEstatus = '';
+                            switch(item.idEstatus) {
+                                case 1: 
+                                    badgeEstatus = '<span class="badge bg-opacity-15 text-primary border border-primary border-opacity-25 d-inline-flex align-items-center gap-1 px-3 py-2">' +
+                                                  '<i class="bi bi-clock-history"></i> En Revisión</span>';
+                                    break;
+                                case 2: 
+                                    badgeEstatus = '<span class="badge bg-opacity-15 text-warning border border-warning border-opacity-25 d-inline-flex align-items-center gap-1 px-3 py-2">' +
+                                                  '<i class="bi bi-chat-dots"></i> Con Comentarios</span>';
+                                    break;
+                                case 3:
+                                    badgeEstatus = '<span class="badge bg-opacity-15 text-success border border-success border-opacity-25 d-inline-flex align-items-center gap-1 px-3 py-2">' +
+                                                  '<i class="bi bi-check-circle"></i> Validado</span>';
+                                    break;
+                                default:
+                                    badgeEstatus = '<span class="badge bg-secondary">' + item.nombreEstatus + '</span>';
+                            }
 
-                                // Para ADMINISTRADOR
-                                if (esAdmin) {
-                                    // ✅ ADMIN: Siempre puede editar sin importar el estatus
-                                    btnEditar = '<button type="button" class="btn btn-primary btn-sm btn-editar" data-id="' + item.idProceso + '">Editar</button>';
-                                    btnEliminar = '<br><button type="button" class="btn btn-danger btn-sm btn-eliminar" data-id="' + item.idProceso + '">Eliminar</button>';
-                                }
-                                else {
-                                    // ✅ USUARIO NORMAL: Solo puede editar cuando está "Con Comentarios" (estatus 2)
-                                    if (item.idEstatus == 2) {
-                                        btnEditar = '<button type="button" class="btn btn-primary btn-sm btn-editar" data-id="' + item.idProceso + '">Editar</button>';
-                                    }
-                                    // En estatus 1 (En Revisión) no ve botón de edición
-                                }
+                            // Construir la fila de la tabla
+                            var fila = '<tr>' +
+                                '<td class="text-center">' + item.pp + '<div class="mt-1">' + btnEliminar + '</div></td>' +
+                                '<td class="text-center">' + item.componente + '</td>' +
+                                '<td class="text-center">' + actividadCompleta + '</td>' +
+                                '<td class="text-start">' + item.descripcionActividad + '</td>' +
+                                '<td class="text-start">' + item.programaSocial + '</td>' +
+                                '<td class="text-center">' + item.area + '</td>' +
+                                '<td class="text-center">' + item.departamento + '</td>' +
+                                '<td class="text-center">' +
+                                    '<div class="d-flex flex-column align-items-center gap-2">' +
+                                        '<div>' + badgeEstatus + '</div>' +
+                                        '<div>' + btnEditar + '</div>' +
+                                    '</div>' +
+                                '</td>' +
+                            '</tr>';
 
-                                // Construir la fila de la tabla
-                                var fila = '<tr>' +
-                                    '<td>' + item.pp + btnEliminar + '</td>' +
-                                    '<td>' + item.componente + '</td>' +
-                                    '<td>' + actividadCompleta + '</td>' +
-                                    '<td>' + item.descripcionActividad + '</td>' +
-                                    '<td>' + item.programaSocial + '</td>' +
-                                    '<td>' + item.area + '</td>' +
-                                    '<td>' + item.departamento + '</td>' +
-                                    '<td>' + item.nombreEstatus + '<br>' + btnEditar + '</td>' +
-                                '</tr>';
-
-                                $('#tbodyDatos').append(fila);
-                            });
-
+                            $('#tbodyDatos').append(fila);
+                        });
                             $('#tablaDatos').show();
 
                         } else {
@@ -230,6 +248,7 @@
                     }
                 });
             });
+
 
             // ========================================
             // ELIMINAR REGISTRO (Solo Admin)

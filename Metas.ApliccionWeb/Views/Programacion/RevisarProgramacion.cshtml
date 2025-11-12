@@ -42,7 +42,7 @@
             <div class="d-flex p-2">
                 <div class="w-50 align-content-center">3. CORREO ELECTRÓNICO:</div>
                 <div class="w-50 my-2 mx-2">
-                    <input type="email" disabled class="input-arena form-control titulo" readonly placeholder="ejemplo@correo.com" id="inputCorreo" value="@Model.CorreoContacto">
+                    <input type="email" disabled class="input-arena form-control titulo"  placeholder="ejemplo@correo.com" id="inputCorreo" value="@Model.CorreoContacto">
                 </div>
             </div>
         </div>
@@ -55,7 +55,7 @@
         <div class="row my-3 border-bottom pb-3">
             <label class="col-md-6 align-content-center">4. PROGRAMA PRESUPUESTARIO:</label>
             <div class="col-md-5 align-content-center">
-                <input type="text" disabled class="input-arena form-control titulo" value="@Model.Pp" readonly data-campo="4">
+                <input type="text" @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control titulo" value="@Model.Pp" data-campo="4">
             </div>
             <div class="col-md-1 align-content-center">
                 <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
@@ -68,7 +68,7 @@
         <div class="row mb-3 border-bottom pb-3">
             <label class="align-content-center col-md-6">5. NÚMERO DE COMPONENTE:</label>
             <div class="col-md-5 align-content-center">
-                <input type="text" disabled class="input-arena form-control titulo" value="@Model.Pp" readonly data-campo="5">
+                <input type="text" @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control titulo" value="@Model.Pp" readonlyreadonly data-campo="5">
             </div>
             <div class="col-md-1 align-content-center">
                 <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
@@ -81,7 +81,7 @@
         <div class="row pb-1 border-bottom mb-3 pb-3">
             <label class="align-content-center col-md-6">6. NÚMERO DE ACTIVIDAD:</label>
             <div class="col-md-5 align-content-center">
-                <input type="number" disabled required class="input-arena form-control titulo" id="inputActividad" value="@Model.NActividad">
+                <input type="number" @(!ViewBag.EsAdministrador ? "disabled" : "") required class="input-arena form-control titulo" id="inputActividad" value="@Model.NActividad">
             </div>
             <div class="col-md-1 align-content-center">
                 <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
@@ -96,7 +96,7 @@
             <div class="row">
                 <div class="col-md-11">
                     <label>7. JUSTIFICACIÓN</label>
-                    <textarea required class="input-arena form-control" disabled rows="2" id="inputJustificacion">@Model.Justificacion</textarea>
+                    <textarea required class="input-arena form-control" @(!ViewBag.EsAdministrador ? "disabled" : "") rows="2" id="inputJustificacion">@Model.Justificacion</textarea>
                 </div>
                 <div class="col-md-1 align-content-center">
                     <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
@@ -112,7 +112,7 @@
             <div class="row">
                 <div class="col-md-11">
                     <label>8. DOCUMENTACIÓN SOPORTE DE LA JUSTIFICACIÓN</label>
-                    <textarea disabled required class="input-arena form-control disabled" rows="2" id="inputDocumentacion">@Model.DescripcionDocumento</textarea>
+                    <textarea @(!ViewBag.EsAdministrador ? "disabled" : "") required class="input-arena form-control disabled" rows="2" id="inputDocumentacion">@Model.DescripcionDocumento</textarea>
                 </div>
                 <div class="col-md-1 align-content-center">
                     <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
@@ -132,7 +132,7 @@
                 <div class="row g-2">
                     <div class="col-6">
                         <h5 class="fw-light">Recurso Federal</h5>
-                        <select required disabled class="input-arena form-control titulo" id="selectFederal">
+                        <select required @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control titulo" id="selectFederal">
                             <option value="">Seleccione</option>
                             <option value="Si" selected="@(Model.RecursoFederal == "Si")">Sí</option>
                             <option value="No" selected="@(Model.RecursoFederal == "No")">No</option>
@@ -140,7 +140,7 @@
                     </div>
                     <div class="col-6">
                         <h5 class="fw-light">Recurso Estatal</h5>
-                        <select required disabled class="input-arena form-control titulo" id="selectEstatal">
+                        <select required @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control titulo" id="selectEstatal">
                             <option value="">Seleccione</option>
                             <option value="Si" selected="@(Model.RecursoEstatal == "Si")">Sí</option>
                             <option value="No" selected="@(Model.RecursoEstatal == "No")">No</option>
@@ -166,7 +166,7 @@
         <div class="row border-bottom">
             <label class="col-md-4 align-content-center">10. PROGRAMA SOCIAL, SERVICIO Y/O PROYECTO</label>
             <div class="col-md-7 mb-3">
-                <textarea required id="inputPrograma" disabled class="input-arena form-control" rows="2">@Model.ProgramaSocial</textarea>
+                <textarea required id="inputPrograma" @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control" rows="2">@Model.ProgramaSocial</textarea>
             </div>
             <div class="col-md-1 align-content-center">
                 <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
@@ -178,7 +178,7 @@
         <div class="row border-bottom">
             <label class="col-md-4 align-content-center">11. DESCRIPCIÓN DE LA ACTIVIDAD</label>
             <div class="col-md-7 my-3">
-                <textarea required id="inputDescripcion" disabled class="input-arena form-control" rows="2">@Model.DescripcionActividad</textarea>
+                <textarea required id="inputDescripcion" @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control" rows="2">@Model.DescripcionActividad</textarea>
             </div>
             <div class="col-md-1 align-content-center">
                 <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
@@ -190,7 +190,7 @@
         <div class="row border-bottom">
             <label class="col-md-4 align-content-center">12. NOMBRE DEL INDICADOR</label>
             <div class="col-md-7 my-3">
-                <textarea required id="inputIndicador" disabled class="input-arena form-control" rows="2">@Model.NombreIndicador</textarea>
+                <textarea required id="inputIndicador" @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control" rows="2">@Model.NombreIndicador</textarea>
             </div>
             <div class="col-md-1 align-content-center">
                 <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
@@ -202,7 +202,7 @@
         <div class="row border-bottom">
             <label class="col-md-4 align-content-center">13. DEFINICIÓN DEL INDICADOR</label>
             <div class="col-md-7 my-3">
-                <textarea required id="inputDefinicion" disabled class="input-arena form-control" rows="2">@Model.DefinicionIndicador</textarea>
+                <textarea required id="inputDefinicion" @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control" rows="2">@Model.DefinicionIndicador</textarea>
             </div>
             <div class="col-md-1 align-content-center">
                 <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
@@ -242,16 +242,16 @@
                 <label class="fw-light">SERVICIOS</label>
             </div>
             <div class="col-md-2">
-                <input type="number" disabled id="primerServicio" class="input-arena form-control titulo text-center" value="@Model.PrimerServicio" min="0">
+                <input type="number" @(!ViewBag.EsAdministrador ? "disabled" : "") id="primerServicio" class="input-arena form-control titulo text-center" value="@Model.PrimerServicio" min="0">
             </div>
             <div class="col-md-2">
-                <input type="number" disabled id="segundoServicio" class="input-arena form-control titulo text-center" value="@Model.SegundoServicio" min="0">
+                <input type="number" @(!ViewBag.EsAdministrador ? "disabled" : "") id="segundoServicio" class="input-arena form-control titulo text-center" value="@Model.SegundoServicio" min="0">
             </div>
             <div class="col-md-2">
-                <input type="number" disabled id="tercerServicio" class="input-arena form-control titulo text-center" value="@Model.TercerServicio" min="0">
+                <input type="number" @(!ViewBag.EsAdministrador ? "disabled" : "") id="tercerServicio" class="input-arena form-control titulo text-center" value="@Model.TercerServicio" min="0">
             </div>
             <div class="col-md-2">
-                <input type="number" disabled id="cuartoServicio" class="input-arena form-control titulo text-center" value="@Model.CuartoServicio" min="0">
+                <input type="number" @(!ViewBag.EsAdministrador ? "disabled" : "") id="cuartoServicio" class="input-arena form-control titulo text-center" value="@Model.CuartoServicio" min="0">
             </div>
             <div class="col-md-1 align-content-center">
                 <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
@@ -267,23 +267,23 @@
                 <label class="fw-light">PERSONAS</label>
             </div>
             <div class="col-md-2">
-                <input type="number" disabled id="primerPersona" class="input-arena form-control titulo text-center" value="@Model.PrimerPersona" min="0">
+                <input type="number" @(!ViewBag.EsAdministrador ? "disabled" : "") id="primerPersona" class="input-arena form-control titulo text-center" value="@Model.PrimerPersona" min="0">
             </div>
             <div class="col-md-2">
-                <input type="number" disabled id="segundoPersona" class="input-arena form-control titulo text-center" value="@Model.SegundoPersona" min="0">
+                <input type="number" @(!ViewBag.EsAdministrador ? "disabled" : "") id="segundoPersona" class="input-arena form-control titulo text-center" value="@Model.SegundoPersona" min="0">
             </div>
             <div class="col-md-2">
-                <input type="number" disabled id="tercerPersona" class="input-arena form-control titulo text-center" value="@Model.TercerPersona" min="0">
+                <input type="number" @(!ViewBag.EsAdministrador ? "disabled" : "") id="tercerPersona" class="input-arena form-control titulo text-center" value="@Model.TercerPersona" min="0">
             </div>
             <div class="col-md-2">
-                <input type="number" disabled id="cuartoPersona" class="input-arena form-control titulo text-center" value="@Model.CuartoPersona" min="0">
+                <input type="number" @(!ViewBag.EsAdministrador ? "disabled" : "") id="cuartoPersona" class="input-arena form-control titulo text-center" value="@Model.CuartoPersona" min="0">
             </div>
         </div>
 
         <div class="row border-bottom border-top">
             <label class="col-md-4 align-content-center">15. UNIDAD DE MEDIDA</label>
             <div class="col-md-7 my-3">
-                <input type="text" disabled class="input-arena form-control titulo" id="selectMedida" value="@Model.UnidadMedida" readonly>
+                <input type="text" @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control titulo" id="selectMedida" value="@Model.UnidadMedida">
             </div>
             <div class="col-md-1 align-content-center">
                 <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
@@ -296,7 +296,7 @@
         <div class="row border-bottom">
             <label class="col-md-4 align-content-center">16. MEDIOS DE VERIFICACIÓN</label>
             <div class="col-md-7 my-3">
-                <textarea required id="inputMedios" disabled class="input-arena form-control" rows="2">@Model.MediosVerificacion</textarea>
+                <textarea required id="inputMedios" @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control" rows="2">@Model.MediosVerificacion</textarea>
             </div>
             <div class="col-md-1 align-content-center">
                 <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
@@ -309,10 +309,10 @@
         <div class="row border-bottom">
             <label class="col-md-4 align-content-center">17. SERIE DE INFORMACIÓN DISPONIBLE</label>
             <div class="col-md-3 my-3">
-                <input type="text" disabled class="input-arena form-control titulo" value="@Model.SerieInformacionDesde" readonly>
+                <input type="text" @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control titulo" value="@Model.SerieInformacionDesde">
             </div>
             <div class="col-md-4 my-3">
-                <input type="text" disabled class="input-arena form-control titulo" value="@Model.SerieInformacionHasta" readonly>
+                <input type="text" @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control titulo" value="@Model.SerieInformacionHasta">
             </div>
             <div class="col-md-1 align-content-center">
                 <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
@@ -325,7 +325,7 @@
         <div class="row border-bottom mb-2">
             <label class="col-md-4 align-content-center">18. FUENTES DE INFORMACIÓN</label>
             <div class="col-md-7 my-3">
-                <textarea required id="inputFuentes" disabled class="input-arena form-control" rows="2">@Model.FuenteInformacion</textarea>
+                <textarea required id="inputFuentes" @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control" rows="2">@Model.FuenteInformacion</textarea>
             </div>
             <div class="col-md-1 align-content-center">
                 <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
@@ -342,7 +342,7 @@
                         <label class="mb-0 d-flex align-items-center h-100">19. INTERVIENEN DELEGACIONES REGIONALES</label>
                     </div>
                     <div class="col-md-5">
-                        <select id="selectDelegaciones" disabled class="input-arena form-control titulo">
+                        <select id="selectDelegaciones" @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control titulo">
                             <option value="">Seleccione</option>
                             <option value="Si" selected="@(Model.IntervienenDelegaciones == "Si")">Sí</option>
                             <option value="No" selected="@(Model.IntervienenDelegaciones == "No")">No</option>
@@ -390,7 +390,7 @@
                         <label class="mb-0">21. AÑO</label>
                     </div>
                     <div class="col-md-5">
-                        <input type="text" disabled class="input-arena form-control titulo" value="@Model.AnoBase" readonly>
+                        <input type="text" disabled class="input-arena form-control titulo" value="@Model.AnoBase" >
                     </div>
                     <div class="col-md-1 align-content-center">
                         <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
@@ -456,7 +456,7 @@
                         <label class="mb-0">25. AÑO</label>
                     </div>
                     <div class="col-md-5">
-                        <input id="inputAnoMeta" type="text" class="input-arena form-control titulo text-center fw-semibold" value="@Model.AnoMeta" disabled readonly>
+                        <input id="inputAnoMeta" type="text" class="input-arena form-control titulo text-center fw-semibold" value="@Model.AnoMeta" disabled >
                     </div>
                     <div class="col-md-1 align-content-center">
                         <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
@@ -834,6 +834,26 @@
         </div>
     </div>
 
+    @if (ViewBag.EsAdministrador && Model.Estatus != 3)
+    {
+        <div class="text-center mb-5 mt-4">
+            <button class="btn btn-success btn-lg" id="btnValidarProgramacion"
+                    data-idprogramacion="@ViewData["IdProgramacion"]">
+                <i class="fas fa-check-circle"></i> Validar Programación
+            </button>
+        </div>
+    }
+
+    @if (Model.Estatus == 3)
+    {
+        <div class="text-center mb-5 mt-4">
+            <div class="alert alert-success" role="alert">
+                <h4><i class="fas fa-check-circle"></i> Programación Validada</h4>
+                <p class="mb-0">Esta programación ha sido aprobada y validada.</p>
+            </div>
+        </div>
+    }
+
 </div>
 
 <!-- Modal para comentarios -->
@@ -866,12 +886,14 @@
 </div>
 
 <!-- Botón guardar comentarios -->
-<div class="text-center mb-5">
-    <button class="btn btn-success btn-lg" id="btnGuardarTodosComentarios">
-        <i class="fas fa-save"></i> Guardar Todos los Comentarios
-    </button>
-</div>
-
+@if (ViewBag.EsAdministrador && Model.Estatus != 3)
+{
+    <div class="text-center mb-5">
+        <button class="btn btn-primary btn-lg" id="btnGuardarTodosComentarios">
+            <i class="fas fa-save"></i> Guardar Todos los Comentarios
+        </button>
+    </div>
+}
 <input type="hidden" id="esAdministrador" value="@ViewBag.EsAdministrador">
 <input type="hidden" id="idProgramacionHidden" value="@ViewData["IdProgramacion"]">
 
@@ -1215,6 +1237,73 @@
 
             } catch (error) {
                 console.error('Error cargando comentarios:', error);
+            }
+        }
+
+        // Botón Validar Programación
+        document.addEventListener('DOMContentLoaded', function() {
+            const btnValidar = document.getElementById('btnValidarProgramacion');
+
+            if (btnValidar) {
+                btnValidar.addEventListener('click', validarProgramacion);
+            }
+        });
+
+        async function validarProgramacion() {
+            const btn = document.getElementById('btnValidarProgramacion');
+            const idProgramacion = btn.getAttribute('data-idprogramacion');
+
+            const confirmacion = await Swal.fire({
+                title: '¿Validar Programación?',
+                text: 'Esta acción eliminará todos los comentarios y cambiará el estatus a "Validado". ¿Continuar?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, Validar',
+                cancelButtonText: 'Cancelar'
+            });
+
+            if (!confirmacion.isConfirmed) return;
+
+            try {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Validando...';
+
+                const response = await fetch('/Programacion/ValidarProgramacion', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ IdProgramacion: parseInt(idProgramacion) })
+                });
+
+                const resultado = await response.json();
+
+                if (resultado.success) {
+                    await Swal.fire({
+                        title: '¡Validada!',
+                        text: resultado.message,
+                        icon: 'success',
+                        confirmButtonText: 'Aceptar'
+                    });
+
+                     window.location.href = '/Programacion/Programacion';
+
+                } else {
+                    throw new Error(resultado.message);
+                }
+
+            } catch (error) {
+                Swal.fire({
+                    title: 'Error',
+                    text: error.message,
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-check-circle"></i> Validar Programación';
             }
         }
 
@@ -2100,5 +2189,6 @@
             }
             console.log('Array con mapeo correcto:', comentariosArray);
         }
+
     </script>
 }
