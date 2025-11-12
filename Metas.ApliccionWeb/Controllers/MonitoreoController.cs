@@ -1,10 +1,12 @@
 ﻿using Metas.AplicacionWeb.Models.ViewModels;
+using Metas.BLL.DTO;
 using Metas.BLL.Implementacion;
 using Metas.BLL.Interfaces;
 using Metas.Entity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Hosting;
 
 namespace Metas.AplicacionWeb.Controllers
 {
@@ -14,11 +16,15 @@ namespace Metas.AplicacionWeb.Controllers
         private readonly IDepartamentoService _departamentoService;
         private readonly IProgramacionService _programacionService;
         private readonly IFechasService _fechasService;
-        public MonitoreoController(IDepartamentoService departamentoService, IProgramacionService programacionService, IFechasService fechasService)
+        private readonly IMonitoreoService _monitoreoService;
+        private readonly IWebHostEnvironment _hostEnvironment;
+        public MonitoreoController(IDepartamentoService departamentoService, IProgramacionService programacionService, IFechasService fechasService, IMonitoreoService monitoreoService, IWebHostEnvironment hostEnvironment)
         {
             _departamentoService = departamentoService;
             _programacionService = programacionService;
             _fechasService = fechasService;
+            _monitoreoService = monitoreoService;
+            _hostEnvironment = hostEnvironment;
         }
         public async Task<IActionResult> Monitoreo()
         {
@@ -97,6 +103,7 @@ namespace Metas.AplicacionWeb.Controllers
                 .FirstOrDefault(f => f.IdFechaCaptura == mes);
 
             var datosInternos = await _programacionService.ObtenerporId(idProceso);
+            var datosExternos = await _monitoreoService.ObtenerLlenadoMensual(idProceso, mes);
 
             int? totalMes = mes switch
             {
@@ -115,9 +122,11 @@ namespace Metas.AplicacionWeb.Controllers
                 _ => null
             };
 
-            var modelo = new VMDatosInternos
+            var modelo = new VMGuardarActualizacion
             {
+                IdProceso = idProceso,
                 Mes = fechaRegistro.Mes,
+                MesNum = mes,
                 FechaFin = fechaRegistro.FechaFin,
                 Total = totalMes,
                 pp = datosInternos.Pp,
@@ -127,10 +136,138 @@ namespace Metas.AplicacionWeb.Controllers
                 ProgramaSocial = datosInternos.ProgramaSocial,
                 Area = datosInternos.Area,
                 Departamento = datosInternos.Departamento,
-                DescripcionActividad = datosInternos.DescripcionActividad
+                DescripcionActividad = datosInternos.DescripcionActividad,
+                Realizado = datosExternos?.Realizado ?? 0,
+                MujeresAtendidas = datosExternos?.MujeresAtendidas ?? 0,
+                HombresAtendidos = datosExternos?.HombresAtendidos ?? 0,
+                Rango0a3 = datosExternos?._03anos ?? 0,
+                Rango4a8 = datosExternos?._48anos ?? 0,
+                Rango9a12 = datosExternos?._912anos ?? 0,
+                Rango13a17 = datosExternos?._1317anos ?? 0,
+                Rango18a29 = datosExternos?._1829anos ?? 0,
+                Rango30a59 = datosExternos?._3059anos ?? 0,
+                Rango60adelante = datosExternos?._60amasanos ?? 0,
+                RangoNoEspecifica = datosExternos?.NoDefinida ?? 0,
+                Indigena = datosExternos?.Indigena ?? 0,
+                NombreRealizo = datosInternos.NombreRealizo ?? "",
+                PuestoRealizo = datosInternos.CargoRealizo ?? "",
+                NombreAutorizo = datosInternos.NombreValido ?? "",
+                PuestoAutorizo = datosInternos.CargoValido ?? ""
             };
 
             return View(modelo);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GuardarActualizacion(GuardarActualizacionDTO modelo)
+        {
+            // Variables de ruta inicializadas a null
+            string rutaEvidencia = null;
+            string rutaJustificacion = null;
+
+            // Variables de ruta para construcción
+            string idProceso = modelo.IdProceso.ToString();
+            string mes = modelo.Mes.ToString(); // El mes es un INT (1-12)
+
+            // Definición de las carpetas base en wwwroot
+            const string BASE_FOLDER_EVIDENCIA = "Evidencia";
+            const string BASE_FOLDER_JUSTIFICACION = "Justificacion";
+
+            // 1. Definir rutas físicas completas para las carpetas destino (ej: wwwroot/Evidencia/123/5)
+            string folderPathEvidencia = Path.Combine(_hostEnvironment.WebRootPath, BASE_FOLDER_EVIDENCIA, idProceso, mes);
+            string folderPathJustificacion = Path.Combine(_hostEnvironment.WebRootPath, BASE_FOLDER_JUSTIFICACION, idProceso, mes);
+
+            try
+            {
+                // 2. PROCESAMIENTO DE ARCHIVOS Y CREACIÓN DE CARPETAS
+
+                // A. Evidencia
+                if (modelo.InputEvidencia != null && modelo.InputEvidencia.Length > 0)
+                {
+                    // Crear la estructura de carpetas para Evidencia si no existe
+                    Directory.CreateDirectory(folderPathEvidencia);
+
+                    // Generar nombre de archivo único: [IdProceso]_E_[Mes]_[Ticks].ext
+                    string extension = Path.GetExtension(modelo.InputEvidencia.FileName);
+                    // Opción Segura (Recomendada) para Evidencia:
+                    string originalFileName = Path.GetFileName(modelo.InputEvidencia.FileName);
+                    // Se asegura unicidad por proceso/mes y aún conserva el nombre original
+                    string newFileName = $"{idProceso}_E_{mes}_{originalFileName}";
+
+                    // Ruta física donde se guardará el archivo
+                    string rutaFisicaEvidencia = Path.Combine(folderPathEvidencia, newFileName);
+
+                    // Guardar el archivo físicamente
+                    using (var fileStream = new FileStream(rutaFisicaEvidencia, FileMode.Create))
+                    {
+                        await modelo.InputEvidencia.CopyToAsync(fileStream);
+                    }
+
+                    // Guardamos la RUTA RELATIVA para la DB (ej: /Evidencia/123/5/nombre.ext)
+                    rutaEvidencia = $"/{BASE_FOLDER_EVIDENCIA}/{idProceso}/{mes}/{newFileName}";
+                }
+
+                // B. Justificación
+                if (modelo.InputJustificacion != null && modelo.InputJustificacion.Length > 0)
+                {
+                    // Crear la estructura de carpetas para Justificación si no existe
+                    Directory.CreateDirectory(folderPathJustificacion);
+
+                    // Generar nombre de archivo único: [IdProceso]_J_[Mes]_[Ticks].ext
+                    string extension = Path.GetExtension(modelo.InputJustificacion.FileName);
+                    string newFileName = $"{idProceso}_J_{mes}_{DateTime.Now.Ticks}{extension}";
+
+                    // Ruta física donde se guardará el archivo
+                    string rutaFisicaJustificacion = Path.Combine(folderPathJustificacion, newFileName);
+
+                    // Guardar el archivo físicamente
+                    using (var fileStream = new FileStream(rutaFisicaJustificacion, FileMode.Create))
+                    {
+                        await modelo.InputJustificacion.CopyToAsync(fileStream);
+                    }
+
+                    // Guardamos la RUTA RELATIVA para la DB (ej: /Justificacion/123/5/nombre.ext)
+                    rutaJustificacion = $"/{BASE_FOLDER_JUSTIFICACION}/{idProceso}/{mes}/{newFileName}";
+                }
+
+                // 3. LLAMADA AL SERVICIO Y PERSISTENCIA DE DATOS (Tu lógica de negocio)
+                bool resultado = await _monitoreoService.GuardarActualizacion(
+                    modelo,
+                    rutaEvidencia,
+                    rutaJustificacion
+                );
+
+                // 4. MANEJO DE RESULTADO Y RESPUESTA JSON (para la función AJAX en JS)
+
+                if (resultado)
+                {
+                    string mensaje = modelo.EsBorrador ? "El borrador se guardó exitosamente." : "La actualización se envió con éxito.";
+
+                    return Json(new
+                    {
+                        success = true,
+                        message = mensaje,
+                        redirectTo = Url.Action("Monitoreo", "Monitoreo")
+                    });
+                }
+                else
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Hubo un error al intentar guardar la actualización. Intente de nuevo."
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                // Se recomienda loggear el error (ex)
+                return Json(new
+                {
+                    success = false,
+                    message = $"Ocurrió un error inesperado en el servidor: {ex.Message}"
+                });
+            }
         }
     }
 }

@@ -33,8 +33,6 @@ public partial class LlenadoExterno
 
     public int? Meses { get; set; }
 
-    public bool? ValidarInfo { get; set; }
-
     public int? IdProceso { get; set; }
 
     public string? Evidencia { get; set; }

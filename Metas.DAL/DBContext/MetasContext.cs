@@ -60,7 +60,7 @@ public partial class MetasContext : DbContext
 
     public virtual DbSet<Vinculacion> Vinculacions { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder){}
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder){ }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -137,12 +137,11 @@ public partial class MetasContext : DbContext
 
         modelBuilder.Entity<LlenadoExterno>(entity =>
         {
-            entity
-                .HasNoKey()
-                .ToTable("LlenadoExterno");
+            entity.HasKey(e => e.IdLlenado);
+
+            entity.ToTable("LlenadoExterno");
 
             entity.Property(e => e.Evidencia).HasMaxLength(300);
-            entity.Property(e => e.IdLlenado).ValueGeneratedOnAdd();
             entity.Property(e => e.Justificacion).HasMaxLength(300);
             entity.Property(e => e._03anos).HasColumnName("0-3ANOS");
             entity.Property(e => e._1317anos).HasColumnName("13-17ANOS");
@@ -152,7 +151,7 @@ public partial class MetasContext : DbContext
             entity.Property(e => e._60amasanos).HasColumnName("60AMASANOS");
             entity.Property(e => e._912anos).HasColumnName("9-12ANOS");
 
-            entity.HasOne(d => d.IdProcesoNavigation).WithMany()
+            entity.HasOne(d => d.IdProcesoNavigation).WithMany(p => p.LlenadoExternos)
                 .HasForeignKey(d => d.IdProceso)
                 .HasConstraintName("FK_LlenadoExterno_LlenadoInterno");
         });
@@ -233,7 +232,6 @@ public partial class MetasContext : DbContext
 
             entity.Property(e => e.Acumulable).HasMaxLength(4);
             entity.Property(e => e.Beneficiarios).HasMaxLength(50);
-            entity.Property(e => e.Cuarto).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.Frecuencia1).HasMaxLength(150);
             entity.Property(e => e.Frecuencia2).HasMaxLength(150);
             entity.Property(e => e.Frecuencia3).HasMaxLength(150);
@@ -257,12 +255,9 @@ public partial class MetasContext : DbContext
             entity.Property(e => e.NComponente).HasColumnName("nComponente");
             entity.Property(e => e.NoPersonas2).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.Pp).HasColumnName("pp");
-            entity.Property(e => e.Primero).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.RecursoEstatal).HasMaxLength(5);
             entity.Property(e => e.RecursoFederal).HasMaxLength(5);
-            entity.Property(e => e.Segundo).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.SerieInfo2).HasMaxLength(5);
-            entity.Property(e => e.Tercero).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.Totalanos2).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.Valor).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.Valor2).HasColumnType("decimal(18, 2)");

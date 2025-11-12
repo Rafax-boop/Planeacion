@@ -165,6 +165,8 @@ public partial class LlenadoInterno
 
     public virtual Pp? IdppNavigation { get; set; }
 
+    public virtual ICollection<LlenadoExterno> LlenadoExternos { get; set; } = new List<LlenadoExterno>();
+
     public virtual ICollection<Programacion> Programacions { get; set; } = new List<Programacion>();
 
     public virtual ICollection<Vinculacion> Vinculacions { get; set; } = new List<Vinculacion>();

@@ -35,14 +35,6 @@ public partial class Programacion
 
     public string? DefinicionIndicador { get; set; }
 
-    public decimal? Primero { get; set; }
-
-    public decimal? Segundo { get; set; }
-
-    public decimal? Tercero { get; set; }
-
-    public decimal? Cuarto { get; set; }
-
     public int? Servicio1 { get; set; }
 
     public int? Servicio2 { get; set; }
