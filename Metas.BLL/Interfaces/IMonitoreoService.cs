@@ -1,0 +1,16 @@
+﻿using Metas.BLL.DTO;
+using Metas.Entity;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Metas.BLL.Interfaces
+{
+    public interface IMonitoreoService
+    {
+        Task<bool> GuardarActualizacion(GuardarActualizacionDTO modelo, string rutaEvidencia, string rutaJustificacion);
+        Task<LlenadoExterno> ObtenerLlenadoMensual(int id, int mes);
+    }
+}

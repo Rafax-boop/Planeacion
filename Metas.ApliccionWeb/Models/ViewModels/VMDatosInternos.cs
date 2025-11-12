@@ -27,6 +27,7 @@
         public int? Total { get; set; }
         public string? UnidadMedida { get; set; }
         public string Mes { get; set; }
+        public int MesNum { get; set; }
         public DateOnly? FechaFin { get; set; }
         public Dictionary<int, RangoDeFechas> FechasCaptura { get; set; }
     }

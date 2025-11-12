@@ -2,6 +2,7 @@
 @{
     ViewData["Title"] = "Iniciar Programación";
 }
+<h1>Ejercicio de Programación</h1>
 <div class="mt-5 pb-4 pt-3 rounded-5 glass-effect" style="padding-left: 20px; padding-right: 25px">
     <div class="row">
         <div class="col">
@@ -74,7 +75,7 @@
 
 <!-- Sección que se mostrará después de buscar -->
 <div id="seccionResultados" class="mt-4 pb-4 pt-3 rounded-5 glass-effect" style="padding-left: 20px; padding-right: 25px; display: none;">
-    <h2 class="fw-semibold text-start">
+    <h2 class="fw-semibold text-start" id="ano">
         Ejercicio Fiscal
     </h2>
     <h3 class="fw-light" id="tituloDepartamento">
@@ -128,6 +129,7 @@
             $('#btnBuscar').click(function() {
                 var anoFiscal = $('#selectAnoFiscal').val();
                 var departamento = $('#selectDepartamento').val();
+                var departamentoTexto = $('#selectDepartamento option:selected').text();
 
                 // Validar que se haya seleccionado un departamento
                 if (!departamento) {
@@ -137,6 +139,10 @@
 
                 // Mostrar la sección de resultados
                 $('#seccionResultados').slideDown();
+
+                // Cambiar los títulos dinámicamente
+                $('#ano').text('Ejercicio Fiscal: ' + anoFiscal);
+                $('#tituloDepartamento').text('Departamento: ' + departamentoTexto);
 
                 // Mostrar mensaje de carga
                 $('#mensajeCarga').show();
