@@ -138,141 +138,199 @@
 
 @section Scripts{
     <script>
-        $(document).ready(function() {
-        // Evento click del botón Buscar
-        $('#btnBuscar').click(function() {
-            var anoFiscal = $('#selectAnoFiscal').val();
-            var departamento = $('#selectDepartamento').val();
-            var departamentoTexto = $('#selectDepartamento option:selected').text();
+                const esAdmin = @(User.IsInRole("Administrador").ToString().ToLower())
 
-            // Validar que se haya seleccionado un departamento
-            if (!departamento) {
-                alert('Por favor, seleccione un departamento');
-                return;
+        function habilitarCaptura(element) {
+            const idProceso = $(element).data('idproceso');
+            const mesNumero = $(element).data('mes');
+
+            if (confirm(`¿Está seguro de habilitar la fecha de captura?`)) {
+                $.ajax({
+                    url: '@Url.Action("HabilitarCaptura", "Monitoreo")',
+                    type: 'POST',
+                    data: {
+                        idProceso: idProceso,
+                        mes: mesNumero
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            alert('Captura habilitada correctamente. La página se recargará.');
+                            location.reload();
+                        } else {
+                            alert('Error al habilitar la captura: ' + response.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        alert('Error de comunicación con el servidor.');
+                        console.error('AJAX Error:', error);
+                    }
+                });
             }
+        }
 
-            // Mostrar la sección de resultados
-            $('#seccionResultados').slideDown();
+        function obtenerFechaHabilitacion(item, mesNumero) {
+            // Las propiedades vienen en camelCase desde el JSON
+            const nombresMesesCamel = {
+                1: 'fechaEnero', 2: 'fechaFebrero', 3: 'fechaMarzo', 4: 'fechaAbril',
+                5: 'fechaMayo', 6: 'fechaJunio', 7: 'fechaJulio', 8: 'fechaAgosto',
+                9: 'fechaSeptiembre', 10: 'fechaOctubre', 11: 'fechaNoviembre', 12: 'fechaDiciembre'
+            };
 
-            // Cambiar los títulos dinámicamente
-            $('#ano').text('Ejercicio Fiscal: ' + anoFiscal);
-            $('#tituloDepartamento').text('Departamento: ' + departamentoTexto);
+            const nombrePropiedad = nombresMesesCamel[mesNumero];
+            return item[nombrePropiedad];
+        }
 
-            // Mostrar mensaje de carga
-            $('#mensajeCarga').show();
-            $('#tablaDatos').hide();
-            $('#mensajeSinDatos').hide();
+        $(document).ready(function() {
+            $('#btnBuscar').click(function() {
+                var anoFiscal = $('#selectAnoFiscal').val();
+                var departamento = $('#selectDepartamento').val();
+                var departamentoTexto = $('#selectDepartamento option:selected').text();
 
-            // Llamada AJAX para obtener los datos
-            $.ajax({
-                url: '@Url.Action("ObtenerDatos", "Monitoreo")',
-                type: 'GET',
-                data: {
-                    anoFiscal: anoFiscal,
-                    departamento: departamento
-                },
-            success: function(response) {
-                $('#mensajeCarga').hide();
+                if (!departamento) {
+                    alert('Por favor, seleccione un departamento');
+                    return;
+                }
 
-                if (response.success && response.datos && response.datos.length > 0) {
-                    $('#tbodyDatos').empty();
+                $('#seccionResultados').slideDown();
+                $('#ano').text('Ejercicio Fiscal: ' + anoFiscal);
+                $('#tituloDepartamento').text('Departamento: ' + departamentoTexto);
+                $('#mensajeCarga').show();
+                $('#tablaDatos').hide();
+                $('#mensajeSinDatos').hide();
 
-                    $.each(response.datos, function(index, item) {
-                        var prefijoActividad = '';
-                        if (item.pp && item.pp.toLowerCase() === 'agenda') {
-                            prefijoActividad = 'T';
-                        }
+                $.ajax({
+                    url: '@Url.Action("ObtenerDatos", "Monitoreo")',
+                    type: 'GET',
+                    data: {
+                        anoFiscal: anoFiscal,
+                        departamento: departamento
+                    },
+                    success: function(response) {
+                        $('#mensajeCarga').hide();
 
-                        var actividadCompleta = prefijoActividad + (item.componente || '') + '.' + (item.actividad || '');
+                        if (response.success && response.datos && response.datos.length > 0) {
+                            $('#tbodyDatos').empty();
 
-                        function generarIcono(valor, mesNumero, fechasCaptura, idProceso) { // <-- ¡Recibir idProceso!
-                            let iconoHTML = '';
-                            let claseIcono = '';
-                            let titulo = '';
-                            let color = '';
-
-                            if (valor === 1 || valor === true) {
-                                // Opción 1: Completado - Check verde (No redirige)
-                                color = 'text-success';
-                                claseIcono = 'fa-circle-check';
-                                titulo = 'Completado';
-                                iconoHTML = `<i class="fa-solid ${claseIcono} ${color}" title="${titulo}"></i>`;
-                            } else {
-                                // Opción 2: No completado - Verificar periodo de captura
-                                if (fechasCaptura && fechasCaptura[mesNumero]) {
-                                    // ... (Toda la lógica de fechas aquí) ...
-                                    const fechaInicio = new Date(fechasCaptura[mesNumero].fechaInicio);
-                                    const fechaFin = new Date(fechasCaptura[mesNumero].fechaFin);
-                                    const hoy = new Date();
-
-                                    hoy.setHours(0, 0, 0, 0);
-                                    fechaInicio.setHours(0, 0, 0, 0);
-                                    fechaFin.setHours(0, 0, 0, 0);
-
-                                    if (hoy >= fechaInicio && hoy <= fechaFin) {
-                                        // Opción 2.1: Pendiente - EN PERIODO DE CAPTURA (¡DEBE REDIRIGIR!)
-                                        color = 'text-primary clickable-icon';
-                                        claseIcono = 'fa-circle-xmark';
-                                        titulo = 'Pendiente - En periodo de captura';
-
-                                        // Genera el enlace de redirección a tu nueva vista
-                                        // Asume que la vista se llama 'ActualizarMeses' en el controlador 'Monitoreo' o 'Programacion'
-                                            const url = '@Url.Action("ActualizacionMeses", "Monitoreo")' + '?idProceso=' + idProceso + '&mes=' + mesNumero;
-
-                                        // Usamos un <a> con el URL
-                                        iconoHTML = `<a href="${url}"><i class="fa-solid ${claseIcono} ${color}" title="${titulo}" style="cursor: pointer;"></i></a>`;
-
-                                    } else {
-                                        // Opción 2.2: Pendiente - FUERA DE PERIODO (No redirige)
-                                        color = 'text-danger';
-                                        claseIcono = 'fa-circle-xmark';
-                                        titulo = 'Pendiente - Fuera de periodo';
-                                        iconoHTML = `<i class="fa-solid ${claseIcono} ${color}" title="${titulo}"></i>`;
-                                    }
-                                } else {
-                                    // Opción 3: Sin datos de fechas
-                                    color = 'text-danger';
-                                    claseIcono = 'fa-circle-xmark';
-                                    titulo = 'Pendiente - Fuera de periodo';
-                                    iconoHTML = `<i class="fa-solid ${claseIcono} ${color}" title="${titulo}"></i>`;
+                            $.each(response.datos, function(index, item) {
+                                var prefijoActividad = '';
+                                if (item.pp && item.pp.toLowerCase() === 'agenda') {
+                                    prefijoActividad = 'T';
                                 }
-                            }
-                            return iconoHTML;
+
+                                var actividadCompleta = prefijoActividad + (item.componente || '') + '.' + (item.actividad || '');
+
+                                function generarIcono(valor, mesNumero, fechasCaptura, idProceso, item) {
+                                    let iconoHTML = '';
+                                    let claseIcono = '';
+                                    let titulo = '';
+                                    let color = '';
+
+                                    if (valor === 1 || valor === true) {
+                                        color = 'text-success';
+                                        claseIcono = 'fa-circle-check';
+                                        titulo = 'Completado';
+                                        const url = '@Url.Action("ActualizacionMeses", "Monitoreo")' + '?idProceso=' + idProceso + '&mes=' + mesNumero + '&modo=visualizar';
+                                        iconoHTML = `<a href="${url}"><i class="fa-solid ${claseIcono} ${color}" title="${titulo}"></i></a>`;
+                                    } else {
+                                        // Obtener la fecha habilitada manualmente
+                                        const fechaHabilitadaMes = obtenerFechaHabilitacion(item, mesNumero);
+
+                                        let estaHabilitadoManualmente = false;
+                                        if (fechaHabilitadaMes) {
+                                            // Crear fecha a partir del string "YYYY-MM-DD"
+                                            // Usamos split para evitar problemas de zona horaria
+                                            const partes = fechaHabilitadaMes.split('-');
+                                            const fechaHabilitada = new Date(partes[0], partes[1] - 1, partes[2]);
+                                            const hoy = new Date();
+
+                                            fechaHabilitada.setHours(0, 0, 0, 0);
+                                            hoy.setHours(0, 0, 0, 0);
+
+                                            estaHabilitadoManualmente = (fechaHabilitada.getTime() === hoy.getTime());
+                                        }
+
+                                        let enPeriodoCaptura = false;
+                                        if (fechasCaptura && fechasCaptura[mesNumero]) {
+                                            const fechaInicio = new Date(fechasCaptura[mesNumero].fechaInicio);
+                                            const fechaFin = new Date(fechasCaptura[mesNumero].fechaFin);
+                                            const hoy = new Date();
+
+                                            hoy.setHours(0, 0, 0, 0);
+                                            fechaInicio.setHours(0, 0, 0, 0);
+                                            fechaFin.setHours(0, 0, 0, 0);
+
+                                            enPeriodoCaptura = (hoy >= fechaInicio && hoy <= fechaFin);
+                                        }
+
+                                        if (enPeriodoCaptura || estaHabilitadoManualmente) {
+                                            color = 'text-primary clickable-icon';
+                                            claseIcono = 'fa-circle-xmark';
+
+                                            if (estaHabilitadoManualmente && !enPeriodoCaptura) {
+                                                titulo = 'Pendiente - Habilitado por administrador';
+                                            } else {
+                                                titulo = 'Pendiente - En periodo de captura';
+                                            }
+
+                                            const url = '@Url.Action("ActualizacionMeses", "Monitoreo")' + '?idProceso=' + idProceso + '&mes=' + mesNumero;
+                                            iconoHTML = `<a href="${url}"><i class="fa-solid ${claseIcono} ${color}" title="${titulo}" style="cursor: pointer;"></i></a>`;
+
+                                        } else {
+                                            color = 'text-danger';
+                                            claseIcono = 'fa-circle-xmark';
+                                            titulo = 'Pendiente - Fuera de periodo';
+
+                                            if (esAdmin) {
+                                                const botonAdmin = `<i
+                                                    class="fa-sharp fa-solid fa-check-to-slot"
+                                                    title="Habilitar Captura (Admin)"
+                                                    data-idproceso="${idProceso}"
+                                                    data-mes="${mesNumero}"
+                                                    onclick="habilitarCaptura(this)"
+                                                    style="cursor: pointer; color: #C04116;"></i>`;
+
+                                                iconoHTML = `<i class="fa-solid ${claseIcono} ${color}" title="${titulo}"></i><br>${botonAdmin}`;
+                                            } else {
+                                                iconoHTML = `<i class="fa-solid ${claseIcono} ${color}" title="${titulo}"></i>`;
+                                            }
+                                        }
+                                    }
+                                    return iconoHTML;
+                                }
+
+                                var fila = '<tr>' +
+                                    '<td>' + item.pp + '</td>' +
+                                    '<td>' + item.componente + '</td>' +
+                                    '<td>' + actividadCompleta + '</td>' +
+                                    '<td>' + item.descripcionActividad + '</td>' +
+                                    '<td>' + item.programaSocial + '</td>' +
+                                    '<td class="text-center">' + generarIcono(item.enero, 1, item.fechasCaptura, item.idProceso, item) + '</td>' +
+                                    '<td class="text-center">' + generarIcono(item.febrero, 2, item.fechasCaptura, item.idProceso, item) + '</td>' +
+                                    '<td class="text-center">' + generarIcono(item.marzo, 3, item.fechasCaptura, item.idProceso, item) + '</td>' +
+                                    '<td class="text-center">' + generarIcono(item.abril, 4, item.fechasCaptura, item.idProceso, item) + '</td>' +
+                                    '<td class="text-center">' + generarIcono(item.mayo, 5, item.fechasCaptura, item.idProceso, item) + '</td>' +
+                                    '<td class="text-center">' + generarIcono(item.junio, 6, item.fechasCaptura, item.idProceso, item) + '</td>' +
+                                    '<td class="text-center">' + generarIcono(item.julio, 7, item.fechasCaptura, item.idProceso, item) + '</td>' +
+                                    '<td class="text-center">' + generarIcono(item.agosto, 8, item.fechasCaptura, item.idProceso, item) + '</td>' +
+                                    '<td class="text-center">' + generarIcono(item.septiembre, 9, item.fechasCaptura, item.idProceso, item) + '</td>' +
+                                    '<td class="text-center">' + generarIcono(item.octubre, 10, item.fechasCaptura, item.idProceso, item) + '</td>' +
+                                    '<td class="text-center">' + generarIcono(item.noviembre, 11, item.fechasCaptura, item.idProceso, item) + '</td>' +
+                                    '<td class="text-center">' + generarIcono(item.diciembre, 12, item.fechasCaptura, item.idProceso, item) + '</td>' +
+                                '</tr>';
+                                $('#tbodyDatos').append(fila);
+                            });
+
+                            $('#tablaDatos').show();
+                        } else {
+                            $('#mensajeSinDatos').show();
                         }
-
-                        var fila = '<tr>' +
-                            '<td>' + item.pp + '</td>' +
-                            '<td>' + item.componente + '</td>' +
-                            '<td>' + actividadCompleta + '</td>' +
-                            '<td>' + item.descripcionActividad + '</td>' +
-                            '<td>' + item.programaSocial + '</td>' +
-                            '<td class="text-center">' + generarIcono(item.enero, 1, item.fechasCaptura, item.idProceso) + '</td>' +
-                            '<td class="text-center">' + generarIcono(item.febrero, 2, item.fechasCaptura, item.idProceso) + '</td>' +
-                            '<td class="text-center">' + generarIcono(item.marzo, 3, item.fechasCaptura, item.idProceso) + '</td>' +
-                            '<td class="text-center">' + generarIcono(item.abril, 4, item.fechasCaptura, item.idProceso) + '</td>' +
-                            '<td class="text-center">' + generarIcono(item.mayo, 5, item.fechasCaptura, item.idProceso) + '</td>' +
-                            '<td class="text-center">' + generarIcono(item.junio, 6, item.fechasCaptura, item.idProceso) + '</td>' +
-                            '<td class="text-center">' + generarIcono(item.julio, 7, item.fechasCaptura, item.idProceso) + '</td>' +
-                            '<td class="text-center">' + generarIcono(item.agosto, 8, item.fechasCaptura, item.idProceso) + '</td>' +
-                            '<td class="text-center">' + generarIcono(item.septiembre, 9, item.fechasCaptura, item.idProceso) + '</td>' +
-                            '<td class="text-center">' + generarIcono(item.octubre, 10, item.fechasCaptura, item.idProceso) + '</td>' +
-                            '<td class="text-center">' + generarIcono(item.noviembre, 11, item.fechasCaptura, item.idProceso) + '</td>' +
-                            '<td class="text-center">' + generarIcono(item.diciembre, 12, item.fechasCaptura, item.idProceso) + '</td>' +
-                        '</tr>';
-                        $('#tbodyDatos').append(fila);
-                    });
-
-                    $('#tablaDatos').show();
-                } else {
-                    $('#mensajeSinDatos').show();
-                }
-            },
-                error: function(xhr, status, error) {
-                    $('#mensajeCarga').hide();
-                    alert('Error al cargar los datos: ' + error);
-                }
+                    },
+                    error: function(xhr, status, error) {
+                        $('#mensajeCarga').hide();
+                        alert('Error al cargar los datos: ' + error);
+                    }
+                });
             });
         });
-    })
     </script>
 }

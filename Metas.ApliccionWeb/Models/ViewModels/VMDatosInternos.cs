@@ -24,6 +24,18 @@
         public bool? Octubre { get; set; }
         public bool? Noviembre { get; set; }
         public bool? Diciembre { get; set; }
+        public string? FechaEnero { get; set; }
+        public string? FechaFebrero { get; set; }
+        public string? FechaMarzo { get; set; }
+        public string? FechaAbril { get; set; }
+        public string? FechaMayo { get; set; }
+        public string? FechaJunio { get; set; }
+        public string? FechaJulio { get; set; }
+        public string? FechaAgosto { get; set; }
+        public string? FechaSeptiembre { get; set; }
+        public string? FechaOctubre { get; set; }
+        public string? FechaNoviembre { get; set; }
+        public string? FechaDiciembre { get; set; }
         public int? Total { get; set; }
         public string? UnidadMedida { get; set; }
         public string Mes { get; set; }

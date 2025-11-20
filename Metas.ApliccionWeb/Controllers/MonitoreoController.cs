@@ -84,6 +84,18 @@ namespace Metas.AplicacionWeb.Controllers
                     Diciembre = x.Diciembre,
                     IdEstatus = x.Programacions.FirstOrDefault()?.IdEstatus,
                     NombreEstatus = x.Programacions.FirstOrDefault()?.IdEstatusNavigation.Valor,
+                    FechaEnero = x.FechaEnero.HasValue ? x.FechaEnero.Value.ToString("yyyy-MM-dd") : null,
+                    FechaFebrero = x.FechaFebrero.HasValue ? x.FechaFebrero.Value.ToString("yyyy-MM-dd") : null,
+                    FechaMarzo = x.FechaMarzo.HasValue ? x.FechaMarzo.Value.ToString("yyyy-MM-dd") : null,
+                    FechaAbril = x.FechaAbril.HasValue ? x.FechaAbril.Value.ToString("yyyy-MM-dd") : null,
+                    FechaMayo = x.FechaMayo.HasValue ? x.FechaMayo.Value.ToString("yyyy-MM-dd") : null,
+                    FechaJunio = x.FechaJunio.HasValue ? x.FechaJunio.Value.ToString("yyyy-MM-dd") : null,
+                    FechaJulio = x.FechaJulio.HasValue ? x.FechaJulio.Value.ToString("yyyy-MM-dd") : null,
+                    FechaAgosto = x.FechaAgosto.HasValue ? x.FechaAgosto.Value.ToString("yyyy-MM-dd") : null,
+                    FechaSeptiembre = x.FechaSeptiembre.HasValue ? x.FechaSeptiembre.Value.ToString("yyyy-MM-dd") : null,
+                    FechaOctubre = x.FechaOctubre.HasValue ? x.FechaOctubre.Value.ToString("yyyy-MM-dd") : null,
+                    FechaNoviembre = x.FechaNoviembre.HasValue ? x.FechaNoviembre.Value.ToString("yyyy-MM-dd") : null,
+                    FechaDiciembre = x.FechaDiciembre.HasValue ? x.FechaDiciembre.Value.ToString("yyyy-MM-dd") : null,
                     FechasCaptura = fechasDelAno
                 }).ToList();
 
@@ -95,7 +107,7 @@ namespace Metas.AplicacionWeb.Controllers
             }
         }
 
-        public async Task<IActionResult> ActualizacionMeses(int idProceso, int mes)
+        public async Task<IActionResult> ActualizacionMeses(int idProceso, int mes, string modo = null)
         {
             var fechasCaptura = await _fechasService.Lista();
 
@@ -149,12 +161,14 @@ namespace Metas.AplicacionWeb.Controllers
                 Rango60adelante = datosExternos?._60amasanos ?? 0,
                 RangoNoEspecifica = datosExternos?.NoDefinida ?? 0,
                 Indigena = datosExternos?.Indigena ?? 0,
+                RutaEvidencia = datosExternos?.Evidencia,
+                RutaJustificacion = datosExternos?.Justificacion,
                 NombreRealizo = datosInternos.NombreRealizo ?? "",
                 PuestoRealizo = datosInternos.CargoRealizo ?? "",
                 NombreAutorizo = datosInternos.NombreValido ?? "",
                 PuestoAutorizo = datosInternos.CargoValido ?? ""
             };
-
+            ViewBag.EsModoVisualizar = (modo == "visualizar");
             return View(modelo);
         }
 
@@ -215,7 +229,10 @@ namespace Metas.AplicacionWeb.Controllers
 
                     // Generar nombre de archivo único: [IdProceso]_J_[Mes]_[Ticks].ext
                     string extension = Path.GetExtension(modelo.InputJustificacion.FileName);
-                    string newFileName = $"{idProceso}_J_{mes}_{DateTime.Now.Ticks}{extension}";
+                    // Opción Segura (Recomendada) para Evidencia:
+                    string originalFileName = Path.GetFileName(modelo.InputEvidencia.FileName);
+                    // Se asegura unicidad por proceso/mes y aún conserva el nombre original
+                    string newFileName = $"{idProceso}_J_{mes}_{originalFileName}";
 
                     // Ruta física donde se guardará el archivo
                     string rutaFisicaJustificacion = Path.Combine(folderPathJustificacion, newFileName);
@@ -267,6 +284,36 @@ namespace Metas.AplicacionWeb.Controllers
                     success = false,
                     message = $"Ocurrió un error inesperado en el servidor: {ex.Message}"
                 });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> HabilitarCaptura(int idProceso, int mes)
+        {
+            // Verificar si el usuario es administrador por seguridad
+            if (!User.IsInRole("Administrador"))
+            {
+                return Json(new { success = false, message = "Acceso denegado." });
+            }
+
+            try
+            {
+                // 1. LLAMAR al método del servicio para actualizar la fecha
+                bool resultado = await _monitoreoService.HabilitarCaptura(idProceso, mes);
+
+                if (resultado)
+                {
+                    return Json(new { success = true, message = "Campo de fecha actualizado." });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "No se pudo encontrar o actualizar el registro." });
+                }
+            }
+            catch (Exception ex)
+            {
+                // Loggear el error (recomendado)
+                return Json(new { success = false, message = "Error interno del servidor." });
             }
         }
     }

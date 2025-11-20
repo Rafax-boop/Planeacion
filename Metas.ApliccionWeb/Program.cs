@@ -1,4 +1,5 @@
 using Metas.AplicacionWeb.Utilidades.AutoMapper;
+using Microsoft.Extensions.FileProviders;
 using Metas.BLL.Implementacion;
 using Metas.BLL.Interfaces;
 using Metas.DAL.Implementacion;
@@ -25,6 +26,21 @@ builder.Services.InyectarDependencia(builder.Configuration);
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
 var app = builder.Build();
+
+app.UseStaticFiles();
+var env = app.Environment;
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(env.WebRootPath, "Evidencia")),
+    RequestPath = "/Evidencia"
+});
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(env.WebRootPath, "Justificacion")),
+    RequestPath = "/Justificacion"
+});
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

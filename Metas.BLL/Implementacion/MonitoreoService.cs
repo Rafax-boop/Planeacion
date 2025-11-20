@@ -2,6 +2,7 @@
 using Metas.BLL.Interfaces;
 using Metas.DAL.Interfaces;
 using Metas.Entity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -86,7 +87,7 @@ namespace Metas.BLL.Implementacion
                     registroExterno.Justificacion = rutaJustificacion; // Usa la nueva ruta
                 }
 
-                // 3. 🎯 CREAR O ACTUALIZAR en LlenadoExterno
+                // 3. CREAR O ACTUALIZAR en LlenadoExterno
                 if (registroExistente != null)
                 {
                     await _llenadoExternoRepository.Editar(registroExterno);
@@ -110,8 +111,6 @@ namespace Metas.BLL.Implementacion
                 int mesNumero = modelo.Mes;
                 int valorNuevoMensual = modelo.Realizado;
                 int? totalRealizadoAnterior = metaInterna.TotalRealizado ?? 0;
-
-                // ... (Tu switch statement completo para actualizar TotalXxxRealizado y Enero=true/false) ...
                 switch (mesNumero)
                 {
                     case 1: // Enero
@@ -119,7 +118,57 @@ namespace Metas.BLL.Implementacion
                         metaInterna.TotalEneroRealizado = valorNuevoMensual;
                         if (!modelo.EsBorrador) { metaInterna.Enero = true; }
                         break;
-                    // ... (restantes meses) ...
+                    case 2: // Febrero
+
+                        totalRealizadoAnterior -= metaInterna.TotalFebreroRealizado ?? 0;
+                        metaInterna.TotalFebreroRealizado = valorNuevoMensual;
+                        if (!modelo.EsBorrador) { metaInterna.Febrero = true; }
+                        break;
+                    case 3: // Marzo
+                        totalRealizadoAnterior -= metaInterna.TotalMarzoRealizado ?? 0;
+                        metaInterna.TotalMarzoRealizado = valorNuevoMensual;
+                        if (!modelo.EsBorrador) { metaInterna.Marzo = true; }
+                        break;
+                    case 4: // Abril
+                        totalRealizadoAnterior -= metaInterna.TotalAbrilRealizado ?? 0;
+                        metaInterna.TotalAbrilRealizado = valorNuevoMensual;
+                        if (!modelo.EsBorrador) { metaInterna.Abril = true; }
+                        break;
+                    case 5: // Mayo
+                        totalRealizadoAnterior -= metaInterna.TotalMayoRealizado ?? 0;
+                        metaInterna.TotalMayoRealizado = valorNuevoMensual;
+                        if (!modelo.EsBorrador) { metaInterna.Mayo = true; }
+                        break;
+                    case 6: // Junio
+                        totalRealizadoAnterior -= metaInterna.TotalJunioRealizado ?? 0;
+                        metaInterna.TotalJunioRealizado = valorNuevoMensual;
+                        if (!modelo.EsBorrador) { metaInterna.Junio = true; }
+                        break;
+                    case 7: // Julio
+                        totalRealizadoAnterior -= metaInterna.TotalJulioRealizado ?? 0;
+                        metaInterna.TotalJulioRealizado = valorNuevoMensual;
+                        if (!modelo.EsBorrador) { metaInterna.Julio = true; }
+                        break;
+                    case 8: // Agosto
+                        totalRealizadoAnterior -= metaInterna.TotalAgostoRealizado ?? 0;
+                        metaInterna.TotalAgostoRealizado = valorNuevoMensual;
+                        if (!modelo.EsBorrador) { metaInterna.Agosto = true; }
+                        break;
+                    case 9: // Septiembre
+                        totalRealizadoAnterior -= metaInterna.TotalSeptiembreRealizado ?? 0;
+                        metaInterna.TotalSeptiembreRealizado = valorNuevoMensual;
+                        if (!modelo.EsBorrador) { metaInterna.Septiembre = true; }
+                        break;
+                    case 10: // Octubre
+                        totalRealizadoAnterior -= metaInterna.TotalOctubreRealizado ?? 0;
+                        metaInterna.TotalOctubreRealizado = valorNuevoMensual;
+                        if (!modelo.EsBorrador) { metaInterna.Octubre = true; }
+                        break;
+                    case 11: // Noviembre
+                        totalRealizadoAnterior -= metaInterna.TotalNoviembreRealizado ?? 0;
+                        metaInterna.TotalNoviembreRealizado = valorNuevoMensual;
+                        if (!modelo.EsBorrador) { metaInterna.Noviembre = true; }
+                        break;
                     case 12: // Diciembre
                         totalRealizadoAnterior -= metaInterna.TotalDiciembreRealizado ?? 0;
                         metaInterna.TotalDiciembreRealizado = valorNuevoMensual;
@@ -150,6 +199,44 @@ namespace Metas.BLL.Implementacion
             }
         }
 
+        public async Task<bool> HabilitarCaptura(int idProceso, int mes)
+        {
+            var registro = await _llenadoInternoRepository.Obtener(r => r.IdProceso == idProceso);
+
+            if (registro == null)
+            {
+                return false;
+            }
+
+            // 2. Determinar la columna a actualizar
+            string columnaMes = ObtenerColumnaFecha(mes);
+
+            // 3. Usar Reflection para actualizar la propiedad dinámicamente
+            var propiedad = registro.GetType().GetProperty(columnaMes);
+
+            // 🚨 Valor DateOnly a asignar 🚨
+            var fechaActual = DateOnly.FromDateTime(DateTime.Now);
+
+            // Verificamos si es DateOnly? (Nullable)
+            if (propiedad != null && propiedad.PropertyType == typeof(DateOnly?))
+            {
+                propiedad.SetValue(registro, fechaActual);
+            }
+            // Opcional: Si el campo fuera DateOnly (no nullable)
+            else if (propiedad != null && propiedad.PropertyType == typeof(DateOnly))
+            {
+                propiedad.SetValue(registro, fechaActual);
+            }
+            else
+            {
+                // La columna no se encontró o el tipo de dato no coincide
+                return false;
+            }
+
+            // 4. ACTUALIZAR el registro en la base de datos usando el repositorio genérico
+            return await _llenadoInternoRepository.Editar(registro);
+        }
+
         public async Task<LlenadoExterno> ObtenerLlenadoMensual(int id, int mes)
         {
             var registro = await _llenadoExternoRepository.Obtener(
@@ -157,6 +244,26 @@ namespace Metas.BLL.Implementacion
             );
 
             return registro;
+        }
+
+        private string ObtenerColumnaFecha(int mes)
+        {
+            return mes switch
+            {
+                1 => "FechaEnero",
+                2 => "FechaFebrero",
+                3 => "FechaMarzo",
+                4 => "FechaAbril",
+                5 => "FechaMayo",
+                6 => "FechaJunio",
+                7 => "FechaJulio",
+                8 => "FechaAgosto",
+                9 => "FechaSeptiembre",
+                10 => "FechaOctubre",
+                11 => "FechaNoviembre",
+                12 => "FechaDiciembre",
+                _ => throw new ArgumentException("Mes no válido")
+            };
         }
     }
 }
