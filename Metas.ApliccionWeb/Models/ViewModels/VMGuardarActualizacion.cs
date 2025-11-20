@@ -26,6 +26,8 @@ namespace Metas.AplicacionWeb.Models.ViewModels
         // =====================================
         public IFormFile InputEvidencia { get; set; }  // name="InputEvidencia"
         public IFormFile InputJustificacion { get; set; } // name="InputJustificacion"
+        public string RutaEvidencia { get; set; }
+        public string RutaJustificacion { get; set; }
 
         // =====================================
         // SECCIÓN REALIZÓ Y AUTORIZÓ (Firmas)

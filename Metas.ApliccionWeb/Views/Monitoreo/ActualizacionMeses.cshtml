@@ -2,274 +2,336 @@
 
 @{
     ViewData["Title"] = "Actualización Mensual de Metas";
+    bool esSoloVista = ViewBag.EsModoVisualizar ?? false;
 }
 
-<form method="post" action="@Url.Action("GuardarActualizacion", "Monitoreo")" enctype="multipart/form-data">
-
-    <input type="hidden" name="IdProceso" value="@Model.IdProceso" /> 
-    <input type="hidden" name="Mes" value="@Model.MesNum" /> 
-
-    <div class="glass-effect rounded-5 mt-4">
-        @* Encabezado *@
-        <div class="">
-            <h1 class="fw-semibold text-center p-1 titulo">
-                @Model.Mes
-            </h1>
-        </div>    
-    </div>
-    <div class="text-center mb-4 mt-3">
-        <small class="text-muted">
-            <i class="fas fa-calendar titulo me-1"></i>
-            @Model.FechaFin
-        </small>
-    </div>
-    @* Fin Encabezado *@    
-
-    @* Primera tabla (ReadOnly - Sin cambios de name) *@
+@if (User.IsInRole("Administrador") && !esSoloVista)
+{
     <div class="container-gris mt-4">
         <div class="row">
             <div class="col-12">
                 <div class="row g-3 text-center mt-1 mx-2 pb-3 border-bottom">
-                    <div class="col-2 border-end">
-                        <label for="metaProgramada" class="form-label fw-semibold titulo">Meta Programada</label>
-                        <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" id="metaProgramada" value="@Model.Total" readonly>
-                    </div>
-                    <div class="col-2 border-end">
-                        <label for="input2" class="form-label fw-semibold titulo">Personas Programadas</label>
-                        <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" readonly id="input2">
-                    </div>
-                    <div class="col-2 border-end">
-                        <label for="input3" class="form-label fw-semibold titulo">Pp</label>
-                        <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" readonly id="input3" value="@Model.pp">
-                    </div>
-                    <div class="col-2 border-end">
-                        <label for="input4" class="form-label fw-semibold titulo">Componente</label>
-                        <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" readonly id="input4" value="@Model.Componente">
-                    </div>
-                    <div class="col-2 border-end">
-                        <label for="input5" class="form-label fw-semibold titulo">Actividad</label>
-                        <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" readonly id="input5" value="@Model.Actividad">
-                    </div>
-                    <div class="col-2">
-                        <label for="input6" class="form-label fw-semibold titulo">Unidad de Medida</label>
-                        <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" readonly id="input6" value="@Model.UnidadMedida">
-                    </div>
-                </div>
-
-                <div class="row g-3 text-center mt-1 mx-2 border-bottom pb-3">
-                    <div class="col-4 border-end">
-                        <label for="input1" class="form-label fw-semibold titulo"> Programa o servicio de asistencia social </label>
-                        <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed" readonly id="input1" value="@Model.ProgramaSocial">
-                    </div>
-                    <div class="col-4 border-end">
-                        <label for="input2" class="form-label fw-semibold titulo">Área</label>
-                        <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed" readonly id="input2" value="@Model.Area">
-                    </div>
-                    <div class="col-4">
-                        <label for="input3" class="form-label fw-semibold titulo">Departamento</label>
-                        <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed" readonly id="input3" value="@Model.Departamento">
-                    </div>
-                </div>
-
-                <div class="text-center mt-3 mx-3 mb-4">
-                    <div class="">
-                        <label for="input1" class="form-label fw-semibold titulo">Descripción de la Actividad</label>
-                        <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" readonly id="input1" value="@Model.DescripcionActividad">
-                    </div>                
+                    <h3 class="fw-semibold text-center m-2 titulo">Información no requisitada</h3>
                 </div>
             </div>
         </div>
     </div>
-    @* Fin Primera tabla *@
+}
+else
+{
+    <form method="post" action="@Url.Action("GuardarActualizacion", "Monitoreo")" enctype="multipart/form-data">
 
-    @* tabla Secundaria - CAMPOS DE CAPTURA *@
-    <div class="container-gris mt-4">
-        @* metas *@
-        <div class="glass-effect rounded-5 m-3">
-            <h3 class="fw-semibold text-center m-2 titulo">
-                METAS
-            </h3>
+        <input type="hidden" name="IdProceso" value="@Model.IdProceso" /> 
+        <input type="hidden" name="Mes" value="@Model.MesNum" /> 
+
+        <div class="glass-effect rounded-5 mt-4">
+            @* Encabezado *@
+            <div class="">
+                <h1 class="fw-semibold text-center p-1 titulo">
+                    @Model.Mes
+                </h1>
+            </div>    
         </div>
-        <div class="row">
-            <div class="col-12">
-                <div class="row g-3 mt-1 mx-2 pb-3 border-bottom">
-                    <div class="col-6 border-end">
-                        <label for="realizadoInput" class="form-label fw-semibold titulo">Realizado</label>
-                        <input type="number" class="form-control fw-light input-arena titulo" id="realizadoInput" name="Realizado" value="@Model.Realizado">
+        <div class="text-center mb-4 mt-3">
+            <small class="text-muted">
+                <i class="fas fa-calendar titulo me-1"></i>
+                @Model.FechaFin
+            </small>
+        </div>
+        @* Fin Encabezado *@    
+
+        @* Primera tabla (ReadOnly - Sin cambios de name) *@
+        <div class="container-gris mt-4">
+            <div class="row">
+                <div class="col-12">
+                    <div class="row g-3 text-center mt-1 mx-2 pb-3 border-bottom">
+                        <div class="col-2 border-end">
+                            <label for="metaProgramada" class="form-label fw-semibold titulo">Meta Programada</label>
+                            <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" id="metaProgramada" value="@Model.Total" readonly>
+                        </div>
+                        <div class="col-2 border-end">
+                            <label for="input2" class="form-label fw-semibold titulo">Personas Programadas</label>
+                            <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" readonly id="input2">
+                        </div>
+                        <div class="col-2 border-end">
+                            <label for="input3" class="form-label fw-semibold titulo">Pp</label>
+                            <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" readonly id="input3" value="@Model.pp">
+                        </div>
+                        <div class="col-2 border-end">
+                            <label for="input4" class="form-label fw-semibold titulo">Componente</label>
+                            <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" readonly id="input4" value="@Model.Componente">
+                        </div>
+                        <div class="col-2 border-end">
+                            <label for="input5" class="form-label fw-semibold titulo">Actividad</label>
+                            <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" readonly id="input5" value="@Model.Actividad">
+                        </div>
+                        <div class="col-2">
+                            <label for="input6" class="form-label fw-semibold titulo">Unidad de Medida</label>
+                            <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" readonly id="input6" value="@Model.UnidadMedida">
+                        </div>
                     </div>
-                    <div class="col-6">
-                        <label for="totalPorcentaje" class="form-label fw-semibold titulo">Total de porcentaje:</label>
-                        <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" readonly id="totalPorcentaje" value="0%">
+
+                    <div class="row g-3 text-center mt-1 mx-2 border-bottom pb-3">
+                        <div class="col-4 border-end">
+                            <label for="input1" class="form-label fw-semibold titulo"> Programa o servicio de asistencia social </label>
+                            <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed" readonly id="input1" value="@Model.ProgramaSocial">
+                        </div>
+                        <div class="col-4 border-end">
+                            <label for="input2" class="form-label fw-semibold titulo">Área</label>
+                            <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed" readonly id="input2" value="@Model.Area">
+                        </div>
+                        <div class="col-4">
+                            <label for="input3" class="form-label fw-semibold titulo">Departamento</label>
+                            <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed" readonly id="input3" value="@Model.Departamento">
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-3 mx-3 mb-4">
+                        <div class="">
+                            <label for="input1" class="form-label fw-semibold titulo">Descripción de la Actividad</label>
+                            <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" readonly id="input1" value="@Model.DescripcionActividad">
+                        </div>                
+                    </div>
+                </div>
+            </div>
+        </div>
+        @* Fin Primera tabla *@
+
+        @* tabla Secundaria - CAMPOS DE CAPTURA *@
+        <div class="container-gris mt-4">
+            @* metas *@
+            <div class="glass-effect rounded-5 m-3">
+                <h3 class="fw-semibold text-center m-2 titulo">
+                    METAS
+                </h3>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="row g-3 mt-1 mx-2 pb-3 border-bottom">
+                        <div class="col-6 border-end">
+                            <label for="realizadoInput" class="form-label fw-semibold titulo">Realizado</label>
+                            <input type="number" class="form-control fw-light input-arena titulo" id="realizadoInput" name="Realizado" value="@Model.Realizado" @(esSoloVista ? "disabled" : "")>
+                        </div>
+                        <div class="col-6">
+                            <label for="totalPorcentaje" class="form-label fw-semibold titulo">Total de porcentaje:</label>
+                            <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" readonly id="totalPorcentaje" value="0%">
+                        </div>            
                     </div>            
-                </div>            
+                </div>
             </div>
-        </div>
         
-        @* personas *@
-        <div class="glass-effect rounded-5 m-3">
-            <h4 class="fw-semibold text-center m-2 titulo">
-                PERSONAS
-            </h4>
-        </div>
-        <div class="row">
-            <div class="col-12">
-                <div class="row g-3 mt-1 mx-2 pb-3 border-bottom">
-                    <div class="col-4">
-                        <label for="mujeresAtendidas" class="form-label fw-semibold titulo">Mujeres Atendidas</label>
-                        <input type="number" class="form-control fw-light input-arena titulo personas-input" disabled id="mujeresAtendidas" name="MujeresAtendidas" value="@Model.MujeresAtendidas">
-                    </div>
-                    <div class="col-4 border-end">
-                        <label for="hombresAtendidos" class="form-label fw-semibold titulo">Hombres Atendidos</label>
-                        <input type="number" class="form-control fw-light input-arena titulo personas-input" disabled id="hombresAtendidos" name="HombresAtendidos" value="@Model.HombresAtendidos">
-                    </div>
-                    <div class="col-4">
-                        <label for="personasAtendidas" class="form-label fw-semibold titulo">Personas Atendidas</label>
-                        <input type="number" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" readonly id="personasAtendidas" value="0">
+            @* personas *@
+            <div class="glass-effect rounded-5 m-3">
+                <h4 class="fw-semibold text-center m-2 titulo">
+                    PERSONAS
+                </h4>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="row g-3 mt-1 mx-2 pb-3 border-bottom">
+                        <div class="col-4">
+                            <label for="mujeresAtendidas" class="form-label fw-semibold titulo">Mujeres Atendidas</label>
+                            <input type="number" class="form-control fw-light input-arena titulo personas-input" disabled id="mujeresAtendidas" name="MujeresAtendidas" value="@Model.MujeresAtendidas" @(esSoloVista ? "disabled" : "")>
+                        </div>
+                        <div class="col-4 border-end">
+                            <label for="hombresAtendidos" class="form-label fw-semibold titulo">Hombres Atendidos</label>
+                            <input type="number" class="form-control fw-light input-arena titulo personas-input" disabled id="hombresAtendidos" name="HombresAtendidos" value="@Model.HombresAtendidos" @(esSoloVista ? "disabled" : "")>
+                        </div>
+                        <div class="col-4">
+                            <label for="personasAtendidas" class="form-label fw-semibold titulo">Personas Atendidas</label>
+                            <input type="number" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" readonly id="personasAtendidas" value="0">
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
         
-        @* Rango de edad *@
-        <div class="glass-effect rounded-5 m-3">
-            <h4 class="fw-semibold text-center m-2 titulo">
-                RANGO DE EDAD
-            </h4>
-        </div>
-        <div class="row">
-            <div class="col-12">
-                <div class="row g-3 mt-1 mx-2 pb-3">
-                    <div class="col-3">
-                        <label for="rango0a3" class="form-label fw-semibold titulo">0 - 3 AÑOS</label>
-                        <input type="number" class="form-control fw-light input-arena titulo rango-input" disabled id="rango0a3" name="Rango0a3" value="@Model.Rango0a3">
-                    </div>
-                    <div class="col-3">
-                        <label for="rango4a8" class="form-label fw-semibold titulo">4 - 8 AÑOS</label>
-                        <input type="number" class="form-control fw-light input-arena titulo rango-input" disabled id="rango4a8" name="Rango4a8" value="@Model.Rango4a8">
-                    </div>
-                    <div class="col-3">
-                        <label for="rango9a12" class="form-label fw-semibold titulo">9 - 12 AÑOS</label>
-                        <input type="number" class="form-control fw-light input-arena titulo rango-input" disabled id="rango9a12" name="Rango9a12" value="@Model.Rango9a12">
-                    </div>
-                    <div class="col-3">
-                        <label for="rango13a17" class="form-label fw-semibold titulo">13 - 17 AÑOS</label>
-                        <input type="number" class="form-control fw-light input-arena titulo rango-input" disabled id="rango13a17" name="Rango13a17" value="@Model.Rango13a17">
+            @* Rango de edad *@
+            <div class="glass-effect rounded-5 m-3">
+                <h4 class="fw-semibold text-center m-2 titulo">
+                    RANGO DE EDAD
+                </h4>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="row g-3 mt-1 mx-2 pb-3">
+                        <div class="col-3">
+                            <label for="rango0a3" class="form-label fw-semibold titulo">0 - 3 AÑOS</label>
+                            <input type="number" class="form-control fw-light input-arena titulo rango-input" disabled id="rango0a3" name="Rango0a3" value="@Model.Rango0a3" @(esSoloVista ? "disabled" : "")>
+                        </div>
+                        <div class="col-3">
+                            <label for="rango4a8" class="form-label fw-semibold titulo">4 - 8 AÑOS</label>
+                            <input type="number" class="form-control fw-light input-arena titulo rango-input" disabled id="rango4a8" name="Rango4a8" value="@Model.Rango4a8" @(esSoloVista ? "disabled" : "")>
+                        </div>
+                        <div class="col-3">
+                            <label for="rango9a12" class="form-label fw-semibold titulo">9 - 12 AÑOS</label>
+                            <input type="number" class="form-control fw-light input-arena titulo rango-input" disabled id="rango9a12" name="Rango9a12" value="@Model.Rango9a12" @(esSoloVista ? "disabled" : "")>
+                        </div>
+                        <div class="col-3">
+                            <label for="rango13a17" class="form-label fw-semibold titulo">13 - 17 AÑOS</label>
+                            <input type="number" class="form-control fw-light input-arena titulo rango-input" disabled id="rango13a17" name="Rango13a17" value="@Model.Rango13a17" @(esSoloVista ? "disabled" : "")>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-12">
-                <div class="row g-3 mt-1 mx-2 pb-3 border-bottom">
-                    <div class="col-3">
-                        <label for="rango18a29" class="form-label fw-semibold titulo">18 - 29 AÑOS</label>
-                        <input type="number" class="form-control fw-light input-arena titulo rango-input" disabled id="rango18a29" name="Rango18a29" value="@Model.Rango18a29">
-                    </div>
-                    <div class="col-3">
-                        <label for="rango30a59" class="form-label fw-semibold titulo">30 - 59 AÑOS</label>
-                        <input type="number" class="form-control fw-light input-arena titulo rango-input" disabled id="rango30a59" name="Rango30a59" value="@Model.Rango30a59">
-                    </div>
-                    <div class="col-3">
-                        <label for="rango60adelante" class="form-label fw-semibold titulo">DE 60 AÑOS EN ADELANTE</label>
-                        <input type="number" class="form-control fw-light input-arena titulo rango-input" disabled id="rango60adelante" name="Rango60adelante" value="@Model.Rango60adelante">
-                    </div>
-                    <div class="col-3">
-                        <label for="rangoNoEspecifica" class="form-label fw-semibold titulo">NO SE ESPECIFICA</label>
-                        <input type="number" class="form-control fw-light input-arena titulo rango-input" disabled id="rangoNoEspecifica" name="RangoNoEspecifica" value="@Model.RangoNoEspecifica">
+                <div class="col-12">
+                    <div class="row g-3 mt-1 mx-2 pb-3 border-bottom">
+                        <div class="col-3">
+                            <label for="rango18a29" class="form-label fw-semibold titulo">18 - 29 AÑOS</label>
+                            <input type="number" class="form-control fw-light input-arena titulo rango-input" disabled id="rango18a29" name="Rango18a29" value="@Model.Rango18a29" @(esSoloVista ? "disabled" : "")>
+                        </div>
+                        <div class="col-3">
+                            <label for="rango30a59" class="form-label fw-semibold titulo">30 - 59 AÑOS</label>
+                            <input type="number" class="form-control fw-light input-arena titulo rango-input" disabled id="rango30a59" name="Rango30a59" value="@Model.Rango30a59" @(esSoloVista ? "disabled" : "")>
+                        </div>
+                        <div class="col-3">
+                            <label for="rango60adelante" class="form-label fw-semibold titulo">DE 60 AÑOS EN ADELANTE</label>
+                            <input type="number" class="form-control fw-light input-arena titulo rango-input" disabled id="rango60adelante" name="Rango60adelante" value="@Model.Rango60adelante" @(esSoloVista ? "disabled" : "")>
+                        </div>
+                        <div class="col-3">
+                            <label for="rangoNoEspecifica" class="form-label fw-semibold titulo">NO SE ESPECIFICA</label>
+                            <input type="number" class="form-control fw-light input-arena titulo rango-input" disabled id="rangoNoEspecifica" name="RangoNoEspecifica" value="@Model.RangoNoEspecifica" @(esSoloVista ? "disabled" : "")>
+                        </div>
                     </div>
                 </div>
-            </div>
             
-            <div class="col-12">
-                <div class="row g-3 mt-1 mx-2 pb-3 border-bottom text-center">          
-                    <div class="col-12">
-                        <label for="totalPersonas" class="form-label fw-semibold titulo">TOTAL</label>
-                        <input type="number" class="form-control fw-light input-arena titulo" style="background-color:#c09866;" disabled id="totalPersonas" value="0">
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-12">
-                <div class="row g-3 mt-1 mx-2 pb-3 border-bottom">
-                    @* tipo de poblacion *@
-                    <div class="col-4 border-end">
-                        <div class="glass-effect rounded-5 mb-4">
-                            <h5 class="fw-semibold text-center m-2 titulo">
-                                TIPO DE POBLACIÓN
-                            </h5>
-                        </div>
-                        <label for="indigena" class="form-label fw-semibold titulo">Indígena</label>
-                        <input type="number" class="form-control fw-light input-arena titulo" id="indigena" name="Indigena" value="@Model.Indigena">
-                    </div>
-
-                    @* evidencia *@
-                    <div class="col-4 border-end">
-                        <div class="glass-effect rounded-5 mb-4">
-                            <h5 class="fw-semibold text-center m-2 titulo">
-                                EVIDENCIA
-                            </h5>
-                        </div>
-                        <label for="inputEvidencia" class="form-label fw-semibold titulo">Evidencia Realizada</label>
-                        <label for="inputEvidencia" class="form-label fw-semibold titulo">Favor de llenar el Formato de Evidencia y subirlo.</label>
-                        <a target="_blank" href="@Url.Content("~/FormatoEvidencia/MUNICIPIOS1.xlsx")" download="MUNICIPIOS1.xlsx" class="btn btn-success">Descargar formato de evidencia</a>
-                        <input type="file" class="form-control fw-light input-arena titulo" id="inputEvidencia" name="InputEvidencia">
-                    </div>
-
-                    @* justificacion *@
-                    <div class="col-4 border-end">
-                        <div class="glass-effect rounded-5 mb-4">
-                            <h5 class="fw-semibold text-center m-2 titulo">
-                                JUSTIFICACIÓN
-                            </h5>
-                        </div>
-                        <div id="justificacionDiv" style="display:none;">
-                            <label for="inputJustificacion" class="form-label fw-semibold titulo">Favor de descargar el Formato de Justificación y subirlo en PDF debidamente requisitado y firmado.</label>
-                            <a target="_blank" href="@Url.Content("~/FormatoEvidencia/JUSTIFICACION.xlsx")" download="JUSTIFICACION.xlsx" class="btn btn-success">Descargar formato de evidencia</a>
-                            <input type="file" class="form-control fw-light input-arena titulo" id="inputJustificacion" name="InputJustificacion">
+                <div class="col-12">
+                    <div class="row g-3 mt-1 mx-2 pb-3 border-bottom text-center">          
+                        <div class="col-12">
+                            <label for="totalPersonas" class="form-label fw-semibold titulo">TOTAL</label>
+                            <input type="number" class="form-control fw-light input-arena titulo" style="background-color:#c09866;" disabled id="totalPersonas" value="0" @(esSoloVista ? "disabled" : "")>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="row g-3 mt-1 mx-2 pb-3 border-bottom">
+                        @* tipo de poblacion *@
+                        <div class="col-4 border-end">
+                            <div class="glass-effect rounded-5 mb-4">
+                                <h5 class="fw-semibold text-center m-2 titulo">
+                                    TIPO DE POBLACIÓN
+                                </h5>
+                            </div>
+                            <label for="indigena" class="form-label fw-semibold titulo">Indígena</label>
+                            <input type="number" class="form-control fw-light input-arena titulo" id="indigena" name="Indigena" value="@Model.Indigena" @(esSoloVista ? "disabled" : "")>
+                        </div>
 
-        @* realizo y autorizo *@
-        <div class="row">
-            <div class="col-12">
-                <div class="row g-3 mt-1 mx-2 pb-3 border-bottom">
-                    <div class="col-6 border-end">
-                        <div class="glass-effect rounded-5 mb-4">
-                            <h5 class="fw-semibold text-center m-2 titulo">
-                                Realizó
-                            </h5>
+                        @* evidencia *@
+                        <div class="col-4 border-end">
+                            <div class="glass-effect rounded-5 mb-4">
+                                <h5 class="fw-semibold text-center m-2 titulo">
+                                    EVIDENCIA
+                                </h5>
+                            </div>                        
+                            @if (!esSoloVista)
+                            {
+                                <label for="inputEvidencia" class="form-label fw-semibold titulo">Evidencia Realizada</label>
+                                <label for="inputEvidencia" class="form-label fw-semibold titulo">Favor de llenar el Formato de Evidencia y subirlo.</label>
+                                <a target="_blank" href="@Url.Content("~/FormatoEvidencia/MUNICIPIOS1.xlsx")" download="MUNICIPIOS1.xlsx" class="btn btn-success">Descargar formato de evidencia</a>
+                                <input type="file" class="form-control fw-light input-arena titulo" id="inputEvidencia" name="InputEvidencia">
+                            }else
+                            {
+                                @if (!string.IsNullOrEmpty(Model.RutaEvidencia))
+                                {
+                                    <label class="form-label fw-semibold titulo">Evidencia subida:</label>
+                                    <br />
+                                    <a target="_blank" href="@Model.RutaEvidencia" class="btn btn-success">
+                                        <i class="fas fa-download me-2"></i>
+                                        Ver evidencia
+                                    </a>
+                                }
+                                else
+                                {
+                                    // Si no hay evidencia subida para este mes/proceso
+                                    <p class="text-danger fw-semibold">No se ha cargado ninguna evidencia.</p>
+                                }
+                            }
                         </div>
-                        <input type="text" class="form-control fw-light input-arena titulo mb-2" placeholder="Nombre de quien realiza" id="nombreRealiza" name="NombreRealizo" value="@Model.NombreRealizo">
-                        <input type="text" class="form-control fw-light input-arena titulo" placeholder="Puesto de quien realiza" id="cargoRealiza" name="PuestoRealizo" value="@Model.PuestoRealizo">
-                    </div>
-                    <div class="col-6 border-end">
-                        <div class="glass-effect rounded-5 mb-4">
-                            <h5 class="fw-semibold text-center m-2 titulo">
-                                Autorizó
-                            </h5>
+
+                        @* justificacion *@
+                        <div class="col-4 border-end">
+                            <div class="glass-effect rounded-5 mb-4">
+                                <h5 class="fw-semibold text-center m-2 titulo">
+                                    JUSTIFICACIÓN
+                                </h5>
+                            </div>
+                            <div id="justificacionDiv" style="display:none;">
+                                @if(!esSoloVista)
+                                {
+                                    <label for="inputJustificacion" class="form-label fw-semibold titulo">Favor de descargar el Formato de Justificación y subirlo en PDF debidamente requisitado y firmado.</label>
+                                    <a target="_blank" href="@Url.Content("~/FormatoEvidencia/JUSTIFICACION.xlsx")" download="JUSTIFICACION.xlsx" class="btn btn-success">Descargar formato de evidencia</a>
+                                    <input type="file" class="form-control fw-light input-arena titulo" id="inputJustificacion" name="InputJustificacion" accept=".pdf">
+                                }
+                                else
+                                {
+                                    @if (!string.IsNullOrEmpty(Model.RutaJustificacion))
+                                    {
+                                        <label class="form-label fw-semibold titulo">Justificación subida:</label>
+                                        <br />
+                                        <a target="_blank" href="@Model.RutaJustificacion" class="btn btn-success">
+                                            <i class="fas fa-download me-2"></i>
+                                            Ver justificación
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        // Si no hay evidencia subida para este mes/proceso
+                                        <p class="text-danger fw-semibold">No se ha cargado ninguna justificación.</p>
+                                    }
+                                }
+                            </div>
                         </div>
-                        <input type="text" class="form-control fw-light input-arena titulo mb-2" placeholder="Nombre de quien autoriza" id="nombreAutorizo" name="NombreAutorizo" value="@Model.NombreAutorizo">
-                        <input type="text" class="form-control fw-light input-arena titulo" placeholder="Puesto de quien autoriza" id="cargoAutorizo" name="PuestoAutorizo" value="@Model.PuestoAutorizo">
                     </div>
                 </div>
             </div>
-        </div>
 
-        @* botones *@
-        <div class="text-center m-4">
-            <button type="button" class="boton-rojo mx-2 fw-light w-25" id="btnGuardarBorrador">
-                Guardar
-            </button>
-            <button type="button" class="boton-amarillo mx-2 fw-light w-25" id="btnEnviarFinal">
-                Enviar
-            </button>
-        </div>
-    </div>
-    @* Fin tabla secundaria *@
+            @* realizo y autorizo *@
+            <div class="row">
+                <div class="col-12">
+                    <div class="row g-3 mt-1 mx-2 pb-3 border-bottom">
+                        <div class="col-6 border-end">
+                            <div class="glass-effect rounded-5 mb-4">
+                                <h5 class="fw-semibold text-center m-2 titulo">
+                                    Realizó
+                                </h5>
+                            </div>
+                            <input type="text" class="form-control fw-light input-arena titulo mb-2" placeholder="Nombre de quien realiza" id="nombreRealiza" name="NombreRealizo" value="@Model.NombreRealizo" @(esSoloVista ? "disabled" : "")>
+                            <input type="text" class="form-control fw-light input-arena titulo" placeholder="Puesto de quien realiza" id="cargoRealiza" name="PuestoRealizo" value="@Model.PuestoRealizo" @(esSoloVista ? "disabled" : "")>
+                        </div>
+                        <div class="col-6 border-end">
+                            <div class="glass-effect rounded-5 mb-4">
+                                <h5 class="fw-semibold text-center m-2 titulo">
+                                    Autorizó
+                                </h5>
+                            </div>
+                            <input type="text" class="form-control fw-light input-arena titulo mb-2" placeholder="Nombre de quien autoriza" id="nombreAutorizo" name="NombreAutorizo" value="@Model.NombreAutorizo" @(esSoloVista ? "disabled" : "")>
+                            <input type="text" class="form-control fw-light input-arena titulo" placeholder="Puesto de quien autoriza" id="cargoAutorizo" name="PuestoAutorizo" value="@Model.PuestoAutorizo" @(esSoloVista ? "disabled" : "")>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-</form>
+            @* botones *@
+            <div class="text-center m-4">
+                @if (!esSoloVista)
+                {
+                    <button type="button" class="boton-rojo mx-2 fw-light w-25" id="btnGuardarBorrador">
+                        Guardar
+                    </button>
+                    <button type="button" class="boton-amarillo mx-2 fw-light w-25" id="btnEnviarFinal">
+                        Enviar
+                    </button>
+                }
+                else
+                {
+                    <p class="alert alert-info">Esta información está completa y se muestra en modo solo lectura.</p>
+                }
+            </div>
+        </div>
+        @* Fin tabla secundaria *@
+
+    </form>
+}
 @section Scripts {
     <script>
         $(document).ready(function () {
@@ -373,13 +435,16 @@
                     $('#totalPorcentaje').val(porcentaje + '%');
                 }
 
+                const esSoloVista = @(esSoloVista.ToString().ToLower());
                 // Habilitar/Deshabilitar campos Personas/Rangos
-                if (realizado > 0) {
-                    $('.personas-input, .rango-input').prop('disabled', false).css('background-color', '');
-                } else {
-                    $('.personas-input, .rango-input').prop('disabled', true).val('0').css('background-color', '#f7f2ed');
-                    $('#personasAtendidas, #totalPersonas').val('0');
-                }
+                if(!esSoloVista){
+                    if (realizado > 0) {
+                        $('.personas-input, .rango-input').prop('disabled', false).css('background-color', '');
+                    } else {
+                        $('.personas-input, .rango-input').prop('disabled', true).val('0').css('background-color', '#f7f2ed');
+                        $('#personasAtendidas, #totalPersonas').val('0');
+                    }
+                }                
             }).on('blur', function() {
                 // --- Lógica de Justificación (al salir del campo) ---
                 let meta = parseFloat($('#metaProgramada').val()) || 0;

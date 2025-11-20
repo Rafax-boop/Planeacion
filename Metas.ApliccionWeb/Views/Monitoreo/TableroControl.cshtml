@@ -1,0 +1,328 @@
+﻿@model Metas.AplicacionWeb.Models.ViewModels.VMDepartamentos
+@{
+    ViewData["Title"] = "Tablero de Control";
+}
+
+<div class="container-fluid mt-4 border-bottom pb-4">
+
+    <!-- INFORMACIÓN DEL PROGRAMA -->
+    <div class="glass-effect rounded-3 p-3 mb-3">
+        <h5 class="fw-semibold titulo mb-3 border-bottom pb-2 text-center">INFORMACIÓN DEL PROGRAMA</h5>
+
+        <div class="row small">
+            <div class="col-md-6 border-end pe-3">
+                <div class="mb-2">
+                    <span class="fw-semibold titulo">Componente:</span>
+                    <span id="componente">N/A</span>
+                </div>
+                <div class="mb-2">
+                    <span class="fw-semibold titulo">Número de Actividad:</span>
+                    <span id="numeroActividad">N/A</span>
+                </div>
+                <div class="mb-2">
+                    <span class="fw-semibold titulo">Programa Social:</span>
+                    <span id="programaSocial">N/A</span>
+                </div>
+            </div>
+            <div class="col-md-6 ps-3">
+                <div class="mb-2">
+                    <span class="fw-semibold titulo">Unidad de Medida:</span>
+                    <span id="unidadMedida">N/A</span>
+                </div>
+                <div class="mb-2">
+                    <span class="fw-semibold titulo">Descripción:</span>
+                    <span id="descripcion">N/A</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CALENDARIZACIÓN ANUAL -->
+    <div class="glass-effect rounded-3 p-3 mb-3" style="background-color: white">
+        <h5 class="fw-semibold titulo mb-3 border-bottom pb-2 text-center">CALENDARIZACIÓN ANUAL</h5>
+
+        <div class="row">
+            <!-- Programado -->
+            <div class="col-md-6 border-end pe-3">
+                <h6 class="fw-semibold text-primary mb-2">PROGRAMADO</h6>
+                <div class="table-responsive">
+                    <table class="table table-sm text-center mb-2">
+                        <thead class="bg-primary text-white">
+                            <tr>
+                                <th>Ene</th>
+                                <th>Feb</th>
+                                <th>Mar</th>
+                                <th>Abr</th>
+                                <th>May</th>
+                                <th>Jun</th>
+                                <th>Jul</th>
+                                <th>Ago</th>
+                                <th>Sep</th>
+                                <th>Oct</th>
+                                <th>Nov</th>
+                                <th>Dic</th>
+                                <th>Programado Anual</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td id="prog-ene">100</td>
+                                <td id="prog-feb">150</td>
+                                <td id="prog-mar">200</td>
+                                <td id="prog-abr">180</td>
+                                <td id="prog-may">220</td>
+                                <td id="prog-jun">190</td>
+                                <td id="prog-jul">210</td>
+                                <td id="prog-ago">230</td>
+                                <td id="prog-sep">240</td>
+                                <td id="prog-oct">250</td>
+                                <td id="prog-nov">260</td>
+                                <td id="prog-dic">270</td>
+                                <td class="fw-bold bg-info bg-opacity-10" id="real-total">1843</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Realizado -->
+            <div class="col-md-6 ps-3">
+                <h6 class="fw-semibold text-success mb-2">REALIZADO</h6>
+                <div class="table-responsive">
+                    <table class="table table-sm text-center mb-2">
+                        <thead class="bg-success text-white">
+                            <tr>
+                                <th>Ene</th>
+                                <th>Feb</th>
+                                <th>Mar</th>
+                                <th>Abr</th>
+                                <th>May</th>
+                                <th>Jun</th>
+                                <th>Jul</th>
+                                <th>Ago</th>
+                                <th>Sep</th>
+                                <th>Oct</th>
+                                <th>Nov</th>
+                                <th>Dic</th>
+                                <th>Realizado Anual</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td id="real-ene">115</td>
+                                <td id="real-feb">142</td>
+                                <td id="real-mar">196</td>
+                                <td id="real-abr">183</td>
+                                <td id="real-may">187</td>
+                                <td id="real-jun">167</td>
+                                <td id="real-jul">157</td>
+                                <td id="real-ago">165</td>
+                                <td id="real-sep">156</td>
+                                <td id="real-oct">145</td>
+                                <td id="real-nov">117</td>
+                                <td id="real-dic">113</td>
+                                <td class="fw-bold bg-success bg-opacity-10" id="prog-total">2700</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PORCENTAJE DE AVANCE MENSUAL -->
+    <div class="glass-effect rounded-3 p-3 mb-3" style="background-color: white">
+        <h5 class="fw-semibold titulo mb-3 border-bottom pb-2 text-center">AVANCE MENSUAL</h5>
+
+        <div class="table-responsive">
+            <table class="table table-sm text-center mb-1">
+                <thead class="bg-warning text-dark">
+                    <tr>
+                        <th>Ene</th>
+                        <th>Feb</th>
+                        <th>Mar</th>
+                        <th>Abr</th>
+                        <th>May</th>
+                        <th>Jun</th>
+                        <th>Jul</th>
+                        <th>Ago</th>
+                        <th>Sep</th>
+                        <th>Oct</th>
+                        <th>Nov</th>
+                        <th>Dic</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><div class="fw-bold porcentaje-mes" data-mes="ene">115%</div></td>
+                        <td><div class="fw-bold porcentaje-mes" data-mes="feb">95%</div></td>
+                        <td><div class="fw-bold porcentaje-mes" data-mes="mar">98%</div></td>
+                        <td><div class="fw-bold porcentaje-mes" data-mes="abr">102%</div></td>
+                        <td><div class="fw-bold porcentaje-mes" data-mes="may">85%</div></td>
+                        <td><div class="fw-bold porcentaje-mes" data-mes="jun">88%</div></td>
+                        <td><div class="fw-bold porcentaje-mes" data-mes="jul">75%</div></td>
+                        <td><div class="fw-bold porcentaje-mes" data-mes="ago">72%</div></td>
+                        <td><div class="fw-bold porcentaje-mes" data-mes="sep">65%</div></td>
+                        <td><div class="fw-bold porcentaje-mes" data-mes="oct">58%</div></td>
+                        <td><div class="fw-bold porcentaje-mes" data-mes="nov">45%</div></td>
+                        <td><div class="fw-bold porcentaje-mes" data-mes="dic">42%</div></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- PORCENTAJE TRIMESTRAL Y ANUAL -->
+    <div class="glass-effect rounded-3 p-3" style="background-color: white">
+        <div class="row">
+            <!-- Porcentaje Trimestral -->
+            <div class="col-md-8 border-end pe-3">
+                <h5 class="fw-semibold titulo mb-3 border-bottom pb-2 text-center">TRIMESTRAL</h5>
+
+                <div class="row text-center">
+                    <div class="col-md-3 mb-2">
+                        <div class="border rounded p-2">
+                            <small class="fw-semibold">1ER</small>
+                            <div class="h6 fw-bold porcentaje-trimestre" data-trimestre="1">115%</div>
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar" id="progress-trimestre-1" style="width: 100%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <div class="border rounded p-2">
+                            <small class="fw-semibold">2DO</small>
+                            <div class="h6 fw-bold porcentaje-trimestre" data-trimestre="2">95%</div>
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar" id="progress-trimestre-2" style="width: 95%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <div class="border rounded p-2">
+                            <small class="fw-semibold">3ER</small>
+                            <div class="h6 fw-bold porcentaje-trimestre" data-trimestre="3">85%</div>
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar" id="progress-trimestre-3" style="width: 85%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <div class="border rounded p-2">
+                            <small class="fw-semibold">4TO</small>
+                            <div class="h6 fw-bold porcentaje-trimestre" data-trimestre="4">8%</div>
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar" id="progress-trimestre-4" style="width: 65%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Porcentaje Anual -->
+            <div class="col-md-4 ps-3">
+                <h5 class="fw-semibold titulo mb-3 border-bottom pb-2 text-center">ANUAL</h5>
+
+                <div class="text-center">
+                    <div class="h3 fw-bold porcentaje-anual">85%</div>
+                    <div class="progress mb-2" style="height: 12px;">
+                        <div class="progress-bar" id="progress-anual" style="width: 85%"></div>
+                    </div>
+                    <div class="row small text-center">
+                        <div class="col-6">
+                            <div class="fw-semibold">Prog:</div>
+                            <div class="text-primary" id="total-programado">2700</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="fw-semibold">Real:</div>
+                            <div class="text-success" id="total-realizado">1843</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+
+@section Scripts {
+    <script>
+        // Función para determinar el color según el porcentaje
+        function getColorClass(porcentaje) {
+            if (porcentaje >= 115) return 'text-primary';      // 🔵 Azul - Sobre cumplimiento
+            if (porcentaje >= 95) return 'text-success';       // 🟢 Verde - Bien
+            if (porcentaje >= 85) return 'text-warning';       // 🟡 Amarillo - Poco atrasado
+            if (porcentaje >= 70) return 'text-orange';        // 🟠 Naranja - Más atrasado
+            return 'text-danger';                              // 🔴 Rojo - Muy atrasado
+        }
+
+        // Función para determinar el color del progress bar
+        function getProgressColor(porcentaje) {
+            if (porcentaje >= 115) return 'bg-primary';
+            if (porcentaje >= 95) return 'bg-success';
+            if (porcentaje >= 85) return 'bg-warning';
+            if (porcentaje >= 70) return 'bg-orange';
+            return 'bg-danger';
+        }
+
+        // Función para extraer el número del texto (ej: "115%" → 115)
+        function extraerPorcentaje(texto) {
+            return parseInt(texto) || 0;
+        }
+
+        // Función para aplicar colores automáticamente al cargar la página
+        function aplicarColoresAutomaticos() {
+            // Aplicar colores a porcentajes mensuales
+            const elementosMensuales = document.querySelectorAll('.porcentaje-mes');
+            elementosMensuales.forEach(elemento => {
+                const porcentaje = extraerPorcentaje(elemento.textContent);
+                elemento.className = `fw-bold porcentaje-mes ${getColorClass(porcentaje)}`;
+            });
+
+            // Aplicar colores a porcentajes trimestrales
+            const elementosTrimestrales = document.querySelectorAll('.porcentaje-trimestre');
+            elementosTrimestrales.forEach(elemento => {
+                const porcentaje = extraerPorcentaje(elemento.textContent);
+                elemento.className = `h6 fw-bold porcentaje-trimestre ${getColorClass(porcentaje)}`;
+
+                // Actualizar progress bar
+                const trimestre = elemento.getAttribute('data-trimestre');
+                const progressBar = document.getElementById(`progress-trimestre-${trimestre}`);
+                if (progressBar) {
+                    progressBar.style.width = `${Math.min(porcentaje, 100)}%`;
+                    progressBar.className = `progress-bar ${getProgressColor(porcentaje)}`;
+                }
+            });
+
+            // Aplicar color a porcentaje anual
+            const elementoAnual = document.querySelector('.porcentaje-anual');
+            if (elementoAnual) {
+                const porcentaje = extraerPorcentaje(elementoAnual.textContent);
+                elementoAnual.className = `h3 fw-bold porcentaje-anual ${getColorClass(porcentaje)}`;
+
+                // Actualizar progress bar anual
+                const progressAnual = document.getElementById('progress-anual');
+                if (progressAnual) {
+                    progressAnual.style.width = `${Math.min(porcentaje, 100)}%`;
+                    progressAnual.className = `progress-bar ${getProgressColor(porcentaje)}`;
+                }
+            }
+        }
+
+        // Aplicar colores automáticamente cuando la página cargue
+        document.addEventListener('DOMContentLoaded', function() {
+            aplicarColoresAutomaticos();
+        });
+    </script>
+
+    <style>
+        .text-orange {
+            color: #fd7e14 !important;
+        }
+
+        .bg-orange {
+            background-color: #fd7e14 !important;
+        }
+    </style>
+}
