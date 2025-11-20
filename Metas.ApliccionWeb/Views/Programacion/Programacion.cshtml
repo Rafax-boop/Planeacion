@@ -1,0 +1,305 @@
+﻿@model Metas.AplicacionWeb.Models.ViewModels.VMDepartamentos
+@{
+    ViewData["Title"] = "Iniciar Programación";
+}
+<h1>Ejercicio de Programación</h1>
+<div class="mt-5 pb-4 pt-3 rounded-5 glass-effect" style="padding-left: 20px; padding-right: 25px">
+    <div class="row">
+        <div class="col">
+            <div class="mt-2 text-center">
+                <label class="form-label fs-3 fw-bold titulo">Año Fiscal</label>
+            </div>
+        </div>
+        <div class="col">
+            <div class="mt-2 text-center">
+                <label class="form-label fs-3 fw-bold titulo">Departamentos</label>
+            </div>
+        </div>
+    </div>
+    <div class="row g-1">
+        <div class="col">
+            <div class="col-12">
+                <select class="titulo form-select input-arena" id="selectAnoFiscal">
+                    @{
+                        var anoActual = DateTime.Now.Year;
+                        var anoMaximo = anoActual + 1;
+                        var anoMinimo = anoActual - 5;
+
+                        for (int ano = anoMaximo; ano >= anoMinimo; ano--)
+                        {
+                            <option value="@ano">@ano</option>
+                        }
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="col">
+            <div class="col-12" style="margin-left: 6px">
+                <select class="titulo form-select input-arena" id="selectDepartamento">                    
+                    @if (User.IsInRole("Administrador"))
+                    {
+                        <option value="">-- Seleccione un departamento --</option>
+                        @foreach (var act in Model.ListaDepartamentos)
+                        {
+                            <option value="@act.Value">@act.Text</option>
+                        }
+                    }
+                    else
+                    {
+                        var departamentoUsuarioTexto = User.Claims.FirstOrDefault(c => c.Type == "Departamento")?.Value;
+
+                        var departamentoUsuarioObjeto = Model.ListaDepartamentos
+                        .FirstOrDefault(d => d.Text == departamentoUsuarioTexto);
+
+                        if (departamentoUsuarioObjeto != null)
+                        {
+                            // Si se encuentra, usamos el Value (ID) y el Text (Nombre)
+                            <option value="@departamentoUsuarioObjeto.Value">@departamentoUsuarioObjeto.Text</option>
+                        }
+                        else
+                        {
+                            // Opcional: Manejo si no se encuentra (solo mostrar el texto como fallback)
+                            <option value="">Recargué la página</option>
+                        }
+                    }
+                </select>
+            </div>
+        </div>
+        <div>
+            <div class="mt-4 text-center">
+                <button class="boton-rojo" type="button" id="btnBuscar">Buscar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Sección que se mostrará después de buscar -->
+<div id="seccionResultados" class="mt-4 pb-4 pt-3 rounded-5 glass-effect" style="padding-left: 20px; padding-right: 25px; display: none;">
+    <h2 class="fw-semibold text-start" id="ano">
+        Ejercicio Fiscal
+    </h2>
+    <h3 class="fw-light" id="tituloDepartamento">
+        Departamento:
+    </h3>
+    <div class="text-center mb-3">
+        <button class="boton-rojo" type="button" id="btnIniciarProgramacion" >Iniciar Programación</button>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover table-borderless align-middle shadow-sm rounded-3 overflow-hidden" id="tablaDatos">
+            <thead class="bg-danger text-white">
+                <tr>
+                    <th scope="col" class="text-center px-3 py-3 border-end border-light border-opacity-25">Pp</th>
+                    <th scope="col" class="text-center px-3 py-3 border-end border-light border-opacity-25">Componente</th>
+                    <th scope="col" class="text-center px-3 py-3 border-end border-light border-opacity-25">Actividad</th>
+                    <th scope="col" class="text-center px-3 py-3 border-end border-light border-opacity-25">Descripción de la Actividad</th>
+                    <th scope="col" class="text-center px-3 py-3 border-end border-light border-opacity-25">Programa o servicio de asistencia social</th>
+                    <th scope="col" class="text-center px-3 py-3 border-end border-light border-opacity-25">Área</th>
+                    <th scope="col" class="text-center px-3 py-3 border-end border-light border-opacity-25">Departamento</th>
+                    <th scope="col" class="text-center px-3 py-3">Estatus</th>
+                </tr>
+            </thead>
+            <tbody id="tbodyDatos" class="bg-light bg-opacity-50">
+                <!-- Los datos se cargarán aquí dinámicamente -->
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Mensaje de carga -->
+    <div id="mensajeCarga" class="text-center" style="display: none;">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Cargando...</span>
+        </div>
+        <p class="mt-2">Cargando datos...</p>
+    </div>
+    
+    <!-- Mensaje cuando no hay datos -->
+    <div id="mensajeSinDatos" class="alert alert-info text-center" style="display: none;">
+        No se encontraron datos para los criterios seleccionados.
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+
+            // ========================================
+            // BUSCAR REGISTROS
+            // ========================================
+            $('#btnBuscar').click(function() {
+                var anoFiscal = $('#selectAnoFiscal').val();
+                var departamento = $('#selectDepartamento').val();
+                var departamentoTexto = $('#selectDepartamento option:selected').text();
+
+                // Validar que se haya seleccionado un departamento
+                if (!departamento) {
+                    alert('Por favor, seleccione un departamento');
+                    return;
+                }
+
+                // Mostrar la sección de resultados
+                $('#seccionResultados').slideDown();
+
+                // Cambiar los títulos dinámicamente
+                $('#ano').text('Ejercicio Fiscal: ' + anoFiscal);
+                $('#tituloDepartamento').text('Departamento: ' + departamentoTexto);
+
+                // Mostrar mensaje de carga
+                $('#mensajeCarga').show();
+                $('#tablaDatos').hide();
+                $('#mensajeSinDatos').hide();
+
+                // Llamada AJAX para obtener los datos
+                $.ajax({
+                    url: '@Url.Action("ObtenerDatos", "Programacion")',
+                    type: 'GET',
+                    data: {
+                        anoFiscal: anoFiscal,
+                        departamento: departamento
+                    },
+                    success: function(response) {
+                        $('#mensajeCarga').hide();
+
+                        // Mostrar/Ocultar el botón "Iniciar Programación" según fecha habilitada
+                        if (response.fechaHabilitada) {
+                            $('#btnIniciarProgramacion').show();
+                        } else {
+                            $('#btnIniciarProgramacion').hide().prop('disabled', true);
+                        }
+
+                        // Verificar si hay datos
+                        if (response.success && response.datos && response.datos.length > 0) {
+                            $('#tbodyDatos').empty();
+
+                            var esAdmin = response.esAdmin;
+
+                         // Llenar la tabla con los datos
+                        $.each(response.datos, function(index, item) {
+                            // Construir nombre de actividad
+                            var prefijoActividad = '';
+                            if (item.pp && item.pp.toLowerCase() === 'agenda') {
+                                prefijoActividad = 'T';
+                            }
+                            var actividadCompleta = prefijoActividad + (item.componente || '') + '.' + (item.actividad || '');
+
+                            // ========================================
+                            // LÓGICA DE BOTONES SEGÚN ROL Y ESTATUS
+                            // ========================================
+                            var btnEliminar = '';
+                            var btnEditar = '';
+
+                            // Para ADMINISTRADOR
+                            if (esAdmin) {
+                                btnEditar = '<button type="button" class="btn btn-primary btn-sm btn-editar me-1" data-id="' + item.idProceso + '"><i class="fa-solid fa-pen-to-square"></i></button>';
+                                btnEliminar = '<button type="button" class="btn btn-danger btn-sm btn-eliminar" data-id="' + item.idProceso + '"><i class="fa-solid fa-trash"></i></button>';
+                            }
+                            else {
+                                // Para USUARIO NORMAL
+                                if (item.idEstatus == 2) {
+                                    btnEditar = '<button type="button" class="btn btn-primary btn-sm btn-editar" data-id="' + item.idProceso + '"><i class="fa-solid fa-pen-to-square"></i></button>';
+                                }
+                            }
+
+                            var badgeEstatus = '';
+                            switch(item.idEstatus) {
+                                case 1: 
+                                    badgeEstatus = '<span class="badge bg-opacity-15 text-primary border border-primary border-opacity-25 d-inline-flex align-items-center gap-1 px-3 py-2">' +
+                                                  '<i class="bi bi-clock-history"></i> En Revisión</span>';
+                                    break;
+                                case 2: 
+                                    badgeEstatus = '<span class="badge bg-opacity-15 text-warning border border-warning border-opacity-25 d-inline-flex align-items-center gap-1 px-3 py-2">' +
+                                                  '<i class="bi bi-chat-dots"></i> Con Comentarios</span>';
+                                    break;
+                                case 3:
+                                    badgeEstatus = '<span class="badge bg-opacity-15 text-success border border-success border-opacity-25 d-inline-flex align-items-center gap-1 px-3 py-2">' +
+                                                  '<i class="bi bi-check-circle"></i> Validado</span>';
+                                    break;
+                                default:
+                                    badgeEstatus = '<span class="badge bg-secondary">' + item.nombreEstatus + '</span>';
+                            }
+
+                            // Construir la fila de la tabla
+                            var fila = '<tr>' +
+                                '<td class="text-center">' + item.pp + '<div class="mt-1">' + btnEliminar + '</div></td>' +
+                                '<td class="text-center">' + item.componente + '</td>' +
+                                '<td class="text-center">' + actividadCompleta + '</td>' +
+                                '<td class="text-start">' + item.descripcionActividad + '</td>' +
+                                '<td class="text-start">' + item.programaSocial + '</td>' +
+                                '<td class="text-center">' + item.area + '</td>' +
+                                '<td class="text-center">' + item.departamento + '</td>' +
+                                '<td class="text-center">' +
+                                    '<div class="d-flex flex-column align-items-center gap-2">' +
+                                        '<div>' + badgeEstatus + '</div>' +
+                                        '<div>' + btnEditar + '</div>' +
+                                    '</div>' +
+                                '</td>' +
+                            '</tr>';
+
+                            $('#tbodyDatos').append(fila);
+                        });
+                            $('#tablaDatos').show();
+
+                        } else {
+                            $('#mensajeSinDatos').show();
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        $('#mensajeCarga').hide();
+                        alert('Error al cargar los datos: ' + error);
+                    }
+                });
+            });
+
+
+            // ========================================
+            // ELIMINAR REGISTRO (Solo Admin)
+            // ========================================
+            $(document).on('click', '.btn-eliminar', function() {
+                var idProceso = $(this).data('id');
+
+                // Confirmación antes de eliminar
+                if (confirm('¿Está seguro de que desea eliminar este registro? Esta acción es irreversible y eliminará datos en 4 tablas.')) {
+                    $.ajax({
+                        url: '@Url.Action("EliminarRegistro", "Programacion")',
+                        type: 'POST',
+                        data: { id: idProceso },
+                        success: function(response) {
+                            if (response.success) {
+                                alert(response.mensaje);
+                                // Recargar la tabla
+                                $('#btnBuscar').click();
+                            } else {
+                                alert('Error: ' + response.mensaje);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            alert('Error en la comunicación con el servidor al intentar eliminar.');
+                        }
+                    });
+                }
+            });
+
+            // ========================================
+            // EDITAR REGISTRO (Admin o Usuario según estatus)
+            // ========================================
+            $(document).on('click', '.btn-editar', function() {
+                var idProceso = $(this).data('id');
+                var urlEditar = '@Url.Action("RevisarProgramacion", "Programacion")' + '?id=' + idProceso;
+                window.location.href = urlEditar;
+            });
+
+            // ========================================
+            // INICIAR NUEVA PROGRAMACIÓN
+            // ========================================
+            $('#btnIniciarProgramacion').click(function() {
+                var anoFiscal = $('#selectAnoFiscal').val();
+                var departamento = $('#selectDepartamento').val();
+
+                var urlRedireccion = '@Url.Action("RegistrarProgramacion", "Programacion")' +
+                                     '?anoFiscal=' + anoFiscal +
+                                     '&departamentoId=' + departamento;
+
+                window.location.href = urlRedireccion;
+            });
+        });
+    </script>
+}

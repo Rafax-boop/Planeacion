@@ -1,0 +1,87 @@
+﻿.boton-rojo {
+    background-color: #fdf3f6;
+    color: #741732;
+    border-radius: 5px 5px 5px 5px;
+    font-size: 20px;
+    padding-bottom: 4px;
+    padding-top: 4px;
+    padding-left: 6px;
+    padding-right: 6px;
+    font-weight: 500;
+    box-shadow: 0 5px 8px 0 #741732;
+    transition: box-shadow 0.1s ease;
+    border: 1px solid #741732 !important;
+}
+    .boton-rojo:hover {
+        box-shadow: none !important;
+        cursor: pointer;
+        transition: box-shadow 0.3s ease;
+    }   
+
+    .boton-rojo:active {
+        transform: translateY(2px);
+        transition: all 0.1s ease;
+    }
+
+.boton-amarillo {
+    background-color: #fdf3f6;
+    color: #c09866;
+    border-radius: 5px 5px 5px 5px;
+    font-size: 20px;
+    padding-bottom: 4px;
+    padding-top: 4px;
+    padding-left: 6px;
+    padding-right: 6px;
+    font-weight: 500;
+    box-shadow: 0 5px 8px 0 #c09866;
+    transition: box-shadow 0.1s ease;
+    border: 1px solid #c09866 !important;
+}
+
+    .boton-amarillo:hover {
+        box-shadow: none !important;
+        cursor: pointer;
+        transition: box-shadow 0.3s ease;
+    }
+
+    .boton-amarillo:active {
+        transform: translateY(2px);
+        transition: all 0.1s ease;
+    }
+
+.fecha-inicio::-webkit-calendar-picker-indicator {
+    background: transparent;
+    bottom: 0;
+    color: transparent;
+    cursor: pointer;
+    height: auto;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: auto;
+}
+
+.fecha-inicio {
+    position: relative;
+}
+
+    .fecha-inicio::after {
+        content: "📅";
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        pointer-events: none;
+    }
+
+/* Estilos para los botones deshabilitados */
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Transiciones suaves */
+.accion-item {
+    transition: all 0.3s ease;
+}

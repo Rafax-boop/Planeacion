@@ -1,0 +1,2194 @@
+﻿@model Metas.BLL.DTO.ProgramacionDTO
+
+@{
+    ViewData["Title"] = "Editar Programación";
+}
+
+<div class="container-fluid mt-5">
+    <h1 class="text-center mb-4 titulo fw-semibold pt-2 glass-effect rounded-5 pb-2">EDITAR FICHA TÉCNICA DE ACTIVIDADES</h1>
+
+    @* Datos del solicitante *@
+    <div class="d-flex border mb-4 rounded-4 shadow">
+        <div class="w-25 p-3 rounded-start-4 align-content-center glass-effect">
+            <h5 class="fw-semibold titulo text-center">
+                Datos del solicitante
+            </h5>
+        </div>
+
+        <div class="w-75">
+            <div class="d-flex border-bottom p-2">
+                <div class="w-50 my-2">1. FECHA DE ELABORACIÓN:</div>
+                <div class="w-50 fw-semibold text-center my-2">@DateTime.Now.ToString("dd/MM/yyyy")</div>
+            </div>
+
+            <div class="d-flex p-2 row">
+                <label class="col-md-4 align-content-center">2. NOMBRE DEL ÁREA OPERATIVA <br /> RESPONSABLE (AOR):</label>
+                <div class="col-8 row">
+                    <div class="col-md-6">
+                        <h5 class="fw-light">
+                           Area:   
+                        </h5>
+                        <textarea disabled class="form-control input-arena titulo fw-semibold" rows="2" id="inputArea">@Model.Area</textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <h5 class="fw-light">
+                            Departamento:
+                        </h5>
+                        <textarea disabled class="form-control input-arena titulo fw-semibold" rows="2" id="inputDepartamento">@Model.Departamento</textarea>
+                    </div>                   
+                </div>
+            </div>
+
+            <div class="d-flex p-2">
+                <div class="w-50 align-content-center">3. CORREO ELECTRÓNICO:</div>
+                <div class="w-50 my-2 mx-2">
+                    <input type="email" disabled class="input-arena form-control titulo"  placeholder="ejemplo@correo.com" id="inputCorreo" value="@Model.CorreoContacto">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* Datos de la solicitud *@
+    <div class="p-3 mb-4 rounded-4 shadow">
+        <h5 class="mb-2 text-center border-bottom pb-3 fw-semibold titulo pt-2 glass-effect rounded-5">DATOS DE LA SOLICITUD</h5>
+
+        <div class="row my-3 border-bottom pb-3">
+            <label class="col-md-6 align-content-center">4. PROGRAMA PRESUPUESTARIO:</label>
+            <div class="col-md-5 align-content-center">
+                <input type="text" @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control titulo" value="@Model.Pp" data-campo="4">
+            </div>
+            <div class="col-md-1 align-content-center">
+                <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
+                        data-campo="4" data-bs-toggle="tooltip" title="Agregar comentario">
+                    <i class="fas fa-comment-medical"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="row mb-3 border-bottom pb-3">
+            <label class="align-content-center col-md-6">5. NÚMERO DE COMPONENTE:</label>
+            <div class="col-md-5 align-content-center">
+                <input type="text" @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control titulo" value="@Model.Pp" readonlyreadonly data-campo="5">
+            </div>
+            <div class="col-md-1 align-content-center">
+                <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
+                        data-campo="5" data-bs-toggle="tooltip" title="Agregar comentario">
+                    <i class="fas fa-comment-medical"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="row pb-1 border-bottom mb-3 pb-3">
+            <label class="align-content-center col-md-6">6. NÚMERO DE ACTIVIDAD:</label>
+            <div class="col-md-5 align-content-center">
+                <input type="number" @(!ViewBag.EsAdministrador ? "disabled" : "") required class="input-arena form-control titulo" id="inputActividad" value="@Model.NActividad">
+            </div>
+            <div class="col-md-1 align-content-center">
+                <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
+                        data-campo="6" data-bs-toggle="tooltip" title="Agregar comentario">
+                    <i class="fas fa-comment-medical"></i>
+                </button>
+            </div>
+        </div>
+
+        @* Justificacion *@
+        <div class="border-bottom mb-3 pb-3">
+            <div class="row">
+                <div class="col-md-11">
+                    <label>7. JUSTIFICACIÓN</label>
+                    <textarea required class="input-arena form-control" @(!ViewBag.EsAdministrador ? "disabled" : "") rows="2" id="inputJustificacion">@Model.Justificacion</textarea>
+                </div>
+                <div class="col-md-1 align-content-center">
+                    <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
+                            data-campo="7" data-bs-toggle="tooltip" title="Agregar comentario">
+                        <i class="fas fa-comment-medical"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        @* Documentacion soporte de la justificacion *@
+        <div class="mb-3 pb-3 border-bottom">
+            <div class="row">
+                <div class="col-md-11">
+                    <label>8. DOCUMENTACIÓN SOPORTE DE LA JUSTIFICACIÓN</label>
+                    <textarea @(!ViewBag.EsAdministrador ? "disabled" : "") required class="input-arena form-control disabled" rows="2" id="inputDocumentacion">@Model.DescripcionDocumento</textarea>
+                </div>
+                <div class="col-md-1 align-content-center">
+                    <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
+                            data-campo="8" data-bs-toggle="tooltip" title="Agregar comentario">
+                        <i class="fas fa-comment-medical"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        @* Origen de recursos *@
+        <div class="d-flex align-items-center py-2 pb-4">
+            <div class="w-50 pe-3 mt-2 align-items-center">
+                <label>9. ORIGEN DE RECURSOS</label>
+            </div>
+            <div class="w-50 mt-2">
+                <div class="row g-2">
+                    <div class="col-6">
+                        <h5 class="fw-light">Recurso Federal</h5>
+                        <select required @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control titulo" id="selectFederal">
+                            <option value="">Seleccione</option>
+                            <option value="Si" selected="@(Model.RecursoFederal == "Si")">Sí</option>
+                            <option value="No" selected="@(Model.RecursoFederal == "No")">No</option>
+                        </select>
+                    </div>
+                    <div class="col-6">
+                        <h5 class="fw-light">Recurso Estatal</h5>
+                        <select required @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control titulo" id="selectEstatal">
+                            <option value="">Seleccione</option>
+                            <option value="Si" selected="@(Model.RecursoEstatal == "Si")">Sí</option>
+                            <option value="No" selected="@(Model.RecursoEstatal == "No")">No</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="w-auto ms-2 align-content-center">
+                <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
+                        data-campo="9" data-bs-toggle="tooltip" title="Agregar comentario">
+                    <i class="fas fa-comment-medical"></i>
+                </button>
+            </div>
+        </div>
+    </div>    
+
+    <hr>
+
+    @* Datos generales *@
+    <h2 class="text-center my-4 titulo fw-semibold pt-2 pb-2 glass-effect rounded-5 ">DATOS GENERALES</h2>
+    
+    <div class="border p-3 mb-4 mt-4 rounded-4 shadow">
+        <div class="row border-bottom">
+            <label class="col-md-4 align-content-center">10. PROGRAMA SOCIAL, SERVICIO Y/O PROYECTO</label>
+            <div class="col-md-7 mb-3">
+                <textarea required id="inputPrograma" @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control" rows="2">@Model.ProgramaSocial</textarea>
+            </div>
+            <div class="col-md-1 align-content-center">
+                <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
+                        data-campo="10" data-bs-toggle="tooltip" title="Agregar comentario">
+                    <i class="fas fa-comment-medical"></i>
+                </button>
+            </div>
+        </div>
+        <div class="row border-bottom">
+            <label class="col-md-4 align-content-center">11. DESCRIPCIÓN DE LA ACTIVIDAD</label>
+            <div class="col-md-7 my-3">
+                <textarea required id="inputDescripcion" @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control" rows="2">@Model.DescripcionActividad</textarea>
+            </div>
+            <div class="col-md-1 align-content-center">
+                <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
+                        data-campo="11" data-bs-toggle="tooltip" title="Agregar comentario">
+                    <i class="fas fa-comment-medical"></i>
+                </button>
+            </div>
+        </div>
+        <div class="row border-bottom">
+            <label class="col-md-4 align-content-center">12. NOMBRE DEL INDICADOR</label>
+            <div class="col-md-7 my-3">
+                <textarea required id="inputIndicador" @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control" rows="2">@Model.NombreIndicador</textarea>
+            </div>
+            <div class="col-md-1 align-content-center">
+                <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
+                        data-campo="12" data-bs-toggle="tooltip" title="Agregar comentario">
+                    <i class="fas fa-comment-medical"></i>
+                </button>
+            </div>
+        </div>
+        <div class="row border-bottom">
+            <label class="col-md-4 align-content-center">13. DEFINICIÓN DEL INDICADOR</label>
+            <div class="col-md-7 my-3">
+                <textarea required id="inputDefinicion" @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control" rows="2">@Model.DefinicionIndicador</textarea>
+            </div>
+            <div class="col-md-1 align-content-center">
+                <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
+                        data-campo="13" data-bs-toggle="tooltip" title="Agregar comentario">
+                    <i class="fas fa-comment-medical"></i>
+                </button>
+            </div>
+        </div>
+
+        @* Calendarización *@
+        <div class="row border-bottom py-3 mb-3">
+            <label class="col-md-4 align-content-center">14. CALENDARIZACIÓN</label>
+        </div>
+
+        <div class="row">
+            @* Encabezados de trimestres *@
+            <div class="col-md-3 mb-3">
+                <div class="text-center fw-semibold text-muted">TRIMESTRES</div>
+            </div>
+            <div class="col-md-2 mb-3">
+                <div class="text-center titulo fw-semibold border-bottom pb-1">1ER TRIMESTRE</div>
+            </div>
+            <div class="col-md-2 mb-3">
+                <div class="text-center titulo fw-semibold border-bottom pb-1">2DO. TRIMESTRE</div>
+            </div>
+            <div class="col-md-2 mb-3">
+                <div class="text-center titulo fw-semibold border-bottom pb-1">3ER. TRIMESTRE</div>
+            </div>
+            <div class="col-md-2 mb-3">
+                <div class="text-center titulo fw-semibold border-bottom pb-1">4TO. TRIMESTRE</div>
+            </div>
+        </div>
+
+        @* Fila para SERVICIOS *@
+        <div class="row align-items-center pb-2 mb-2">
+            <div class="col-md-3 text-center">
+                <label class="fw-light">SERVICIOS</label>
+            </div>
+            <div class="col-md-2">
+                <input type="number" @(!ViewBag.EsAdministrador ? "disabled" : "") id="primerServicio" class="input-arena form-control titulo text-center" value="@Model.PrimerServicio" min="0">
+            </div>
+            <div class="col-md-2">
+                <input type="number" @(!ViewBag.EsAdministrador ? "disabled" : "") id="segundoServicio" class="input-arena form-control titulo text-center" value="@Model.SegundoServicio" min="0">
+            </div>
+            <div class="col-md-2">
+                <input type="number" @(!ViewBag.EsAdministrador ? "disabled" : "") id="tercerServicio" class="input-arena form-control titulo text-center" value="@Model.TercerServicio" min="0">
+            </div>
+            <div class="col-md-2">
+                <input type="number" @(!ViewBag.EsAdministrador ? "disabled" : "") id="cuartoServicio" class="input-arena form-control titulo text-center" value="@Model.CuartoServicio" min="0">
+            </div>
+            <div class="col-md-1 align-content-center">
+                <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
+                        data-campo="14" data-bs-toggle="tooltip" title="Agregar comentario">
+                    <i class="fas fa-comment-medical"></i>
+                </button>
+            </div>
+        </div>
+
+        @* Fila para PERSONAS *@
+        <div class="row align-items-center mb-3">
+            <div class="col-md-3 text-center">
+                <label class="fw-light">PERSONAS</label>
+            </div>
+            <div class="col-md-2">
+                <input type="number" @(!ViewBag.EsAdministrador ? "disabled" : "") id="primerPersona" class="input-arena form-control titulo text-center" value="@Model.PrimerPersona" min="0">
+            </div>
+            <div class="col-md-2">
+                <input type="number" @(!ViewBag.EsAdministrador ? "disabled" : "") id="segundoPersona" class="input-arena form-control titulo text-center" value="@Model.SegundoPersona" min="0">
+            </div>
+            <div class="col-md-2">
+                <input type="number" @(!ViewBag.EsAdministrador ? "disabled" : "") id="tercerPersona" class="input-arena form-control titulo text-center" value="@Model.TercerPersona" min="0">
+            </div>
+            <div class="col-md-2">
+                <input type="number" @(!ViewBag.EsAdministrador ? "disabled" : "") id="cuartoPersona" class="input-arena form-control titulo text-center" value="@Model.CuartoPersona" min="0">
+            </div>
+        </div>
+
+        <div class="row border-bottom border-top">
+            <label class="col-md-4 align-content-center">15. UNIDAD DE MEDIDA</label>
+            <div class="col-md-7 my-3">
+                <input type="text" @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control titulo" id="selectMedida" value="@Model.UnidadMedida">
+            </div>
+            <div class="col-md-1 align-content-center">
+                <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
+                        data-campo="15" data-bs-toggle="tooltip" title="Agregar comentario">
+                    <i class="fas fa-comment-medical"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="row border-bottom">
+            <label class="col-md-4 align-content-center">16. MEDIOS DE VERIFICACIÓN</label>
+            <div class="col-md-7 my-3">
+                <textarea required id="inputMedios" @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control" rows="2">@Model.MediosVerificacion</textarea>
+            </div>
+            <div class="col-md-1 align-content-center">
+                <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
+                        data-campo="16" data-bs-toggle="tooltip" title="Agregar comentario">
+                    <i class="fas fa-comment-medical"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="row border-bottom">
+            <label class="col-md-4 align-content-center">17. SERIE DE INFORMACIÓN DISPONIBLE</label>
+            <div class="col-md-3 my-3">
+                <input type="text" @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control titulo" value="@Model.SerieInformacionDesde">
+            </div>
+            <div class="col-md-4 my-3">
+                <input type="text" @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control titulo" value="@Model.SerieInformacionHasta">
+            </div>
+            <div class="col-md-1 align-content-center">
+                <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
+                        data-campo="17" data-bs-toggle="tooltip" title="Agregar comentario">
+                    <i class="fas fa-comment-medical"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="row border-bottom mb-2">
+            <label class="col-md-4 align-content-center">18. FUENTES DE INFORMACIÓN</label>
+            <div class="col-md-7 my-3">
+                <textarea required id="inputFuentes" @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control" rows="2">@Model.FuenteInformacion</textarea>
+            </div>
+            <div class="col-md-1 align-content-center">
+                <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
+                        data-campo="18" data-bs-toggle="tooltip" title="Agregar comentario">
+                    <i class="fas fa-comment-medical"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 border-end my-3">
+                <div class="row align-items-center h-100">
+                    <div class="col-md-6">
+                        <label class="mb-0 d-flex align-items-center h-100">19. INTERVIENEN DELEGACIONES REGIONALES</label>
+                    </div>
+                    <div class="col-md-5">
+                        <select id="selectDelegaciones" @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control titulo">
+                            <option value="">Seleccione</option>
+                            <option value="Si" selected="@(Model.IntervienenDelegaciones == "Si")">Sí</option>
+                            <option value="No" selected="@(Model.IntervienenDelegaciones == "No")">No</option>
+                        </select>
+                    </div>
+                    <div class="col-md-1 align-content-center">
+                        <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
+                                data-campo="19" data-bs-toggle="tooltip" title="Agregar comentario">
+                            <i class="fas fa-comment-medical"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="row align-items-center h-100">
+                    <div class="col-md-6">
+                        <label class="mb-0 d-flex align-items-center h-100">20. ¿DE QUÉ MANERA?</label>
+                    </div>
+                    <div class="col-md-5">
+                        <textarea disabled id="inputDelegaciones" class="input-arena form-control" rows="2">@Model.IntervienenDelegacionesManera</textarea>
+                    </div>
+                    <div class="col-md-1 align-content-center">
+                        <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
+                                data-campo="20" data-bs-toggle="tooltip" title="Agregar comentario">
+                            <i class="fas fa-comment-medical"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* Determinación de Metas *@
+    <div class="border p-3 mb-4 rounded-4 shadow">
+        <h5 class="pt-2 glass-effect rounded-5 text-center border-bottom pb-2 fw-semibold titulo">DETERMINACIÓN DE METAS</h5>
+
+        <div class="row">
+            <div class="col-md-6 border-end">
+                <div class="text-center fw-light py-2 border-bottom" style="background-color: #F4F4F4">
+                    LÍNEA BASE
+                </div>
+
+                <div class="row align-items-center border-bottom py-2">
+                    <div class="col-md-6">
+                        <label class="mb-0">21. AÑO</label>
+                    </div>
+                    <div class="col-md-5">
+                        <input type="text" disabled class="input-arena form-control titulo" value="@Model.AnoBase" >
+                    </div>
+                    <div class="col-md-1 align-content-center">
+                        <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
+                                data-campo="21" data-bs-toggle="tooltip" title="Agregar comentario">
+                            <i class="fas fa-comment-medical"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="row align-items-center border-bottom py-2">
+                    <div class="col-md-6">
+                        <label class="mb-0">22. PORCENTAJE DE CUMPLIMIENTO</label>
+                    </div>
+                    <div class="col-md-5">
+                        <input id="inputPorcentajeBase" disabled type="number" class="input-arena form-control titulo text-center" value="@Model.PorcentajeBase" min="0" max="100">
+                    </div>
+                    <div class="col-md-1 align-content-center">
+                        <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
+                                data-campo="22" data-bs-toggle="tooltip" title="Agregar comentario">
+                            <i class="fas fa-comment-medical"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="row align-items-center border-bottom py-2">
+                    <div class="col-md-6">
+                        <label class="mb-0">23. NO. DE BIEN O SERVICIO ENTREGADO</label>
+                    </div>
+                    <div class="col-md-5">
+                        <input disabled id="inputServicioBase" type="number" class="input-arena form-control titulo text-center" value="@Model.ServicioBase" min="0">
+                    </div>
+                    <div class="col-md-1 align-content-center">
+                        <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
+                                data-campo="23" data-bs-toggle="tooltip" title="Agregar comentario">
+                            <i class="fas fa-comment-medical"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="row align-items-center py-2">
+                    <div class="col-md-6">
+                        <label class="mb-0">24. NO. DE PERSONAS ATENDIDAS</label>
+                    </div>
+                    <div class="col-md-5">
+                        <input disabled id="inputPersonasBase" type="number" class="input-arena form-control titulo text-center" value="@Model.PersonasBase" min="0">
+                    </div>
+                    <div class="col-md-1 align-content-center">
+                        <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
+                                data-campo="24" data-bs-toggle="tooltip" title="Agregar comentario">
+                            <i class="fas fa-comment-medical"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="text-center fw-light py-2 border-bottom" style="background-color: #F4F4F4">
+                    META Y PERIODO DE CUMPLIMIENTO
+                </div>
+
+                <div class="row align-items-center border-bottom py-2">
+                    <div class="col-md-6">
+                        <label class="mb-0">25. AÑO</label>
+                    </div>
+                    <div class="col-md-5">
+                        <input id="inputAnoMeta" type="text" class="input-arena form-control titulo text-center fw-semibold" value="@Model.AnoMeta" disabled >
+                    </div>
+                    <div class="col-md-1 align-content-center">
+                        <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
+                                data-campo="25" data-bs-toggle="tooltip" title="Agregar comentario">
+                            <i class="fas fa-comment-medical"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="row align-items-center border-bottom py-2">
+                    <div class="col-md-6">
+                        <label class="mb-0">26. PORCENTAJE DE CUMPLIMIENTO</label>
+                    </div>
+                    <div class="col-md-5">
+                        <input id="inputPorcentajeMeta" disabled type="number" class="input-arena form-control titulo text-center" value="@Model.PorcentajeMeta" min="0" max="100">
+                    </div>
+                    <div class="col-md-1 align-content-center">
+                        <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
+                                data-campo="26" data-bs-toggle="tooltip" title="Agregar comentario">
+                            <i class="fas fa-comment-medical"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="row align-items-center border-bottom py-2">
+                    <div class="col-md-6">
+                        <label class="mb-0">27. NO. DE BIEN O SERVICIO A ENTREGAR</label>
+                    </div>
+                    <div class="col-md-5">
+                        <input id="inputServicioMeta" disabled type="number" class="input-arena form-control titulo text-center" value="@Model.ServicioMeta" min="0">
+                    </div>
+                    <div class="col-md-1 align-content-center">
+                        <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
+                                data-campo="27" data-bs-toggle="tooltip" title="Agregar comentario">
+                            <i class="fas fa-comment-medical"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="row align-items-center py-2">
+                    <div class="col-md-6">
+                        <label class="mb-0">28. NO. DE PERSONAS POR ATENDER</label>
+                    </div>
+                    <div class="col-md-5">
+                        <input id="inputServicioMetas" disabled type="number" class="input-arena form-control titulo text-center" value="@Model.PersonasMeta" min="0">
+                    </div>
+                    <div class="col-md-1 align-content-center">
+                        <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
+                                data-campo="28" data-bs-toggle="tooltip" title="Agregar comentario">
+                            <i class="fas fa-comment-medical"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* Meta Anual *@
+    <div class="border p-3 mb-4 rounded-4 shadow" id="metaAnualForm">
+        <h5 class="mb-2 text-center border-bottom pb-3 fw-semibold titulo pt-2 glass-effect rounded-5">META ANUAL</h5>
+
+        @* Sección Bien/Servicio y Personas *@
+        <div class="border-bottom pb-3">
+            <div class="row">
+                <div class="col-md-6 border-end align-content-center">
+                    <div class="row align-items-center py-2">
+                        <div class="col-md-11">
+                            <label class="mb-0 align-content-center">29. BIEN O SERVICIO</label>
+                        </div>
+                        <div class="col-md-1 align-content-center">
+                            <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
+                                    data-campo="29" data-bs-toggle="tooltip" title="Agregar comentario">
+                                <i class="fas fa-comment-medical"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="col-md-12">
+                        <div class="row align-items-center py-2">
+                            <div class="col-md-12">
+                                <label class="mb-0">30. PERSONAS</label>
+                            </div>
+                            <div class="col-md-10">
+                                <select disabled class="input-arena form-control titulo" id="selectPersonas">
+                                    <option value="">Seleccione Personas / Instituciones</option>
+                                    <option value="Personas" selected="@(Model.Beneficiarios == "Personas")">Personas</option>
+                                    <option value="Instituciones" selected="@(Model.Beneficiarios == "Instituciones")">Instituciones</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2 align-content-center">
+                                <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
+                                        data-campo="30" data-bs-toggle="tooltip" title="Agregar comentario">
+                                    <i class="fas fa-comment-medical"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row align-items-center py-2">
+                        <div class="col-md-4">
+                            <label class="mb-0">Acumulable</label>
+                        </div>
+                        <div class="col-md-8">
+                            <select disabled class="input-arena form-control titulo" id="selectAcumulable">
+                                <option value="">Seleccione opción</option>
+                                <option value="no" selected="@(Model.SelectAcumulable == "no")">No</option>
+                                <option value="si" selected="@(Model.SelectAcumulable == "si")">Sí</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @* Sección Meses - Se llenará con JavaScript *@
+        <div class="mt-4">
+            @{
+                var mesesPrimerSemestre = new[] { "ENE", "FEB", "MAR", "ABR", "MAY", "JUN" };
+                var mesesSegundoSemestre = new[] { "JUL", "AGO", "SEP", "OCT", "NOV", "DIC" };
+            }
+
+            <div class="row mt-3">              
+                <div class="col-md-6 border-end">
+                    <div class="row text-center ">
+                        @for (int i = 0; i < 6; i++)
+                        {
+                            <div class="col-2 p-1 glass-effect rounded">@mesesPrimerSemestre[i]</div>
+                        }
+                    </div>
+                    <div class="row text-center">
+                        @for (int i = 0; i < 6; i++)
+                        {
+                            <div class="col-2 p-1">
+                                <input disabled type="number" class="input-arena form-control titulo text-center mes-grupo1"
+                                       value="@(Model.MesesServicios != null && Model.MesesServicios.Count > i ? Model.MesesServicios[i] : 0)" 
+                                       min="0" data-mes="@mesesPrimerSemestre[i]">
+                            </div>
+                        }
+                    </div>
+
+                    <div class="row text-center mt-2">
+                        @for (int i = 0; i < 6; i++)
+                        {
+                            <div class="col-2 p-1 glass-effect rounded">@mesesSegundoSemestre[i]</div>
+                        }
+                    </div>
+                    <div class="row text-center">
+                        @for (int i = 0; i < 6; i++)
+                        {
+                            var index = i + 6;
+                            <div class="col-2 p-1">
+                                <input disabled type="number" class="input-arena form-control titulo text-center mes-grupo1"
+                                       value="@(Model.MesesServicios != null && Model.MesesServicios.Count > index ? Model.MesesServicios[index] : 0)" 
+                                       min="0" data-mes="@mesesSegundoSemestre[i]">
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="row text-center">
+                        @for (int i = 0; i < 6; i++)
+                        {
+                            <div class="col-2 p-1 glass-effect rounded">@mesesPrimerSemestre[i]</div>
+                        }
+                    </div>
+                    <div class="row text-center">
+                        @for (int i = 0; i < 6; i++)
+                        {
+                            <div class="col-2 p-1">
+                                <input disabled type="number" class="input-arena form-control titulo text-center mes-grupo2"
+                                       value="@(Model.MesesPersonas != null && Model.MesesPersonas.Count > i ? Model.MesesPersonas[i] : 0)" 
+                                       min="0" data-mes="@mesesPrimerSemestre[i]">
+                            </div>
+                        }
+                    </div>
+
+                    <div class="row text-center mt-2">
+                        @for (int i = 0; i < 6; i++)
+                        {
+                            <div class="col-2 p-1 glass-effect rounded">@mesesSegundoSemestre[i]</div>
+                        }
+                    </div>
+                    <div class="row text-center">
+                        @for (int i = 0; i < 6; i++)
+                        {
+                            var index = i + 6;
+                            <div class="col-2 p-1">
+                                <input disabled type="number" class="input-arena form-control titulo text-center mes-grupo2"
+                                       value="@(Model.MesesPersonas != null && Model.MesesPersonas.Count > index ? Model.MesesPersonas[index] : 0)" 
+                                       min="0" disabled data-mes="@mesesSegundoSemestre[i]">
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @* Sección Valores y Resultados *@
+        <div class="row mt-4 border-top pt-3">
+            <div class="col-md-6 border-end pe-3">
+                <div class="row align-items-center border-bottom py-2">
+                    <div class="col-md-8">
+                        <label class="mb-0 fw-semibold">Valor de servicios</label>
+                    </div>
+                    <div class="col-md-4">
+                        <input disabled class="input-arena form-control titulo text-center fw-bold"
+                               id="valorServicios" value="@Model.TotalAnos" disabled>
+                    </div>
+                </div>
+
+                <div class="row align-items-center border-bottom py-2">
+                    <div class="col-md-8">
+                        <labe disabledl class="mb-0 fw-semibold">Valor de servicios por municipio</labe>
+                    </div>
+                    <div class="col-md-4">
+                        <input disabled class="input-arena form-control titulo text-center"
+                               id="valorServiciosMunicipio" disabled value="0">
+                    </div>
+                </div>
+
+                <div class="mt-4">
+
+                    <div class="mt-3" id="tablaGrupo1" style="display: none;">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-sm">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th>Personas Atendidas</th>
+                                        <th>Municipio</th>
+                                        <th>Región</th>
+                                        <th>Número de región</th>
+                                        <th>Clave del municipio</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbodyGrupo1">
+                                </tbody>
+                                <tfoot>
+                                    <tr class="fw-bold" style="background-color: #e9ecef;">
+                                        <td id="totalGrupo1">0</td>
+                                        <td colspan="5" class="text-end">Total Grupo Principal</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 ps-3">
+                <div class="row align-items-center border-bottom py-2">
+                    <div class="col-md-8">
+                        <label class="mb-0 fw-semibold">Valor de personas</label>
+                    </div>
+                    <div class="col-md-4">
+                        <input class="input-arena form-control titulo text-center fw-bold"
+                               id="valorPersonas" disabled value="@Model.TotalAnos2">
+                    </div>
+                </div>
+
+                <div class="row align-items-center border-bottom py-2">
+                    <div class="col-md-8">
+                        <label class="mb-0 fw-semibold">Valor de personas por municipio</label>
+                    </div>
+                    <div class="col-md-4">
+                        <input class="input-arena form-control titulo text-center"
+                               id="valorPersonasMunicipio" disabled value="0">
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    
+
+                    <div class="mt-3" id="tablaGrupo2" style="display: none;">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-sm">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th>Personas Atendidas</th>
+                                        <th>Municipio</th>
+                                        <th>Región</th>
+                                        <th>Número de región</th>
+                                        <th>Clave del municipio</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbodyGrupo2">
+                                </tbody>
+                                <tfoot>
+                                    <tr class="fw-bold" style="background-color: #e9ecef;">
+                                        <td id="totalGrupo2">0</td>
+                                        <td colspan="5" class="text-end">Total Grupo Acumulable</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> 
+
+    @* Acciones necesarias *@
+    <div class="border p-3 mb-4 rounded-4 shadow" id="accionesContainer">
+        <div class="mb-2 text-center pb-1">
+            <h5 class="pt-2 glass-effect rounded-5 mb-2 text-center border-bottom pb-3 fw-semibold titulo">
+                ACCIONES NECESARIAS PARA REALIZAR LA ACTIVIDAD PRINCIPAL
+            </h5>
+        </div>
+
+        <div id="accionesList">
+            @if (Model.Acciones != null && Model.Acciones.Any())
+            {
+                foreach (var accion in Model.Acciones)
+                {
+                    <div class="border rounded p-3 mb-3 accion-item">
+                        <div class="row align-items-center mb-3">
+                            <div class="col-md-12">
+                                <h6 class="fw-semibold mb-0 titulo">ACCIÓN</h6>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label class="form-label fw-semibold small">DESCRIPCIÓN DE LA ACCIÓN</label>
+                                <textarea class="form-control titulo input-arena" rows="3" disabled>@accion.Descripcion</textarea>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold small">FRECUENCIA DE REALIZACIÓN</label>
+                                <select class="form-control titulo input-arena" disabled>
+                                    <option value="">Seleccione la frecuencia</option>
+                                    <option value="mensual" selected="@(accion.Frecuencia == "mensual")">MENSUAL</option>
+                                    <option value="trimestral" selected="@(accion.Frecuencia == "trimestral")">TRIMESTRAL</option>
+                                    <option value="anual" selected="@(accion.Frecuencia == "anual")">ANUAL</option>
+                                </select>
+                            </div>
+                            <div class="col-md-8">
+                                <label class="form-label fw-semibold small">FECHA INICIO</label>
+                                <input type="date" class="form-control titulo input-arena fecha-inicio"
+                                       value="@accion.FechaInicio?.ToString("yyyy-MM-dd")" disabled>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <p class="text-muted text-center">No hay acciones registradas</p>
+            }
+        </div>
+    </div>
+
+    <div class="p-3 mb-4 rounded-4 shadow">
+        <div class="row p-3">            
+            <div class="col-md-4 text-center border-end">
+                <label class="fw-semibold d-block mb-2">Elaboró</label>
+                <input type="text" disabled id="inputElaboro" class="form-control text-center mb-2 input-arena" value="@Model.ElaboraNombre" />
+                <input type="text" disabled id="inputElaboroCargo" class="form-control text-center input-arena" value="@Model.ElaboroCargo" />
+            </div>
+
+            <div class="col-md-4 text-center border-end">
+                <label class="fw-semibold d-block mb-2">Revisó</label>
+                <input type="text" disabled id="inputReviso" class="form-control text-center mb-2 input-arena" value="@Model.RevisionNombre" />
+                <input type="text" disabled id="inputRevisoCargo" class="form-control text-center  input-arena" value="@Model.RevisionCargo" />
+            </div>
+
+            <div class="col-md-4 text-center">
+                <label class="fw-semibold d-block mb-2">Autorizó</label>
+                <input type="text" disabled id="inputAutorizo" class="form-control text-center mb-2 input-arena" value="@Model.AutorizacionNombre" />
+                <input type="text" disabled id="inputAutorizoCargo" class="form-control text-center input-arena" value="@Model.AutorizacionCargo" />
+            </div>
+        </div>
+    </div>
+
+    @if (ViewBag.EsAdministrador && Model.Estatus != 3)
+    {
+        <div class="text-center mb-5 mt-4">
+            <button class="btn btn-success btn-lg" id="btnValidarProgramacion"
+                    data-idprogramacion="@ViewData["IdProgramacion"]">
+                <i class="fas fa-check-circle"></i> Validar Programación
+            </button>
+        </div>
+    }
+
+    @if (Model.Estatus == 3)
+    {
+        <div class="text-center mb-5 mt-4">
+            <div class="alert alert-success" role="alert">
+                <h4><i class="fas fa-check-circle"></i> Programación Validada</h4>
+                <p class="mb-0">Esta programación ha sido aprobada y validada.</p>
+            </div>
+        </div>
+    }
+
+</div>
+
+<!-- Modal para comentarios -->
+<div class="modal fade" id="modalComentario" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Agregar Comentario</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="campoActual">
+                <div class="mb-3">
+                    <label class="form-label">Comentario:</label>
+                    <textarea class="form-control" id="textoComentario" rows="4"></textarea>
+                </div>
+                <div class="mb-3">
+                    <small class="text-muted" id="infoCampo"></small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" id="btnEliminarComentario" style="display: none;">
+                    <i class="fas fa-trash"></i> Eliminar
+                </button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="btnGuardarComentario">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Botón guardar comentarios -->
+@if (ViewBag.EsAdministrador && Model.Estatus != 3)
+{
+    <div class="text-center mb-5">
+        <button class="btn btn-primary btn-lg" id="btnGuardarTodosComentarios">
+            <i class="fas fa-save"></i> Guardar Todos los Comentarios
+        </button>
+    </div>
+}
+<input type="hidden" id="esAdministrador" value="@ViewBag.EsAdministrador">
+<input type="hidden" id="idProgramacionHidden" value="@ViewData["IdProgramacion"]">
+
+@section Scripts {
+    <script>
+        // ========================================
+        // VARIABLES GLOBALES
+        // ========================================
+        let datosEstados = {};
+        let contadorAcciones = 3;
+        const MAX_ACCIONES = 5;
+        const MIN_ACCIONES = 3;
+
+        // ========================================
+        // SISTEMA DE COMENTARIOS - ADMIN
+        // ========================================
+
+        // Variables globales para manejar los comentarios
+        let comentariosTemp = {};
+        let modalComentario = null;
+
+        // Descripciones de cada campo del formulario
+        const descripcionesCampos = {
+            '4': 'PROGRAMA PRESUPUESTARIO', '5': 'NÚMERO DE COMPONENTE', '6': 'NÚMERO DE ACTIVIDAD',
+            '7': 'JUSTIFICACIÓN', '8': 'DOCUMENTACIÓN SOPORTE', '9': 'ORIGEN DE RECURSOS',
+            '10': 'PROGRAMA SOCIAL', '11': 'DESCRIPCIÓN ACTIVIDAD', '12': 'NOMBRE INDICADOR',
+            '13': 'DEFINICIÓN INDICADOR', '14': 'CALENDARIZACIÓN', '15': 'UNIDAD DE MEDIDA',
+            '16': 'MEDIOS VERIFICACIÓN', '17': 'SERIE INFORMACIÓN', '18': 'FUENTES INFORMACIÓN',
+            '19': 'DELEGACIONES REGIONALES', '20': '¿DE QUÉ MANERA?', '21': 'AÑO (LÍNEA BASE)',
+            '22': 'PORCENTAJE CUMPLIMIENTO', '23': 'BIEN/SERVICIO ENTREGADO', '24': 'PERSONAS ATENDIDAS',
+            '25': 'AÑO (META)', '26': 'PORCENTAJE META', '27': 'BIEN/SERVICIO A ENTREGAR',
+            '28': 'PERSONAS POR ATENDER', '29': 'BIEN O SERVICIO', '30': 'PERSONAS'
+        };
+
+        // ========================================
+        // Inicializar el sistema de comentarios
+        // ========================================
+        function inicializarComentarios() {
+            const esAdministrador = document.getElementById('esAdministrador').value === 'True';
+
+            console.log('👤 Tipo de usuario:', esAdministrador ? 'Administrador' : 'Usuario');
+
+            // Configurar modal y eventos
+            modalComentario = new bootstrap.Modal(document.getElementById('modalComentario'));
+
+            document.querySelectorAll('.btn-comentario').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const campo = this.getAttribute('data-campo');
+                    abrirModalComentario(campo);
+                });
+            });
+
+            // Configurar eventos del modal
+            document.getElementById('btnGuardarComentario').addEventListener('click', guardarComentarioIndividual);
+            document.getElementById('btnEliminarComentario').addEventListener('click', eliminarComentario);
+            document.getElementById('btnGuardarTodosComentarios').addEventListener('click', guardarTodosComentarios);
+
+            // ✅ BLOQUEAR CAMPOS PARA USUARIOS SI NO TIENEN COMENTARIOS
+            if (!esAdministrador) {
+                bloquearCamposSinComentarios();
+            }
+
+            // ✅ AGREGAR EVENTOS PARA BORRAR COMENTARIOS AL EDITAR
+            configurarEventosEdicionCampos();
+
+            // Cargar comentarios existentes
+            cargarComentariosExistentes();
+        }
+
+        // ========================================
+        // Bloquear campos para usuarios si no tienen comentarios
+        // ========================================
+        function bloquearCamposSinComentarios() {
+            console.log('🔒 Bloqueando campos sin comentarios para usuario...');
+
+            // Para cada campo del 4 al 30
+            for (let campo = 4; campo <= 30; campo++) {
+                const tieneComentario = comentariosTemp[campo]?.texto?.trim() !== '';
+
+                if (!tieneComentario) {
+                    // Buscar todos los inputs/selects/textarea de este campo
+                    const elementosCampo = document.querySelectorAll(`[data-campo="${campo}"]`);
+
+                    elementosCampo.forEach(elemento => {
+                        if (elemento.tagName === 'INPUT' || elemento.tagName === 'SELECT' || elemento.tagName === 'TEXTAREA') {
+                            elemento.disabled = true;
+                            elemento.title = 'Este campo está bloqueado. Solo se puede editar si tiene comentarios del administrador.';
+
+                            // Agregar estilo visual
+                            elemento.style.backgroundColor = '#f8f9fa';
+                            elemento.style.cursor = 'not-allowed';
+                        }
+                    });
+                }
+            }
+        }
+
+        // ========================================
+        // Configurar eventos para borrar comentarios al editar campos
+        // ========================================
+        function configurarEventosEdicionCampos() {
+            console.log('🎯 Configurando eventos para borrar comentarios al editar...');
+
+            // Para cada campo del 4 al 30
+            for (let campo = 4; campo <= 30; campo++) {
+                // Buscar todos los elementos editables de este campo
+                const elementosEditables = document.querySelectorAll(`
+                    input[data-campo="${campo}"],
+                    select[data-campo="${campo}"],
+                    textarea[data-campo="${campo}"]
+                `);
+
+                elementosEditables.forEach(elemento => {
+                    // Evento cuando el campo pierde el foco (después de editar)
+                    elemento.addEventListener('blur', function() {
+                        const valorOriginal = this.getAttribute('data-valor-original');
+                        const valorActual = this.value;
+
+                        // Si el valor cambió, borrar el comentario
+                        if (valorOriginal !== valorActual) {
+                            borrarComentarioAlEditar(campo);
+                        }
+                    });
+
+                    // Guardar valor original al enfocar
+                    elemento.addEventListener('focus', function() {
+                        this.setAttribute('data-valor-original', this.value);
+                    });
+                });
+            }
+        }
+
+        // ========================================
+        // Borrar comentario cuando se edita un campo
+        // ========================================
+        function borrarComentarioAlEditar(campo) {
+            // Verificar si existe comentario para este campo
+            if (comentariosTemp[campo]) {
+                console.log(`🗑️ Borrando comentario del campo ${campo} porque fue editado`);
+
+                // Eliminar de memoria temporal
+                delete comentariosTemp[campo];
+
+                // Actualizar botón de comentario
+                actualizarBotonComentario(campo, false);
+
+                // Mostrar notificación
+                Swal.fire({
+                    title: 'Comentario eliminado',
+                    text: `El comentario del campo ${campo} se eliminó automáticamente porque editaste este campo.`,
+                    icon: 'info',
+                    timer: 3000,
+                    showConfirmButton: false
+                });
+
+                // ✅ OPCIONAL: Guardar automáticamente en BD
+                // guardarTodosComentarios();
+            }
+        }
+
+        // ========================================
+        // Abrir el modal para agregar/editar comentario
+        // ========================================
+        function abrirModalComentario(campo) {
+            console.log('🔍 Abriendo modal para campo:', campo);
+            console.log('📝 Comentario actual en memoria:', comentariosTemp[campo]);
+
+            // Obtener elementos del DOM
+            const campoActual = document.getElementById('campoActual');
+            const infoCampo = document.getElementById('infoCampo');
+            const textoComentario = document.getElementById('textoComentario');
+            const btnEliminar = document.getElementById('btnEliminarComentario');
+
+            // Configurar el campo actual
+            campoActual.value = campo;
+            infoCampo.textContent = `Campo ${campo}: ${descripcionesCampos[campo] || 'Desconocido'}`;
+
+            // Cargar el comentario si ya existe
+            const comentarioExistente = comentariosTemp[campo];
+            textoComentario.value = comentarioExistente?.texto || '';
+
+            console.log('📋 Texto cargado en textarea:', textoComentario.value);
+
+            // Mostrar/ocultar botón eliminar según si hay comentario
+            btnEliminar.style.display = comentarioExistente ? 'block' : 'none';
+            console.log('👁️ Botón eliminar visible:', btnEliminar.style.display);
+
+            // Abrir el modal y enfocar el textarea
+            modalComentario.show();
+            setTimeout(() => textoComentario.focus(), 500);
+        }
+
+        // ========================================
+        // Guardar un comentario individual (temporal)
+        // ========================================
+        function guardarComentarioIndividual() {
+            const campo = document.getElementById('campoActual').value;
+            const texto = document.getElementById('textoComentario').value.trim();
+
+            // Validar que no esté vacío
+            if (!texto) {
+                Swal.fire('Error', 'El comentario no puede estar vacío', 'warning');
+                return;
+            }
+
+            // Guardar en memoria temporal (no en BD todavía)
+            comentariosTemp[campo] = {
+                texto: texto,
+                fechaHora: new Date().toISOString()
+            };
+
+            // Actualizar la apariencia del botón
+            actualizarBotonComentario(campo, true);
+
+            // Cerrar modal y mostrar confirmación
+            modalComentario.hide();
+            Swal.fire('Éxito', 'Comentario guardado temporalmente', 'success');
+        }
+
+        // ========================================
+        // Eliminar un comentario INDIVIDUAL
+        // ========================================
+        function eliminarComentario() {
+            const campo = document.getElementById('campoActual').value;
+
+            // Eliminar de la memoria temporal
+            delete comentariosTemp[campo];
+
+            // Actualizar la apariencia del botón
+            actualizarBotonComentario(campo, false);
+
+            // Limpiar el textarea y cerrar modal
+            document.getElementById('textoComentario').value = '';
+            modalComentario.hide();
+
+            Swal.fire('Éxito', 'Comentario eliminado', 'success');
+
+            // ✅ OPCIONAL: Guardar automáticamente después de eliminar
+            // guardarTodosComentarios();
+        }
+        // ========================================
+        // Actualizar la apariencia del botón de comentario
+        // ========================================
+        function actualizarBotonComentario(campo, tieneComentario) {
+            document.querySelectorAll(`[data-campo="${campo}"]`).forEach(btn => {
+                if (tieneComentario) {
+                    // Botón con comentario (estilo azul)
+                    btn.className = 'btn btn-sm btn-comentario btn-comentario-con';
+                    btn.innerHTML = '<i class="fas fa-comment-dots"></i>';
+                } else {
+                    // Botón sin comentario (estilo gris)
+                    btn.className = 'btn btn-sm btn-comentario btn-comentario-sin';
+                    btn.innerHTML = '<i class="fas fa-comment-medical"></i>';
+                }
+            });
+        }
+
+        // ========================================
+        // Guardar TODOS los comentarios en la base de datos
+        // ========================================
+        async function guardarTodosComentarios() {
+            const comentariosArray = [];
+            const idProgramacion = document.getElementById('idProgramacionHidden').value;
+
+            // ✅ PREPARAR COMENTARIOS - INCLUIR CAMPOS VACÍOS
+            for (let campo = 4; campo <= 30; campo++) {
+                const comentarioBD = campo - 3;
+                const texto = comentariosTemp[campo]?.texto || ''; // Si no existe, texto vacío
+
+                comentariosArray.push({
+                    ComentarioId: comentarioBD,
+                    Campo: campo,
+                    Texto: texto,
+                    IdProgramacion: parseInt(idProgramacion)
+                });
+            }
+
+            console.log('📤 Enviando TODOS los comentarios:', comentariosArray);
+
+            const btn = document.getElementById('btnGuardarTodosComentarios');
+
+            try {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+
+                const response = await fetch('/Programacion/GuardarComentarios', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(comentariosArray)
+                });
+
+                const resultado = await response.json();
+
+                if (resultado.success) {
+                    await Swal.fire('Éxito', resultado.message || 'Comentarios guardados correctamente', 'success');
+                    window.location.href = '/Programacion/Programacion';
+                } else {
+                    Swal.fire('Error', resultado.message || 'No se pudieron guardar los comentarios', 'error');
+                }
+
+            } catch (error) {
+                Swal.fire('Error', 'Error de conexión: ' + error.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-save"></i> Guardar Todos los Comentarios';
+            }
+        }
+
+        // ========================================
+        // Cargar comentarios existentes desde la base de datos
+        // ========================================
+        async function cargarComentariosExistentes() {
+            try {
+                const idProgramacion = document.getElementById('idProgramacionHidden').value;
+                const esAdministrador = document.getElementById('esAdministrador').value === 'True';
+
+                const response = await fetch(
+                    `/Programacion/ObtenerComentariosPorProgramacion?idProgramacion=${idProgramacion}`
+                );
+
+                if (!response.ok) return;
+
+                const comentarioObj = await response.json();
+
+                // Procesar comentarios
+                for (let comentarioBD = 1; comentarioBD <= 27; comentarioBD++) {
+                    const propiedad = `comentario${comentarioBD}`;
+                    const texto = comentarioObj[propiedad];
+                    const campoVista = comentarioBD + 3;
+
+                    if (texto && texto.trim() !== '') {
+                        comentariosTemp[campoVista] = { texto: texto };
+                        actualizarBotonComentario(campoVista, true);
+                    }
+                }
+
+                // ✅ BLOQUEAR CAMPOS DESPUÉS DE CARGAR COMENTARIOS
+                if (!esAdministrador) {
+                    setTimeout(() => bloquearCamposSinComentarios(), 100);
+                }
+
+            } catch (error) {
+                console.error('Error cargando comentarios:', error);
+            }
+        }
+
+        // Botón Validar Programación
+        document.addEventListener('DOMContentLoaded', function() {
+            const btnValidar = document.getElementById('btnValidarProgramacion');
+
+            if (btnValidar) {
+                btnValidar.addEventListener('click', validarProgramacion);
+            }
+        });
+
+        async function validarProgramacion() {
+            const btn = document.getElementById('btnValidarProgramacion');
+            const idProgramacion = btn.getAttribute('data-idprogramacion');
+
+            const confirmacion = await Swal.fire({
+                title: '¿Validar Programación?',
+                text: 'Esta acción eliminará todos los comentarios y cambiará el estatus a "Validado". ¿Continuar?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, Validar',
+                cancelButtonText: 'Cancelar'
+            });
+
+            if (!confirmacion.isConfirmed) return;
+
+            try {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Validando...';
+
+                const response = await fetch('/Programacion/ValidarProgramacion', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ IdProgramacion: parseInt(idProgramacion) })
+                });
+
+                const resultado = await response.json();
+
+                if (resultado.success) {
+                    await Swal.fire({
+                        title: '¡Validada!',
+                        text: resultado.message,
+                        icon: 'success',
+                        confirmButtonText: 'Aceptar'
+                    });
+
+                     window.location.href = '/Programacion/Programacion';
+
+                } else {
+                    throw new Error(resultado.message);
+                }
+
+            } catch (error) {
+                Swal.fire({
+                    title: 'Error',
+                    text: error.message,
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-check-circle"></i> Validar Programación';
+            }
+        }
+
+        // ========================================
+        // TUS FUNCIONES ORIGINALES
+        // ========================================
+        async function cargarMunicipios() {
+            try {
+                const response = await fetch('/Programacion/ObtenerMunicipiosJson');
+                if (!response.ok) throw new Error('Error al cargar municipios');
+                const municipios = await response.json();
+
+                datosEstados = {};
+                municipios.forEach(m => {
+                    datosEstados[m.id] = {
+                        municipio: m.municipio,
+                        region: m.region,
+                        numeroRegion: m.numeroRegion,
+                        clave: m.clave
+                    };
+                });
+            } catch (error) {
+                console.error('Error al cargar municipios:', error);
+            }
+        }
+
+        function getAccionTemplate(numero) {
+            return `
+                <div class="border rounded p-3 mb-3 accion-item" data-numero="${numero}">
+                    <div class="row align-items-center mb-3">
+                        <div class="col-md-12">
+                            <h6 class="fw-semibold mb-0 titulo">${numero}. ACCIÓN</h6>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold small">DESCRIPCIÓN DE LA ACCIÓN</label>
+                            <textarea class="form-control titulo input-arena" rows="3" placeholder="Describa la acción necesaria..."></textarea>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold small">FRECUENCIA DE REALIZACIÓN</label>
+                            <select class="form-control titulo input-arena">
+                                <option value="">Seleccione la frecuencia</option>
+                                <option value="mensual">MENSUAL</option>
+                                <option value="trimestral">TRIMESTRAL</option>
+                                <option value="anual">ANUAL</option>
+                            </select>
+                        </div>
+                        <div class="col-md-8">
+                            <label class="form-label fw-semibold small">FECHA INICIO</label>
+                            <input type="date" class="form-control titulo input-arena fecha-inicio">
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function actualizarNumeros() {
+            document.querySelectorAll('.accion-item').forEach((accion, index) => {
+                const numero = index + 1;
+                accion.setAttribute('data-numero', numero);
+                accion.querySelector('h6').textContent = `${numero}. ACCIÓN`;
+            });
+        }
+
+        function actualizarBotones(btnAgregar, btnEliminar) {
+            btnAgregar.disabled = contadorAcciones >= MAX_ACCIONES;
+            btnEliminar.disabled = contadorAcciones <= MIN_ACCIONES;
+        }
+
+        function configurarAcciones() {
+            const accionesList = document.getElementById('accionesList');
+            const btnAgregar = document.getElementById('btnAgregarAccion');
+            const btnEliminar = document.getElementById('btnEliminarAccion');
+
+            if (!btnAgregar || !btnEliminar) return;
+
+            btnAgregar.addEventListener('click', function() {
+                if (contadorAcciones < MAX_ACCIONES) {
+                    contadorAcciones++;
+                    accionesList.insertAdjacentHTML('beforeend', getAccionTemplate(contadorAcciones));
+                    actualizarNumeros();
+                    actualizarBotones(btnAgregar, btnEliminar);
+                }
+            });
+
+            btnEliminar.addEventListener('click', function() {
+                if (contadorAcciones > MIN_ACCIONES) {
+                    document.querySelector('.accion-item:last-child').remove();
+                    contadorAcciones--;
+                    actualizarNumeros();
+                    actualizarBotones(btnAgregar, btnEliminar);
+                }
+            });
+
+            actualizarBotones(btnAgregar, btnEliminar);
+        }
+
+        // ========================================
+        // FUNCIONES DE CÁLCULO
+        // ========================================
+        function calcularTotalPersonas(grupo) {
+            let total = 0;
+            document.querySelectorAll(`#tbody${grupo} tr`).forEach(fila => {
+                total += parseInt(fila.cells[0].textContent) || 0;
+            });
+            document.getElementById(`total${grupo}`).textContent = total;
+            return total;
+        }
+
+        function calcularSumatorias() {
+            const selectAcumulable = document.getElementById('selectAcumulable');
+            let sumaGrupo1 = 0;
+            let sumaGrupo2 = 0;
+
+            document.querySelectorAll('.mes-grupo1').forEach(input => {
+                sumaGrupo1 += parseInt(input.value) || 0;
+            });
+
+            if (selectAcumulable.value === 'si') {
+                document.querySelectorAll('.mes-grupo2').forEach(input => {
+                    sumaGrupo2 += parseInt(input.value) || 0;
+                });
+            }
+
+            document.getElementById('valorServicios').value = sumaGrupo1;
+            document.getElementById('valorPersonas').value = sumaGrupo2;
+
+            actualizarMaximosPersonas(sumaGrupo1, sumaGrupo2);
+            actualizarServiciosPorMunicipio();
+            actualizarCamposMeta();
+            calcularTrimestres();
+        }
+
+        function actualizarServiciosPorMunicipio() {
+            let totalPersonasGrupo1 = calcularTotalPersonas('Grupo1');
+            let totalPersonasGrupo2 = calcularTotalPersonas('Grupo2');
+            const totalPersonasMunicipios = totalPersonasGrupo1 + totalPersonasGrupo2;
+            document.getElementById('valorServiciosMunicipio').value = totalPersonasMunicipios;
+            actualizarCamposMeta();
+        }
+
+        function actualizarMaximosPersonas(maxGrupo1, maxGrupo2) {
+            document.getElementById('personasAtendidasGrupo1').max = maxGrupo1;
+            document.getElementById('personasAtendidasGrupo2').max = maxGrupo2;
+        }
+
+        function puedeAgregarPersonas(grupo, cantidad) {
+            const maxServicios = grupo === 'Grupo1'
+                ? parseInt(document.getElementById('valorServicios').value) || 0
+                : parseInt(document.getElementById('valorPersonas').value) || 0;
+
+            const totalActual = calcularTotalPersonas(grupo);
+            return (totalActual + cantidad) <= maxServicios;
+        }
+
+        function actualizarCamposMeta() {
+            const valorServicios = parseInt(document.getElementById('valorServicios').value) || 0;
+            const valorPersonas = parseInt(document.getElementById('valorPersonas').value) || 0;
+
+            document.getElementById('inputServicioMeta').value = valorServicios;
+            document.getElementById('inputServicioMetas').value = valorPersonas;
+
+            let porcentaje = 0;
+            if (valorServicios > 0) {
+                if (valorPersonas > 0) {
+                    porcentaje = (valorPersonas / valorServicios) * 100;
+                } else {
+                    porcentaje = 100;
+                }
+                porcentaje = Math.round(porcentaje * 100) / 100;
+            }
+
+            document.getElementById('inputPorcentajeMeta').value = porcentaje;
+        }
+
+        function calcularTrimestres() {
+            const trimestres = {
+                1: ['ENE', 'FEB', 'MAR'],
+                2: ['ABR', 'MAY', 'JUN'],
+                3: ['JUL', 'AGO', 'SEP'],
+                4: ['OCT', 'NOV', 'DIC']
+            };
+
+            for (let i = 1; i <= 4; i++) {
+                let suma = 0;
+                trimestres[i].forEach(mes => {
+                    const input = document.querySelector(`.mes-grupo1[data-mes="${mes}"]`);
+                    if (input) {
+                        suma += parseInt(input.value) || 0;
+                    }
+                });
+
+                const campos = {
+                    1: 'primerServicio',
+                    2: 'segundoServicio',
+                    3: 'tercerServicio',
+                    4: 'cuartoServicio'
+                };
+
+                document.getElementById(campos[i]).value = suma;
+            }
+
+            for (let i = 1; i <= 4; i++) {
+                let suma = 0;
+                trimestres[i].forEach(mes => {
+                    const input = document.querySelector(`.mes-grupo2[data-mes="${mes}"]`);
+                    if (input) {
+                        suma += parseInt(input.value) || 0;
+                    }
+                });
+
+                const campos = {
+                    1: 'primerPersona',
+                    2: 'segundoPersona',
+                    3: 'tercerPersona',
+                    4: 'cuartoPersona'
+                };
+
+                document.getElementById(campos[i]).value = suma;
+            }
+        }
+
+        // ========================================
+        // FUNCIONES DE PERSONAS/MUNICIPIOS
+        // ========================================
+        function configurarAgregarPersonas(grupo) {
+            const btnAgregar = document.getElementById(`btnAgregar${grupo}`);
+            const selectEstado = document.getElementById(`selectEstado${grupo}`);
+            const inputPersonas = document.getElementById(`personasAtendidas${grupo}`);
+            const tbody = document.getElementById(`tbody${grupo}`);
+            const tabla = document.getElementById(`tabla${grupo}`);
+
+            // Si el botón no existe (vista de revisión), salir
+            if (!btnAgregar) {
+                return;
+            }
+
+            btnAgregar.addEventListener('click', function() {
+                const estado = selectEstado.value;
+                const personas = parseInt(inputPersonas.value) || 0;
+
+                if (!estado) {
+                    alert('Por favor, seleccione un municipio');
+                    return;
+                }
+
+                if (personas <= 0) {
+                    alert('Por favor, ingrese un número válido de personas');
+                    return;
+                }
+
+                if (!puedeAgregarPersonas(grupo, personas)) {
+                    const maxServicios = grupo === 'Grupo1'
+                        ? parseInt(document.getElementById('valorServicios').value) || 0
+                        : parseInt(document.getElementById('valorPersonas').value) || 0;
+
+                    const totalActual = calcularTotalPersonas(grupo);
+                    const disponibles = maxServicios - totalActual;
+                    alert(`No se pueden agregar ${personas} personas. Solo hay ${disponibles} disponibles en el ${grupo === 'Grupo1' ? 'Grupo Principal' : 'Grupo Acumulable'}.`);
+                    return;
+                }
+
+                const datos = datosEstados[estado];
+
+                if (!datos) {
+                    alert('Error: No se encontraron datos para el municipio seleccionado');
+                    return;
+                }
+
+                const nuevaFila = document.createElement('tr');
+                nuevaFila.setAttribute('data-id-municipio', estado);
+                nuevaFila.setAttribute('data-cantidad', personas);
+                nuevaFila.innerHTML = `
+                    <td>${personas}</td>
+                    <td>${datos.municipio}</td>
+                    <td>${datos.region}</td>
+                    <td>${datos.numeroRegion}</td>
+                    <td>${datos.clave}</td>
+                    <td><button class="btn btn-sm btn-outline-danger btn-eliminar">Eliminar</button></td>
+                `;
+
+                tbody.appendChild(nuevaFila);
+
+                if (tabla.style.display === 'none') {
+                    tabla.style.display = 'block';
+                }
+
+                nuevaFila.querySelector('.btn-eliminar').addEventListener('click', function() {
+                    nuevaFila.remove();
+                    calcularTotalPersonas(grupo);
+                    actualizarServiciosPorMunicipio();
+                    if (tbody.children.length === 0) {
+                        tabla.style.display = 'none';
+                    }
+                });
+
+                calcularTotalPersonas(grupo);
+                actualizarServiciosPorMunicipio();
+                inputPersonas.value = '0';
+                selectEstado.value = '';
+            });
+        }
+
+        // ========================================
+        // CONFIGURACIÓN DE EVENTOS DE SELECTS
+        // ========================================
+        function configurarSelectDelegaciones() {
+            const selectDelegaciones = document.getElementById('selectDelegaciones');
+            const inputDelegaciones = document.getElementById('inputDelegaciones');
+
+            // Si está disabled (vista de revisión), salir
+            if (selectDelegaciones.disabled) {
+                return;
+            }
+
+            inputDelegaciones.disabled = true;
+
+            selectDelegaciones.addEventListener('change', function() {
+                const valorSeleccionado = this.value;
+
+                if (valorSeleccionado === 'No') {
+                    inputDelegaciones.value = 'N/A';
+                    inputDelegaciones.disabled = true;
+                } else if (valorSeleccionado === 'Si') {
+                    inputDelegaciones.value = '';
+                    inputDelegaciones.disabled = false;
+                } else {
+                    inputDelegaciones.value = '';
+                    inputDelegaciones.disabled = true;
+                }
+            });
+        }
+
+        function configurarSelectPersonas() {
+            const selectPersonas = document.getElementById('selectPersonas');
+            const selectAcumulable = document.getElementById('selectAcumulable');
+            const inputsGrupo2 = document.querySelectorAll('.mes-grupo2');
+
+            // Si está disabled (vista de revisión), salir
+            if (selectPersonas.disabled) {
+                return;
+            }
+
+            selectAcumulable.disabled = true;
+
+            selectPersonas.addEventListener('change', function() {
+                if (this.value === 'Personas' || this.value === 'instituciones') {
+                    selectAcumulable.disabled = false;
+                } else {
+                    selectAcumulable.disabled = true;
+                    selectAcumulable.value = '';
+
+                    inputsGrupo2.forEach(input => {
+                        input.disabled = true;
+                        input.value = 0;
+                    });
+
+                    calcularSumatorias();
+                }
+            });
+        }
+
+        function configurarSelectAcumulable() {
+            const selectAcumulable = document.getElementById('selectAcumulable');
+            const inputsGrupo2 = document.querySelectorAll('.mes-grupo2');
+
+            // Si está disabled (vista de revisión), salir
+            if (selectAcumulable.disabled) {
+                return;
+            }
+
+            selectAcumulable.addEventListener('change', function() {
+                const habilitar = this.value === 'si';
+
+                inputsGrupo2.forEach(input => {
+                    input.disabled = !habilitar;
+                    if (!habilitar) {
+                        input.value = 0;
+                    }
+                });
+
+                calcularSumatorias();
+            });
+        }
+
+        function configurarSelectProgramaComponente() {
+            const $selectPrograma = $('#selectPrograma');
+            const $selectComponente = $('#selectComponente');
+
+            // Si está disabled (vista de revisión), salir
+            if ($selectPrograma.is(':disabled')) {
+                return;
+            }
+
+            const todasOpciones = $selectComponente.find('option:not(:first)').clone();
+
+            $selectPrograma.on('change', function() {
+                const programaSeleccionado = $(this).val();
+
+                $selectComponente.find('option:not(:first)').remove();
+
+                if (programaSeleccionado) {
+                    todasOpciones.each(function() {
+                        if ($(this).data('programa') === programaSeleccionado) {
+                            $selectComponente.append($(this).clone());
+                        }
+                    });
+
+                    $selectComponente.prop('disabled', false);
+                } else {
+                    $selectComponente.prop('disabled', true);
+                }
+            });
+        }
+
+        // ========================================
+        // FUNCIÓN PARA GUARDAR PROGRAMACIÓN
+        // ========================================
+        async function guardarProgramacion() {
+            const btnGuardar = document.getElementById('btnGuardarProgramacion') || document.getElementById('btnActualizarProgramacion');
+            const textoOriginal = btnGuardar.innerHTML;
+
+            try {
+                // ========================================
+                // VALIDACIONES INMEDIATAS (ANTES DE CARGAR)
+                // ========================================
+                const erroresValidacion = validarDatosAntesDeGuardar();
+                if (erroresValidacion.length > 0) {
+                    // Usar SweetAlert en lugar de alert normal
+                    await Swal.fire({
+                        title: 'Campos obligatorios',
+                        html: 'Por favor complete los siguientes campos:<br><br>' +
+                              erroresValidacion.join('<br>'),
+                        icon: 'warning',
+                        confirmButtonText: 'Aceptar',
+                        confirmButtonColor: '#3085d6',
+                        allowOutsideClick: false
+                    });
+
+                    // Enfocar el primer campo faltante
+                    enfocarPrimerCampoFaltante(erroresValidacion);
+                    return;
+                }
+
+                // ========================================
+                // SOLO SI PASÓ LAS VALIDACIONES, MOSTRAR LOADING
+                // ========================================
+                btnGuardar.disabled = true;
+                btnGuardar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+
+                // ========================================
+                // RECOLECCIÓN DE DATOS
+                // ========================================
+                const datosGenerales = {
+                    area: document.getElementById('inputArea').value,
+                    correoContacto: document.getElementById('inputCorreo').value,
+                    pp: document.getElementById('selectPrograma').value,
+                    nComponente: document.getElementById('selectComponente').value,
+                    nActividad: parseInt(document.getElementById('inputActividad').value) || 0,
+                    justificacion: document.getElementById('inputJustificacion').value,
+                    descripcionDocumento: document.getElementById('inputDocumentacion').value,
+                    recursoFederal: document.getElementById('selectFederal').value,
+                    recursoEstatal: document.getElementById('selectEstatal').value,
+                    programaSocial: document.getElementById('inputPrograma').value,
+                    descripcionActividad: document.getElementById('inputDescripcion').value,
+                    nombreIndicador: document.getElementById('inputIndicador').value,
+                    definicionIndicador: document.getElementById('inputDefinicion').value,
+                    unidadMedida: document.getElementById('selectMedida').value,
+                    mediosVerificacion: document.getElementById('inputMedios').value,
+                    serieInformacionDesde: document.getElementById('selectDesde').value,
+                    serieInformacionHasta: parseInt(document.getElementById('selectHasta').value) || 0,
+                    fuenteInformacion: document.getElementById('inputFuentes').value,
+                    intervienenDelegaciones: document.getElementById('selectDelegaciones').value,
+                    intervienenDelegacionesManera: document.getElementById('inputDelegaciones').value
+                };
+
+                const lineaBase = {
+                    anoBase: parseInt(document.getElementById('selectAnoBase').value) || 0,
+                    porcentajeBase: parseFloat(document.getElementById('inputPorcentajeBase').value) || 0,
+                    servicioBase: parseInt(document.getElementById('inputServicioBase').value) || 0,
+                    personasBase: parseInt(document.getElementById('inputPersonasBase').value) || 0
+                };
+
+                const metaAnual = {
+                    anoMeta: parseInt(document.getElementById('inputAnoMeta').value) || 0,
+                    porcentajeMeta: parseFloat(document.getElementById('inputPorcentajeMeta').value) || 0,
+                    servicioMeta: parseInt(document.getElementById('inputServicioMeta').value) || 0,
+                    personasMeta: parseInt(document.getElementById('inputServicioMetas').value) || 0
+                };
+
+                const trimestresServicios = {
+                    primerServicio: parseInt(document.getElementById('primerServicio').value) || 0,
+                    segundoServicio: parseInt(document.getElementById('segundoServicio').value) || 0,
+                    tercerServicio: parseInt(document.getElementById('tercerServicio').value) || 0,
+                    cuartoServicio: parseInt(document.getElementById('cuartoServicio').value) || 0
+                };
+
+                const trimestresPersonas = {
+                    primerPersona: parseInt(document.getElementById('primerPersona').value) || 0,
+                    segundoPersona: parseInt(document.getElementById('segundoPersona').value) || 0,
+                    tercerPersona: parseInt(document.getElementById('tercerPersona').value) || 0,
+                    cuartoPersona: parseInt(document.getElementById('cuartoPersona').value) || 0
+                };
+
+                // Recolectar meses
+                const mesesServicios = [];
+                document.querySelectorAll('.mes-grupo1').forEach(input => {
+                    mesesServicios.push(parseInt(input.value) || 0);
+                });
+
+                const mesesPersonas = [];
+                document.querySelectorAll('.mes-grupo2').forEach(input => {
+                    mesesPersonas.push(parseInt(input.value) || 0);
+                });
+
+                // Recolectar municipios del Grupo 1 (Servicios)
+                const municipiosServicios = [];
+                document.querySelectorAll('#tbodyGrupo1 tr').forEach(fila => {
+                    const idMunicipio = parseInt(fila.getAttribute('data-id-municipio')) || 0;
+                    const cantidad = parseInt(fila.getAttribute('data-cantidad')) || 0;
+
+                    if (idMunicipio > 0 && cantidad > 0) {
+                        municipiosServicios.push({
+                            idMunicipio: idMunicipio,
+                            cantidad: cantidad
+                        });
+                    }
+                });
+
+                // Recolectar municipios del Grupo 2 (Personas)
+                const municipiosPersonas = [];
+                document.querySelectorAll('#tbodyGrupo2 tr').forEach(fila => {
+                    const idMunicipio = parseInt(fila.getAttribute('data-id-municipio')) || 0;
+                    const cantidad = parseInt(fila.getAttribute('data-cantidad')) || 0;
+
+                    if (idMunicipio > 0 && cantidad > 0) {
+                        municipiosPersonas.push({
+                            idMunicipio: idMunicipio,
+                            cantidad: cantidad
+                        });
+                    }
+                });
+
+                // Recolectar acciones
+                const acciones = [];
+                document.querySelectorAll('.accion-item').forEach(accion => {
+                    const descripcion = accion.querySelector('textarea').value;
+                    const frecuencia = accion.querySelector('select').value;
+                    const fechaStr = accion.querySelector('.fecha-inicio').value;
+
+                    if (descripcion.trim() !== '') {
+                        let fechaInicio = null;
+                        if (fechaStr) {
+                            const [year, month, day] = fechaStr.split('-');
+                            fechaInicio = `${year}-${month}-${day}`;
+                        }
+
+                        acciones.push({
+                            descripcion: descripcion,
+                            frecuencia: frecuencia,
+                            fechaInicio: fechaInicio
+                        });
+                    }
+                });
+
+                // Recolectar firmas
+                const firmas = {
+                    elaboraNombre: document.getElementById('inputElaboro').value,
+                    elaboroCargo: document.getElementById('inputElaboroCargo').value,
+                    revisionNombre: document.getElementById('inputReviso').value,
+                    revisionCargo: document.getElementById('inputRevisoCargo').value,
+                    autorizacionNombre: document.getElementById('inputAutorizo').value,
+                    autorizacionCargo: document.getElementById('inputAutorizoCargo').value
+                };
+
+                // Consolidar todos los datos
+                const datosCompletos = {
+                    ...datosGenerales,
+                    ...lineaBase,
+                    ...metaAnual,
+                    ...trimestresServicios,
+                    ...trimestresPersonas,
+                    mesesServicios: mesesServicios,
+                    mesesPersonas: mesesPersonas,
+                    municipiosServicios: municipiosServicios,
+                    municipiosPersonas: municipiosPersonas,
+                    acciones: acciones,
+                    ...firmas
+                };
+
+                // ========================================
+                // VALIDACIONES FINALES (DESPUÉS DE RECOLECTAR)
+                // ========================================
+                const erroresFinales = validarDatosCompletos(datosCompletos);
+                if (erroresFinales.length > 0) {
+                    // Restaurar botón inmediatamente si hay errores
+                    btnGuardar.disabled = false;
+                    btnGuardar.innerHTML = textoOriginal;
+
+                    await Swal.fire({
+                        title: 'Errores en el formulario',
+                        html: erroresFinales.join('<br>'),
+                        icon: 'error',
+                        confirmButtonText: 'Aceptar',
+                        confirmButtonColor: '#d33'
+                    });
+
+                    return;
+                }
+
+                console.log('Datos a enviar:', datosCompletos);
+
+                // ========================================
+                // ENVÍO AL SERVIDOR (SOLO SI TODO ESTÁ BIEN)
+                // ========================================
+                const response = await fetch('/Programacion/GuardarProgramacion', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(datosCompletos)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error HTTP: ${response.status}`);
+                }
+
+                const resultado = await response.json();
+
+                if (resultado.success) {
+                    // Mostrar mensaje de éxito
+                    btnGuardar.innerHTML = '<i class="fas fa-check"></i> ¡Guardado!';
+                    btnGuardar.classList.remove('boton-rojo');
+                    btnGuardar.classList.add('btn-success');
+
+                    await Swal.fire({
+                        title: '¡Éxito!',
+                        text: 'Programación guardada correctamente',
+                        icon: 'success',
+                        confirmButtonText: 'Aceptar',
+                        confirmButtonColor: '#3085d6'
+                    });
+
+                    window.location.href = '/Programacion/Index';
+
+                } else {
+                    throw new Error(resultado.message || 'Error desconocido al guardar');
+                }
+
+            } catch (error) {
+                console.error('Error al guardar:', error);
+
+                // Restaurar botón en caso de error
+                btnGuardar.disabled = false;
+                btnGuardar.innerHTML = textoOriginal;
+                btnGuardar.classList.remove('btn-success');
+                btnGuardar.classList.add('boton-rojo');
+
+                // Mostrar error específico
+                let mensajeError = 'Error al guardar la programación';
+                if (error.message.includes('HTTP')) {
+                    mensajeError = 'Error de conexión con el servidor';
+                } else if (error.message.includes('JSON')) {
+                    mensajeError = 'Error en el formato de datos';
+                } else {
+                    mensajeError = error.message;
+                }
+
+                await Swal.fire({
+                    title: 'Error',
+                    text: `${mensajeError}\n\nPor favor, intente nuevamente.`,
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar',
+                    confirmButtonColor: '#d33'
+                });
+            }
+        }
+
+        // ========================================
+        // FUNCIÓN PARA ENFOCAR PRIMER CAMPO FALTANTE
+        // ========================================
+        function enfocarPrimerCampoFaltante(errores) {
+            // Mapeo de errores a IDs de campos
+            const mapaErrores = {
+                '• Programa presupuestario': 'selectPrograma',
+                '• Número de componente': 'selectComponente',
+                '• Número de actividad válido': 'inputActividad',
+                '• Justificación': 'inputJustificacion',
+                '• Descripción de la actividad': 'inputDescripcion',
+                '• Unidad de medida': 'selectMedida',
+                '• Nombre de quien elabora': 'inputElaboro',
+                '• Cargo de quien elabora': 'inputElaboroCargo',
+                '• Mínimo 3 acciones necesarias': 'accionesContainer'
+            };
+
+            // Buscar el primer error que tenga un campo asociado
+            for (const error of errores) {
+                const campoId = mapaErrores[error];
+                if (campoId) {
+                    const campo = document.getElementById(campoId);
+                    if (campo) {
+                        // Hacer scroll suave hasta el campo
+                        campo.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'center'
+                        });
+
+                        // Enfocar el campo después de un pequeño delay
+                        setTimeout(() => {
+                            if (campo.tagName === 'SELECT' || campo.tagName === 'INPUT' || campo.tagName === 'TEXTAREA') {
+                                campo.focus();
+
+                                // Resaltar visualmente el campo
+                                campo.style.border = '2px solid #dc3545';
+                                campo.style.backgroundColor = '#fff5f5';
+
+                                // Quitar el resaltado después de 3 segundos
+                                setTimeout(() => {
+                                    campo.style.border = '';
+                                    campo.style.backgroundColor = '';
+                                }, 3000);
+                            }
+                        }, 500);
+
+                        break; // Solo enfocar el primer campo
+                    }
+                }
+            }
+        }
+
+        // ========================================
+        // FUNCIONES DE VALIDACIÓN
+        // ========================================
+        function validarDatosAntesDeGuardar() {
+            const errores = [];
+
+            // Validar campos obligatorios básicos
+            if (!document.getElementById('selectPrograma').value) {
+                errores.push('• Programa presupuestario');
+            }
+
+            if (!document.getElementById('selectComponente').value) {
+                errores.push('• Número de componente');
+            }
+
+            if (!document.getElementById('inputActividad').value || parseInt(document.getElementById('inputActividad').value) <= 0) {
+                errores.push('• Número de actividad válido');
+            }
+
+            if (!document.getElementById('inputJustificacion').value.trim()) {
+                errores.push('• Justificación');
+            }
+
+            if (!document.getElementById('inputDescripcion').value.trim()) {
+                errores.push('• Descripción de la actividad');
+            }
+
+            if (!document.getElementById('selectMedida').value) {
+                errores.push('• Unidad de medida');
+            }
+
+            // Validar que haya al menos 3 acciones completas
+            const accionesCompletas = document.querySelectorAll('.accion-item').length;
+            if (accionesCompletas < 3) {
+                errores.push('• Mínimo 3 acciones necesarias');
+            }
+
+            // Validar firmas
+            if (!document.getElementById('inputElaboro').value.trim()) {
+                errores.push('• Nombre de quien elabora');
+            }
+
+            if (!document.getElementById('inputElaboroCargo').value.trim()) {
+                errores.push('• Cargo de quien elabora');
+            }
+
+            return errores;
+        }
+
+        function validarDatosCompletos(datosCompletos) {
+            const errores = [];
+
+            if (!datosCompletos.pp) {
+                errores.push('• Debe seleccionar un programa presupuestario');
+            }
+
+            if (!datosCompletos.nComponente) {
+                errores.push('• Debe seleccionar un componente');
+            }
+
+            if (datosCompletos.nActividad <= 0) {
+                errores.push('• Debe ingresar un número de actividad válido');
+            }
+
+            if (datosCompletos.acciones.length < 3 || datosCompletos.acciones.length > 5) {
+                errores.push('• Debe haber entre 3 y 5 acciones completas');
+            }
+
+            // Validar que las acciones tengan descripción
+            const accionesIncompletas = datosCompletos.acciones.filter(a => !a.descripcion.trim());
+            if (accionesIncompletas.length > 0) {
+                errores.push('• Todas las acciones deben tener descripción');
+            }
+
+            if (!datosCompletos.elaboraNombre || !datosCompletos.elaboroCargo) {
+                errores.push('• Los datos de quién elaboró son requeridos');
+            }
+
+            // Validar que los totales de municipios no excedan los totales de servicios/personas
+            const totalServiciosMunicipios = datosCompletos.municipiosServicios.reduce((sum, m) => sum + m.cantidad, 0);
+            const totalPersonasMunicipios = datosCompletos.municipiosPersonas.reduce((sum, m) => sum + m.cantidad, 0);
+
+            if (totalServiciosMunicipios > datosCompletos.servicioMeta) {
+                errores.push(`• Los servicios por municipio (${totalServiciosMunicipios}) exceden el total de servicios (${datosCompletos.servicioMeta})`);
+            }
+
+            if (totalPersonasMunicipios > datosCompletos.personasMeta) {
+                errores.push(`• Las personas por municipio (${totalPersonasMunicipios}) exceden el total de personas (${datosCompletos.personasMeta})`);
+            }
+
+            return errores;
+        }
+
+
+        // ========================================
+        // INICIALIZACIÓN PRINCIPAL
+        // ========================================
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log('DOM cargado - Inicializando...');
+
+            await cargarMunicipios();
+
+            // Solo inicializar comentarios si estamos en vista de revisión
+            if (document.querySelector('input[disabled]')) {
+                console.log('Vista de revisión detectada - Inicializando comentarios');
+                inicializarComentarios();
+            } else {
+                console.log('Vista normal - Configurando acciones');
+                configurarAcciones();
+            }
+
+            // El resto de tus configuraciones originales
+            configurarSelectDelegaciones();
+            configurarSelectPersonas();
+            configurarSelectAcumulable();
+            configurarSelectProgramaComponente();
+            configurarAgregarPersonas('Grupo1');
+            configurarAgregarPersonas('Grupo2');
+
+            document.querySelectorAll('.mes-grupo1, .mes-grupo2').forEach(input => {
+                if (!input.disabled) {
+                    input.addEventListener('input', calcularSumatorias);
+                }
+            });
+
+            const btnGuardar = document.getElementById('btnGuardarProgramacion') || document.getElementById('btnActualizarProgramacion');
+            if (btnGuardar) {
+                btnGuardar.addEventListener('click', guardarProgramacion);
+            }
+
+            calcularSumatorias();
+        });
+
+        function debugComentarios() {
+            console.log('=== DEBUG COMENTARIOS - MAPEO ===');
+            console.log('Comentarios temp:', comentariosTemp);
+            console.log('ID Programación:', document.getElementById('idProgramacionHidden').value);
+
+            const comentariosArray = [];
+            for (let campo in comentariosTemp) {
+                const campoVista = parseInt(campo);
+                const comentarioBD = campoVista - 3;
+
+                comentariosArray.push({
+                    ComentarioId: comentarioBD, // Para BD (1-27)
+                    Campo: campoVista, // Para vista (4-30)
+                    Texto: comentariosTemp[campo].texto,
+                    IdProgramacion: parseInt(document.getElementById('idProgramacionHidden').value)
+                });
+            }
+            console.log('Array con mapeo correcto:', comentariosArray);
+        }
+
+    </script>
+}

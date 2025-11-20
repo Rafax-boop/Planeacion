@@ -12,3 +12,39 @@
         transform: translateY(0);
     }
 }
+
+.container-gris {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    border: 1px solid #dee2e6;
+    border-radius: 20px 20px 20px 20px;
+}
+
+.contenedor-campo {
+    position: relative;
+    padding-left: 40px; /* Espacio para el botón */
+}
+
+.btn-comentario {
+    border: none;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.btn-comentario-sin {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-comentario-con {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-comentario:hover {
+    transform: scale(1.1);
+}

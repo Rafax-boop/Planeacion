@@ -1,0 +1,120 @@
+﻿@using Metas.AplicacionWeb.Models.ViewModels
+@model List<VMFechas>
+@{
+    ViewData["Title"] = "Fecha Programacion";
+}
+
+<div class="mt-4 shadow border p-4 rounded-4 text-center">
+    <table class="table">
+        <thead>
+            <tr>
+                <th class="fw-semibold" style="color:#741732">Fecha Inicio</th>
+                <th class="fw-semibold" style="color:#741732">Fecha Termino</th>
+                <th class="fw-semibold" style="color:#741732">Año</th>
+                <th class="fw-semibold" style="color:#741732">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var fecha in Model)
+            {
+                <tr>
+                    <td class="fw-light">@fecha.FechaInicio</td>
+                    <td class="fw-light">@fecha.FechaFin</td>
+                    <td class="fw-light">@fecha.Ano</td>
+                    <td>
+                        <button class="boton-amarillo fw-light fs-6" style="width: 60px"
+                                data-bs-toggle="modal"
+                                data-bs-target="#ModalFecha"
+                                onclick="cargarDatosFecha('@fecha.IdFechaCaptura', '@fecha.FechaInicio.ToString("yyyy-MM-dd")', '@fecha.FechaFin.ToString("yyyy-MM-dd")', @fecha.Ano)">
+                            Editar
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="modal fade" id="ModalFecha" tabindex="-1" aria-labelledby="miModalLabel"
+     data-bs-backdrop="false" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content glass-effect" style="box-shadow: 0 0 40px 2px #c09866 !important">
+            <div class="modal-header">
+                <h5 class ="modal-title titulo fw-semibold" style="margin-left: 170px" id="miModalLabel">
+                    EDITAR FECHAS</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="formEditar">
+                <div class="modal-body">
+                    <input type="hidden" id="txtIdFechaCaptura" name="IdFechaCaptura" />
+
+                    <label class="form-label titulo fw-semibold">Fecha Inicio</label>
+                    <input type="date" class="form-control mb-3 input-arena fw-light" style="color:#c09866" id="txtFechaInicio" name="FechaInicio" required />
+
+                    <label class="form-label titulo fw-semibold">Fecha Termino</label>
+                    <input type="date" class="form-control mb-3 input-arena fw-light" style="color:#c09866" id="txtFechaFin" name="FechaFin" required />
+
+                    <label class="form-label titulo fw-semibold">Año</label>
+                    <input type="number" class="form-control mb-3 input-arena fw-light" style="color:#c09866" id="txtAno" name="Ano" required />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="boton-rojo fs-6 fw-light" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="boton-amarillo fs-6 fw-light" id="btnEditar">Editar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function cargarDatosFecha(id, fechaInicio, fechaFin, ano) {
+            document.getElementById('txtIdFechaCaptura').value = id;
+            document.getElementById('txtFechaInicio').value = fechaInicio;
+            document.getElementById('txtFechaFin').value = fechaFin;
+            document.getElementById('txtAno').value = ano;
+        }
+
+        // Limpiar el formulario cuando se cierra el modal
+        document.getElementById('ModalFecha').addEventListener('hidden.bs.modal', function () {
+            document.getElementById('formEditar').reset();
+        });
+
+        $("#formEditar").submit(function (e) {
+            e.preventDefault();
+            var formData = $(this).serialize();
+            $("#btnEditar").prop('disabled', true).text('Editando...');
+
+            $.ajax({
+                type: 'PUT',
+                url: '/Admin/EditarProgramacion',
+                data: formData,
+                dataType: 'json',
+                success: function (response) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Éxito!',
+                        text: response.mensaje,
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        $("#ModalFecha").modal('hide');
+                        $("#formEditar")[0].reset();
+                        location.reload();
+                    });
+                },
+                error: function (xhr) {
+                    var error = xhr.responseJSON;
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: error?.mensaje || 'Error al editar fechas'
+                    });
+                },
+                complete: function() {
+                    $("#btnEditar").prop('disabled', false).text('Editar');
+                }
+            });
+        });
+    </script>
+}
