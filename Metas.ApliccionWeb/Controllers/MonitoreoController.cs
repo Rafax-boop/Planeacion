@@ -317,10 +317,26 @@ namespace Metas.AplicacionWeb.Controllers
             }
         }
 
-        public async Task<IActionResult> TableroControl()
+        public async Task<IActionResult> TableroControl(int anoFiscal, int departamento)
         {
+            try
+            {
+                // Obtener los mismos datos que en la vista Monitoreo
+                var datos = await _programacionService.ObtenerDatosProgramacion(anoFiscal, departamento);
 
-            return View();
+                // Pasar los datos a la vista
+                ViewBag.AnoFiscal = anoFiscal;
+                ViewBag.Departamento = departamento;
+                ViewBag.NumeroRegistros = datos.Count;
+                ViewBag.Datos = datos; // Pasar los datos completos si los necesitas
+
+                return View();
+            }
+            catch (Exception ex)
+            {
+                ViewBag.NumeroRegistros = 0;
+                return View();
+            }
         }
     }
 }
