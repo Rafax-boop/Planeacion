@@ -52,6 +52,7 @@
     <div class="p-3 mb-4 rounded-4 shadow">
         <h5 class="mb-2 text-center border-bottom pb-3 fw-semibold titulo pt-2 glass-effect rounded-5">DATOS DE LA SOLICITUD</h5>
 
+
         <div class="row my-3 border-bottom pb-3">
             <label class="col-md-6 align-content-center">4. PROGRAMA PRESUPUESTARIO:</label>
             <div class="col-md-5 align-content-center">
@@ -68,7 +69,7 @@
         <div class="row mb-3 border-bottom pb-3">
             <label class="align-content-center col-md-6">5. NÚMERO DE COMPONENTE:</label>
             <div class="col-md-5 align-content-center">
-                <input type="text" @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control titulo" value="@Model.Pp" readonlyreadonly data-campo="5">
+                <input type="text" @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control titulo" value="@Model.Pp">
             </div>
             <div class="col-md-1 align-content-center">
                 <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"

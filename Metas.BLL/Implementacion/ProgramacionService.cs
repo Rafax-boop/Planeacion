@@ -613,5 +613,156 @@ namespace Metas.BLL.Implementacion
                 return false;
             }
         }
+
+        public async Task<bool> ActualizarProgramacion(ProgramacionDTO modelo)
+        {
+            using var transaction = await _context.Database.BeginTransactionAsync();
+
+            try
+            {
+                // Obtener la programación existente
+                var programacionExistente = await _repositorioProgramacion.Obtener(
+                    p => p.IdRegistro == modelo.Id);
+
+                if (programacionExistente == null)
+                    return false;
+
+                // Actualizar campos editables
+                programacionExistente.Justificacion = modelo.Justificacion;
+                programacionExistente.DescripcionDocumento = modelo.DescripcionDocumento;
+                programacionExistente.ProgramaSocial = modelo.ProgramaSocial;
+                programacionExistente.DescripcionActividad = modelo.DescripcionActividad;
+                programacionExistente.NombreIndicador = modelo.NombreIndicador;
+                programacionExistente.DefinicionIndicador = modelo.DefinicionIndicador;
+                programacionExistente.UnidadMedida = modelo.UnidadMedida;
+                programacionExistente.MediosVerificac = modelo.MediosVerificacion;
+                programacionExistente.FuenteInfo = modelo.FuenteInformacion;
+                programacionExistente.IntervienenDelegacionesManera = modelo.IntervienenDelegacionesManera;
+
+                // Actualizar trimestres
+                programacionExistente.Servicio1 = modelo.PrimerServicio;
+                programacionExistente.Servicio2 = modelo.SegundoServicio;
+                programacionExistente.Servicio3 = modelo.TercerServicio;
+                programacionExistente.Servicio4 = modelo.CuartoServicio;
+
+                programacionExistente.Personas1 = modelo.PrimerPersona;
+                programacionExistente.Personas2 = modelo.SegundoPersona;
+                programacionExistente.Personas3 = modelo.TercerPersona;
+                programacionExistente.Personas4 = modelo.CuartoPersona;
+
+                // Actualizar meses servicios
+                programacionExistente.Mes1 = modelo.MesesServicios[0];
+                programacionExistente.Mes2 = modelo.MesesServicios[1];
+                programacionExistente.Mes3 = modelo.MesesServicios[2];
+                programacionExistente.Mes4 = modelo.MesesServicios[3];
+                programacionExistente.Mes5 = modelo.MesesServicios[4];
+                programacionExistente.Mes6 = modelo.MesesServicios[5];
+                programacionExistente.Mes7 = modelo.MesesServicios[6];
+                programacionExistente.Mes8 = modelo.MesesServicios[7];
+                programacionExistente.Mes9 = modelo.MesesServicios[8];
+                programacionExistente.Mes10 = modelo.MesesServicios[9];
+                programacionExistente.Mes11 = modelo.MesesServicios[10];
+                programacionExistente.Mes12 = modelo.MesesServicios[11];
+
+                // Actualizar meses personas
+                programacionExistente.Mes13 = modelo.MesesPersonas[0];
+                programacionExistente.Mes14 = modelo.MesesPersonas[1];
+                programacionExistente.Mes15 = modelo.MesesPersonas[2];
+                programacionExistente.Mes16 = modelo.MesesPersonas[3];
+                programacionExistente.Mes17 = modelo.MesesPersonas[4];
+                programacionExistente.Mes18 = modelo.MesesPersonas[5];
+                programacionExistente.Mes111 = modelo.MesesPersonas[6];
+                programacionExistente.Mes112 = modelo.MesesPersonas[7];
+                programacionExistente.Mes1111 = modelo.MesesPersonas[8];
+                programacionExistente.Mes110 = modelo.MesesPersonas[9];
+                programacionExistente.Mes121 = modelo.MesesPersonas[10];
+                programacionExistente.Mes19 = modelo.MesesPersonas[11];
+
+                // Actualizar acciones
+                if (modelo.Acciones.Count > 0)
+                {
+                    programacionExistente.Actividad1 = modelo.Acciones[0].Descripcion;
+                    programacionExistente.Frecuencia1 = modelo.Acciones[0].Frecuencia;
+                    programacionExistente.FechaProgramacion1 = modelo.Acciones[0].FechaInicio;
+                }
+
+                if (modelo.Acciones.Count > 1)
+                {
+                    programacionExistente.Actividad2 = modelo.Acciones[1].Descripcion;
+                    programacionExistente.Frecuencia2 = modelo.Acciones[1].Frecuencia;
+                    programacionExistente.FechaProgramacion2 = modelo.Acciones[1].FechaInicio;
+                }
+
+                if (modelo.Acciones.Count > 2)
+                {
+                    programacionExistente.Actividad3 = modelo.Acciones[2].Descripcion;
+                    programacionExistente.Frecuencia3 = modelo.Acciones[2].Frecuencia;
+                    programacionExistente.FechaProgramacion3 = modelo.Acciones[2].FechaInicio;
+                }
+
+                if (modelo.Acciones.Count > 3)
+                {
+                    programacionExistente.Actividad4 = modelo.Acciones[3].Descripcion;
+                    programacionExistente.Frecuencia4 = modelo.Acciones[3].Frecuencia;
+                    programacionExistente.FechaProgramacion4 = modelo.Acciones[3].FechaInicio;
+                }
+
+                if (modelo.Acciones.Count > 4)
+                {
+                    programacionExistente.Actividad5 = modelo.Acciones[4].Descripcion;
+                    programacionExistente.Frecuencia5 = modelo.Acciones[4].Frecuencia;
+                    programacionExistente.FechaProgramacion5 = modelo.Acciones[4].FechaInicio;
+                }
+
+                // Actualizar firmas
+                programacionExistente.ElaboraNombre = modelo.ElaboraNombre;
+                programacionExistente.ElaboroCargo = modelo.ElaboroCargo;
+                programacionExistente.ValidoNombre = modelo.RevisionNombre;
+                programacionExistente.ValidoCargo = modelo.RevisionCargo;
+                programacionExistente.AutorizoNombre = modelo.AutorizacionNombre;
+                programacionExistente.AutorizoCargo = modelo.AutorizacionCargo;
+
+                // Actualizar totales
+                programacionExistente.Totalanos = modelo.TotalAnos;
+                programacionExistente.Totalanos2 = modelo.TotalAnos2;
+
+                await _repositorioProgramacion.Editar(programacionExistente);
+
+                // Actualizar LlenadoInterno
+                var llenadoInterno = await _repositorioLlenadoInterno.Obtener(
+                    l => l.IdProceso == programacionExistente.IdLlenado);
+
+                if (llenadoInterno != null)
+                {
+                    llenadoInterno.DescripcionActividad = modelo.DescripcionActividad;
+                    llenadoInterno.UnidadMedida = modelo.UnidadMedida;
+                    llenadoInterno.TotalEnero = modelo.MesesServicios[0];
+                    llenadoInterno.TotalFebrero = modelo.MesesServicios[1];
+                    llenadoInterno.TotalMarzo = modelo.MesesServicios[2];
+                    llenadoInterno.TotalAbril = modelo.MesesServicios[3];
+                    llenadoInterno.TotalMayo = modelo.MesesServicios[4];
+                    llenadoInterno.TotalJunio = modelo.MesesServicios[5];
+                    llenadoInterno.TotalJulio = modelo.MesesServicios[6];
+                    llenadoInterno.TotalAgosto = modelo.MesesServicios[7];
+                    llenadoInterno.TotalSeptiembre = modelo.MesesServicios[8];
+                    llenadoInterno.TotalOctubre = modelo.MesesServicios[9];
+                    llenadoInterno.TotalNoviembre = modelo.MesesServicios[10];
+                    llenadoInterno.TotalDiciembre = modelo.MesesServicios[11];
+                    llenadoInterno.TotalProgramado = modelo.PrimerServicio + modelo.SegundoServicio + modelo.TercerServicio + modelo.CuartoServicio;
+                    llenadoInterno.TotalPersona = modelo.PrimerPersona + modelo.SegundoPersona + modelo.TercerPersona + modelo.CuartoPersona;
+
+                    await _repositorioLlenadoInterno.Editar(llenadoInterno);
+                }
+
+                await transaction.CommitAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                Console.WriteLine($"Error al actualizar programación: {ex.Message}");
+                return false;
+            }
+        }
     }
 }
