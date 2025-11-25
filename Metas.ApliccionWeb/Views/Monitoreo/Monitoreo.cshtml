@@ -91,23 +91,6 @@
         </button>
     </div>
 
-    <script>
-        function irATablero() {
-            var anoFiscal = $('#selectAnoFiscal').val();
-            var departamento = $('#selectDepartamento').val();
-
-            if (!anoFiscal || !departamento) {
-                alert('Por favor, seleccione año fiscal y departamento primero');
-                return;
-            }
-
-            // Redirigir a TableroControl con parámetros
-            window.location.href = '@Url.Action("TableroControl", "Monitoreo")' +
-                                  '?anoFiscal=' + anoFiscal +
-                                  '&departamento=' + departamento;
-        }
-    </script>
-
     <div class="table-responsive">
         <table class="table table-hover table-borderless align-middle shadow-sm rounded-3 overflow-hidden" id="tablaDatos">
             <thead class="bg-danger text-white">
@@ -165,7 +148,22 @@
 
 @section Scripts{
     <script>
-                const esAdmin = @(User.IsInRole("Administrador").ToString().ToLower())
+        const esAdmin = @(User.IsInRole("Administrador").ToString().ToLower())
+
+        function irATablero() {
+            var anoFiscal = $('#selectAnoFiscal').val();
+            var departamento = $('#selectDepartamento').val();
+
+            if (!anoFiscal || !departamento) {
+                alert('Por favor, seleccione año fiscal y departamento primero');
+                return;
+            }
+
+            // Redirigir a TableroControl con parámetros
+            window.location.href = '@Url.Action("TableroControl", "Monitoreo")' +
+                                  '?anoFiscal=' + anoFiscal +
+                                  '&departamento=' + departamento;
+        }
 
         function habilitarCaptura(element) {
             const idProceso = $(element).data('idproceso');

@@ -363,7 +363,7 @@
                         <label class="mb-0 d-flex align-items-center h-100">20. ¿DE QUÉ MANERA?</label>
                     </div>
                     <div class="col-md-5">
-                        <textarea disabled id="inputDelegaciones" class="input-arena form-control" rows="2">@Model.IntervienenDelegacionesManera</textarea>
+                        <textarea @(!ViewBag.EsAdministrador ? "disabled" : "") id="inputDelegaciones" class="input-arena form-control" rows="2">@Model.IntervienenDelegacionesManera</textarea>
                     </div>
                     <div class="col-md-1 align-content-center">
                         <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
@@ -391,7 +391,7 @@
                         <label class="mb-0">21. AÑO</label>
                     </div>
                     <div class="col-md-5">
-                        <input type="text" disabled class="input-arena form-control titulo" value="@Model.AnoBase" >
+                        <input type="text" @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control titulo" value="@Model.AnoBase">
                     </div>
                     <div class="col-md-1 align-content-center">
                         <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
@@ -406,7 +406,7 @@
                         <label class="mb-0">22. PORCENTAJE DE CUMPLIMIENTO</label>
                     </div>
                     <div class="col-md-5">
-                        <input id="inputPorcentajeBase" disabled type="number" class="input-arena form-control titulo text-center" value="@Model.PorcentajeBase" min="0" max="100">
+                        <input id="inputPorcentajeBase" @(!ViewBag.EsAdministrador ? "disabled" : "") type="number" class="input-arena form-control titulo text-center" value="@Model.PorcentajeBase" min="0" max="100">
                     </div>
                     <div class="col-md-1 align-content-center">
                         <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
@@ -421,7 +421,7 @@
                         <label class="mb-0">23. NO. DE BIEN O SERVICIO ENTREGADO</label>
                     </div>
                     <div class="col-md-5">
-                        <input disabled id="inputServicioBase" type="number" class="input-arena form-control titulo text-center" value="@Model.ServicioBase" min="0">
+                        <input @(!ViewBag.EsAdministrador ? "disabled" : "") id="inputServicioBase" type="number" class="input-arena form-control titulo text-center" value="@Model.ServicioBase" min="0">
                     </div>
                     <div class="col-md-1 align-content-center">
                         <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
@@ -436,7 +436,7 @@
                         <label class="mb-0">24. NO. DE PERSONAS ATENDIDAS</label>
                     </div>
                     <div class="col-md-5">
-                        <input disabled id="inputPersonasBase" type="number" class="input-arena form-control titulo text-center" value="@Model.PersonasBase" min="0">
+                        <input @(!ViewBag.EsAdministrador ? "disabled" : "") id="inputPersonasBase" type="number" class="input-arena form-control titulo text-center" value="@Model.PersonasBase" min="0">
                     </div>
                     <div class="col-md-1 align-content-center">
                         <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
