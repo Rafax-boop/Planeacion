@@ -18,5 +18,6 @@ namespace Metas.BLL.Interfaces
         Task<bool> ActualizarEstatusProgramacion(int idProgramacion, int nuevoEstatus);
         Task<bool> GuardarComentarios(List<ComentarioDTO> comentarios);
         Task<LlenadoInterno> ObtenerporId(int idLlenado);
+
     }
 }
