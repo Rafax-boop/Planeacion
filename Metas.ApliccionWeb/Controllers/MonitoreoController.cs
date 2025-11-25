@@ -324,11 +324,56 @@ namespace Metas.AplicacionWeb.Controllers
                 // Obtener los mismos datos que en la vista Monitoreo
                 var datos = await _programacionService.ObtenerDatosProgramacion(anoFiscal, departamento);
 
-                // Pasar los datos a la vista
+                var datosParaJSON = datos.Select(x => new
+                {
+                    x.IdProceso,
+                    x.Componente,
+                    x.Actividad,
+                    x.DescripcionActividad,
+                    x.UnidadMedida,
+                    x.ProgramaSocial,
+                    // Asumo que tu entidad x tiene estas propiedades para Programado y Realizado:
+                    Programado = new
+                    {
+                        Ene = x.TotalEnero,
+                        Feb = x.TotalFebrero,
+                        Mar = x.TotalMarzo,
+                        Abr = x.TotalAbril,
+                        May = x.TotalMayo,
+                        Jun = x.TotalJunio,
+                        Jul = x.TotalJulio,
+                        Ago = x.TotalAgosto,
+                        Sep = x.TotalSeptiembre,
+                        Oct = x.TotalOctubre,
+                        Nov = x.TotalNoviembre,
+                        Dic = x.TotalDiciembre,
+                        Total = x.TotalProgramado
+                    },
+                    Realizado = new
+                    {
+                        Ene = x.TotalEneroRealizado,
+                        Feb = x.TotalFebreroRealizado,
+                        Mar = x.TotalMarzoRealizado,
+                        Abr = x.TotalAbrilRealizado,
+                        May = x.TotalMayoRealizado,
+                        Jun = x.TotalJunioRealizado,
+                        Jul = x.TotalJulioRealizado,
+                        Ago = x.TotalAgostoRealizado,
+                        Sep = x.TotalSeptiembreRealizado,
+                        Oct = x.TotalOctubreRealizado,
+                        Nov = x.TotalNoviembreRealizado,
+                        Dic = x.TotalDiciembreRealizado,
+                        Total = x.TotalRealizado
+                    }
+                }).ToList();
+
+                // 3. Serializar la lista a una cadena JSON
+                string datosJson = System.Text.Json.JsonSerializer.Serialize(datosParaJSON);
+
                 ViewBag.AnoFiscal = anoFiscal;
                 ViewBag.Departamento = departamento;
-                ViewBag.NumeroRegistros = datos.Count;
-                ViewBag.Datos = datos; // Pasar los datos completos si los necesitas
+                ViewBag.NumeroRegistros = datosParaJSON.Count;
+                ViewBag.DatosJson = datosJson;
 
                 return View();
             }

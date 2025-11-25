@@ -39,79 +39,119 @@
 
 @section Scripts {
     <script>
+        // 1. Cargar el JSON serializado de C# y parsearlo a un objeto JS
+        const datosTableroJSON = '@Html.Raw(ViewBag.DatosJson ?? "[]")';
+        let datosTablero = [];
+
+        try {
+            datosTablero = JSON.parse(datosTableroJSON);
+        } catch (e) {
+            console.error("Error al parsear datos JSON:", e);
+        }
+
         $(document).ready(function() {
-            const numeroRegistros = @numeroRegistros;
+            const numeroRegistros = datosTablero.length;
             const contenedor = $('#contenedor-tableros');
 
             if (numeroRegistros > 0) {
-                // Generar un tablero por cada registro
-                for (let i = 1; i <= numeroRegistros; i++) {
-                    const tableroHTML = crearTablero(i);
+                // 2. Iterar sobre los datos reales (forEach)
+                datosTablero.forEach((item, index) => {
+                    // El número de tablero es el índice + 1
+                    const numeroTablero = index + 1;
+
+                    // Pasar el objeto de datos (item) a la función crearTablero
+                    const tableroHTML = crearTablero(numeroTablero, item);
                     contenedor.append(tableroHTML);
-                }
+                });
 
                 // Aplicar colores después de generar todos los tableros
                 setTimeout(aplicarColoresAutomaticos, 100);
             }
         });
 
-        // Función para crear el HTML de un tablero individual
-        function crearTablero(numeroTablero) {
+        // ----------------------------------------------------
+        // 3. Modificar la función crearTablero para aceptar y usar los datos
+        function crearTablero(numeroTablero, data) {
+
+            // Calculamos los porcentajes necesarios en el lado del cliente (JS)
+            const porcentajeAnual = data.Realizado.Total > 0 ?
+                Math.round((data.Realizado.Total / data.Programado.Total) * 100) : 0;
+
+            // Los meses en tu data JSON (Ene, Feb, etc.)
+            const mesesAbreviados = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+
+            // Función para calcular el porcentaje de un mes
+            const calcularPorcentajeMes = (mes) => {
+                const prog = data.Programado[mes] || 0;
+                const real = data.Realizado[mes] || 0;
+                return prog > 0 ? Math.round((real / prog) * 100) : 0;
+            };
+
+            // Función para calcular el porcentaje de un trimestre
+            const calcularPorcentajeTrimestre = (m1, m2, m3) => {
+                const progTotal = data.Programado[m1] + data.Programado[m2] + data.Programado[m3];
+                const realTotal = data.Realizado[m1] + data.Realizado[m2] + data.Realizado[m3];
+                return progTotal > 0 ? Math.round((realTotal / progTotal) * 100) : 0;
+            };
+
+            const trim1Porcentaje = calcularPorcentajeTrimestre('Ene', 'Feb', 'Mar');
+            const trim2Porcentaje = calcularPorcentajeTrimestre('Abr', 'May', 'Jun');
+            const trim3Porcentaje = calcularPorcentajeTrimestre('Jul', 'Ago', 'Sep');
+            const trim4Porcentaje = calcularPorcentajeTrimestre('Oct', 'Nov', 'Dic');
+
+
             return `
             <div class="tablero-individual mb-5 border-bottom pb-4" data-tablero="${numeroTablero}">
 
-                <!-- ENCABEZADO DE LA ACTIVIDAD -->
                 <div class="glass-effect rounded-3 p-3 mb-3 bg-primary bg-opacity-10">
                     <div class="row align-items-center">
                         <div class="col-md-8">
                             <h4 class="fw-bold titulo mb-1">
-                                Actividad ${numeroTablero}
+                                ${data.Componente} / ${data.Actividad}
                             </h4>
-                            <p class="mb-1 text-muted">Descripción de la actividad ${numeroTablero}</p>
-                            <small class="text-muted">Programa Social ${numeroTablero}</small>
+                            <p class="mb-1 text-muted">${data.DescripcionActividad}</p>
+                            <small class="text-muted">${data.ProgramaSocial}</small>
                         </div>
                         <div class="col-md-4 text-end">
-                            <span class="badge bg-info fs-6">Registro ${numeroTablero}</span>
+                            <span class="badge bg-info fs-6">ID Proceso ${data.IdProceso}</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- INFORMACIÓN DEL PROGRAMA -->
                 <div class="glass-effect rounded-3 p-3 mb-3">
                     <h5 class="fw-semibold titulo mb-3 border-bottom pb-2 text-center">INFORMACIÓN DEL PROGRAMA</h5>
                     <div class="row small">
                         <div class="col-md-6 border-end pe-3">
                             <div class="mb-2">
                                 <span class="fw-semibold titulo">Componente:</span>
-                                <span>Componente ${numeroTablero}</span>
+                                <span>${data.Componente}</span>
                             </div>
                             <div class="mb-2">
                                 <span class="fw-semibold titulo">Número de Actividad:</span>
-                                <span>${numeroTablero}.${numeroTablero}</span>
+                                <span>${data.Actividad}</span>
                             </div>
                             <div class="mb-2">
                                 <span class="fw-semibold titulo">Programa Social:</span>
-                                <span>Programa Social ${numeroTablero}</span>
+                                <span>${data.ProgramaSocial}</span>
                             </div>
                         </div>
                         <div class="col-md-6 ps-3">
                             <div class="mb-2">
                                 <span class="fw-semibold titulo">Unidad de Medida:</span>
-                                <span>Unidad ${numeroTablero}</span>
+                                <span>${data.UnidadMedida || 'N/A'}</span>
                             </div>
                             <div class="mb-2">
                                 <span class="fw-semibold titulo">Descripción:</span>
-                                <span>Descripción completa de la actividad ${numeroTablero}</span>
+                                <span>${data.DescripcionActividad}</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- CALENDARIZACIÓN ANUAL -->
                 <div class="glass-effect rounded-3 p-3 mb-3" style="background-color: white">
                     <h5 class="fw-semibold titulo mb-3 border-bottom pb-2 text-center">CALENDARIZACIÓN ANUAL</h5>
                     <div class="row">
-                        <!-- Programado -->
+
                         <div class="col-md-6 border-end pe-3">
                             <h6 class="fw-semibold text-primary mb-2">PROGRAMADO</h6>
                             <div class="table-responsive">
@@ -125,16 +165,14 @@
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td>100</td><td>150</td><td>200</td><td>180</td><td>220</td><td>190</td>
-                                            <td>210</td><td>230</td><td>240</td><td>250</td><td>260</td><td>270</td>
-                                            <td class="fw-bold bg-info bg-opacity-10">2550</td>
+                                            ${mesesAbreviados.map(mes => `<td>${data.Programado[mes] || 0}</td>`).join('')}
+                                            <td class="fw-bold bg-info bg-opacity-10">${data.Programado.Total}</td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
                         </div>
 
-                        <!-- Realizado -->
                         <div class="col-md-6 ps-3">
                             <h6 class="fw-semibold text-success mb-2">REALIZADO</h6>
                             <div class="table-responsive">
@@ -148,9 +186,8 @@
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td>115</td><td>142</td><td>196</td><td>183</td><td>187</td><td>167</td>
-                                            <td>157</td><td>165</td><td>156</td><td>145</td><td>117</td><td>113</td>
-                                            <td class="fw-bold bg-success bg-opacity-10">1843</td>
+                                            ${mesesAbreviados.map(mes => `<td>${data.Realizado[mes] || 0}</td>`).join('')}
+                                            <td class="fw-bold bg-success bg-opacity-10">${data.Realizado.Total}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -159,7 +196,6 @@
                     </div>
                 </div>
 
-                <!-- PORCENTAJE DE AVANCE MENSUAL -->
                 <div class="glass-effect rounded-3 p-3 mb-3" style="background-color: white">
                     <h5 class="fw-semibold titulo mb-3 border-bottom pb-2 text-center">AVANCE MENSUAL</h5>
                     <div class="table-responsive">
@@ -172,86 +208,74 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td><div class="fw-bold porcentaje-mes" data-mes="ene">115%</div></td>
-                                    <td><div class="fw-bold porcentaje-mes" data-mes="feb">95%</div></td>
-                                    <td><div class="fw-bold porcentaje-mes" data-mes="mar">98%</div></td>
-                                    <td><div class="fw-bold porcentaje-mes" data-mes="abr">102%</div></td>
-                                    <td><div class="fw-bold porcentaje-mes" data-mes="may">85%</div></td>
-                                    <td><div class="fw-bold porcentaje-mes" data-mes="jun">88%</div></td>
-                                    <td><div class="fw-bold porcentaje-mes" data-mes="jul">75%</div></td>
-                                    <td><div class="fw-bold porcentaje-mes" data-mes="ago">72%</div></td>
-                                    <td><div class="fw-bold porcentaje-mes" data-mes="sep">65%</div></td>
-                                    <td><div class="fw-bold porcentaje-mes" data-mes="oct">58%</div></td>
-                                    <td><div class="fw-bold porcentaje-mes" data-mes="nov">45%</div></td>
-                                    <td><div class="fw-bold porcentaje-mes" data-mes="dic">42%</div></td>
+                                    ${mesesAbreviados.map(mes =>
+                                        `<td><div class="fw-bold porcentaje-mes" data-mes="${mes.toLowerCase()}">${calcularPorcentajeMes(mes)}%</div></td>`
+                                    ).join('')}
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
 
-                <!-- PORCENTAJE TRIMESTRAL Y ANUAL -->
                 <div class="glass-effect rounded-3 p-3" style="background-color: white">
                     <div class="row">
-                        <!-- Porcentaje Trimestral -->
                         <div class="col-md-8 border-end pe-3">
                             <h5 class="fw-semibold titulo mb-3 border-bottom pb-2 text-center">TRIMESTRAL</h5>
                             <div class="row text-center">
                                 <div class="col-md-3 mb-2">
                                     <div class="border rounded p-2">
                                         <small class="fw-semibold">1ER</small>
-                                        <div class="h6 fw-bold porcentaje-trimestre" data-trimestre="1">115%</div>
+                                        <div class="h6 fw-bold porcentaje-trimestre" data-trimestre="1">${trim1Porcentaje}%</div>
                                         <div class="progress" style="height: 8px;">
-                                            <div class="progress-bar progress-trimestre-1" style="width: 100%"></div>
+                                            <div class="progress-bar progress-trimestre-1" style="width: ${Math.min(trim1Porcentaje, 100)}%"></div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-md-3 mb-2">
                                     <div class="border rounded p-2">
                                         <small class="fw-semibold">2DO</small>
-                                        <div class="h6 fw-bold porcentaje-trimestre" data-trimestre="2">95%</div>
+                                        <div class="h6 fw-bold porcentaje-trimestre" data-trimestre="2">${trim2Porcentaje}%</div>
                                         <div class="progress" style="height: 8px;">
-                                            <div class="progress-bar progress-trimestre-2" style="width: 95%"></div>
+                                            <div class="progress-bar progress-trimestre-2" style="width: ${Math.min(trim2Porcentaje, 100)}%"></div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-md-3 mb-2">
                                     <div class="border rounded p-2">
                                         <small class="fw-semibold">3ER</small>
-                                        <div class="h6 fw-bold porcentaje-trimestre" data-trimestre="3">85%</div>
+                                        <div class="h6 fw-bold porcentaje-trimestre" data-trimestre="3">${trim3Porcentaje}%</div>
                                         <div class="progress" style="height: 8px;">
-                                            <div class="progress-bar progress-trimestre-3" style="width: 85%"></div>
+                                            <div class="progress-bar progress-trimestre-3" style="width: ${Math.min(trim3Porcentaje, 100)}%"></div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-md-3 mb-2">
                                     <div class="border rounded p-2">
                                         <small class="fw-semibold">4TO</small>
-                                        <div class="h6 fw-bold porcentaje-trimestre" data-trimestre="4">65%</div>
+                                        <div class="h6 fw-bold porcentaje-trimestre" data-trimestre="4">${trim4Porcentaje}%</div>
                                         <div class="progress" style="height: 8px;">
-                                            <div class="progress-bar progress-trimestre-4" style="width: 65%"></div>
+                                            <div class="progress-bar progress-trimestre-4" style="width: ${Math.min(trim4Porcentaje, 100)}%"></div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Porcentaje Anual -->
                         <div class="col-md-4 ps-3">
                             <h5 class="fw-semibold titulo mb-3 border-bottom pb-2 text-center">ANUAL</h5>
                             <div class="text-center">
-                                <div class="h3 fw-bold porcentaje-anual">85%</div>
+                                <div class="h3 fw-bold porcentaje-anual">${porcentajeAnual}%</div>
                                 <div class="progress mb-2" style="height: 12px;">
-                                    <div class="progress-bar progress-anual" style="width: 85%"></div>
+                                    <div class="progress-bar progress-anual" style="width: ${Math.min(porcentajeAnual, 100)}%"></div>
                                 </div>
                                 <div class="row small text-center">
                                     <div class="col-6">
                                         <div class="fw-semibold">Prog:</div>
-                                        <div class="text-primary">2550</div>
+                                        <div class="text-primary">${data.Programado.Total}</div>
                                     </div>
                                     <div class="col-6">
                                         <div class="fw-semibold">Real:</div>
-                                        <div class="text-success">1843</div>
+                                        <div class="text-success">${data.Realizado.Total}</div>
                                     </div>
                                 </div>
                             </div>
