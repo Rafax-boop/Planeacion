@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Text.Json.Serialization;
 
 namespace Metas.BLL.DTO
@@ -11,8 +12,10 @@ namespace Metas.BLL.DTO
         // ========================================
         [JsonPropertyName("id")]
         public int Id { get; set; }
+
         [JsonPropertyName("area")]
         public string Area { get; set; }
+
         [JsonPropertyName("departamento")]
         public string Departamento { get; set; }
 
@@ -75,6 +78,7 @@ namespace Metas.BLL.DTO
 
         [JsonPropertyName("intervienenDelegacionesManera")]
         public string IntervienenDelegacionesManera { get; set; }
+
         [JsonPropertyName("selectAcumulable")]
         public string SelectAcumulable { get; set; }
 
@@ -83,6 +87,7 @@ namespace Metas.BLL.DTO
 
         [JsonPropertyName("beneficiarios")]
         public string Beneficiarios { get; set; }
+
         // ========================================
         // LÍNEA BASE
         // ========================================
@@ -148,6 +153,7 @@ namespace Metas.BLL.DTO
         // ========================================
         [JsonPropertyName("mesesServicios")]
         public List<int> MesesServicios { get; set; } = new List<int>();
+
         [JsonPropertyName("totalAnos")]
         public int TotalAnos { get; set; }
 
@@ -156,6 +162,7 @@ namespace Metas.BLL.DTO
         // ========================================
         [JsonPropertyName("mesesPersonas")]
         public List<int> MesesPersonas { get; set; } = new List<int>();
+
         [JsonPropertyName("totalAnos2")]
         public decimal TotalAnos2 { get; set; }
 
@@ -197,6 +204,27 @@ namespace Metas.BLL.DTO
 
         [JsonPropertyName("autorizacionCargo")]
         public string AutorizacionCargo { get; set; }
+
+        // ========================================
+        // LISTAS PARA LOS SELECTS
+        // ========================================
+        [JsonIgnore]
+        public List<SelectListItem> ListaProgramas { get; set; } = new List<SelectListItem>();
+
+        [JsonIgnore]
+        public List<SelectListItem> ListaComponentes { get; set; } = new List<SelectListItem>();
+
+        [JsonIgnore]
+        public List<SelectListItem> ListaMedidas { get; set; } = new List<SelectListItem>();
+
+        [JsonIgnore]
+        public List<SelectListItem> ListaMunicipios { get; set; } = new List<SelectListItem>();
+
+        // ========================================
+        // COMENTARIOS (para actualización de usuario)
+        // ========================================
+        [JsonPropertyName("comentarios")]
+        public List<ComentarioDTO> Comentarios { get; set; } = new List<ComentarioDTO>();
     }
 
     // DTO para municipios agregados en las tablas
@@ -221,12 +249,20 @@ namespace Metas.BLL.DTO
         [JsonPropertyName("fechaInicio")]
         public DateOnly? FechaInicio { get; set; }
     }
+
+    // DTO para comentarios
     public class ComentarioDTO
     {
+        [JsonPropertyName("comentarioId")]
         public int ComentarioId { get; set; }
+
+        [JsonPropertyName("campo")]
         public int Campo { get; set; }
+
+        [JsonPropertyName("texto")]
         public string Texto { get; set; }
+
+        [JsonPropertyName("idProgramacion")]
         public int IdProgramacion { get; set; }
     }
-
 }

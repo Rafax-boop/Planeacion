@@ -25,24 +25,20 @@
                 <label class="col-md-4 align-content-center">2. NOMBRE DEL ÁREA OPERATIVA <br /> RESPONSABLE (AOR):</label>
                 <div class="col-8 row">
                     <div class="col-md-6">
-                        <h5 class="fw-light">
-                           Area:   
-                        </h5>
+                        <h5 class="fw-light">Area:</h5>
                         <textarea disabled class="form-control input-arena titulo fw-semibold" rows="2" id="inputArea">@Model.Area</textarea>
                     </div>
                     <div class="col-md-6">
-                        <h5 class="fw-light">
-                            Departamento:
-                        </h5>
+                        <h5 class="fw-light">Departamento:</h5>
                         <textarea disabled class="form-control input-arena titulo fw-semibold" rows="2" id="inputDepartamento">@Model.Departamento</textarea>
-                    </div>                   
+                    </div>
                 </div>
             </div>
 
             <div class="d-flex p-2">
                 <div class="w-50 align-content-center">3. CORREO ELECTRÓNICO:</div>
                 <div class="w-50 my-2 mx-2">
-                    <input type="email" disabled class="input-arena form-control titulo"  placeholder="ejemplo@correo.com" id="inputCorreo" value="@Model.CorreoContacto">
+                    <input type="email" @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control titulo" placeholder="ejemplo@correo.com" id="inputCorreo" value="@Model.CorreoContacto">
                 </div>
             </div>
         </div>
@@ -52,11 +48,26 @@
     <div class="p-3 mb-4 rounded-4 shadow">
         <h5 class="mb-2 text-center border-bottom pb-3 fw-semibold titulo pt-2 glass-effect rounded-5">DATOS DE LA SOLICITUD</h5>
 
-
         <div class="row my-3 border-bottom pb-3">
             <label class="col-md-6 align-content-center">4. PROGRAMA PRESUPUESTARIO:</label>
             <div class="col-md-5 align-content-center">
-                <input type="text" @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control titulo" value="@Model.Pp" data-campo="4">
+                <select @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control titulo" id="selectPrograma" data-campo="4">
+                    <option value="">Seleccione Programa</option>
+                    @if (Model.ListaProgramas != null)
+                    {
+                        foreach (var programa in Model.ListaProgramas)
+                        {
+                            if (programa.Value == Model.Pp)
+                            {
+                                <option value="@programa.Value" selected>@programa.Text</option>
+                            }
+                            else
+                            {
+                                <option value="@programa.Value">@programa.Text</option>
+                            }
+                        }
+                    }
+                </select>
             </div>
             <div class="col-md-1 align-content-center">
                 <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
@@ -69,7 +80,26 @@
         <div class="row mb-3 border-bottom pb-3">
             <label class="align-content-center col-md-6">5. NÚMERO DE COMPONENTE:</label>
             <div class="col-md-5 align-content-center">
-                <input type="text" @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control titulo" value="@Model.Pp">
+                <select @(!ViewBag.EsAdministrador ? "disabled" : "")
+                        class="input-arena form-control titulo"
+                        id="selectComponente"
+                        data-campo="5">
+                    <option value="">Seleccione Componente</option>
+                    @if (Model.ListaComponentes != null && Model.ListaComponentes.Any())
+                    {
+                        foreach (var componente in Model.ListaComponentes)
+                        {
+                            if (componente.Text == Model.NComponente)
+                            {
+                                <option value="@componente.Value" data-programa="@componente.Group.Name" selected>@componente.Text</option>
+                            }
+                            else
+                            {
+                                <option value="@componente.Value" data-programa="@componente.Group.Name">@componente.Text</option>
+                            }
+                        }
+                    }
+                </select>
             </div>
             <div class="col-md-1 align-content-center">
                 <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
@@ -82,7 +112,7 @@
         <div class="row pb-1 border-bottom mb-3 pb-3">
             <label class="align-content-center col-md-6">6. NÚMERO DE ACTIVIDAD:</label>
             <div class="col-md-5 align-content-center">
-                <input type="number" @(!ViewBag.EsAdministrador ? "disabled" : "") required class="input-arena form-control titulo" id="inputActividad" value="@Model.NActividad">
+                <input type="number" @(!ViewBag.EsAdministrador ? "disabled" : "") required class="input-arena form-control titulo" id="inputActividad" value="@Model.NActividad" data-campo="6">
             </div>
             <div class="col-md-1 align-content-center">
                 <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
@@ -97,7 +127,7 @@
             <div class="row">
                 <div class="col-md-11">
                     <label>7. JUSTIFICACIÓN</label>
-                    <textarea required class="input-arena form-control" @(!ViewBag.EsAdministrador ? "disabled" : "") rows="2" id="inputJustificacion">@Model.Justificacion</textarea>
+                    <textarea required class="input-arena form-control" @(!ViewBag.EsAdministrador ? "disabled" : "") rows="2" id="inputJustificacion" data-campo="7">@Model.Justificacion</textarea>
                 </div>
                 <div class="col-md-1 align-content-center">
                     <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
@@ -108,12 +138,12 @@
             </div>
         </div>
 
-        @* Documentacion soporte de la justificacion *@
+        @* Documentacion soporte *@
         <div class="mb-3 pb-3 border-bottom">
             <div class="row">
                 <div class="col-md-11">
                     <label>8. DOCUMENTACIÓN SOPORTE DE LA JUSTIFICACIÓN</label>
-                    <textarea @(!ViewBag.EsAdministrador ? "disabled" : "") required class="input-arena form-control disabled" rows="2" id="inputDocumentacion">@Model.DescripcionDocumento</textarea>
+                    <textarea @(!ViewBag.EsAdministrador ? "disabled" : "") required class="input-arena form-control" rows="2" id="inputDocumentacion" data-campo="8">@Model.DescripcionDocumento</textarea>
                 </div>
                 <div class="col-md-1 align-content-center">
                     <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
@@ -133,7 +163,7 @@
                 <div class="row g-2">
                     <div class="col-6">
                         <h5 class="fw-light">Recurso Federal</h5>
-                        <select required @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control titulo" id="selectFederal">
+                        <select required @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control titulo" id="selectFederal" data-campo="9">
                             <option value="">Seleccione</option>
                             <option value="Si" selected="@(Model.RecursoFederal == "Si")">Sí</option>
                             <option value="No" selected="@(Model.RecursoFederal == "No")">No</option>
@@ -141,7 +171,7 @@
                     </div>
                     <div class="col-6">
                         <h5 class="fw-light">Recurso Estatal</h5>
-                        <select required @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control titulo" id="selectEstatal">
+                        <select required @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control titulo" id="selectEstatal" data-campo="9">
                             <option value="">Seleccione</option>
                             <option value="Si" selected="@(Model.RecursoEstatal == "Si")">Sí</option>
                             <option value="No" selected="@(Model.RecursoEstatal == "No")">No</option>
@@ -156,7 +186,7 @@
                 </button>
             </div>
         </div>
-    </div>    
+    </div>
 
     <hr>
 
@@ -284,7 +314,26 @@
         <div class="row border-bottom border-top">
             <label class="col-md-4 align-content-center">15. UNIDAD DE MEDIDA</label>
             <div class="col-md-7 my-3">
-                <input type="text" @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control titulo" id="selectMedida" value="@Model.UnidadMedida">
+                <select required @(!ViewBag.EsAdministrador ? "disabled" : "")
+                        class="input-arena form-control titulo"
+                        id="selectMedida"
+                        data-campo="15">
+                    <option value="">Seleccione opción</option>
+                    @if (Model.ListaMedidas != null)
+                    {
+                        foreach (var medida in Model.ListaMedidas)
+                        {
+                            if (medida.Value == Model.UnidadMedida || medida.Text == Model.UnidadMedida)
+                            {
+                                <option value="@medida.Value" selected>@medida.Text</option>
+                            }
+                            else
+                            {
+                                <option value="@medida.Value">@medida.Text</option>
+                            }
+                        }
+                    }
+                </select>
             </div>
             <div class="col-md-1 align-content-center">
                 <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
@@ -310,10 +359,41 @@
         <div class="row border-bottom">
             <label class="col-md-4 align-content-center">17. SERIE DE INFORMACIÓN DISPONIBLE</label>
             <div class="col-md-3 my-3">
-                <input type="text" @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control titulo" value="@Model.SerieInformacionDesde">
+                <select required @(!ViewBag.EsAdministrador ? "disabled" : "")
+                        class="titulo form-select input-arena"
+                        id="selectDesde"
+                        data-campo="17">
+                    <option value="">Seleccione Desde</option>
+                    @{
+                        var anoActual = DateTime.Now.Year;
+                        var anoMinimo = anoActual - 5;
+
+                        for (int ano = anoActual; ano >= anoMinimo; ano--)
+                        {
+                            <option value="@ano"
+                                    selected="@(ano.ToString() == Model.SerieInformacionDesde)">
+                                @ano
+                            </option>
+                        }
+                    }
+                </select>
             </div>
             <div class="col-md-4 my-3">
-                <input type="text" @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control titulo" value="@Model.SerieInformacionHasta">
+                <select @(!ViewBag.EsAdministrador ? "disabled" : "")
+                        class="titulo form-select input-arena"
+                        id="selectHasta"
+                        data-campo="17">
+                    <option value="">Seleccione Hasta</option>
+                    @{
+                        for (int ano = anoActual; ano >= anoMinimo; ano--)
+                        {
+                            <option value="@ano"
+                                    selected="@(ano.ToString() == Model.SerieInformacionHasta)">
+                                @ano
+                            </option>
+                        }
+                    }
+                </select>
             </div>
             <div class="col-md-1 align-content-center">
                 <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
@@ -391,7 +471,21 @@
                         <label class="mb-0">21. AÑO</label>
                     </div>
                     <div class="col-md-5">
-                        <input type="text" @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control titulo" value="@Model.AnoBase">
+                        <select @(!ViewBag.EsAdministrador ? "disabled" : "")
+                                class="input-arena form-control titulo"
+                                id="selectAnoBase"
+                                data-campo="21">
+                            <option value="">Seleccione Año</option>
+                            @{
+                                for (int ano = anoActual; ano >= anoMinimo; ano--)
+                                {
+                                    <option value="@ano"
+                                            selected="@(ano == Model.AnoBase)">
+                                        @ano
+                                    </option>
+                                }
+                            }
+                        </select>
                     </div>
                     <div class="col-md-1 align-content-center">
                         <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
@@ -457,7 +551,7 @@
                         <label class="mb-0">25. AÑO</label>
                     </div>
                     <div class="col-md-5">
-                        <input id="inputAnoMeta" type="text" class="input-arena form-control titulo text-center fw-semibold" value="@Model.AnoMeta" disabled >
+                        <input id="inputAnoMeta" type="text" class="input-arena form-control titulo text-center fw-semibold" value="@Model.AnoMeta" @(!ViewBag.EsAdministrador ? "disabled" : "")>
                     </div>
                     <div class="col-md-1 align-content-center">
                         <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
@@ -472,7 +566,7 @@
                         <label class="mb-0">26. PORCENTAJE DE CUMPLIMIENTO</label>
                     </div>
                     <div class="col-md-5">
-                        <input id="inputPorcentajeMeta" disabled type="number" class="input-arena form-control titulo text-center" value="@Model.PorcentajeMeta" min="0" max="100">
+                        <input id="inputPorcentajeMeta" @(!ViewBag.EsAdministrador ? "disabled" : "") type="number" class="input-arena form-control titulo text-center" value="@Model.PorcentajeMeta" min="0" max="100">
                     </div>
                     <div class="col-md-1 align-content-center">
                         <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
@@ -487,7 +581,7 @@
                         <label class="mb-0">27. NO. DE BIEN O SERVICIO A ENTREGAR</label>
                     </div>
                     <div class="col-md-5">
-                        <input id="inputServicioMeta" disabled type="number" class="input-arena form-control titulo text-center" value="@Model.ServicioMeta" min="0">
+                        <input id="inputServicioMeta" @(!ViewBag.EsAdministrador ? "disabled" : "") type="number" class="input-arena form-control titulo text-center" value="@Model.ServicioMeta" min="0">
                     </div>
                     <div class="col-md-1 align-content-center">
                         <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
@@ -502,7 +596,7 @@
                         <label class="mb-0">28. NO. DE PERSONAS POR ATENDER</label>
                     </div>
                     <div class="col-md-5">
-                        <input id="inputServicioMetas" disabled type="number" class="input-arena form-control titulo text-center" value="@Model.PersonasMeta" min="0">
+                        <input id="inputServicioMetas" @(!ViewBag.EsAdministrador ? "disabled" : "") type="number" class="input-arena form-control titulo text-center" value="@Model.PersonasMeta" min="0">
                     </div>
                     <div class="col-md-1 align-content-center">
                         <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
@@ -543,7 +637,7 @@
                                 <label class="mb-0">30. PERSONAS</label>
                             </div>
                             <div class="col-md-10">
-                                <select disabled class="input-arena form-control titulo" id="selectPersonas">
+                                <select @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control titulo" id="selectPersonas">
                                     <option value="">Seleccione Personas / Instituciones</option>
                                     <option value="Personas" selected="@(Model.Beneficiarios == "Personas")">Personas</option>
                                     <option value="Instituciones" selected="@(Model.Beneficiarios == "Instituciones")">Instituciones</option>
@@ -562,7 +656,7 @@
                             <label class="mb-0">Acumulable</label>
                         </div>
                         <div class="col-md-8">
-                            <select disabled class="input-arena form-control titulo" id="selectAcumulable">
+                            <select @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control titulo" id="selectAcumulable">
                                 <option value="">Seleccione opción</option>
                                 <option value="no" selected="@(Model.SelectAcumulable == "no")">No</option>
                                 <option value="si" selected="@(Model.SelectAcumulable == "si")">Sí</option>
@@ -573,7 +667,7 @@
             </div>
         </div>
 
-        @* Sección Meses - Se llenará con JavaScript *@
+        @* Sección Meses *@
         <div class="mt-4">
             @{
                 var mesesPrimerSemestre = new[] { "ENE", "FEB", "MAR", "ABR", "MAY", "JUN" };
@@ -592,7 +686,7 @@
                         @for (int i = 0; i < 6; i++)
                         {
                             <div class="col-2 p-1">
-                                <input disabled type="number" class="input-arena form-control titulo text-center mes-grupo1"
+                                <input @(!ViewBag.EsAdministrador ? "disabled" : "") type="number" class="input-arena form-control titulo text-center mes-grupo1"
                                        value="@(Model.MesesServicios != null && Model.MesesServicios.Count > i ? Model.MesesServicios[i] : 0)" 
                                        min="0" data-mes="@mesesPrimerSemestre[i]">
                             </div>
@@ -610,7 +704,7 @@
                         {
                             var index = i + 6;
                             <div class="col-2 p-1">
-                                <input disabled type="number" class="input-arena form-control titulo text-center mes-grupo1"
+                                <input @(!ViewBag.EsAdministrador ? "disabled" : "") type="number" class="input-arena form-control titulo text-center mes-grupo1"
                                        value="@(Model.MesesServicios != null && Model.MesesServicios.Count > index ? Model.MesesServicios[index] : 0)" 
                                        min="0" data-mes="@mesesSegundoSemestre[i]">
                             </div>
@@ -629,7 +723,7 @@
                         @for (int i = 0; i < 6; i++)
                         {
                             <div class="col-2 p-1">
-                                <input disabled type="number" class="input-arena form-control titulo text-center mes-grupo2"
+                                <input @(!ViewBag.EsAdministrador ? "disabled" : "") type="number" class="input-arena form-control titulo text-center mes-grupo2"
                                        value="@(Model.MesesPersonas != null && Model.MesesPersonas.Count > i ? Model.MesesPersonas[i] : 0)" 
                                        min="0" data-mes="@mesesPrimerSemestre[i]">
                             </div>
@@ -647,9 +741,9 @@
                         {
                             var index = i + 6;
                             <div class="col-2 p-1">
-                                <input disabled type="number" class="input-arena form-control titulo text-center mes-grupo2"
+                                <input @(!ViewBag.EsAdministrador ? "disabled" : "") type="number" class="input-arena form-control titulo text-center mes-grupo2"
                                        value="@(Model.MesesPersonas != null && Model.MesesPersonas.Count > index ? Model.MesesPersonas[index] : 0)" 
-                                       min="0" disabled data-mes="@mesesSegundoSemestre[i]">
+                                       min="0" data-mes="@mesesSegundoSemestre[i]">
                             </div>
                         }
                     </div>
@@ -665,23 +759,22 @@
                         <label class="mb-0 fw-semibold">Valor de servicios</label>
                     </div>
                     <div class="col-md-4">
-                        <input disabled class="input-arena form-control titulo text-center fw-bold"
+                        <input class="input-arena form-control titulo text-center fw-bold"
                                id="valorServicios" value="@Model.TotalAnos" disabled>
                     </div>
                 </div>
 
                 <div class="row align-items-center border-bottom py-2">
                     <div class="col-md-8">
-                        <labe disabledl class="mb-0 fw-semibold">Valor de servicios por municipio</labe>
+                        <label class="mb-0 fw-semibold">Valor de servicios por municipio</label>
                     </div>
                     <div class="col-md-4">
-                        <input disabled class="input-arena form-control titulo text-center"
-                               id="valorServiciosMunicipio" disabled value="0">
+                        <input class="input-arena form-control titulo text-center"
+                               id="valorServiciosMunicipio" value="0" disabled>
                     </div>
                 </div>
 
                 <div class="mt-4">
-
                     <div class="mt-3" id="tablaGrupo1" style="display: none;">
                         <div class="table-responsive">
                             <table class="table table-bordered table-sm">
@@ -694,8 +787,7 @@
                                         <th>Clave del municipio</th>
                                     </tr>
                                 </thead>
-                                <tbody id="tbodyGrupo1">
-                                </tbody>
+                                <tbody id="tbodyGrupo1"></tbody>
                                 <tfoot>
                                     <tr class="fw-bold" style="background-color: #e9ecef;">
                                         <td id="totalGrupo1">0</td>
@@ -715,7 +807,7 @@
                     </div>
                     <div class="col-md-4">
                         <input class="input-arena form-control titulo text-center fw-bold"
-                               id="valorPersonas" disabled value="@Model.TotalAnos2">
+                               id="valorPersonas" value="@Model.TotalAnos2" disabled>
                     </div>
                 </div>
 
@@ -725,13 +817,11 @@
                     </div>
                     <div class="col-md-4">
                         <input class="input-arena form-control titulo text-center"
-                               id="valorPersonasMunicipio" disabled value="0">
+                               id="valorPersonasMunicipio" value="0" disabled>
                     </div>
                 </div>
 
                 <div class="mt-4">
-                    
-
                     <div class="mt-3" id="tablaGrupo2" style="display: none;">
                         <div class="table-responsive">
                             <table class="table table-bordered table-sm">
@@ -744,8 +834,7 @@
                                         <th>Clave del municipio</th>
                                     </tr>
                                 </thead>
-                                <tbody id="tbodyGrupo2">
-                                </tbody>
+                                <tbody id="tbodyGrupo2"></tbody>
                                 <tfoot>
                                     <tr class="fw-bold" style="background-color: #e9ecef;">
                                         <td id="totalGrupo2">0</td>
@@ -783,14 +872,14 @@
                         <div class="row mb-3">
                             <div class="col-md-12">
                                 <label class="form-label fw-semibold small">DESCRIPCIÓN DE LA ACCIÓN</label>
-                                <textarea class="form-control titulo input-arena" rows="3" disabled>@accion.Descripcion</textarea>
+                                <textarea class="form-control titulo input-arena" rows="3" @(!ViewBag.EsAdministrador ? "disabled" : "")>@accion.Descripcion</textarea>
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="col-md-4">
                                 <label class="form-label fw-semibold small">FRECUENCIA DE REALIZACIÓN</label>
-                                <select class="form-control titulo input-arena" disabled>
+                                <select class="form-control titulo input-arena" @(!ViewBag.EsAdministrador ? "disabled" : "")>
                                     <option value="">Seleccione la frecuencia</option>
                                     <option value="mensual" selected="@(accion.Frecuencia == "mensual")">MENSUAL</option>
                                     <option value="trimestral" selected="@(accion.Frecuencia == "trimestral")">TRIMESTRAL</option>
@@ -800,7 +889,7 @@
                             <div class="col-md-8">
                                 <label class="form-label fw-semibold small">FECHA INICIO</label>
                                 <input type="date" class="form-control titulo input-arena fecha-inicio"
-                                       value="@accion.FechaInicio?.ToString("yyyy-MM-dd")" disabled>
+                                       value="@accion.FechaInicio?.ToString("yyyy-MM-dd")" @(!ViewBag.EsAdministrador ? "disabled" : "")>
                             </div>
                         </div>
                     </div>
@@ -813,36 +902,54 @@
         </div>
     </div>
 
+    @* Sección de Firmas *@
     <div class="p-3 mb-4 rounded-4 shadow">
-        <div class="row p-3">            
+        <div class="row p-3">
             <div class="col-md-4 text-center border-end">
                 <label class="fw-semibold d-block mb-2">Elaboró</label>
-                <input type="text" disabled id="inputElaboro" class="form-control text-center mb-2 input-arena" value="@Model.ElaboraNombre" />
-                <input type="text" disabled id="inputElaboroCargo" class="form-control text-center input-arena" value="@Model.ElaboroCargo" />
+                <input type="text" @(!ViewBag.EsAdministrador ? "disabled" : "") id="inputElaboro" class="form-control text-center mb-2 input-arena" value="@Model.ElaboraNombre" />
+                <input type="text" @(!ViewBag.EsAdministrador ? "disabled" : "") id="inputElaboroCargo" class="form-control text-center input-arena" value="@Model.ElaboroCargo" />
             </div>
 
             <div class="col-md-4 text-center border-end">
                 <label class="fw-semibold d-block mb-2">Revisó</label>
-                <input type="text" disabled id="inputReviso" class="form-control text-center mb-2 input-arena" value="@Model.RevisionNombre" />
-                <input type="text" disabled id="inputRevisoCargo" class="form-control text-center  input-arena" value="@Model.RevisionCargo" />
+                <input type="text" @(!ViewBag.EsAdministrador ? "disabled" : "") id="inputReviso" class="form-control text-center mb-2 input-arena" value="@Model.RevisionNombre" />
+                <input type="text" @(!ViewBag.EsAdministrador ? "disabled" : "") id="inputRevisoCargo" class="form-control text-center input-arena" value="@Model.RevisionCargo" />
             </div>
 
             <div class="col-md-4 text-center">
                 <label class="fw-semibold d-block mb-2">Autorizó</label>
-                <input type="text" disabled id="inputAutorizo" class="form-control text-center mb-2 input-arena" value="@Model.AutorizacionNombre" />
-                <input type="text" disabled id="inputAutorizoCargo" class="form-control text-center input-arena" value="@Model.AutorizacionCargo" />
+                <input type="text" @(!ViewBag.EsAdministrador ? "disabled" : "") id="inputAutorizo" class="form-control text-center mb-2 input-arena" value="@Model.AutorizacionNombre" />
+                <input type="text" @(!ViewBag.EsAdministrador ? "disabled" : "") id="inputAutorizoCargo" class="form-control text-center input-arena" value="@Model.AutorizacionCargo" />
             </div>
         </div>
     </div>
 
-    @if (ViewBag.EsAdministrador && Model.Estatus != 3)
+    @* BOTONES DE ACCIÓN *@
+    @if (ViewBag.EsAdministrador)
     {
         <div class="text-center mb-5 mt-4">
-            <button class="btn btn-success btn-lg" id="btnValidarProgramacion"
-                    data-idprogramacion="@ViewData["IdProgramacion"]">
-                <i class="fas fa-check-circle"></i> Validar Programación
-            </button>
+            @if (Model.Estatus != 3)
+            {
+                <button class="btn btn-primary btn-lg me-3" id="btnGuardarAdmin">
+                    <i class="fas fa-save"></i> Guardar Cambios
+                </button>
+                <button class="btn btn-success btn-lg" id="btnValidarProgramacion" data-idprogramacion="@Model.Id">
+                    <i class="fas fa-check-circle"></i> Validar Programación
+                </button>
+            }
         </div>
+    }
+    else
+    {
+        @if (Model.Estatus == 2)
+        {
+            <div class="text-center mb-5 mt-4">
+                <button class="btn btn-success btn-lg" id="btnGuardarCambiosUsuario">
+                    <i class="fas fa-save"></i> Guardar Cambios
+                </button>
+            </div>
+        }
     }
 
     @if (Model.Estatus == 3)
@@ -855,47 +962,41 @@
         </div>
     }
 
-</div>
-
-<!-- Modal para comentarios -->
-<div class="modal fade" id="modalComentario" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Agregar Comentario</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <input type="hidden" id="campoActual">
-                <div class="mb-3">
-                    <label class="form-label">Comentario:</label>
-                    <textarea class="form-control" id="textoComentario" rows="4"></textarea>
+    @* Modal para comentarios *@
+    <div class="modal fade" id="modalComentario" tabindex="-1" aria-labelledby="modalComentarioLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalComentarioLabel">Agregar Comentario</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="mb-3">
-                    <small class="text-muted" id="infoCampo"></small>
+                <div class="modal-body">
+                    <input type="hidden" id="campoActual">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Campo:</label>
+                        <p id="infoCampo" class="text-muted mb-3"></p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Comentario:</label>
+                        <textarea class="form-control" id="textoComentario" rows="4" placeholder="Escribe tu comentario aquí..."></textarea>
+                    </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" id="btnEliminarComentario" style="display: none;">
-                    <i class="fas fa-trash"></i> Eliminar
-                </button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary" id="btnGuardarComentario">Guardar</button>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" id="btnEliminarComentario" style="display: none;">
+                        <i class="fas fa-trash"></i> Eliminar
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="btnGuardarComentario">
+                        <i class="fas fa-save"></i> Guardar
+                    </button>
+                </div>
             </div>
         </div>
     </div>
+
 </div>
 
-<!-- Botón guardar comentarios -->
-@if (ViewBag.EsAdministrador && Model.Estatus != 3)
-{
-    <div class="text-center mb-5">
-        <button class="btn btn-primary btn-lg" id="btnGuardarTodosComentarios">
-            <i class="fas fa-save"></i> Guardar Todos los Comentarios
-        </button>
-    </div>
-}
-<input type="hidden" id="esAdministrador" value="@ViewBag.EsAdministrador">
+<input type="hidden" id="esAdministrador" value="@User.IsInRole("Administrador").ToString().ToLower()">
 <input type="hidden" id="idProgramacionHidden" value="@ViewData["IdProgramacion"]">
 
 @section Scripts {
@@ -903,20 +1004,9 @@
         // ========================================
         // VARIABLES GLOBALES
         // ========================================
-        let datosEstados = {};
-        let contadorAcciones = 3;
-        const MAX_ACCIONES = 5;
-        const MIN_ACCIONES = 3;
-
-        // ========================================
-        // SISTEMA DE COMENTARIOS - ADMIN
-        // ========================================
-
-        // Variables globales para manejar los comentarios
         let comentariosTemp = {};
         let modalComentario = null;
 
-        // Descripciones de cada campo del formulario
         const descripcionesCampos = {
             '4': 'PROGRAMA PRESUPUESTARIO', '5': 'NÚMERO DE COMPONENTE', '6': 'NÚMERO DE ACTIVIDAD',
             '7': 'JUSTIFICACIÓN', '8': 'DOCUMENTACIÓN SOPORTE', '9': 'ORIGEN DE RECURSOS',
@@ -930,222 +1020,321 @@
         };
 
         // ========================================
-        // Inicializar el sistema de comentarios
+        // INICIALIZAR SISTEMA DE COMENTARIOS
         // ========================================
         function inicializarComentarios() {
-            const esAdministrador = document.getElementById('esAdministrador').value === 'True';
+            const inputAdmin = document.getElementById('esAdministrador');
+            const esAdministrador = inputAdmin?.value?.toLowerCase() === 'true';
 
-            console.log('👤 Tipo de usuario:', esAdministrador ? 'Administrador' : 'Usuario');
+            // Inicializar modal
+            const modalElement = document.getElementById('modalComentario');
+            if (!modalElement || typeof bootstrap === 'undefined') return;
 
-            // Configurar modal y eventos
-            modalComentario = new bootstrap.Modal(document.getElementById('modalComentario'));
+            try {
+                modalComentario = new bootstrap.Modal(modalElement);
+            } catch (error) {
+                console.error('Error al inicializar modal:', error);
+                return;
+            }
 
-            document.querySelectorAll('.btn-comentario').forEach(btn => {
-                btn.addEventListener('click', function() {
+            // Configurar botones de comentario
+            const botonesComentario = document.querySelectorAll('.btn-comentario');
+            botonesComentario.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
                     const campo = this.getAttribute('data-campo');
-                    abrirModalComentario(campo);
+                    const adminInput = document.getElementById('esAdministrador');
+                    const esAdmin = adminInput?.value?.toLowerCase() === 'true';
+
+                    if (esAdmin) {
+                        abrirModalComentario(campo);
+                    } else {
+                        mostrarComentarioSoloLectura(campo);
+                    }
                 });
             });
 
-            // Configurar eventos del modal
-            document.getElementById('btnGuardarComentario').addEventListener('click', guardarComentarioIndividual);
-            document.getElementById('btnEliminarComentario').addEventListener('click', eliminarComentario);
-            document.getElementById('btnGuardarTodosComentarios').addEventListener('click', guardarTodosComentarios);
+            // Configurar botones del modal (solo admin)
+            if (esAdministrador) {
+                const btnGuardar = document.getElementById('btnGuardarComentario');
+                const btnEliminar = document.getElementById('btnEliminarComentario');
 
-            // ✅ BLOQUEAR CAMPOS PARA USUARIOS SI NO TIENEN COMENTARIOS
-            if (!esAdministrador) {
-                bloquearCamposSinComentarios();
+                if (btnGuardar) btnGuardar.addEventListener('click', guardarComentarioIndividual);
+                if (btnEliminar) btnEliminar.addEventListener('click', eliminarComentario);
             }
 
-            // ✅ AGREGAR EVENTOS PARA BORRAR COMENTARIOS AL EDITAR
-            configurarEventosEdicionCampos();
-
             // Cargar comentarios existentes
-            cargarComentariosExistentes();
+            cargarComentariosExistentes().then(() => {
+                const adminCheck = document.getElementById('esAdministrador');
+                const esAdmin = adminCheck?.value?.toLowerCase() === 'true';
+
+                if (!esAdmin) {
+                    setTimeout(bloquearCamposSinComentarios, 300);
+                    setTimeout(configurarEventosEdicionCampos, 400);
+                }
+            });
         }
 
         // ========================================
-        // Bloquear campos para usuarios si no tienen comentarios
+        // MOSTRAR COMENTARIO SOLO LECTURA (USUARIOS)
+        // ========================================
+        function mostrarComentarioSoloLectura(campo) {
+            const comentario = comentariosTemp[campo];
+
+            if (!comentario || !comentario.texto || comentario.texto.trim() === '') {
+                Swal.fire({
+                    title: 'Sin comentarios',
+                    text: `El campo ${campo}: ${descripcionesCampos[campo] || 'Desconocido'} no tiene comentarios.`,
+                    icon: 'info',
+                    confirmButtonText: 'Aceptar'
+                });
+                return;
+            }
+
+            Swal.fire({
+                title: `Comentario - Campo ${campo}`,
+                html: `
+                    <div class="text-start">
+                        <p class="mb-2"><strong>${descripcionesCampos[campo] || 'Campo'}</strong></p>
+                        <div class="alert alert-info">
+                            <i class="fas fa-comment-dots"></i> ${comentario.texto}
+                        </div>
+                        <small class="text-muted">Este comentario fue agregado por el administrador. Puedes editar este campo y el comentario se eliminará automáticamente.</small>
+                    </div>
+                `,
+                icon: 'info',
+                confirmButtonText: 'Entendido',
+                confirmButtonColor: '#3085d6'
+            });
+        }
+
+        // ========================================
+        // BLOQUEAR CAMPOS SIN COMENTARIOS (USUARIOS)
         // ========================================
         function bloquearCamposSinComentarios() {
-            console.log('🔒 Bloqueando campos sin comentarios para usuario...');
+            // Bloquear TODOS los campos editables, EXCEPTO botones
+            const todosLosCampos = document.querySelectorAll('input:not([type="hidden"]), select, textarea');
 
-            // Para cada campo del 4 al 30
+            todosLosCampos.forEach(campo => {
+                if (campo.id === 'inputArea' || campo.id === 'inputDepartamento' || campo.id === 'inputAnoMeta') {
+                    return;
+                }
+                if (campo.classList.contains('btn-comentario')) return;
+
+                campo.disabled = true;
+                campo.style.backgroundColor = '#f8f9fa';
+                campo.style.cursor = 'not-allowed';
+                campo.style.opacity = '0.7';
+            });
+
+            // Desbloquear solo los campos que tienen comentarios
             for (let campo = 4; campo <= 30; campo++) {
-                const tieneComentario = comentariosTemp[campo]?.texto?.trim() !== '';
+                const tieneComentario = comentariosTemp[campo]?.texto?.trim() !== '' && comentariosTemp[campo]?.texto !== undefined;
 
-                if (!tieneComentario) {
-                    // Buscar todos los inputs/selects/textarea de este campo
-                    const elementosCampo = document.querySelectorAll(`[data-campo="${campo}"]`);
+                if (tieneComentario) {
+                    const elementosDelCampo = obtenerElementosPorCampo(campo);
 
-                    elementosCampo.forEach(elemento => {
-                        if (elemento.tagName === 'INPUT' || elemento.tagName === 'SELECT' || elemento.tagName === 'TEXTAREA') {
-                            elemento.disabled = true;
-                            elemento.title = 'Este campo está bloqueado. Solo se puede editar si tiene comentarios del administrador.';
-
-                            // Agregar estilo visual
-                            elemento.style.backgroundColor = '#f8f9fa';
-                            elemento.style.cursor = 'not-allowed';
-                        }
+                    elementosDelCampo.forEach(elemento => {
+                        elemento.disabled = false;
+                        elemento.style.backgroundColor = '';
+                        elemento.style.cursor = '';
+                        elemento.style.opacity = '';
+                        elemento.title = 'Puedes editar este campo porque tiene comentarios del administrador.';
+                        elemento.style.borderColor = '#28a745';
+                        elemento.style.borderWidth = '2px';
                     });
                 }
             }
         }
 
         // ========================================
-        // Configurar eventos para borrar comentarios al editar campos
+        // OBTENER ELEMENTOS POR CAMPO
+        // ========================================
+        function obtenerElementosPorCampo(campo) {
+            const elementos = [];
+
+            const mapaCampos = {
+                4: ['selectPrograma'],
+                5: ['selectComponente'],
+                6: ['inputActividad'],
+                7: ['inputJustificacion'],
+                8: ['inputDocumentacion'],
+                9: ['selectFederal', 'selectEstatal'],
+                10: ['inputPrograma'],
+                11: ['inputDescripcion'],
+                12: ['inputIndicador'],
+                13: ['inputDefinicion'],
+                14: ['primerServicio', 'segundoServicio', 'tercerServicio', 'cuartoServicio',
+                     'primerPersona', 'segundoPersona', 'tercerPersona', 'cuartoPersona'],
+                15: ['selectMedida'],
+                16: ['inputMedios'],
+                17: ['selectDesde', 'selectHasta'],
+                18: ['inputFuentes'],
+                19: ['selectDelegaciones'],
+                20: ['inputDelegaciones'],
+                21: ['selectAnoBase'],
+                22: ['inputPorcentajeBase'],
+                23: ['inputServicioBase'],
+                24: ['inputPersonasBase'],
+                25: ['inputAnoMeta'],
+                26: ['inputPorcentajeMeta'],
+                27: ['inputServicioMeta'],
+                28: ['inputServicioMetas'],
+                29: [],
+                30: ['selectPersonas', 'selectAcumulable']
+            };
+
+            const ids = mapaCampos[campo] || [];
+
+            ids.forEach(id => {
+                const elemento = document.getElementById(id);
+                if (elemento) elementos.push(elemento);
+            });
+
+            if (campo === 14) {
+                document.querySelectorAll('.mes-grupo1, .mes-grupo2').forEach(input => {
+                    elementos.push(input);
+                });
+            }
+
+            if (campo === 29) {
+                document.querySelectorAll('.mes-grupo1').forEach(input => {
+                    elementos.push(input);
+                });
+            }
+
+            return elementos;
+        }
+
+        // ========================================
+        // CONFIGURAR EVENTOS EDICIÓN CAMPOS
         // ========================================
         function configurarEventosEdicionCampos() {
-            console.log('🎯 Configurando eventos para borrar comentarios al editar...');
-
-            // Para cada campo del 4 al 30
             for (let campo = 4; campo <= 30; campo++) {
-                // Buscar todos los elementos editables de este campo
-                const elementosEditables = document.querySelectorAll(`
-                    input[data-campo="${campo}"],
-                    select[data-campo="${campo}"],
-                    textarea[data-campo="${campo}"]
-                `);
+                if (!comentariosTemp[campo]?.texto) continue;
+
+                const elementosEditables = obtenerElementosPorCampo(campo);
 
                 elementosEditables.forEach(elemento => {
-                    // Evento cuando el campo pierde el foco (después de editar)
-                    elemento.addEventListener('blur', function() {
-                        const valorOriginal = this.getAttribute('data-valor-original');
-                        const valorActual = this.value;
+                    if (elemento.disabled) return;
 
-                        // Si el valor cambió, borrar el comentario
-                        if (valorOriginal !== valorActual) {
+                    const valorOriginal = elemento.value;
+                    elemento.setAttribute('data-valor-original', valorOriginal);
+
+                    const eventoChange = function() {
+                        const valorNuevo = this.value;
+                        const valorOriginalGuardado = this.getAttribute('data-valor-original');
+
+                        if (valorOriginalGuardado !== valorNuevo) {
                             borrarComentarioAlEditar(campo);
-                        }
-                    });
 
-                    // Guardar valor original al enfocar
-                    elemento.addEventListener('focus', function() {
-                        this.setAttribute('data-valor-original', this.value);
-                    });
+                            this.disabled = true;
+                            this.style.backgroundColor = '#f8f9fa';
+                            this.style.cursor = 'not-allowed';
+                            this.style.opacity = '0.7';
+                            this.style.borderColor = '';
+                            this.style.borderWidth = '';
+                        }
+                    };
+
+                    if (elemento.tagName === 'SELECT') {
+                        elemento.addEventListener('change', eventoChange);
+                    } else {
+                        elemento.addEventListener('blur', eventoChange);
+                    }
                 });
             }
         }
 
         // ========================================
-        // Borrar comentario cuando se edita un campo
+        // BORRAR COMENTARIO AL EDITAR
         // ========================================
         function borrarComentarioAlEditar(campo) {
-            // Verificar si existe comentario para este campo
             if (comentariosTemp[campo]) {
-                console.log(`🗑️ Borrando comentario del campo ${campo} porque fue editado`);
-
-                // Eliminar de memoria temporal
                 delete comentariosTemp[campo];
-
-                // Actualizar botón de comentario
                 actualizarBotonComentario(campo, false);
 
-                // Mostrar notificación
                 Swal.fire({
                     title: 'Comentario eliminado',
-                    text: `El comentario del campo ${campo} se eliminó automáticamente porque editaste este campo.`,
+                    html: `El comentario del campo <strong>${campo}: ${descripcionesCampos[campo]}</strong> se eliminó porque editaste este campo.<br><br>
+                           <small class="text-muted">Recuerda guardar los cambios cuando termines.</small>`,
                     icon: 'info',
-                    timer: 3000,
-                    showConfirmButton: false
+                    timer: 4000,
+                    showConfirmButton: true,
+                    confirmButtonText: 'Entendido'
                 });
-
-                // ✅ OPCIONAL: Guardar automáticamente en BD
-                // guardarTodosComentarios();
             }
         }
 
         // ========================================
-        // Abrir el modal para agregar/editar comentario
+        // ABRIR MODAL COMENTARIO (ADMIN)
         // ========================================
         function abrirModalComentario(campo) {
-            console.log('🔍 Abriendo modal para campo:', campo);
-            console.log('📝 Comentario actual en memoria:', comentariosTemp[campo]);
-
-            // Obtener elementos del DOM
             const campoActual = document.getElementById('campoActual');
             const infoCampo = document.getElementById('infoCampo');
             const textoComentario = document.getElementById('textoComentario');
             const btnEliminar = document.getElementById('btnEliminarComentario');
 
-            // Configurar el campo actual
             campoActual.value = campo;
             infoCampo.textContent = `Campo ${campo}: ${descripcionesCampos[campo] || 'Desconocido'}`;
 
-            // Cargar el comentario si ya existe
             const comentarioExistente = comentariosTemp[campo];
             textoComentario.value = comentarioExistente?.texto || '';
 
-            console.log('📋 Texto cargado en textarea:', textoComentario.value);
-
-            // Mostrar/ocultar botón eliminar según si hay comentario
             btnEliminar.style.display = comentarioExistente ? 'block' : 'none';
-            console.log('👁️ Botón eliminar visible:', btnEliminar.style.display);
 
-            // Abrir el modal y enfocar el textarea
             modalComentario.show();
             setTimeout(() => textoComentario.focus(), 500);
         }
 
         // ========================================
-        // Guardar un comentario individual (temporal)
+        // GUARDAR COMENTARIO INDIVIDUAL
         // ========================================
         function guardarComentarioIndividual() {
             const campo = document.getElementById('campoActual').value;
             const texto = document.getElementById('textoComentario').value.trim();
 
-            // Validar que no esté vacío
             if (!texto) {
                 Swal.fire('Error', 'El comentario no puede estar vacío', 'warning');
                 return;
             }
 
-            // Guardar en memoria temporal (no en BD todavía)
             comentariosTemp[campo] = {
                 texto: texto,
                 fechaHora: new Date().toISOString()
             };
 
-            // Actualizar la apariencia del botón
             actualizarBotonComentario(campo, true);
-
-            // Cerrar modal y mostrar confirmación
             modalComentario.hide();
             Swal.fire('Éxito', 'Comentario guardado temporalmente', 'success');
         }
 
         // ========================================
-        // Eliminar un comentario INDIVIDUAL
+        // ELIMINAR COMENTARIO
         // ========================================
         function eliminarComentario() {
             const campo = document.getElementById('campoActual').value;
 
-            // Eliminar de la memoria temporal
             delete comentariosTemp[campo];
-
-            // Actualizar la apariencia del botón
             actualizarBotonComentario(campo, false);
 
-            // Limpiar el textarea y cerrar modal
             document.getElementById('textoComentario').value = '';
             modalComentario.hide();
 
             Swal.fire('Éxito', 'Comentario eliminado', 'success');
-
-            // ✅ OPCIONAL: Guardar automáticamente después de eliminar
-            // guardarTodosComentarios();
         }
+
         // ========================================
-        // Actualizar la apariencia del botón de comentario
+        // ACTUALIZAR BOTÓN COMENTARIO
         // ========================================
         function actualizarBotonComentario(campo, tieneComentario) {
-            document.querySelectorAll(`[data-campo="${campo}"]`).forEach(btn => {
+            document.querySelectorAll(`button.btn-comentario[data-campo="${campo}"]`).forEach(btn => {
                 if (tieneComentario) {
-                    // Botón con comentario (estilo azul)
                     btn.className = 'btn btn-sm btn-comentario btn-comentario-con';
                     btn.innerHTML = '<i class="fas fa-comment-dots"></i>';
                 } else {
-                    // Botón sin comentario (estilo gris)
                     btn.className = 'btn btn-sm btn-comentario btn-comentario-sin';
                     btn.innerHTML = '<i class="fas fa-comment-medical"></i>';
                 }
@@ -1153,63 +1342,11 @@
         }
 
         // ========================================
-        // Guardar TODOS los comentarios en la base de datos
-        // ========================================
-        async function guardarTodosComentarios() {
-            const comentariosArray = [];
-            const idProgramacion = document.getElementById('idProgramacionHidden').value;
-
-            // ✅ PREPARAR COMENTARIOS - INCLUIR CAMPOS VACÍOS
-            for (let campo = 4; campo <= 30; campo++) {
-                const comentarioBD = campo - 3;
-                const texto = comentariosTemp[campo]?.texto || ''; // Si no existe, texto vacío
-
-                comentariosArray.push({
-                    ComentarioId: comentarioBD,
-                    Campo: campo,
-                    Texto: texto,
-                    IdProgramacion: parseInt(idProgramacion)
-                });
-            }
-
-            console.log('📤 Enviando TODOS los comentarios:', comentariosArray);
-
-            const btn = document.getElementById('btnGuardarTodosComentarios');
-
-            try {
-                btn.disabled = true;
-                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
-
-                const response = await fetch('/Programacion/GuardarComentarios', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(comentariosArray)
-                });
-
-                const resultado = await response.json();
-
-                if (resultado.success) {
-                    await Swal.fire('Éxito', resultado.message || 'Comentarios guardados correctamente', 'success');
-                    window.location.href = '/Programacion/Programacion';
-                } else {
-                    Swal.fire('Error', resultado.message || 'No se pudieron guardar los comentarios', 'error');
-                }
-
-            } catch (error) {
-                Swal.fire('Error', 'Error de conexión: ' + error.message, 'error');
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-save"></i> Guardar Todos los Comentarios';
-            }
-        }
-
-        // ========================================
-        // Cargar comentarios existentes desde la base de datos
+        // CARGAR COMENTARIOS EXISTENTES
         // ========================================
         async function cargarComentariosExistentes() {
             try {
                 const idProgramacion = document.getElementById('idProgramacionHidden').value;
-                const esAdministrador = document.getElementById('esAdministrador').value === 'True';
 
                 const response = await fetch(
                     `/Programacion/ObtenerComentariosPorProgramacion?idProgramacion=${idProgramacion}`
@@ -1219,7 +1356,6 @@
 
                 const comentarioObj = await response.json();
 
-                // Procesar comentarios
                 for (let comentarioBD = 1; comentarioBD <= 27; comentarioBD++) {
                     const propiedad = `comentario${comentarioBD}`;
                     const texto = comentarioObj[propiedad];
@@ -1231,25 +1367,14 @@
                     }
                 }
 
-                // ✅ BLOQUEAR CAMPOS DESPUÉS DE CARGAR COMENTARIOS
-                if (!esAdministrador) {
-                    setTimeout(() => bloquearCamposSinComentarios(), 100);
-                }
-
             } catch (error) {
                 console.error('Error cargando comentarios:', error);
             }
         }
 
-        // Botón Validar Programación
-        document.addEventListener('DOMContentLoaded', function() {
-            const btnValidar = document.getElementById('btnValidarProgramacion');
-
-            if (btnValidar) {
-                btnValidar.addEventListener('click', validarProgramacion);
-            }
-        });
-
+        // ========================================
+        // VALIDAR PROGRAMACIÓN
+        // ========================================
         async function validarProgramacion() {
             const btn = document.getElementById('btnValidarProgramacion');
             const idProgramacion = btn.getAttribute('data-idprogramacion');
@@ -1273,9 +1398,7 @@
 
                 const response = await fetch('/Programacion/ValidarProgramacion', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ IdProgramacion: parseInt(idProgramacion) })
                 });
 
@@ -1288,9 +1411,7 @@
                         icon: 'success',
                         confirmButtonText: 'Aceptar'
                     });
-
-                     window.location.href = '/Programacion/Programacion';
-
+                    window.location.href = '/Programacion/Programacion';
                 } else {
                     throw new Error(resultado.message);
                 }
@@ -1309,114 +1430,422 @@
         }
 
         // ========================================
-        // TUS FUNCIONES ORIGINALES
+        // GUARDAR CAMBIOS ADMIN
         // ========================================
-        async function cargarMunicipios() {
-            try {
-                const response = await fetch('/Programacion/ObtenerMunicipiosJson');
-                if (!response.ok) throw new Error('Error al cargar municipios');
-                const municipios = await response.json();
+        async function guardarCambiosAdmin() {
+            const btnGuardar = document.getElementById('btnGuardarAdmin');
+            const textoOriginal = btnGuardar.innerHTML;
+            const idProgramacion = document.getElementById('idProgramacionHidden')?.value;
 
-                datosEstados = {};
-                municipios.forEach(m => {
-                    datosEstados[m.id] = {
-                        municipio: m.municipio,
-                        region: m.region,
-                        numeroRegion: m.numeroRegion,
-                        clave: m.clave
-                    };
+            if (!idProgramacion) {
+                await Swal.fire({ title: 'Error', text: 'No se encontró el ID de programación', icon: 'error' });
+                return;
+            }
+
+            try {
+                btnGuardar.disabled = true;
+                btnGuardar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+
+                const obtenerValor = (id, valorDefault = '') => {
+                    const elemento = document.getElementById(id);
+                    return elemento ? elemento.value : valorDefault;
+                };
+
+                const obtenerTextoSelect = (id, valorDefault = '') => {
+                    const elemento = document.getElementById(id);
+                    if (!elemento) return valorDefault;
+                    const opcionSeleccionada = elemento.selectedOptions[0];
+                    return opcionSeleccionada ? opcionSeleccionada.text : valorDefault;
+                };
+
+                const obtenerValorNumerico = (id, valorDefault = 0) => {
+                    const elemento = document.getElementById(id);
+                    return elemento ? (parseInt(elemento.value) || valorDefault) : valorDefault;
+                };
+
+                const obtenerValorDecimal = (id, valorDefault = 0) => {
+                    const elemento = document.getElementById(id);
+                    return elemento ? (parseFloat(elemento.value) || valorDefault) : valorDefault;
+                };
+
+                // Preparar comentarios
+                const comentariosArray = [];
+                for (let campo = 4; campo <= 30; campo++) {
+                    const comentarioBD = campo - 3;
+                    const texto = comentariosTemp[campo]?.texto || '';
+                    comentariosArray.push({
+                        comentarioId: comentarioBD,
+                        campo: campo,
+                        texto: texto,
+                        idProgramacion: parseInt(idProgramacion)
+                    });
+                }
+
+                const datosCompletos = {
+                    id: parseInt(idProgramacion),
+                    area: obtenerValor('inputArea'),
+                    departamento: obtenerValor('inputDepartamento'),
+                    correoContacto: obtenerValor('inputCorreo'),
+                    pp: obtenerValor('selectPrograma'),
+                    nComponente: obtenerTextoSelect('selectComponente'),
+                    componente: obtenerValorNumerico('selectComponente'),
+                    nActividad: obtenerValorNumerico('inputActividad'),
+                    justificacion: obtenerValor('inputJustificacion'),
+                    descripcionDocumento: obtenerValor('inputDocumentacion'),
+                    recursoFederal: obtenerValor('selectFederal'),
+                    recursoEstatal: obtenerValor('selectEstatal'),
+                    programaSocial: obtenerValor('inputPrograma'),
+                    descripcionActividad: obtenerValor('inputDescripcion'),
+                    nombreIndicador: obtenerValor('inputIndicador'),
+                    definicionIndicador: obtenerValor('inputDefinicion'),
+                    unidadMedida: obtenerTextoSelect('selectMedida'),
+                    mediosVerificacion: obtenerValor('inputMedios'),
+                    serieInformacionDesde: obtenerValor('selectDesde'),
+                    serieInformacionHasta: obtenerValor('selectHasta'),
+                    fuenteInformacion: obtenerValor('inputFuentes'),
+                    intervienenDelegaciones: obtenerValor('selectDelegaciones'),
+                    intervienenDelegacionesManera: obtenerValor('inputDelegaciones'),
+                    anoBase: obtenerValorNumerico('selectAnoBase'),
+                    porcentajeBase: obtenerValorDecimal('inputPorcentajeBase'),
+                    servicioBase: obtenerValorNumerico('inputServicioBase'),
+                    personasBase: obtenerValorNumerico('inputPersonasBase'),
+                    anoMeta: obtenerValorNumerico('inputAnoMeta'),
+                    porcentajeMeta: obtenerValorDecimal('inputPorcentajeMeta'),
+                    servicioMeta: obtenerValorNumerico('inputServicioMeta'),
+                    personasMeta: obtenerValorNumerico('inputServicioMetas'),
+                    primerServicio: obtenerValorNumerico('primerServicio'),
+                    segundoServicio: obtenerValorNumerico('segundoServicio'),
+                    tercerServicio: obtenerValorNumerico('tercerServicio'),
+                    cuartoServicio: obtenerValorNumerico('cuartoServicio'),
+                    primerPersona: obtenerValorNumerico('primerPersona'),
+                    segundoPersona: obtenerValorNumerico('segundoPersona'),
+                    tercerPersona: obtenerValorNumerico('tercerPersona'),
+                    cuartoPersona: obtenerValorNumerico('cuartoPersona'),
+                    selectAcumulable: obtenerValor('selectAcumulable'),
+                    beneficiarios: obtenerValor('selectPersonas'),
+                    totalAnos: obtenerValorNumerico('valorServicios'),
+                    totalAnos2: obtenerValorNumerico('valorPersonas'),
+                    elaboraNombre: obtenerValor('inputElaboro'),
+                    elaboroCargo: obtenerValor('inputElaboroCargo'),
+                    revisionNombre: obtenerValor('inputReviso'),
+                    revisionCargo: obtenerValor('inputRevisoCargo'),
+                    autorizacionNombre: obtenerValor('inputAutorizo'),
+                    autorizacionCargo: obtenerValor('inputAutorizoCargo'),
+                    mesesServicios: [],
+                    mesesPersonas: [],
+                    municipiosServicios: [],
+                    municipiosPersonas: [],
+                    acciones: [],
+                    comentarios: comentariosArray
+                };
+
+                // Meses
+                document.querySelectorAll('.mes-grupo1').forEach(input => {
+                    datosCompletos.mesesServicios.push(parseInt(input.value) || 0);
                 });
+                document.querySelectorAll('.mes-grupo2').forEach(input => {
+                    datosCompletos.mesesPersonas.push(parseInt(input.value) || 0);
+                });
+
+                // Municipios
+                document.querySelectorAll('#tbodyGrupo1 tr').forEach(fila => {
+                    const idMunicipio = parseInt(fila.getAttribute('data-id-municipio')) || 0;
+                    const cantidad = parseInt(fila.getAttribute('data-cantidad')) || 0;
+                    if (idMunicipio > 0 && cantidad > 0) {
+                        datosCompletos.municipiosServicios.push({ idMunicipio, cantidad });
+                    }
+                });
+                document.querySelectorAll('#tbodyGrupo2 tr').forEach(fila => {
+                    const idMunicipio = parseInt(fila.getAttribute('data-id-municipio')) || 0;
+                    const cantidad = parseInt(fila.getAttribute('data-cantidad')) || 0;
+                    if (idMunicipio > 0 && cantidad > 0) {
+                        datosCompletos.municipiosPersonas.push({ idMunicipio, cantidad });
+                    }
+                });
+
+                // Acciones
+                document.querySelectorAll('.accion-item').forEach(accion => {
+                    const descripcion = accion.querySelector('textarea')?.value || '';
+                    const frecuencia = accion.querySelector('select')?.value || '';
+                    const fechaStr = accion.querySelector('.fecha-inicio')?.value || '';
+                    if (descripcion.trim() !== '') {
+                        datosCompletos.acciones.push({
+                            descripcion,
+                            frecuencia,
+                            fechaInicio: fechaStr || null
+                        });
+                    }
+                });
+
+                const response = await fetch('/Programacion/GuardarCambiosAdmin', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(datosCompletos)
+                });
+
+                if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
+
+                const resultado = await response.json();
+
+                if (resultado.success) {
+                    await Swal.fire({
+                        title: '¡Éxito!',
+                        text: resultado.message,
+                        icon: 'success',
+                        confirmButtonText: 'Aceptar'
+                    });
+                    window.location.href = '/Programacion/Programacion';
+                } else {
+                    throw new Error(resultado.message || 'Error al guardar');
+                }
+
             } catch (error) {
-                console.error('Error al cargar municipios:', error);
+                console.error('Error al guardar:', error);
+                btnGuardar.disabled = false;
+                btnGuardar.innerHTML = textoOriginal;
+
+                await Swal.fire({
+                    title: 'Error',
+                    text: error.message,
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
             }
         }
 
-        function getAccionTemplate(numero) {
-            return `
-                <div class="border rounded p-3 mb-3 accion-item" data-numero="${numero}">
-                    <div class="row align-items-center mb-3">
-                        <div class="col-md-12">
-                            <h6 class="fw-semibold mb-0 titulo">${numero}. ACCIÓN</h6>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-12">
-                            <label class="form-label fw-semibold small">DESCRIPCIÓN DE LA ACCIÓN</label>
-                            <textarea class="form-control titulo input-arena" rows="3" placeholder="Describa la acción necesaria..."></textarea>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <label class="form-label fw-semibold small">FRECUENCIA DE REALIZACIÓN</label>
-                            <select class="form-control titulo input-arena">
-                                <option value="">Seleccione la frecuencia</option>
-                                <option value="mensual">MENSUAL</option>
-                                <option value="trimestral">TRIMESTRAL</option>
-                                <option value="anual">ANUAL</option>
-                            </select>
-                        </div>
-                        <div class="col-md-8">
-                            <label class="form-label fw-semibold small">FECHA INICIO</label>
-                            <input type="date" class="form-control titulo input-arena fecha-inicio">
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
+        // ========================================
+        // GUARDAR CAMBIOS USUARIO
+        // ========================================
+        async function guardarCambiosUsuario() {
+            const btnGuardar = document.getElementById('btnGuardarCambiosUsuario');
+            const textoOriginal = btnGuardar.innerHTML;
+            const idProgramacion = document.getElementById('idProgramacionHidden')?.value;
 
-        function actualizarNumeros() {
-            document.querySelectorAll('.accion-item').forEach((accion, index) => {
-                const numero = index + 1;
-                accion.setAttribute('data-numero', numero);
-                accion.querySelector('h6').textContent = `${numero}. ACCIÓN`;
-            });
-        }
+            if (!idProgramacion) {
+                await Swal.fire({ title: 'Error', text: 'No se encontró el ID de programación', icon: 'error' });
+                return;
+            }
 
-        function actualizarBotones(btnAgregar, btnEliminar) {
-            btnAgregar.disabled = contadorAcciones >= MAX_ACCIONES;
-            btnEliminar.disabled = contadorAcciones <= MIN_ACCIONES;
-        }
+            try {
+                btnGuardar.disabled = true;
+                btnGuardar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
 
-        function configurarAcciones() {
-            const accionesList = document.getElementById('accionesList');
-            const btnAgregar = document.getElementById('btnAgregarAccion');
-            const btnEliminar = document.getElementById('btnEliminarAccion');
+                const obtenerValor = (id, valorDefault = '') => {
+                    const elemento = document.getElementById(id);
+                    return elemento ? elemento.value : valorDefault;
+                };
 
-            if (!btnAgregar || !btnEliminar) return;
+                const obtenerTextoSelect = (id, valorDefault = '') => {
+                    const elemento = document.getElementById(id);
+                    if (!elemento) return valorDefault;
+                    const opcionSeleccionada = elemento.selectedOptions[0];
+                    return opcionSeleccionada ? opcionSeleccionada.text : valorDefault;
+                };
 
-            btnAgregar.addEventListener('click', function() {
-                if (contadorAcciones < MAX_ACCIONES) {
-                    contadorAcciones++;
-                    accionesList.insertAdjacentHTML('beforeend', getAccionTemplate(contadorAcciones));
-                    actualizarNumeros();
-                    actualizarBotones(btnAgregar, btnEliminar);
+                const obtenerValorNumerico = (id, valorDefault = 0) => {
+                    const elemento = document.getElementById(id);
+                    return elemento ? (parseInt(elemento.value) || valorDefault) : valorDefault;
+                };
+
+                const obtenerValorDecimal = (id, valorDefault = 0) => {
+                    const elemento = document.getElementById(id);
+                    return elemento ? (parseFloat(elemento.value) || valorDefault) : valorDefault;
+                };
+
+                // Preparar comentarios restantes
+                const comentariosRestantes = [];
+                for (let campo = 4; campo <= 30; campo++) {
+                    const comentarioBD = campo - 3;
+                    const texto = comentariosTemp[campo]?.texto || '';
+                    comentariosRestantes.push({
+                        comentarioId: comentarioBD,
+                        campo: campo,
+                        texto: texto,
+                        idProgramacion: parseInt(idProgramacion)
+                    });
                 }
-            });
 
-            btnEliminar.addEventListener('click', function() {
-                if (contadorAcciones > MIN_ACCIONES) {
-                    document.querySelector('.accion-item:last-child').remove();
-                    contadorAcciones--;
-                    actualizarNumeros();
-                    actualizarBotones(btnAgregar, btnEliminar);
+                const datosCompletos = {
+                    id: parseInt(idProgramacion),
+                    area: obtenerValor('inputArea'),
+                    departamento: obtenerValor('inputDepartamento'),
+                    correoContacto: obtenerValor('inputCorreo'),
+                    pp: obtenerValor('selectPrograma'),
+                    nComponente: obtenerTextoSelect('selectComponente'),
+                    componente: obtenerValorNumerico('selectComponente'),
+                    nActividad: obtenerValorNumerico('inputActividad'),
+                    justificacion: obtenerValor('inputJustificacion'),
+                    descripcionDocumento: obtenerValor('inputDocumentacion'),
+                    recursoFederal: obtenerValor('selectFederal'),
+                    recursoEstatal: obtenerValor('selectEstatal'),
+                    programaSocial: obtenerValor('inputPrograma'),
+                    descripcionActividad: obtenerValor('inputDescripcion'),
+                    nombreIndicador: obtenerValor('inputIndicador'),
+                    definicionIndicador: obtenerValor('inputDefinicion'),
+                    unidadMedida: obtenerTextoSelect('selectMedida'),
+                    mediosVerificacion: obtenerValor('inputMedios'),
+                    serieInformacionDesde: obtenerValor('selectDesde'),
+                    serieInformacionHasta: obtenerValor('selectHasta'),
+                    fuenteInformacion: obtenerValor('inputFuentes'),
+                    intervienenDelegaciones: obtenerValor('selectDelegaciones'),
+                    intervienenDelegacionesManera: obtenerValor('inputDelegaciones'),
+                    anoBase: obtenerValorNumerico('selectAnoBase'),
+                    porcentajeBase: obtenerValorDecimal('inputPorcentajeBase'),
+                    servicioBase: obtenerValorNumerico('inputServicioBase'),
+                    personasBase: obtenerValorNumerico('inputPersonasBase'),
+                    anoMeta: obtenerValorNumerico('inputAnoMeta'),
+                    porcentajeMeta: obtenerValorDecimal('inputPorcentajeMeta'),
+                    servicioMeta: obtenerValorNumerico('inputServicioMeta'),
+                    personasMeta: obtenerValorNumerico('inputServicioMetas'),
+                    primerServicio: obtenerValorNumerico('primerServicio'),
+                    segundoServicio: obtenerValorNumerico('segundoServicio'),
+                    tercerServicio: obtenerValorNumerico('tercerServicio'),
+                    cuartoServicio: obtenerValorNumerico('cuartoServicio'),
+                    primerPersona: obtenerValorNumerico('primerPersona'),
+                    segundoPersona: obtenerValorNumerico('segundoPersona'),
+                    tercerPersona: obtenerValorNumerico('tercerPersona'),
+                    cuartoPersona: obtenerValorNumerico('cuartoPersona'),
+                    selectAcumulable: obtenerValor('selectAcumulable'),
+                    beneficiarios: obtenerValor('selectPersonas'),
+                    totalAnos: obtenerValorNumerico('valorServicios'),
+                    totalAnos2: obtenerValorNumerico('valorPersonas'),
+                    elaboraNombre: obtenerValor('inputElaboro'),
+                    elaboroCargo: obtenerValor('inputElaboroCargo'),
+                    revisionNombre: obtenerValor('inputReviso'),
+                    revisionCargo: obtenerValor('inputRevisoCargo'),
+                    autorizacionNombre: obtenerValor('inputAutorizo'),
+                    autorizacionCargo: obtenerValor('inputAutorizoCargo'),
+                    mesesServicios: [],
+                    mesesPersonas: [],
+                    municipiosServicios: [],
+                    municipiosPersonas: [],
+                    acciones: [],
+                    comentarios: comentariosRestantes
+                };
+
+                // Meses
+                document.querySelectorAll('.mes-grupo1').forEach(input => {
+                    datosCompletos.mesesServicios.push(parseInt(input.value) || 0);
+                });
+                document.querySelectorAll('.mes-grupo2').forEach(input => {
+                    datosCompletos.mesesPersonas.push(parseInt(input.value) || 0);
+                });
+
+                // Municipios
+                document.querySelectorAll('#tbodyGrupo1 tr').forEach(fila => {
+                    const idMunicipio = parseInt(fila.getAttribute('data-id-municipio')) || 0;
+                    const cantidad = parseInt(fila.getAttribute('data-cantidad')) || 0;
+                    if (idMunicipio > 0 && cantidad > 0) {
+                        datosCompletos.municipiosServicios.push({ idMunicipio, cantidad });
+                    }
+                });
+                document.querySelectorAll('#tbodyGrupo2 tr').forEach(fila => {
+                    const idMunicipio = parseInt(fila.getAttribute('data-id-municipio')) || 0;
+                    const cantidad = parseInt(fila.getAttribute('data-cantidad')) || 0;
+                    if (idMunicipio > 0 && cantidad > 0) {
+                        datosCompletos.municipiosPersonas.push({ idMunicipio, cantidad });
+                    }
+                });
+
+                // Acciones
+                document.querySelectorAll('.accion-item').forEach(accion => {
+                    const descripcion = accion.querySelector('textarea')?.value || '';
+                    const frecuencia = accion.querySelector('select')?.value || '';
+                    const fechaStr = accion.querySelector('.fecha-inicio')?.value || '';
+                    if (descripcion.trim() !== '') {
+                        datosCompletos.acciones.push({ descripcion, frecuencia, fechaInicio: fechaStr || null });
+                    }
+                });
+
+                const response = await fetch('/Programacion/GuardarCambiosUsuario', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(datosCompletos)
+                });
+
+                if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
+
+                const resultado = await response.json();
+
+                if (resultado.success) {
+                    await Swal.fire({
+                        title: '¡Éxito!',
+                        text: 'Cambios guardados correctamente. La programación fue enviada a revisión.',
+                        icon: 'success',
+                        confirmButtonText: 'Aceptar'
+                    });
+                    window.location.href = '/Programacion/Programacion';
+                } else {
+                    throw new Error(resultado.message || 'Error al guardar');
                 }
-            });
 
-            actualizarBotones(btnAgregar, btnEliminar);
+            } catch (error) {
+                console.error('Error al guardar:', error);
+                btnGuardar.disabled = false;
+                btnGuardar.innerHTML = textoOriginal;
+
+                await Swal.fire({
+                    title: 'Error',
+                    text: error.message,
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
         }
 
         // ========================================
-        // FUNCIONES DE CÁLCULO
+        // CONFIGURAR SELECT PROGRAMA-COMPONENTE
         // ========================================
-        function calcularTotalPersonas(grupo) {
-            let total = 0;
-            document.querySelectorAll(`#tbody${grupo} tr`).forEach(fila => {
-                total += parseInt(fila.cells[0].textContent) || 0;
+        function configurarSelectProgramaComponente() {
+            const $selectPrograma = $('#selectPrograma');
+            const $selectComponente = $('#selectComponente');
+
+            if (!$selectPrograma.length || !$selectComponente.length) return;
+
+            const componenteSeleccionadoOriginal = $selectComponente.val();
+            const componenteTextoOriginal = $selectComponente.find('option:selected').text();
+            const todasOpciones = $selectComponente.find('option:not(:first)').clone();
+            const programaSeleccionadoInicial = $selectPrograma.find('option:selected').text();
+
+            filtrarComponentes(programaSeleccionadoInicial, componenteSeleccionadoOriginal);
+
+            $selectPrograma.on('change', function() {
+                const programaSeleccionado = $(this).find('option:selected').text();
+                filtrarComponentes(programaSeleccionado, null);
             });
-            document.getElementById(`total${grupo}`).textContent = total;
-            return total;
+
+            function filtrarComponentes(programaTexto, componenteASeleccionar) {
+                $selectComponente.find('option:not(:first)').remove();
+
+                if (programaTexto && programaTexto.trim() !== '' && programaTexto !== 'Seleccione Programa') {
+                    todasOpciones.each(function() {
+                        const opcionPrograma = $(this).data('programa');
+                        if (opcionPrograma === programaTexto) {
+                            $selectComponente.append($(this).clone());
+                        }
+                    });
+
+                    $selectComponente.prop('disabled', false);
+
+                    if (componenteASeleccionar) {
+                        $selectComponente.val(componenteASeleccionar);
+                        if ($selectComponente.val() !== componenteASeleccionar) {
+                            $selectComponente.find('option').each(function() {
+                                if ($(this).text() === componenteTextoOriginal) {
+                                    $(this).prop('selected', true);
+                                }
+                            });
+                        }
+                    }
+                } else {
+                    $selectComponente.prop('disabled', true);
+                }
+            }
         }
 
+        // ========================================
+        // CALCULAR SUMATORIAS
+        // ========================================
         function calcularSumatorias() {
             const selectAcumulable = document.getElementById('selectAcumulable');
             let sumaGrupo1 = 0;
@@ -1426,63 +1855,24 @@
                 sumaGrupo1 += parseInt(input.value) || 0;
             });
 
-            if (selectAcumulable.value === 'si') {
+            if (selectAcumulable && selectAcumulable.value === 'si') {
                 document.querySelectorAll('.mes-grupo2').forEach(input => {
                     sumaGrupo2 += parseInt(input.value) || 0;
                 });
             }
 
-            document.getElementById('valorServicios').value = sumaGrupo1;
-            document.getElementById('valorPersonas').value = sumaGrupo2;
+            const valorServiciosEl = document.getElementById('valorServicios');
+            const valorPersonasEl = document.getElementById('valorPersonas');
 
-            actualizarMaximosPersonas(sumaGrupo1, sumaGrupo2);
-            actualizarServiciosPorMunicipio();
-            actualizarCamposMeta();
+            if (valorServiciosEl) valorServiciosEl.value = sumaGrupo1;
+            if (valorPersonasEl) valorPersonasEl.value = sumaGrupo2;
+
             calcularTrimestres();
         }
 
-        function actualizarServiciosPorMunicipio() {
-            let totalPersonasGrupo1 = calcularTotalPersonas('Grupo1');
-            let totalPersonasGrupo2 = calcularTotalPersonas('Grupo2');
-            const totalPersonasMunicipios = totalPersonasGrupo1 + totalPersonasGrupo2;
-            document.getElementById('valorServiciosMunicipio').value = totalPersonasMunicipios;
-            actualizarCamposMeta();
-        }
-
-        function actualizarMaximosPersonas(maxGrupo1, maxGrupo2) {
-            document.getElementById('personasAtendidasGrupo1').max = maxGrupo1;
-            document.getElementById('personasAtendidasGrupo2').max = maxGrupo2;
-        }
-
-        function puedeAgregarPersonas(grupo, cantidad) {
-            const maxServicios = grupo === 'Grupo1'
-                ? parseInt(document.getElementById('valorServicios').value) || 0
-                : parseInt(document.getElementById('valorPersonas').value) || 0;
-
-            const totalActual = calcularTotalPersonas(grupo);
-            return (totalActual + cantidad) <= maxServicios;
-        }
-
-        function actualizarCamposMeta() {
-            const valorServicios = parseInt(document.getElementById('valorServicios').value) || 0;
-            const valorPersonas = parseInt(document.getElementById('valorPersonas').value) || 0;
-
-            document.getElementById('inputServicioMeta').value = valorServicios;
-            document.getElementById('inputServicioMetas').value = valorPersonas;
-
-            let porcentaje = 0;
-            if (valorServicios > 0) {
-                if (valorPersonas > 0) {
-                    porcentaje = (valorPersonas / valorServicios) * 100;
-                } else {
-                    porcentaje = 100;
-                }
-                porcentaje = Math.round(porcentaje * 100) / 100;
-            }
-
-            document.getElementById('inputPorcentajeMeta').value = porcentaje;
-        }
-
+        // ========================================
+        // CALCULAR TRIMESTRES
+        // ========================================
         function calcularTrimestres() {
             const trimestres = {
                 1: ['ENE', 'FEB', 'MAR'],
@@ -1491,705 +1881,63 @@
                 4: ['OCT', 'NOV', 'DIC']
             };
 
-            for (let i = 1; i <= 4; i++) {
-                let suma = 0;
-                trimestres[i].forEach(mes => {
-                    const input = document.querySelector(`.mes-grupo1[data-mes="${mes}"]`);
-                    if (input) {
-                        suma += parseInt(input.value) || 0;
-                    }
-                });
-
-                const campos = {
-                    1: 'primerServicio',
-                    2: 'segundoServicio',
-                    3: 'tercerServicio',
-                    4: 'cuartoServicio'
-                };
-
-                document.getElementById(campos[i]).value = suma;
-            }
+            const camposServicios = { 1: 'primerServicio', 2: 'segundoServicio', 3: 'tercerServicio', 4: 'cuartoServicio' };
+            const camposPersonas = { 1: 'primerPersona', 2: 'segundoPersona', 3: 'tercerPersona', 4: 'cuartoPersona' };
 
             for (let i = 1; i <= 4; i++) {
-                let suma = 0;
+                let sumaServicios = 0;
+                let sumaPersonas = 0;
+
                 trimestres[i].forEach(mes => {
-                    const input = document.querySelector(`.mes-grupo2[data-mes="${mes}"]`);
-                    if (input) {
-                        suma += parseInt(input.value) || 0;
-                    }
+                    const inputServicio = document.querySelector(`.mes-grupo1[data-mes="${mes}"]`);
+                    const inputPersona = document.querySelector(`.mes-grupo2[data-mes="${mes}"]`);
+
+                    if (inputServicio) sumaServicios += parseInt(inputServicio.value) || 0;
+                    if (inputPersona) sumaPersonas += parseInt(inputPersona.value) || 0;
                 });
 
-                const campos = {
-                    1: 'primerPersona',
-                    2: 'segundoPersona',
-                    3: 'tercerPersona',
-                    4: 'cuartoPersona'
-                };
+                const campoServicio = document.getElementById(camposServicios[i]);
+                const campoPersona = document.getElementById(camposPersonas[i]);
 
-                document.getElementById(campos[i]).value = suma;
+                if (campoServicio) campoServicio.value = sumaServicios;
+                if (campoPersona) campoPersona.value = sumaPersonas;
             }
         }
-
-        // ========================================
-        // FUNCIONES DE PERSONAS/MUNICIPIOS
-        // ========================================
-        function configurarAgregarPersonas(grupo) {
-            const btnAgregar = document.getElementById(`btnAgregar${grupo}`);
-            const selectEstado = document.getElementById(`selectEstado${grupo}`);
-            const inputPersonas = document.getElementById(`personasAtendidas${grupo}`);
-            const tbody = document.getElementById(`tbody${grupo}`);
-            const tabla = document.getElementById(`tabla${grupo}`);
-
-            // Si el botón no existe (vista de revisión), salir
-            if (!btnAgregar) {
-                return;
-            }
-
-            btnAgregar.addEventListener('click', function() {
-                const estado = selectEstado.value;
-                const personas = parseInt(inputPersonas.value) || 0;
-
-                if (!estado) {
-                    alert('Por favor, seleccione un municipio');
-                    return;
-                }
-
-                if (personas <= 0) {
-                    alert('Por favor, ingrese un número válido de personas');
-                    return;
-                }
-
-                if (!puedeAgregarPersonas(grupo, personas)) {
-                    const maxServicios = grupo === 'Grupo1'
-                        ? parseInt(document.getElementById('valorServicios').value) || 0
-                        : parseInt(document.getElementById('valorPersonas').value) || 0;
-
-                    const totalActual = calcularTotalPersonas(grupo);
-                    const disponibles = maxServicios - totalActual;
-                    alert(`No se pueden agregar ${personas} personas. Solo hay ${disponibles} disponibles en el ${grupo === 'Grupo1' ? 'Grupo Principal' : 'Grupo Acumulable'}.`);
-                    return;
-                }
-
-                const datos = datosEstados[estado];
-
-                if (!datos) {
-                    alert('Error: No se encontraron datos para el municipio seleccionado');
-                    return;
-                }
-
-                const nuevaFila = document.createElement('tr');
-                nuevaFila.setAttribute('data-id-municipio', estado);
-                nuevaFila.setAttribute('data-cantidad', personas);
-                nuevaFila.innerHTML = `
-                    <td>${personas}</td>
-                    <td>${datos.municipio}</td>
-                    <td>${datos.region}</td>
-                    <td>${datos.numeroRegion}</td>
-                    <td>${datos.clave}</td>
-                    <td><button class="btn btn-sm btn-outline-danger btn-eliminar">Eliminar</button></td>
-                `;
-
-                tbody.appendChild(nuevaFila);
-
-                if (tabla.style.display === 'none') {
-                    tabla.style.display = 'block';
-                }
-
-                nuevaFila.querySelector('.btn-eliminar').addEventListener('click', function() {
-                    nuevaFila.remove();
-                    calcularTotalPersonas(grupo);
-                    actualizarServiciosPorMunicipio();
-                    if (tbody.children.length === 0) {
-                        tabla.style.display = 'none';
-                    }
-                });
-
-                calcularTotalPersonas(grupo);
-                actualizarServiciosPorMunicipio();
-                inputPersonas.value = '0';
-                selectEstado.value = '';
-            });
-        }
-
-        // ========================================
-        // CONFIGURACIÓN DE EVENTOS DE SELECTS
-        // ========================================
-        function configurarSelectDelegaciones() {
-            const selectDelegaciones = document.getElementById('selectDelegaciones');
-            const inputDelegaciones = document.getElementById('inputDelegaciones');
-
-            // Si está disabled (vista de revisión), salir
-            if (selectDelegaciones.disabled) {
-                return;
-            }
-
-            inputDelegaciones.disabled = true;
-
-            selectDelegaciones.addEventListener('change', function() {
-                const valorSeleccionado = this.value;
-
-                if (valorSeleccionado === 'No') {
-                    inputDelegaciones.value = 'N/A';
-                    inputDelegaciones.disabled = true;
-                } else if (valorSeleccionado === 'Si') {
-                    inputDelegaciones.value = '';
-                    inputDelegaciones.disabled = false;
-                } else {
-                    inputDelegaciones.value = '';
-                    inputDelegaciones.disabled = true;
-                }
-            });
-        }
-
-        function configurarSelectPersonas() {
-            const selectPersonas = document.getElementById('selectPersonas');
-            const selectAcumulable = document.getElementById('selectAcumulable');
-            const inputsGrupo2 = document.querySelectorAll('.mes-grupo2');
-
-            // Si está disabled (vista de revisión), salir
-            if (selectPersonas.disabled) {
-                return;
-            }
-
-            selectAcumulable.disabled = true;
-
-            selectPersonas.addEventListener('change', function() {
-                if (this.value === 'Personas' || this.value === 'instituciones') {
-                    selectAcumulable.disabled = false;
-                } else {
-                    selectAcumulable.disabled = true;
-                    selectAcumulable.value = '';
-
-                    inputsGrupo2.forEach(input => {
-                        input.disabled = true;
-                        input.value = 0;
-                    });
-
-                    calcularSumatorias();
-                }
-            });
-        }
-
-        function configurarSelectAcumulable() {
-            const selectAcumulable = document.getElementById('selectAcumulable');
-            const inputsGrupo2 = document.querySelectorAll('.mes-grupo2');
-
-            // Si está disabled (vista de revisión), salir
-            if (selectAcumulable.disabled) {
-                return;
-            }
-
-            selectAcumulable.addEventListener('change', function() {
-                const habilitar = this.value === 'si';
-
-                inputsGrupo2.forEach(input => {
-                    input.disabled = !habilitar;
-                    if (!habilitar) {
-                        input.value = 0;
-                    }
-                });
-
-                calcularSumatorias();
-            });
-        }
-
-        function configurarSelectProgramaComponente() {
-            const $selectPrograma = $('#selectPrograma');
-            const $selectComponente = $('#selectComponente');
-
-            // Si está disabled (vista de revisión), salir
-            if ($selectPrograma.is(':disabled')) {
-                return;
-            }
-
-            const todasOpciones = $selectComponente.find('option:not(:first)').clone();
-
-            $selectPrograma.on('change', function() {
-                const programaSeleccionado = $(this).val();
-
-                $selectComponente.find('option:not(:first)').remove();
-
-                if (programaSeleccionado) {
-                    todasOpciones.each(function() {
-                        if ($(this).data('programa') === programaSeleccionado) {
-                            $selectComponente.append($(this).clone());
-                        }
-                    });
-
-                    $selectComponente.prop('disabled', false);
-                } else {
-                    $selectComponente.prop('disabled', true);
-                }
-            });
-        }
-
-        // ========================================
-        // FUNCIÓN PARA GUARDAR PROGRAMACIÓN
-        // ========================================
-        async function guardarProgramacion() {
-            const btnGuardar = document.getElementById('btnGuardarProgramacion') || document.getElementById('btnActualizarProgramacion');
-            const textoOriginal = btnGuardar.innerHTML;
-
-            try {
-                // ========================================
-                // VALIDACIONES INMEDIATAS (ANTES DE CARGAR)
-                // ========================================
-                const erroresValidacion = validarDatosAntesDeGuardar();
-                if (erroresValidacion.length > 0) {
-                    // Usar SweetAlert en lugar de alert normal
-                    await Swal.fire({
-                        title: 'Campos obligatorios',
-                        html: 'Por favor complete los siguientes campos:<br><br>' +
-                              erroresValidacion.join('<br>'),
-                        icon: 'warning',
-                        confirmButtonText: 'Aceptar',
-                        confirmButtonColor: '#3085d6',
-                        allowOutsideClick: false
-                    });
-
-                    // Enfocar el primer campo faltante
-                    enfocarPrimerCampoFaltante(erroresValidacion);
-                    return;
-                }
-
-                // ========================================
-                // SOLO SI PASÓ LAS VALIDACIONES, MOSTRAR LOADING
-                // ========================================
-                btnGuardar.disabled = true;
-                btnGuardar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
-
-                // ========================================
-                // RECOLECCIÓN DE DATOS
-                // ========================================
-                const datosGenerales = {
-                    area: document.getElementById('inputArea').value,
-                    correoContacto: document.getElementById('inputCorreo').value,
-                    pp: document.getElementById('selectPrograma').value,
-                    nComponente: document.getElementById('selectComponente').value,
-                    nActividad: parseInt(document.getElementById('inputActividad').value) || 0,
-                    justificacion: document.getElementById('inputJustificacion').value,
-                    descripcionDocumento: document.getElementById('inputDocumentacion').value,
-                    recursoFederal: document.getElementById('selectFederal').value,
-                    recursoEstatal: document.getElementById('selectEstatal').value,
-                    programaSocial: document.getElementById('inputPrograma').value,
-                    descripcionActividad: document.getElementById('inputDescripcion').value,
-                    nombreIndicador: document.getElementById('inputIndicador').value,
-                    definicionIndicador: document.getElementById('inputDefinicion').value,
-                    unidadMedida: document.getElementById('selectMedida').value,
-                    mediosVerificacion: document.getElementById('inputMedios').value,
-                    serieInformacionDesde: document.getElementById('selectDesde').value,
-                    serieInformacionHasta: parseInt(document.getElementById('selectHasta').value) || 0,
-                    fuenteInformacion: document.getElementById('inputFuentes').value,
-                    intervienenDelegaciones: document.getElementById('selectDelegaciones').value,
-                    intervienenDelegacionesManera: document.getElementById('inputDelegaciones').value
-                };
-
-                const lineaBase = {
-                    anoBase: parseInt(document.getElementById('selectAnoBase').value) || 0,
-                    porcentajeBase: parseFloat(document.getElementById('inputPorcentajeBase').value) || 0,
-                    servicioBase: parseInt(document.getElementById('inputServicioBase').value) || 0,
-                    personasBase: parseInt(document.getElementById('inputPersonasBase').value) || 0
-                };
-
-                const metaAnual = {
-                    anoMeta: parseInt(document.getElementById('inputAnoMeta').value) || 0,
-                    porcentajeMeta: parseFloat(document.getElementById('inputPorcentajeMeta').value) || 0,
-                    servicioMeta: parseInt(document.getElementById('inputServicioMeta').value) || 0,
-                    personasMeta: parseInt(document.getElementById('inputServicioMetas').value) || 0
-                };
-
-                const trimestresServicios = {
-                    primerServicio: parseInt(document.getElementById('primerServicio').value) || 0,
-                    segundoServicio: parseInt(document.getElementById('segundoServicio').value) || 0,
-                    tercerServicio: parseInt(document.getElementById('tercerServicio').value) || 0,
-                    cuartoServicio: parseInt(document.getElementById('cuartoServicio').value) || 0
-                };
-
-                const trimestresPersonas = {
-                    primerPersona: parseInt(document.getElementById('primerPersona').value) || 0,
-                    segundoPersona: parseInt(document.getElementById('segundoPersona').value) || 0,
-                    tercerPersona: parseInt(document.getElementById('tercerPersona').value) || 0,
-                    cuartoPersona: parseInt(document.getElementById('cuartoPersona').value) || 0
-                };
-
-                // Recolectar meses
-                const mesesServicios = [];
-                document.querySelectorAll('.mes-grupo1').forEach(input => {
-                    mesesServicios.push(parseInt(input.value) || 0);
-                });
-
-                const mesesPersonas = [];
-                document.querySelectorAll('.mes-grupo2').forEach(input => {
-                    mesesPersonas.push(parseInt(input.value) || 0);
-                });
-
-                // Recolectar municipios del Grupo 1 (Servicios)
-                const municipiosServicios = [];
-                document.querySelectorAll('#tbodyGrupo1 tr').forEach(fila => {
-                    const idMunicipio = parseInt(fila.getAttribute('data-id-municipio')) || 0;
-                    const cantidad = parseInt(fila.getAttribute('data-cantidad')) || 0;
-
-                    if (idMunicipio > 0 && cantidad > 0) {
-                        municipiosServicios.push({
-                            idMunicipio: idMunicipio,
-                            cantidad: cantidad
-                        });
-                    }
-                });
-
-                // Recolectar municipios del Grupo 2 (Personas)
-                const municipiosPersonas = [];
-                document.querySelectorAll('#tbodyGrupo2 tr').forEach(fila => {
-                    const idMunicipio = parseInt(fila.getAttribute('data-id-municipio')) || 0;
-                    const cantidad = parseInt(fila.getAttribute('data-cantidad')) || 0;
-
-                    if (idMunicipio > 0 && cantidad > 0) {
-                        municipiosPersonas.push({
-                            idMunicipio: idMunicipio,
-                            cantidad: cantidad
-                        });
-                    }
-                });
-
-                // Recolectar acciones
-                const acciones = [];
-                document.querySelectorAll('.accion-item').forEach(accion => {
-                    const descripcion = accion.querySelector('textarea').value;
-                    const frecuencia = accion.querySelector('select').value;
-                    const fechaStr = accion.querySelector('.fecha-inicio').value;
-
-                    if (descripcion.trim() !== '') {
-                        let fechaInicio = null;
-                        if (fechaStr) {
-                            const [year, month, day] = fechaStr.split('-');
-                            fechaInicio = `${year}-${month}-${day}`;
-                        }
-
-                        acciones.push({
-                            descripcion: descripcion,
-                            frecuencia: frecuencia,
-                            fechaInicio: fechaInicio
-                        });
-                    }
-                });
-
-                // Recolectar firmas
-                const firmas = {
-                    elaboraNombre: document.getElementById('inputElaboro').value,
-                    elaboroCargo: document.getElementById('inputElaboroCargo').value,
-                    revisionNombre: document.getElementById('inputReviso').value,
-                    revisionCargo: document.getElementById('inputRevisoCargo').value,
-                    autorizacionNombre: document.getElementById('inputAutorizo').value,
-                    autorizacionCargo: document.getElementById('inputAutorizoCargo').value
-                };
-
-                // Consolidar todos los datos
-                const datosCompletos = {
-                    ...datosGenerales,
-                    ...lineaBase,
-                    ...metaAnual,
-                    ...trimestresServicios,
-                    ...trimestresPersonas,
-                    mesesServicios: mesesServicios,
-                    mesesPersonas: mesesPersonas,
-                    municipiosServicios: municipiosServicios,
-                    municipiosPersonas: municipiosPersonas,
-                    acciones: acciones,
-                    ...firmas
-                };
-
-                // ========================================
-                // VALIDACIONES FINALES (DESPUÉS DE RECOLECTAR)
-                // ========================================
-                const erroresFinales = validarDatosCompletos(datosCompletos);
-                if (erroresFinales.length > 0) {
-                    // Restaurar botón inmediatamente si hay errores
-                    btnGuardar.disabled = false;
-                    btnGuardar.innerHTML = textoOriginal;
-
-                    await Swal.fire({
-                        title: 'Errores en el formulario',
-                        html: erroresFinales.join('<br>'),
-                        icon: 'error',
-                        confirmButtonText: 'Aceptar',
-                        confirmButtonColor: '#d33'
-                    });
-
-                    return;
-                }
-
-                console.log('Datos a enviar:', datosCompletos);
-
-                // ========================================
-                // ENVÍO AL SERVIDOR (SOLO SI TODO ESTÁ BIEN)
-                // ========================================
-                const response = await fetch('/Programacion/GuardarProgramacion', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(datosCompletos)
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Error HTTP: ${response.status}`);
-                }
-
-                const resultado = await response.json();
-
-                if (resultado.success) {
-                    // Mostrar mensaje de éxito
-                    btnGuardar.innerHTML = '<i class="fas fa-check"></i> ¡Guardado!';
-                    btnGuardar.classList.remove('boton-rojo');
-                    btnGuardar.classList.add('btn-success');
-
-                    await Swal.fire({
-                        title: '¡Éxito!',
-                        text: 'Programación guardada correctamente',
-                        icon: 'success',
-                        confirmButtonText: 'Aceptar',
-                        confirmButtonColor: '#3085d6'
-                    });
-
-                    window.location.href = '/Programacion/Index';
-
-                } else {
-                    throw new Error(resultado.message || 'Error desconocido al guardar');
-                }
-
-            } catch (error) {
-                console.error('Error al guardar:', error);
-
-                // Restaurar botón en caso de error
-                btnGuardar.disabled = false;
-                btnGuardar.innerHTML = textoOriginal;
-                btnGuardar.classList.remove('btn-success');
-                btnGuardar.classList.add('boton-rojo');
-
-                // Mostrar error específico
-                let mensajeError = 'Error al guardar la programación';
-                if (error.message.includes('HTTP')) {
-                    mensajeError = 'Error de conexión con el servidor';
-                } else if (error.message.includes('JSON')) {
-                    mensajeError = 'Error en el formato de datos';
-                } else {
-                    mensajeError = error.message;
-                }
-
-                await Swal.fire({
-                    title: 'Error',
-                    text: `${mensajeError}\n\nPor favor, intente nuevamente.`,
-                    icon: 'error',
-                    confirmButtonText: 'Aceptar',
-                    confirmButtonColor: '#d33'
-                });
-            }
-        }
-
-        // ========================================
-        // FUNCIÓN PARA ENFOCAR PRIMER CAMPO FALTANTE
-        // ========================================
-        function enfocarPrimerCampoFaltante(errores) {
-            // Mapeo de errores a IDs de campos
-            const mapaErrores = {
-                '• Programa presupuestario': 'selectPrograma',
-                '• Número de componente': 'selectComponente',
-                '• Número de actividad válido': 'inputActividad',
-                '• Justificación': 'inputJustificacion',
-                '• Descripción de la actividad': 'inputDescripcion',
-                '• Unidad de medida': 'selectMedida',
-                '• Nombre de quien elabora': 'inputElaboro',
-                '• Cargo de quien elabora': 'inputElaboroCargo',
-                '• Mínimo 3 acciones necesarias': 'accionesContainer'
-            };
-
-            // Buscar el primer error que tenga un campo asociado
-            for (const error of errores) {
-                const campoId = mapaErrores[error];
-                if (campoId) {
-                    const campo = document.getElementById(campoId);
-                    if (campo) {
-                        // Hacer scroll suave hasta el campo
-                        campo.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'center'
-                        });
-
-                        // Enfocar el campo después de un pequeño delay
-                        setTimeout(() => {
-                            if (campo.tagName === 'SELECT' || campo.tagName === 'INPUT' || campo.tagName === 'TEXTAREA') {
-                                campo.focus();
-
-                                // Resaltar visualmente el campo
-                                campo.style.border = '2px solid #dc3545';
-                                campo.style.backgroundColor = '#fff5f5';
-
-                                // Quitar el resaltado después de 3 segundos
-                                setTimeout(() => {
-                                    campo.style.border = '';
-                                    campo.style.backgroundColor = '';
-                                }, 3000);
-                            }
-                        }, 500);
-
-                        break; // Solo enfocar el primer campo
-                    }
-                }
-            }
-        }
-
-        // ========================================
-        // FUNCIONES DE VALIDACIÓN
-        // ========================================
-        function validarDatosAntesDeGuardar() {
-            const errores = [];
-
-            // Validar campos obligatorios básicos
-            if (!document.getElementById('selectPrograma').value) {
-                errores.push('• Programa presupuestario');
-            }
-
-            if (!document.getElementById('selectComponente').value) {
-                errores.push('• Número de componente');
-            }
-
-            if (!document.getElementById('inputActividad').value || parseInt(document.getElementById('inputActividad').value) <= 0) {
-                errores.push('• Número de actividad válido');
-            }
-
-            if (!document.getElementById('inputJustificacion').value.trim()) {
-                errores.push('• Justificación');
-            }
-
-            if (!document.getElementById('inputDescripcion').value.trim()) {
-                errores.push('• Descripción de la actividad');
-            }
-
-            if (!document.getElementById('selectMedida').value) {
-                errores.push('• Unidad de medida');
-            }
-
-            // Validar que haya al menos 3 acciones completas
-            const accionesCompletas = document.querySelectorAll('.accion-item').length;
-            if (accionesCompletas < 3) {
-                errores.push('• Mínimo 3 acciones necesarias');
-            }
-
-            // Validar firmas
-            if (!document.getElementById('inputElaboro').value.trim()) {
-                errores.push('• Nombre de quien elabora');
-            }
-
-            if (!document.getElementById('inputElaboroCargo').value.trim()) {
-                errores.push('• Cargo de quien elabora');
-            }
-
-            return errores;
-        }
-
-        function validarDatosCompletos(datosCompletos) {
-            const errores = [];
-
-            if (!datosCompletos.pp) {
-                errores.push('• Debe seleccionar un programa presupuestario');
-            }
-
-            if (!datosCompletos.nComponente) {
-                errores.push('• Debe seleccionar un componente');
-            }
-
-            if (datosCompletos.nActividad <= 0) {
-                errores.push('• Debe ingresar un número de actividad válido');
-            }
-
-            if (datosCompletos.acciones.length < 3 || datosCompletos.acciones.length > 5) {
-                errores.push('• Debe haber entre 3 y 5 acciones completas');
-            }
-
-            // Validar que las acciones tengan descripción
-            const accionesIncompletas = datosCompletos.acciones.filter(a => !a.descripcion.trim());
-            if (accionesIncompletas.length > 0) {
-                errores.push('• Todas las acciones deben tener descripción');
-            }
-
-            if (!datosCompletos.elaboraNombre || !datosCompletos.elaboroCargo) {
-                errores.push('• Los datos de quién elaboró son requeridos');
-            }
-
-            // Validar que los totales de municipios no excedan los totales de servicios/personas
-            const totalServiciosMunicipios = datosCompletos.municipiosServicios.reduce((sum, m) => sum + m.cantidad, 0);
-            const totalPersonasMunicipios = datosCompletos.municipiosPersonas.reduce((sum, m) => sum + m.cantidad, 0);
-
-            if (totalServiciosMunicipios > datosCompletos.servicioMeta) {
-                errores.push(`• Los servicios por municipio (${totalServiciosMunicipios}) exceden el total de servicios (${datosCompletos.servicioMeta})`);
-            }
-
-            if (totalPersonasMunicipios > datosCompletos.personasMeta) {
-                errores.push(`• Las personas por municipio (${totalPersonasMunicipios}) exceden el total de personas (${datosCompletos.personasMeta})`);
-            }
-
-            return errores;
-        }
-
 
         // ========================================
         // INICIALIZACIÓN PRINCIPAL
         // ========================================
-        document.addEventListener('DOMContentLoaded', async function() {
-            console.log('DOM cargado - Inicializando...');
-
-            await cargarMunicipios();
-
-            // Solo inicializar comentarios si estamos en vista de revisión
-            if (document.querySelector('input[disabled]')) {
-                console.log('Vista de revisión detectada - Inicializando comentarios');
-                inicializarComentarios();
-            } else {
-                console.log('Vista normal - Configurando acciones');
-                configurarAcciones();
-            }
-
-            // El resto de tus configuraciones originales
-            configurarSelectDelegaciones();
-            configurarSelectPersonas();
-            configurarSelectAcumulable();
+        document.addEventListener('DOMContentLoaded', function() {
+            inicializarComentarios();
             configurarSelectProgramaComponente();
-            configurarAgregarPersonas('Grupo1');
-            configurarAgregarPersonas('Grupo2');
 
+            // Eventos de cálculo para admin
             document.querySelectorAll('.mes-grupo1, .mes-grupo2').forEach(input => {
                 if (!input.disabled) {
                     input.addEventListener('input', calcularSumatorias);
                 }
             });
 
-            const btnGuardar = document.getElementById('btnGuardarProgramacion') || document.getElementById('btnActualizarProgramacion');
-            if (btnGuardar) {
-                btnGuardar.addEventListener('click', guardarProgramacion);
+            // Botón guardar admin
+            const btnGuardarAdmin = document.getElementById('btnGuardarAdmin');
+            if (btnGuardarAdmin) {
+                btnGuardarAdmin.addEventListener('click', guardarCambiosAdmin);
+            }
+
+            // Botón validar
+            const btnValidar = document.getElementById('btnValidarProgramacion');
+            if (btnValidar) {
+                btnValidar.addEventListener('click', validarProgramacion);
+            }
+
+            // Botón guardar usuario
+            const btnGuardarUsuario = document.getElementById('btnGuardarCambiosUsuario');
+            if (btnGuardarUsuario) {
+                btnGuardarUsuario.addEventListener('click', guardarCambiosUsuario);
             }
 
             calcularSumatorias();
         });
-
-        function debugComentarios() {
-            console.log('=== DEBUG COMENTARIOS - MAPEO ===');
-            console.log('Comentarios temp:', comentariosTemp);
-            console.log('ID Programación:', document.getElementById('idProgramacionHidden').value);
-
-            const comentariosArray = [];
-            for (let campo in comentariosTemp) {
-                const campoVista = parseInt(campo);
-                const comentarioBD = campoVista - 3;
-
-                comentariosArray.push({
-                    ComentarioId: comentarioBD, // Para BD (1-27)
-                    Campo: campoVista, // Para vista (4-30)
-                    Texto: comentariosTemp[campo].texto,
-                    IdProgramacion: parseInt(document.getElementById('idProgramacionHidden').value)
-                });
-            }
-            console.log('Array con mapeo correcto:', comentariosArray);
-        }
 
     </script>
 }

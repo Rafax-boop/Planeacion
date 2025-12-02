@@ -49,6 +49,21 @@
             console.error("Error al parsear datos JSON:", e);
         }
 
+        // 2. Cargar datos de llenado interno
+        const llenadoInternoJSON = '@Html.Raw(ViewBag.LlenadoInternoJson ?? "{}")';
+        let llenadoInterno = {};
+
+        try {
+            llenadoInterno = JSON.parse(llenadoInternoJSON);
+            console.log("✅ Datos de llenado interno cargados:", llenadoInterno);
+        } catch (e) {
+            console.error("❌ Error al parsear llenadoInterno:", e);
+            llenadoInterno = {
+                NombreReviso: "Sin asignar",
+                NombreValido: "Sin asignar"
+            };
+        }
+
         $(document).ready(function() {
             const numeroRegistros = datosTablero.length;
             const contenedor = $('#contenedor-tableros');
@@ -114,6 +129,11 @@
                         </div>
                         <div class="col-md-4 text-end">
                             <span class="badge bg-info fs-6">ID Proceso ${data.IdProceso}</span>
+                            <button class="boton-amarillo m-2"
+                                    onclick="exportarTableroComoImagen(this)"
+                                    style="color: red; box-shadow: 0 4px 6px 0 red; border: 1px solid red !important; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; padding: 6px 13px; font-size: 12.8px;">
+                                <i class="fas fa-file-pdf" style="font-size: 14px;"></i> Exportar a PDF
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -284,6 +304,276 @@
                 </div>
             </div>
             `;
+        }
+
+        async function exportarTableroComoImagen(boton) {
+            console.log("🔍 Iniciando exportación...");
+            console.log("📋 llenadoInterno disponible:", llenadoInterno);
+
+            const tablero = $(boton).closest('.tablero-individual');
+
+            if (!tablero.length) {
+                alert('No se encontró el tablero para exportar');
+                return;
+            }
+
+            const numeroTablero = tablero.data('tablero');
+            const componente = tablero.find('h4.fw-bold').first().text().trim();
+            const idProceso = tablero.find('.badge.bg-info').text().trim();
+
+            const botonOriginal = $(boton).html();
+            $(boton).html('<i class="fas fa-spinner fa-spin"></i> Generando PDF...').prop('disabled', true);
+
+            try {
+                // Clonar el tablero para no afectar el original
+                const tableroClonado = tablero.clone();
+
+                // Remover el botón de exportar del clon
+                tableroClonado.find('button[onclick*="exportarTableroComoImagen"]').remove();
+
+                // Remover el cuadro azul completo (el div con bg-primary bg-opacity-10)
+                tableroClonado.find('.bg-primary.bg-opacity-10').remove();
+                tableroClonado.css({
+                    'position': 'absolute',
+                    'left': '-9999px',
+                    'top': '0',
+                    'background': 'white',
+                    'padding': '20px',
+                    'width': '1200px'
+                });
+                $('body').append(tableroClonado);
+
+                const canvas = await html2canvas(tableroClonado[0], {
+                    scale: 1.2,
+                    useCORS: true,
+                    logging: false,
+                    backgroundColor: '#ffffff'
+                });
+
+                tableroClonado.remove();
+
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: 'letter'
+                });
+
+                const pageWidth = pdf.internal.pageSize.getWidth();
+                const pageHeight = pdf.internal.pageSize.getHeight();
+                const margin = 15;
+
+                const fechaActual = new Date().toLocaleDateString('es-MX', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+
+                const anoFiscal = (llenadoInterno && llenadoInterno.Ano) ? llenadoInterno.Ano : new Date().getFullYear();
+                const alturaEncabezado = 42;
+
+                // Fondo BLANCO del encabezado
+                pdf.setFillColor(255, 255, 255);
+                pdf.rect(0, 0, pageWidth, alturaEncabezado, 'F');
+
+                // Borde inferior gris
+                pdf.setDrawColor(200, 200, 200);
+                pdf.setLineWidth(0.5);
+                pdf.line(0, alturaEncabezado, pageWidth, alturaEncabezado);
+
+                // Función helper para cargar imagen con promesa
+                const cargarImagen = (src) => {
+                    return new Promise((resolve, reject) => {
+                        const img = new Image();
+                        img.onload = () => resolve(img);
+                        img.onerror = reject;
+                        img.src = src;
+                    });
+                };
+
+                // Cargar ambos logos
+                try {
+                    const logoIzquierdo = await cargarImagen('/img/png-gob.png');
+                    const anchoLogoIzq = 24.5;
+                    const aspectRatioIzq = logoIzquierdo.width / logoIzquierdo.height;
+                    const altoLogoIzq = anchoLogoIzq / aspectRatioIzq;
+                    const yPosLogoIzq = (alturaEncabezado - altoLogoIzq) / 2;
+
+                    pdf.addImage(logoIzquierdo, 'PNG', 15, yPosLogoIzq, anchoLogoIzq, altoLogoIzq);
+                } catch (error) {
+                    console.warn('No se pudo cargar logo izquierdo:', error);
+                }
+
+                try {
+                    const logoDerecho = await cargarImagen('/img/familias-dif.png');
+                    const anchoLogoDer = 24.5;
+                    const aspectRatioDer = logoDerecho.width / logoDerecho.height;
+                    const altoLogoDer = anchoLogoDer / aspectRatioDer;
+                    const yPosLogoDer = (alturaEncabezado - altoLogoDer) / 2;
+
+                    pdf.addImage(logoDerecho, 'PNG', pageWidth - 40, yPosLogoDer, anchoLogoDer, altoLogoDer);
+                } catch (error) {
+                    console.warn('No se pudo cargar logo derecho:', error);
+                }
+
+                // TEXTOS DEL ENCABEZADO
+                pdf.setTextColor(0, 0, 0);
+
+                pdf.setFontSize(9);
+                pdf.setFont(undefined, 'bold');
+                pdf.text('SISTEMA PARA EL DESARROLLO INTEGRAL DE LA FAMILIA DEL ESTADO DE PUEBLA', pageWidth / 2, 10, { align: 'center' });
+
+                pdf.setFontSize(8);
+                pdf.setFont(undefined, 'normal');
+                pdf.text('UNIDAD DE PLANEACIÓN ADMINISTRACIÓN Y FINANZAS', pageWidth / 2, 15, { align: 'center' });
+                pdf.text('DIRECCIÓN DE PLANEACIÓN Y EVALUACIÓN', pageWidth / 2, 19, { align: 'center' });
+
+                pdf.setFontSize(10);
+                pdf.setFont(undefined, 'bold');
+                pdf.text(`TABLERO DE CONTROL ${anoFiscal}`, pageWidth / 2, 25, { align: 'center' });
+
+                pdf.setFontSize(8);
+                pdf.setFont(undefined, 'italic');
+                pdf.text('Programa de Prestación de Servicios de Asistencia Social.', pageWidth / 2, 30, { align: 'center' });
+
+                pdf.setFontSize(7);
+                pdf.setFont(undefined, 'normal');
+                pdf.setTextColor(100, 100, 100);
+                pdf.text(`${idProceso} | Generado el ${fechaActual}`, pageWidth / 2, 36, { align: 'center' });
+
+                // IMAGEN DEL TABLERO
+                const imgData = canvas.toDataURL('image/png');
+                const imgWidth = pageWidth - (margin * 2);
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+                let yPosition = alturaEncabezado + 8;
+                const maxHeight = pageHeight - 100;
+                let finalImgHeight = imgHeight;
+                let finalImgWidth = imgWidth;
+
+                if (imgHeight > maxHeight) {
+                    finalImgHeight = maxHeight;
+                    finalImgWidth = (canvas.width * finalImgHeight) / canvas.height;
+                }
+
+                pdf.setTextColor(0, 0, 0);
+                pdf.addImage(imgData, 'PNG', margin, yPosition, finalImgWidth, finalImgHeight);
+
+                // SECCIÓN DE FIRMAS
+                const firmasY = pageHeight - 65; // Más espacio para 3 líneas de texto
+                const colWidth = (pageWidth - (margin * 2)) / 2;
+                const firmaY = firmasY + 10;
+
+                pdf.setTextColor(0, 0, 0);
+
+                // Obtener nombres y cargos
+                const nombreReviso = (llenadoInterno && llenadoInterno.NombreReviso) ? llenadoInterno.NombreReviso : 'Sin asignar';
+                const nombreValido = (llenadoInterno && llenadoInterno.NombreValido) ? llenadoInterno.NombreValido : 'Sin asignar';
+                const cargoReviso = (llenadoInterno && llenadoInterno.CargoReviso) ? llenadoInterno.CargoReviso : 'Sin asignar';
+                const cargoValido = (llenadoInterno && llenadoInterno.CargoValido) ? llenadoInterno.CargoValido : 'Sin asignar';
+
+                console.log("✍️ Datos Revisó:", nombreReviso, cargoReviso);
+                console.log("✍️ Datos Autorizó:", nombreValido, cargoValido);
+
+                // ========== PRIMERA FIRMA - REVISÓ ==========
+                const xCentroReviso = margin + (colWidth / 2);
+
+                // Texto "Revisó" arriba
+                pdf.setFont(undefined, 'bold');
+                pdf.setFontSize(10);
+                pdf.text('Revisó', xCentroReviso, firmaY, { align: 'center' });
+
+                // Espacio para firma (5mm de alto)
+                // Línea de firma
+                pdf.setDrawColor(0, 0, 0);
+                pdf.setLineWidth(0.5);
+                pdf.line(margin + 20, firmaY + 12, margin + colWidth - 20, firmaY + 12);
+
+                // Nombre debajo de la línea
+                pdf.setFont(undefined, 'bold');
+                pdf.setFontSize(9);
+                pdf.text(nombreReviso, xCentroReviso, firmaY + 18, { align: 'center' });
+
+                // Cargo debajo del nombre
+                pdf.setFont(undefined, 'normal');
+                pdf.setFontSize(8);
+                pdf.text(cargoReviso, xCentroReviso, firmaY + 23, { align: 'center' });
+
+                // ========== SEGUNDA FIRMA - AUTORIZÓ ==========
+                const xCentroAutorizo = margin + colWidth + (colWidth / 2);
+
+                // Texto "Autorizó" arriba
+                pdf.setFont(undefined, 'bold');
+                pdf.setFontSize(10);
+                pdf.text('Autorizó', xCentroAutorizo, firmaY, { align: 'center' });
+
+                // Espacio para firma (5mm de alto)
+                // Línea de firma
+                pdf.line(margin + colWidth + 20, firmaY + 12, pageWidth - margin - 20, firmaY + 12);
+
+                // Nombre debajo de la línea
+                pdf.setFont(undefined, 'bold');
+                pdf.setFontSize(9);
+                pdf.text(nombreValido, xCentroAutorizo, firmaY + 18, { align: 'center' });
+
+                // Cargo debajo del nombre
+                pdf.setFont(undefined, 'normal');
+                pdf.setFontSize(8);
+                pdf.text(cargoValido, xCentroAutorizo, firmaY + 23, { align: 'center' });
+
+                // Pie de página
+                pdf.setFontSize(7);
+                pdf.setTextColor(128, 128, 128);
+                pdf.text('Este documento es de carácter informativo y representa el avance del programa social',
+                    pageWidth / 2, pageHeight - 10, { align: 'center' });
+
+                // Guardar el PDF
+                const nombreArchivo = `Tablero_${idProceso}_${new Date().getTime()}.pdf`;
+                pdf.save(nombreArchivo);
+
+                $(boton).html(botonOriginal).prop('disabled', false);
+                mostrarNotificacion('PDF generado exitosamente', 'success');
+
+            } catch (error) {
+                console.error('❌ Error completo:', error);
+                console.error('Stack trace:', error.stack);
+                $(boton).html(botonOriginal).prop('disabled', false);
+                alert('Error al generar el PDF: ' + error.message);
+            }
+        }
+
+        // Función auxiliar para mostrar notificaciones
+        function mostrarNotificacion(mensaje, tipo = 'info') {
+            const colores = {
+                'success': '#28a745',
+                'error': '#dc3545',
+                'info': '#17a2b8'
+            };
+
+            const notificacion = $(`
+                <div style="
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: ${colores[tipo]};
+                    color: white;
+                    padding: 15px 25px;
+                    border-radius: 5px;
+                    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+                    z-index: 9999;
+                    font-weight: 500;
+                ">
+                    <i class="fas fa-check-circle"></i> ${mensaje}
+                </div>
+            `);
+
+            $('body').append(notificacion);
+
+            setTimeout(() => {
+                notificacion.fadeOut(400, function() {
+                    $(this).remove();
+                });
+            }, 3000);
         }
 
         // Funciones para colores (las mismas que tenías)

@@ -367,8 +367,27 @@ namespace Metas.AplicacionWeb.Controllers
                     }
                 }).ToList();
 
-                // 3. Serializar la lista a una cadena JSON
+                // Serializar la lista a una cadena JSON
                 string datosJson = System.Text.Json.JsonSerializer.Serialize(datosParaJSON);
+
+                // Obtener datos de llenado interno
+                var primerRegistro = datos.FirstOrDefault();
+
+                // Agregar logs para depuración
+                System.Diagnostics.Debug.WriteLine($"NombreRealizo: {primerRegistro?.NombreRealizo}");
+                System.Diagnostics.Debug.WriteLine($"NombreValido: {primerRegistro?.NombreValido}");
+
+                var llenadoInterno = new
+                {
+                    NombreReviso = primerRegistro?.NombreRealizo ?? "Sin asignar",
+                    NombreValido = primerRegistro?.NombreValido ?? "Sin asignar",
+                    CargoReviso = primerRegistro?.CargoRealizo ?? "Sin asignar",
+                    CargoValido = primerRegistro?.CargoValido ?? "Sin asignar",  
+                    Ano = primerRegistro?.Ano ?? DateTime.Now.Year
+                };
+
+                string llenadoInternoJson = System.Text.Json.JsonSerializer.Serialize(llenadoInterno);
+                ViewBag.LlenadoInternoJson = llenadoInternoJson;
 
                 ViewBag.AnoFiscal = anoFiscal;
                 ViewBag.Departamento = departamento;
@@ -380,6 +399,11 @@ namespace Metas.AplicacionWeb.Controllers
             catch (Exception ex)
             {
                 ViewBag.NumeroRegistros = 0;
+                ViewBag.LlenadoInternoJson = System.Text.Json.JsonSerializer.Serialize(new
+                {
+                    NombreReviso = "Sin asignar",
+                    NombreValido = "Sin asignar"
+                });
                 return View();
             }
         }
