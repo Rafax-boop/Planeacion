@@ -1,4 +1,5 @@
-﻿using Metas.AplicacionWeb.Models.ViewModels;
+﻿using AutoMapper;
+using Metas.AplicacionWeb.Models.ViewModels;
 using Metas.BLL.DTO;
 using Metas.BLL.Implementacion;
 using Metas.BLL.Interfaces;
@@ -18,13 +19,20 @@ namespace Metas.AplicacionWeb.Controllers
         private readonly IFechasService _fechasService;
         private readonly IMonitoreoService _monitoreoService;
         private readonly IWebHostEnvironment _hostEnvironment;
-        public MonitoreoController(IDepartamentoService departamentoService, IProgramacionService programacionService, IFechasService fechasService, IMonitoreoService monitoreoService, IWebHostEnvironment hostEnvironment)
+        private readonly IMapper _mapper;
+        public MonitoreoController(IDepartamentoService departamentoService,
+            IProgramacionService programacionService,
+            IFechasService fechasService,
+            IMonitoreoService monitoreoService,
+            IWebHostEnvironment hostEnvironment,
+            IMapper mapper)
         {
             _departamentoService = departamentoService;
             _programacionService = programacionService;
             _fechasService = fechasService;
             _monitoreoService = monitoreoService;
             _hostEnvironment = hostEnvironment;
+            _mapper = mapper;
         }
         public async Task<IActionResult> Monitoreo()
         {
@@ -41,7 +49,6 @@ namespace Metas.AplicacionWeb.Controllers
             return View(modelo);
         }
 
-        [HttpGet]
         public async Task<IActionResult> ObtenerDatos(int anoFiscal, int departamento)
         {
             try
@@ -407,5 +414,218 @@ namespace Metas.AplicacionWeb.Controllers
                 return View();
             }
         }
+
+        public async Task<IActionResult> ObtenerDatosEdicion(int idProceso)
+        {
+            var registro = await _programacionService.ObtenerporId(idProceso);
+            var medidas = await _departamentoService.ObtenerMedidas();
+
+            if (registro == null)
+            {
+                return NotFound(); 
+            }
+
+            var datosEdicion = new VMDatosEdicionActividad
+            {
+                PP = registro.Idpp,
+                Componente = registro.Componente,
+                Actividad = registro.Actividad,
+                DescripcionActividad = registro.DescripcionActividad,
+                UnidadMedida = registro.UnidadMedida.ToUpperInvariant(),
+                ProgramaSocial = registro.ProgramaSocial,
+                TotalEnero = registro.TotalEnero ?? 0,
+                TotalFebrero = registro.TotalFebrero ?? 0,
+                TotalMarzo = registro.TotalMarzo ?? 0,
+                TotalAbril = registro.TotalAbril ?? 0,
+                TotalMayo = registro.TotalMayo ?? 0,
+                TotalJunio = registro.TotalJunio ?? 0,
+                TotalJulio = registro.TotalJulio ?? 0,
+                TotalAgosto = registro.TotalAgosto ?? 0,
+                TotalSeptiembre = registro.TotalSeptiembre ?? 0,
+                TotalOctubre = registro.TotalOctubre ?? 0,
+                TotalNoviembre = registro.TotalNoviembre ?? 0,
+                TotalDiciembre = registro.TotalDiciembre ?? 0,
+
+                EneroPersona = registro.EneroPersona ?? 0,
+                FebreroPersona = registro.FebreroPersona ?? 0,
+                MarzoPersona = registro.MarzoPersona ?? 0,
+                AbrilPersona = registro.AbrilPersona ?? 0,
+                MayoPersona = registro.MayoPersona ?? 0,
+                JunioPersona = registro.JunioPersona ?? 0,
+                JulioPersona = registro.JulioPersona ?? 0,
+                AgostoPersona = registro.AgostoPersona ?? 0,
+                SeptiembrePersona = registro.SeptiembrePersona ?? 0,
+                OctubrePersona = registro.OctubrePersona ?? 0,
+                NoviembrePersona = registro.NoviembrePersona ?? 0,
+                DiciembrePersona = registro.DiciembrePersona ?? 0,
+                ListaMedidas = medidas
+                    .Select(g => new SelectListItem
+                    {
+                        Value = g.Valor.ToUpperInvariant(),
+                        Text = g.Valor,
+                        Selected = g.Valor.ToUpperInvariant() == registro.UnidadMedida.ToUpperInvariant()
+                    })
+                    .ToList()
+            };
+
+            // Devuelve el objeto, ASP.NET Core lo serializa automáticamente a JSON
+            return Json(datosEdicion);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GuardarEdicion(VMDatosEdicionActividad modelo)
+        {
+            try
+            {
+                var model = _mapper.Map<DatosEdicionDTO>(modelo);
+
+                bool exito = await _monitoreoService.ActualizarRegistro(model);
+
+                if (exito)
+                {
+                    return Json(new { success = true, message = "La actividad se ha actualizado correctamente." });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Fallo la actualización: El servicio no pudo guardar los datos." });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Ocurrió un error interno del servidor. {ex.Message}" });
+            }
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Administrador")] // Solo admin puede agregar
+        public async Task<IActionResult> GuardarNuevo(VMDatosEdicionActividad modelo)
+        {
+            try
+            {
+                // Validación manual de campos requeridos
+                if (modelo.AnoFiscal == 0)
+                {
+                    return Json(new { success = false, message = "El año fiscal es requerido." });
+                }
+
+                if (modelo.Componente == 0)
+                {
+                    return Json(new { success = false, message = "El componente es requerido." });
+                }
+
+                if (modelo.Actividad == 0)
+                {
+                    return Json(new { success = false, message = "La actividad es requerida." });
+                }
+
+
+                // Normalizar UnidadMedida antes del mapeo
+                modelo.UnidadMedida = modelo.UnidadMedida?.ToUpperInvariant();
+
+                // Mapear directamente - ahora los nombres coinciden
+                var nuevoRegistro = _mapper.Map<DatosEdicionDTO>(modelo);
+
+                bool resultado = await _monitoreoService.CrearNuevoProceso(nuevoRegistro);
+
+                if (resultado)
+                {
+                    return Json(new
+                    {
+                        success = true,
+                        message = "Registro creado exitosamente"
+                    });
+                }
+                else
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "No se pudo crear el registro"
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = $"Error al guardar: {ex.Message}"
+                });
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> EliminarCapturaMes(int idProceso, int mes)
+        {
+            try
+            {
+                bool resultado = await _monitoreoService.EliminarCapturaMes(idProceso, mes);
+
+                if (resultado)
+                {
+                    return Json(new
+                    {
+                        success = true,
+                        mensaje = $"Se eliminó correctamente la captura de {ObtenerNombreMes(mes)}"
+                    });
+                }
+                else
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        mensaje = "No se pudo eliminar la captura del mes"
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    success = false,
+                    mensaje = $"Error: {ex.Message}"
+                });
+            }
+        }
+
+        private string ObtenerNombreMes(int mes)
+        {
+            return mes switch
+            {
+                1 => "Enero",
+                2 => "Febrero",
+                3 => "Marzo",
+                4 => "Abril",
+                5 => "Mayo",
+                6 => "Junio",
+                7 => "Julio",
+                8 => "Agosto",
+                9 => "Septiembre",
+                10 => "Octubre",
+                11 => "Noviembre",
+                12 => "Diciembre",
+                _ => "Desconocido"
+            };
+        }
+
+        public async Task<IActionResult> ObtenerUnidadesMedida()
+        {
+            try
+            {
+                var medidas = await _departamentoService.ObtenerMedidas();
+
+                var lista = medidas.Select(m => new SelectListItem
+                {
+                    Value = m.Valor.ToUpperInvariant(),
+                    Text = m.Valor
+                }).ToList();
+
+                return Json(lista);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }        
     }
 }

@@ -69,6 +69,10 @@
         </div>
         <div>
             <div class="mt-4 text-center">
+                @if (User.IsInRole("Administrador"))
+                {
+                    <button class="boton-amarillo" type="button" id="btnNuevo">Agregar Nuevo</button>
+                }
                 <button class="boton-rojo" type="button" id="btnBuscar">Buscar</button>
             </div>
         </div>
@@ -133,20 +137,158 @@
         No se encontraron datos para los criterios seleccionados.
     </div>
 </div>    <!-- Mensaje de carga -->
-    <div id="mensajeCarga" class="text-center" style="display: none;">
-        <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Cargando...</span>
-        </div>
-        <p class="mt-2">Cargando datos...</p>
+<div id="mensajeCarga" class="text-center" style="display: none;">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando...</span>
     </div>
+    <p class="mt-2">Cargando datos...</p>
+</div>
 
-    <!-- Mensaje cuando no hay datos -->
-    <div id="mensajeSinDatos" class="alert alert-info text-center" style="display: none;">
-        No se encontraron datos para los criterios seleccionados.
+<!-- Mensaje cuando no hay datos -->
+<div id="mensajeSinDatos" class="alert alert-info text-center" style="display: none;">
+    No se encontraron datos para los criterios seleccionados.
+</div>
+
+<div class="modal fade" id="modalModificarActividad" tabindex="-1" aria-labelledby="modalModificarActividadLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalModificarActividadLabel">Modificar Actividad</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="formModificarActividad">
+                <div class="modal-body">
+
+                    <input type="hidden" id="IdProcesoModal" name="IdProceso" />
+                    <input type="hidden" id="modoFormulario" value="editar" /> <!-- Nuevo campo para identificar el modo -->
+                    <!-- CAMPOS EXTRAS SOLO PARA AGREGAR NUEVO -->
+                    <div id="camposNuevoRegistro" style="display: none;">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="AnoFiscalModal" class="form-label">Año Fiscal</label>
+                                <input type="number" class="form-control" id="AnoFiscalModal" name="AnoFiscal" readonly>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="DepartamentoModal" class="form-label">Departamento</label>
+                                <input type="text" class="form-control" id="DepartamentoModal" name="Departamento" readonly>
+                                <input type="hidden" id="IdDepartamentoModal" name="IdDepartamento">
+                            </div>
+                        </div>
+                        <hr class="my-4">
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="selectProgramaPresupuestario" class="form-label">Programa Presupuestario</label>
+                            <select class="form-select" id="selectProgramaPresupuestario" name="PP">
+                                <option value="3">Agenda</option>
+                                <option value="1">E046</option>
+                                <option value="2">E047</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="ComponenteModal" class="form-label">Componente</label>
+                            <input type="number" class="form-control" id="ComponenteModal" name="Componente">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="ActividadModal" class="form-label">Actividad</label>
+                            <input type="number" class="form-control" id="ActividadModal" name="Actividad">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="DescripcionActividadModal" class="form-label">Descripción de la actividad</label>
+                        <textarea class="form-control" id="DescripcionActividadModal" name="DescripcionActividad" rows="3"></textarea>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md">
+                            <label for="selectUnidadMedida" class="form-label">Unidad de Medida</label>
+                            <select class="form-select" id="selectUnidadMedida" name="UnidadMedida">
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="ProgramaSocialModal" class="form-label">Programa o servicio de asistencia social</label>
+                        <input type="text" class="form-control" id="ProgramaSocialModal" name="ProgramaSocial" maxlength="255">
+                    </div>
+
+                    <h5 class="mt-4 mb-2">Meta Programada</h5>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-sm text-center">
+                            <thead class="bg-info text-white">
+                                <tr><th>Enero</th><th>Febrero</th><th>Marzo</th><th>Abril</th><th>Mayo</th><th>Junio</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><input type="number" class="form-control form-control-sm meta-prog" name="TotalEnero" id="TotalEnero" value="0"></td>
+                                    <td><input type="number" class="form-control form-control-sm meta-prog" name="TotalFebrero" id="TotalFebrero" value="0"></td>
+                                    <td><input type="number" class="form-control form-control-sm meta-prog" name="TotalMarzo" id="TotalMarzo" value="0"></td>
+                                    <td><input type="number" class="form-control form-control-sm meta-prog" name="TotalAbril" id="TotalAbril" value="0"></td>
+                                    <td><input type="number" class="form-control form-control-sm meta-prog" name="TotalMayo" id="TotalMayo" value="0"></td>
+                                    <td><input type="number" class="form-control form-control-sm meta-prog" name="TotalJunio" id="TotalJunio" value="0"></td>
+                                </tr>
+                            </tbody>
+                            <thead class="bg-info text-white">
+                                <tr><th>Julio</th><th>Agosto</th><th>Septiembre</th><th>Octubre</th><th>Noviembre</th><th>Diciembre</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><input type="number" class="form-control form-control-sm meta-prog" name="TotalJulio" id="TotalJulio" value="0"></td>
+                                    <td><input type="number" class="form-control form-control-sm meta-prog" name="TotalAgosto" id="TotalAgosto" value="0"></td>
+                                    <td><input type="number" class="form-control form-control-sm meta-prog" name="TotalSeptiembre" id="TotalSeptiembre" value="0"></td>
+                                    <td><input type="number" class="form-control form-control-sm meta-prog" name="TotalOctubre" id="TotalOctubre" value="0"></td>
+                                    <td><input type="number" class="form-control form-control-sm meta-prog" name="TotalNoviembre" id="TotalNoviembre" value="0"></td>
+                                    <td><input type="number" class="form-control form-control-sm meta-prog" name="TotalDiciembre" id="TotalDiciembre" value="0"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h5 class="mt-4 mb-2">Personas Programadas</h5>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-sm text-center">
+                            <thead class="bg-success text-white">
+                                <tr><th>Enero</th><th>Febrero</th><th>Marzo</th><th>Abril</th><th>Mayo</th><th>Junio</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><input type="number" class="form-control form-control-sm personas-prog" name="EneroPersona" id="TotalEneroPersonas" value="0"></td>
+                                    <td><input type="number" class="form-control form-control-sm personas-prog" name="FebreroPersona" id="TotalFebreroPersonas" value="0"></td>
+                                    <td><input type="number" class="form-control form-control-sm personas-prog" name="MarzoPersona" id="TotalMarzoPersonas" value="0"></td>
+                                    <td><input type="number" class="form-control form-control-sm personas-prog" name="AbrilPersona" id="TotalAbrilPersonas" value="0"></td>
+                                    <td><input type="number" class="form-control form-control-sm personas-prog" name="MayoPersona" id="TotalMayoPersonas" value="0"></td>
+                                    <td><input type="number" class="form-control form-control-sm personas-prog" name="JunioPersona" id="TotalJunioPersonas" value="0"></td>
+                                </tr>
+                            </tbody>
+                            <thead class="bg-success text-white">
+                                <tr><th>Julio</th><th>Agosto</th><th>Septiembre</th><th>Octubre</th><th>Noviembre</th><th>Diciembre</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><input type="number" class="form-control form-control-sm personas-prog" name="JulioPersona" id="TotalJulioPersonas" value="0"></td>
+                                    <td><input type="number" class="form-control form-control-sm personas-prog" name="AgostoPersona" id="TotalAgostoPersonas" value="0"></td>
+                                    <td><input type="number" class="form-control form-control-sm personas-prog" name="SeptiembrePersona" id="TotalSeptiembrePersonas" value="0"></td>
+                                    <td><input type="number" class="form-control form-control-sm personas-prog" name="OctubrePersona" id="TotalOctubrePersonas" value="0"></td>
+                                    <td><input type="number" class="form-control form-control-sm personas-prog" name="NoviembrePersona" id="TotalNoviembrePersonas" value="0"></td>
+                                    <td><input type="number" class="form-control form-control-sm personas-prog" name="DiciembrePersona" id="TotalDiciembrePersonas" value="0"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary" id="btnGuardarModal">Guardar y continuar</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
-@section Scripts{
+@section Scripts {
     <script>
         const esAdmin = @(User.IsInRole("Administrador").ToString().ToLower())
 
@@ -180,7 +322,7 @@
                     success: function(response) {
                         if (response.success) {
                             alert('Captura habilitada correctamente. La página se recargará.');
-                            location.reload();
+                            $('#btnBuscar').click();
                         } else {
                             alert('Error al habilitar la captura: ' + response.message);
                         }
@@ -192,6 +334,41 @@
                 });
             }
         }
+
+        function eliminarCapturaMes(elemento) {
+                const idProceso = $(elemento).data('idproceso');
+                const mes = $(elemento).data('mes');
+
+                const nombresMeses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                                      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+
+                if (confirm(`¿Está seguro de que desea eliminar la captura de ${nombresMeses[mes]}?\n\nEsta acción:\n- Eliminará todos los registros externos del mes\n- Marcará el mes como no capturado\n\nEsta acción no se puede deshacer.`)) {
+
+                    $(elemento).removeClass('fa-trash').addClass('fa-spinner fa-spin');
+
+                    $.ajax({
+                        url: '@Url.Action("EliminarCapturaMes", "Monitoreo")',
+                        type: 'POST',
+                        data: {
+                            idProceso: idProceso,
+                            mes: mes
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                alert(response.mensaje);
+                                $('#btnBuscar').click();
+                            } else {
+                                alert('Error: ' + response.mensaje);
+                                $(elemento).removeClass('fa-spinner fa-spin').addClass('fa-trash');
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            alert('Error al eliminar la captura del mes');
+                            $(elemento).removeClass('fa-spinner fa-spin').addClass('fa-trash');
+                        }
+                    });
+                }
+            }
 
         function obtenerFechaHabilitacion(item, mesNumero) {
             // Las propiedades vienen en camelCase desde el JSON
@@ -236,6 +413,8 @@
                         if (response.success && response.datos && response.datos.length > 0) {
                             $('#tbodyDatos').empty();
 
+                            var esAdmin = response.esAdmin;
+
                             $.each(response.datos, function(index, item) {
                                 var prefijoActividad = '';
                                 if (item.pp && item.pp.toLowerCase() === 'agenda') {
@@ -250,20 +429,30 @@
                                     let titulo = '';
                                     let color = '';
 
+                                    const botonEliminarMes = esAdmin ?
+                                        `<i
+                                            class="fa-solid fa-trash"
+                                            title="Eliminar Captura del Mes"
+                                            data-idproceso="${idProceso}"
+                                            data-mes="${mesNumero}"
+                                            onclick="eliminarCapturaMes(this)"
+                                            style="cursor: pointer; color: #dc3545;"></i>` : '';
+
                                     if (valor === 1 || valor === true) {
                                         color = 'text-success';
                                         claseIcono = 'fa-circle-check';
                                         titulo = 'Completado';
                                         const url = '@Url.Action("ActualizacionMeses", "Monitoreo")' + '?idProceso=' + idProceso + '&mes=' + mesNumero + '&modo=visualizar';
                                         iconoHTML = `<a href="${url}"><i class="fa-solid ${claseIcono} ${color}" title="${titulo}"></i></a>`;
+                                        if (esAdmin) {
+                                            iconoHTML += `<br>${botonEliminarMes}`;
+                                        }
                                     } else {
                                         // Obtener la fecha habilitada manualmente
                                         const fechaHabilitadaMes = obtenerFechaHabilitacion(item, mesNumero);
 
                                         let estaHabilitadoManualmente = false;
                                         if (fechaHabilitadaMes) {
-                                            // Crear fecha a partir del string "YYYY-MM-DD"
-                                            // Usamos split para evitar problemas de zona horaria
                                             const partes = fechaHabilitadaMes.split('-');
                                             const fechaHabilitada = new Date(partes[0], partes[1] - 1, partes[2]);
                                             const hoy = new Date();
@@ -314,7 +503,7 @@
                                                     onclick="habilitarCaptura(this)"
                                                     style="cursor: pointer; color: #C04116;"></i>`;
 
-                                                iconoHTML = `<i class="fa-solid ${claseIcono} ${color}" title="${titulo}"></i><br>${botonAdmin}`;
+                                                iconoHTML = `<i class="fa-solid ${claseIcono} ${color}" title="${titulo}"></i><br>${botonAdmin}<br>${botonEliminarMes}`;
                                             } else {
                                                 iconoHTML = `<i class="fa-solid ${claseIcono} ${color}" title="${titulo}"></i>`;
                                             }
@@ -323,8 +512,17 @@
                                     return iconoHTML;
                                 }
 
+                                var btnEliminar = '';
+                                var btnEditar = '';
+
+                                // Para ADMINISTRADOR
+                                if (esAdmin) {
+                                    btnEditar = '<button type="button" class="btn btn-primary btn-sm btn-editar me-1" data-id="' + item.idProceso + '"><i class="fa-solid fa-pen-to-square"></i></button>';
+                                    btnEliminar = '<button type="button" class="btn btn-danger btn-sm btn-eliminar" data-id="' + item.idProceso + '"><i class="fa-solid fa-trash"></i></button>';
+                                }
+
                                 var fila = '<tr>' +
-                                    '<td>' + item.pp + '</td>' +
+                                    '<td>' + item.pp + '<div class="mt-1">' + btnEditar + btnEliminar + '</div></td>' +
                                     '<td>' + item.componente + '</td>' +
                                     '<td>' + actividadCompleta + '</td>' +
                                     '<td>' + item.descripcionActividad + '</td>' +
@@ -353,6 +551,216 @@
                     error: function(xhr, status, error) {
                         $('#mensajeCarga').hide();
                         alert('Error al cargar los datos: ' + error);
+                    }
+                });
+            });
+
+            function limpiarFormularioModal() {
+                $('#IdProcesoModal').val('');
+                $('#selectProgramaPresupuestario').val('Agenda');
+                $('#ComponenteModal').val('');
+                $('#ActividadModal').val('');
+                $('#DescripcionActividadModal').val('');
+                $('#ProgramaSocialModal').val('');
+
+                // Limpiar las metas programadas
+                $('.meta-prog').val(0);
+                $('.personas-prog').val(0);
+            }
+
+            $('#tbodyDatos').on('click', '.btn-eliminar', function() {
+                var idProceso = $(this).data('id');
+
+                if (confirm('¿Está seguro de que desea eliminar este registro? Esta acción es irreversible y eliminará datos en 4 tablas.')) {
+                    $.ajax({
+                        url: '@Url.Action("EliminarRegistro", "Programacion")',
+                        type: 'POST',
+                        data: { id: idProceso },
+                        success: function(response) {
+                            if (response.success) {
+                                alert(response.mensaje);
+                                // Recargar la tabla
+                                $('#btnBuscar').click();
+                            } else {
+                                alert('Error: ' + response.mensaje);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            alert('Error en la comunicación con el servidor al intentar eliminar.');
+                        }
+                    });
+                }
+            });
+
+            $('#btnNuevo').click(function() {
+                var anoFiscal = $('#selectAnoFiscal').val();
+                var departamento = $('#selectDepartamento').val();
+                var departamentoTexto = $('#selectDepartamento option:selected').text();
+
+                if (!departamento) {
+                    alert('Por favor, seleccione un departamento antes de agregar un nuevo registro');
+                    return;
+                }
+
+                // Configurar modal en modo "nuevo"
+                $('#modoFormulario').val('nuevo');
+                $('#modalModificarActividadLabel').text('Agregar Nueva Actividad');
+                $('#btnGuardarModal').text('Guardar');
+
+                // Mostrar campos extras
+                $('#camposNuevoRegistro').show();
+
+                // Limpiar todos los campos del formulario PRIMERO
+                limpiarFormularioModal();
+
+                // Llenar campos de año y departamento DESPUÉS de limpiar
+                $('#AnoFiscalModal').val(anoFiscal);
+                $('#DepartamentoModal').val(departamentoTexto);
+                $('#IdDepartamentoModal').val(departamento);
+
+                // Cargar las unidades de medida
+                cargarUnidadesMedida();
+
+                // Abrir el modal
+                var modal = new bootstrap.Modal(document.getElementById('modalModificarActividad'));
+                modal.show();
+            });
+
+
+            $('#tbodyDatos').on('click', '.btn-editar', function() {
+                const idProceso = $(this).data('id');
+
+                $.ajax({
+                    url: '@Url.Action("ObtenerDatosEdicion", "Monitoreo")',
+                    type: 'GET',
+                    data: { idProceso: idProceso },
+                    success: function(data) {
+                        if (data) {
+                            // Configurar modal en modo "editar"
+                            $('#modoFormulario').val('editar');
+                            $('#modalModificarActividadLabel').text('Modificar Actividad');
+                            $('#btnGuardarModal').text('Guardar y continuar');
+
+                            // Ocultar campos extras
+                            $('#camposNuevoRegistro').hide();
+
+                            // Rellenar el modal con los datos
+                            llenarModalEdicion(data);
+
+                            // Abrir el modal
+                            var modal = new bootstrap.Modal(document.getElementById('modalModificarActividad'));
+                            modal.show();
+                        } else {
+                            alert('Error: No se encontraron datos para el ID proporcionado.');
+                        }
+                    },
+                    error: function() {
+                        alert('Ocurrió un error al cargar los datos del registro.');
+                    }
+                });
+            });
+
+            function cargarUnidadesMedida() {
+                $.ajax({
+                    url: '@Url.Action("ObtenerUnidadesMedida", "Monitoreo")', // Deberás crear esta acción
+                    type: 'GET',
+                    success: function(data) {
+                        const selectMedida = $('#selectUnidadMedida');
+                        selectMedida.empty();
+
+                        if (data && data.length > 0) {
+                            data.forEach(function(medida) {
+                                selectMedida.append(
+                                    $('<option>', {
+                                        value: medida.value,
+                                        text: medida.text
+                                    })
+                                );
+                            });
+                        }
+                    },
+                    error: function() {
+                        console.error('Error al cargar las unidades de medida');
+                    }
+                });
+            }
+
+            function llenarModalEdicion(data) {
+                const selectMedida = $('#selectUnidadMedida');
+                selectMedida.empty();
+
+                const unidadMedidaActual = data.unidadMedida.toUpperCase();
+
+                if (data.listaMedidas && data.listaMedidas.length > 0) {
+                    data.listaMedidas.forEach(function(medida) {
+                        selectMedida.append(
+                            $('<option>', {
+                                value: medida.value,
+                                text: medida.text
+                            })
+                        );
+                    });
+                }
+
+                // Campos principales
+                $('#IdProcesoModal').val(data.idProceso);
+                $('#selectProgramaPresupuestario').val(data.pp);
+                $('#ComponenteModal').val(data.componente);
+                $('#ActividadModal').val(data.actividad);
+                $('#DescripcionActividadModal').val(data.descripcionActividad);
+                selectMedida.val(unidadMedidaActual);
+                $('#ProgramaSocialModal').val(data.programaSocial);
+
+                const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+
+                meses.forEach(mes => {
+                    const campoMeta = $(`#Total${mes}`);
+                    if (campoMeta.length) {
+                        campoMeta.val(data[`total${mes}`] || 0);
+                    }
+
+                    const mesMinuscula = mes.charAt(0).toLowerCase() + mes.slice(1);
+                    const campoPersonas = $(`#Total${mes}Personas`);
+                    if (campoPersonas.length) {
+                        campoPersonas.val(data[`${mesMinuscula}Persona`] || 0);
+                    }
+                });
+            }
+
+            $('#formModificarActividad').submit(function(e) {
+                e.preventDefault();
+
+                const modo = $('#modoFormulario').val();
+                const formData = $(this).serialize();
+
+                // DEBUG: Ver qué datos se están enviando
+                // console.log('Modo:', modo);
+                // console.log('Datos del formulario:', formData);
+
+                let urlDestino;
+                if (modo === 'nuevo') {
+                    urlDestino = '@Url.Action("GuardarNuevo", "Monitoreo")';
+                } else {
+                    urlDestino = '@Url.Action("GuardarEdicion", "Monitoreo")';
+                }
+
+                $.ajax({
+                    url: urlDestino,
+                    type: 'POST',
+                    data: formData,
+                    success: function(response) {
+                        if (response.success) {
+                            alert(response.message);
+                            var modal = bootstrap.Modal.getInstance(document.getElementById('modalModificarActividad'));
+                            modal.hide();
+                            $('#btnBuscar').click();
+                        } else {
+                            alert('Error al guardar: ' + response.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error AJAX:', xhr.responseText);
+                        alert('Error de conexión al intentar guardar.');
                     }
                 });
             });
