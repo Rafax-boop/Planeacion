@@ -13,5 +13,8 @@ namespace Metas.BLL.Interfaces
         Task<bool> GuardarActualizacion(GuardarActualizacionDTO modelo, string rutaEvidencia, string rutaJustificacion);
         Task<LlenadoExterno> ObtenerLlenadoMensual(int id, int mes);
         Task<bool> HabilitarCaptura(int idProceso, int mes);
+        Task<bool> ActualizarRegistro(DatosEdicionDTO modelo);
+        Task<bool> EliminarCapturaMes(int idProceso, int mes);
+        Task<bool> CrearNuevoProceso(DatosEdicionDTO modelo);
     }
 }

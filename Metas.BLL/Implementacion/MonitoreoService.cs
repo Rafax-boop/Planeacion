@@ -1,5 +1,6 @@
 ﻿using Metas.BLL.DTO;
 using Metas.BLL.Interfaces;
+using Metas.DAL.DBContext;
 using Metas.DAL.Interfaces;
 using Metas.Entity;
 using Microsoft.EntityFrameworkCore;
@@ -15,13 +16,19 @@ namespace Metas.BLL.Implementacion
     {
         private readonly IGenericRepository<LlenadoInterno> _llenadoInternoRepository;
         private readonly IGenericRepository<LlenadoExterno> _llenadoExternoRepository;
+        private readonly IGenericRepository<Programacion> _programacionRepository;
+        private readonly MetasContext _context;
 
         public MonitoreoService(
         IGenericRepository<LlenadoInterno> llenadoInternoRepository,
-        IGenericRepository<LlenadoExterno> llenadoExternoRepository)
+        IGenericRepository<LlenadoExterno> llenadoExternoRepository,
+        IGenericRepository<Programacion> programacionRepository,
+        MetasContext context)
         {
             _llenadoInternoRepository = llenadoInternoRepository;
             _llenadoExternoRepository = llenadoExternoRepository;
+            _programacionRepository = programacionRepository;
+            _context = context;
         }
 
         public async Task<bool> GuardarActualizacion(GuardarActualizacionDTO modelo, string rutaEvidencia, string rutaJustificacion)
@@ -246,6 +253,262 @@ namespace Metas.BLL.Implementacion
             return registro;
         }
 
+        public async Task<bool> ActualizarRegistro(DatosEdicionDTO modelo)
+        {
+            try
+            {
+                // 1. Buscar la entidad existente
+                var registroDb = await _llenadoInternoRepository.Obtener(r => r.IdProceso == modelo.IdProceso);
+
+                if (registroDb == null)
+                {
+                    Console.WriteLine($"No se encontró el registro con IdProceso: {modelo.IdProceso}");
+                    return false;
+                }
+
+                // 2. Mapear los datos
+                registroDb.Idpp = modelo.PP;
+                registroDb.Pp = ObtenerNombreProgramaPresupuestario(modelo.PP);
+                registroDb.Componente = modelo.Componente;
+                registroDb.Actividad = modelo.Actividad;
+                registroDb.DescripcionActividad = modelo.DescripcionActividad;
+                registroDb.ProgramaSocial = modelo.ProgramaSocial;
+                registroDb.UnidadMedida = modelo.UnidadMedida;
+
+                registroDb.TotalEnero = modelo.TotalEnero;
+                registroDb.TotalFebrero = modelo.TotalFebrero;
+                registroDb.TotalMarzo = modelo.TotalMarzo;
+                registroDb.TotalAbril = modelo.TotalAbril;
+                registroDb.TotalMayo = modelo.TotalMayo;
+                registroDb.TotalJunio = modelo.TotalJunio;
+                registroDb.TotalJulio = modelo.TotalJulio;
+                registroDb.TotalAgosto = modelo.TotalAgosto;
+                registroDb.TotalSeptiembre = modelo.TotalSeptiembre;
+                registroDb.TotalOctubre = modelo.TotalOctubre;
+                registroDb.TotalNoviembre = modelo.TotalNoviembre;
+                registroDb.TotalDiciembre = modelo.TotalDiciembre;
+
+                registroDb.EneroPersona = modelo.EneroPersona;
+                registroDb.FebreroPersona = modelo.FebreroPersona;
+                registroDb.MarzoPersona = modelo.MarzoPersona;
+                registroDb.AbrilPersona = modelo.AbrilPersona;
+                registroDb.MayoPersona = modelo.MayoPersona;
+                registroDb.JunioPersona = modelo.JunioPersona;
+                registroDb.JulioPersona = modelo.JulioPersona;
+                registroDb.AgostoPersona = modelo.AgostoPersona;
+                registroDb.SeptiembrePersona = modelo.SeptiembrePersona;
+                registroDb.OctubrePersona = modelo.OctubrePersona;
+                registroDb.NoviembrePersona = modelo.NoviembrePersona;
+                registroDb.DiciembrePersona = modelo.DiciembrePersona;
+
+                // 3. Editar (esto hace Update y SaveChangesAsync)
+                bool resultado = await _llenadoInternoRepository.Editar(registroDb);
+
+                return resultado;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al actualizar el registro: {ex.Message}");
+                Console.WriteLine($"StackTrace: {ex.StackTrace}");
+                throw;
+            }
+        }
+
+        public async Task<bool> EliminarCapturaMes(int idProceso, int mes)
+        {
+            try
+            {
+                // Validar que el mes esté en el rango correcto
+                if (mes < 1 || mes > 12)
+                {
+                    throw new ArgumentException("El mes debe estar entre 1 y 12");
+                }
+
+                // 1. Eliminar todos los registros de LlenadoExterno para este proceso y mes
+                var registrosExternos = (await _llenadoExternoRepository.Consultar(
+                    le => le.IdProceso == idProceso && le.Meses == mes)).ToList();
+
+                foreach (var registro in registrosExternos)
+                {
+                    await _llenadoExternoRepository.Eliminar(registro);
+                }
+
+                // 2. Actualizar el campo del mes en LlenadoInterno (ponerlo en null)
+                var llenadoInterno = await _llenadoInternoRepository.Obtener(
+                    li => li.IdProceso == idProceso);
+
+                if (llenadoInterno == null)
+                {
+                    throw new Exception($"No se encontró el registro de LlenadoInterno con IdProceso: {idProceso}");
+                }
+
+                // 3. Establecer el campo del mes en null usando switch
+                switch (mes)
+                {
+                    case 1:
+                        llenadoInterno.Enero = null;
+                        llenadoInterno.TotalEneroRealizado = null;
+                        break;
+                    case 2:
+                        llenadoInterno.Febrero = null;
+                        llenadoInterno.TotalFebreroRealizado = null;
+                        break;
+                    case 3:
+                        llenadoInterno.Marzo = null;
+                        llenadoInterno.TotalMarzoRealizado = null;
+                        break;
+                    case 4:
+                        llenadoInterno.Abril = null;
+                        llenadoInterno.TotalAbrilRealizado = null;
+                        break;
+                    case 5:
+                        llenadoInterno.Mayo = null;
+                        llenadoInterno.TotalMayoRealizado = null;
+                        break;
+                    case 6:
+                        llenadoInterno.Junio = null;
+                        llenadoInterno.TotalJunioRealizado = null;
+                        break;
+                    case 7:
+                        llenadoInterno.Julio = null;
+                        llenadoInterno.TotalJulioRealizado = null;
+                        break;
+                    case 8:
+                        llenadoInterno.Agosto = null;
+                        llenadoInterno.TotalAgostoRealizado = null;
+                        break;
+                    case 9:
+                        llenadoInterno.Septiembre = null;
+                        llenadoInterno.TotalSeptiembreRealizado = null;
+                        break;
+                    case 10:
+                        llenadoInterno.Octubre = null;
+                        llenadoInterno.TotalOctubreRealizado = null;
+                        break;
+                    case 11:
+                        llenadoInterno.Noviembre = null;
+                        llenadoInterno.TotalNoviembreRealizado = null;
+                        break;
+                    case 12:
+                        llenadoInterno.Diciembre = null;
+                        llenadoInterno.TotalDiciembreRealizado = null;
+                        break;
+                }
+
+                // 4. Recalcular el total realizado (restar el valor del mes eliminado)
+                llenadoInterno.TotalRealizado =
+                    (llenadoInterno.TotalEneroRealizado ?? 0) +
+                    (llenadoInterno.TotalFebreroRealizado ?? 0) +
+                    (llenadoInterno.TotalMarzoRealizado ?? 0) +
+                    (llenadoInterno.TotalAbrilRealizado ?? 0) +
+                    (llenadoInterno.TotalMayoRealizado ?? 0) +
+                    (llenadoInterno.TotalJunioRealizado ?? 0) +
+                    (llenadoInterno.TotalJulioRealizado ?? 0) +
+                    (llenadoInterno.TotalAgostoRealizado ?? 0) +
+                    (llenadoInterno.TotalSeptiembreRealizado ?? 0) +
+                    (llenadoInterno.TotalOctubreRealizado ?? 0) +
+                    (llenadoInterno.TotalNoviembreRealizado ?? 0) +
+                    (llenadoInterno.TotalDiciembreRealizado ?? 0);
+
+                // 5. Guardar los cambios
+                await _llenadoInternoRepository.Editar(llenadoInterno);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error en EliminarCapturaMes: {ex.Message}");
+                throw;
+            }
+        }
+
+        public async Task<bool> CrearNuevoProceso(DatosEdicionDTO modelo)
+        {
+            try
+            {
+                // Crear la entidad LlenadoInterno
+                var nuevoLlenado = new LlenadoInterno
+                {
+                    Departamento = modelo.Departamento,
+                    Ano = modelo.AnoFiscal,
+                    Idpp = modelo.PP,
+                    Pp = ObtenerNombreProgramaPresupuestario(modelo.PP),
+                    Componente = modelo.Componente,
+                    Actividad = modelo.Actividad,
+                    DescripcionActividad = modelo.DescripcionActividad,
+                    UnidadMedida = modelo.UnidadMedida,
+                    ProgramaSocial = modelo.ProgramaSocial,
+
+                    // Metas programadas
+                    TotalEnero = modelo.TotalEnero,
+                    TotalFebrero = modelo.TotalFebrero,
+                    TotalMarzo = modelo.TotalMarzo,
+                    TotalAbril = modelo.TotalAbril,
+                    TotalMayo = modelo.TotalMayo,
+                    TotalJunio = modelo.TotalJunio,
+                    TotalJulio = modelo.TotalJulio,
+                    TotalAgosto = modelo.TotalAgosto,
+                    TotalSeptiembre = modelo.TotalSeptiembre,
+                    TotalOctubre = modelo.TotalOctubre,
+                    TotalNoviembre = modelo.TotalNoviembre,
+                    TotalDiciembre = modelo.TotalDiciembre,
+
+                    // Personas programadas
+                    EneroPersona = modelo.EneroPersona,
+                    FebreroPersona = modelo.FebreroPersona,
+                    MarzoPersona = modelo.MarzoPersona,
+                    AbrilPersona = modelo.AbrilPersona,
+                    MayoPersona = modelo.MayoPersona,
+                    JunioPersona = modelo.JunioPersona,
+                    JulioPersona = modelo.JulioPersona,
+                    AgostoPersona = modelo.AgostoPersona,
+                    SeptiembrePersona = modelo.SeptiembrePersona,
+                    OctubrePersona = modelo.OctubrePersona,
+                    NoviembrePersona = modelo.NoviembrePersona,
+                    DiciembrePersona = modelo.DiciembrePersona,
+
+                    // Calcular totales
+                    TotalProgramado = (modelo.TotalEnero ?? 0) + (modelo.TotalFebrero ?? 0) +
+                                    (modelo.TotalMarzo ?? 0) + (modelo.TotalAbril ?? 0) +
+                                    (modelo.TotalMayo ?? 0) + (modelo.TotalJunio ?? 0) +
+                                    (modelo.TotalJulio ?? 0) + (modelo.TotalAgosto ?? 0) +
+                                    (modelo.TotalSeptiembre ?? 0) + (modelo.TotalOctubre ?? 0) +
+                                    (modelo.TotalNoviembre ?? 0) + (modelo.TotalDiciembre ?? 0),
+
+                    TotalPersona = (modelo.EneroPersona ?? 0) + (modelo.FebreroPersona ?? 0) +
+                                           (modelo.MarzoPersona ?? 0) + (modelo.AbrilPersona ?? 0) +
+                                           (modelo.MayoPersona ?? 0) + (modelo.JunioPersona ?? 0) +
+                                           (modelo.JulioPersona ?? 0) + (modelo.AgostoPersona ?? 0) +
+                                           (modelo.SeptiembrePersona ?? 0) + (modelo.OctubrePersona ?? 0) +
+                                           (modelo.NoviembrePersona ?? 0) + (modelo.DiciembrePersona ?? 0)
+                };
+
+                // Guardar usando el repositorio genérico
+                var resultado = await _llenadoInternoRepository.Crear(nuevoLlenado);
+
+                // Si tu sistema requiere crear un registro en la tabla Programacion relacionado
+                // (basándome en que veo que usas IdEstatus y navegación a Programacion)
+                if (resultado != null)
+                {
+                    var programacion = new Programacion
+                    {
+                        IdLlenado = resultado.IdProceso,
+                        IdEstatus = 3,
+
+                    };
+
+                    await _programacionRepository.Crear(programacion);
+                }
+
+                return resultado != null;
+            }
+            catch (Exception ex)
+            {
+                // Log del error si tienes un logger
+                throw new Exception($"Error al crear el nuevo proceso: {ex.Message}", ex);
+            }
+        }
+
         private string ObtenerColumnaFecha(int mes)
         {
             return mes switch
@@ -264,6 +527,22 @@ namespace Metas.BLL.Implementacion
                 12 => "FechaDiciembre",
                 _ => throw new ArgumentException("Mes no válido")
             };
+        }
+
+        private string ObtenerNombreProgramaPresupuestario(int? id)
+        {
+
+            switch (id)
+            {
+                case 3:
+                    return "Agenda";
+                case 1:
+                    return "E046";
+                case 2:
+                    return "E047";
+                default:
+                    return string.Empty;
+            }
         }
     }
 }

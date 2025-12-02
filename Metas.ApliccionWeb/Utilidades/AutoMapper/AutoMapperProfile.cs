@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Metas.AplicacionWeb.Models.ViewModels;
+using Metas.BLL.DTO;
 using Metas.Entity;
 
 namespace Metas.AplicacionWeb.Utilidades.AutoMapper
@@ -15,6 +16,9 @@ namespace Metas.AplicacionWeb.Utilidades.AutoMapper
                 .ReverseMap();
 
             CreateMap<VMFechas, FechaCaptura>()
+                .ReverseMap();
+
+            CreateMap<VMDatosEdicionActividad, DatosEdicionDTO>()
                 .ReverseMap();
         }
     }

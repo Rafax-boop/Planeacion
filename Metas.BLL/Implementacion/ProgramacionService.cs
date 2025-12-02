@@ -15,6 +15,7 @@ namespace Metas.BLL.Implementacion
     public class ProgramacionService : IProgramacionService
     {
         private readonly IGenericRepository<LlenadoInterno> _repositorioLlenadoInterno;
+        private readonly IGenericRepository<LlenadoExterno> _repositorioLlenadoExterno;
         private readonly IGenericRepository<Departamento> _repositoryDepartamento;
         private readonly IGenericRepository<Programacion> _repositorioProgramacion;
         private readonly IGenericRepository<ServiciosMunicipio> _repositorioServicios;
@@ -24,6 +25,7 @@ namespace Metas.BLL.Implementacion
 
         public ProgramacionService(IGenericRepository<LlenadoInterno> repositorioLlenadoInterno,
             IGenericRepository<Departamento> repositoryDepartamento,
+            IGenericRepository<LlenadoExterno> repositorioLlenadoExterno,
             IGenericRepository<Programacion> repositorioProgramacion,
             IGenericRepository<ServiciosMunicipio> repositorioServicios,
             IGenericRepository<PersonasMunicipio> repositorioPersonas,
@@ -35,9 +37,11 @@ namespace Metas.BLL.Implementacion
             _repositorioProgramacion = repositorioProgramacion;
             _repositorioServicios = repositorioServicios;
             _repositorioPersonas = repositorioPersonas;
+            _repositorioLlenadoExterno = repositorioLlenadoExterno;
             _repositorioComentario = repositorioComentario;
             _context = context;
         }
+
         public async Task<bool> GuardarProgramacion(ProgramacionDTO modelo)
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
@@ -282,38 +286,57 @@ namespace Metas.BLL.Implementacion
 
                 int idProgramacion = programacionEntidad.IdRegistro;
 
+                // ORDEN CORRECTO: De tablas hijas a tablas padres
+
+                // 1. Eliminar Comentarios (tabla hija de Programacion)
+                var comentarios = (await _repositorioComentario.Consultar(
+                    c => c.IdProgramacion == idProgramacion)).ToList();
+                foreach (var item in comentarios)
+                {
+                    await _repositorioComentario.Eliminar(item);
+                }
+
+                // 2. Eliminar PersonasMunicipio
                 var personasMunicipios = (await _repositorioPersonas.Consultar(
                     pm => pm.IdLlenado == idProgramacion)).ToList();
-
-                foreach (var pm in personasMunicipios)
+                foreach (var item in personasMunicipios)
                 {
-                    await _repositorioPersonas.Eliminar(pm);
+                    await _repositorioPersonas.Eliminar(item);
                 }
 
+                // 3. Eliminar ServiciosMunicipios
                 var serviciosMunicipios = (await _repositorioServicios.Consultar(
                     sm => sm.IdLlenado == idProgramacion)).ToList();
-
-                foreach (var sm in serviciosMunicipios)
+                foreach (var item in serviciosMunicipios)
                 {
-                    await _repositorioServicios.Eliminar(sm);
+                    await _repositorioServicios.Eliminar(item);
                 }
 
-                await _repositorioProgramacion.Eliminar(programacionEntidad);
+                // 4. Eliminar LlenadoExterno
+                var llenadoExternoEntidad = (await _repositorioLlenadoExterno.Consultar(
+                    sm => sm.IdProceso == idLlenado)).ToList();
+                foreach (var item in llenadoExternoEntidad)
+                {
+                    await _repositorioLlenadoExterno.Eliminar(item);
+                }
 
+                // 5. Eliminar LlenadoInterno
                 var llenadoInternoEntidad = await _repositorioLlenadoInterno.Obtener(
                     l => l.IdProceso == idLlenado);
-
                 if (llenadoInternoEntidad != null)
                 {
                     await _repositorioLlenadoInterno.Eliminar(llenadoInternoEntidad);
                 }
 
+                // 6. FINALMENTE: Eliminar Programacion (tabla padre)
+                await _repositorioProgramacion.Eliminar(programacionEntidad);
+
                 return true;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error: {ex.Message}");
-                return false;
+                Console.WriteLine($"Error al eliminar programación {idLlenado}: {ex.Message}");
+                return false; // O considera lanzar la excepción: throw;
             }
         }
 
@@ -512,6 +535,7 @@ namespace Metas.BLL.Implementacion
                 throw;
             }
         }
+
         public async Task<bool> GuardarComentarios(List<ComentarioDTO> comentarios)
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
@@ -570,6 +594,7 @@ namespace Metas.BLL.Implementacion
                 return false;
             }
         }
+
         public async Task<Comentario> ObtenerComentariosPorProgramacion(int idProgramacion)
         {
             try

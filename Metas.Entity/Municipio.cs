@@ -19,9 +19,5 @@ public partial class Municipio
 
     public virtual ICollection<ServiciosMunicipio> ServiciosMunicipios { get; set; } = new List<ServiciosMunicipio>();
 
-    public virtual ICollection<TemporalPersonasMunicipio> TemporalPersonasMunicipios { get; set; } = new List<TemporalPersonasMunicipio>();
-
-    public virtual ICollection<TemporalServiciosMunicipio> TemporalServiciosMunicipios { get; set; } = new List<TemporalServiciosMunicipio>();
-
     public virtual ICollection<Vinculacion> Vinculacions { get; set; } = new List<Vinculacion>();
 }
