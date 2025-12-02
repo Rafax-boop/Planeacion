@@ -645,26 +645,48 @@ namespace Metas.BLL.Implementacion
 
             try
             {
-                // Obtener la programación existente
-                var programacionExistente = await _repositorioProgramacion.Obtener(
-                    p => p.IdRegistro == modelo.Id);
+                // 1. Buscar la programación existente
+                var programacionExistente = await _repositorioProgramacion.Obtener(p => p.IdRegistro == modelo.Id);
 
                 if (programacionExistente == null)
+                {
                     return false;
+                }
 
-                // Actualizar campos editables
+                // 2. Actualizar campos de Programacion
+                programacionExistente.CorreoElectro = modelo.CorreoContacto;
+                programacionExistente.Pp = modelo.Pp;
+                programacionExistente.NComponente = modelo.NComponente;
+                programacionExistente.NActividad = modelo.NActividad;
                 programacionExistente.Justificacion = modelo.Justificacion;
                 programacionExistente.DescripcionDocumento = modelo.DescripcionDocumento;
+                programacionExistente.RecursoFederal = modelo.RecursoFederal;
+                programacionExistente.RecursoEstatal = modelo.RecursoEstatal;
                 programacionExistente.ProgramaSocial = modelo.ProgramaSocial;
                 programacionExistente.DescripcionActividad = modelo.DescripcionActividad;
                 programacionExistente.NombreIndicador = modelo.NombreIndicador;
                 programacionExistente.DefinicionIndicador = modelo.DefinicionIndicador;
                 programacionExistente.UnidadMedida = modelo.UnidadMedida;
                 programacionExistente.MediosVerificac = modelo.MediosVerificacion;
+                programacionExistente.SerieInfo = modelo.SerieInformacionDesde;
+                programacionExistente.SerieInfo2 = modelo.SerieInformacionHasta;
                 programacionExistente.FuenteInfo = modelo.FuenteInformacion;
+                programacionExistente.IntervienenDelegaciones = modelo.IntervienenDelegaciones;
                 programacionExistente.IntervienenDelegacionesManera = modelo.IntervienenDelegacionesManera;
 
-                // Actualizar trimestres
+                // Línea Base
+                programacionExistente.Anos = modelo.AnoBase;
+                programacionExistente.Valor = modelo.PorcentajeBase;
+                programacionExistente.BienServicio = modelo.ServicioBase;
+                programacionExistente.NoPersonas = modelo.PersonasBase;
+
+                // Meta Anual
+                programacionExistente.Anos2 = modelo.AnoMeta;
+                programacionExistente.Valor2 = modelo.PorcentajeMeta;
+                programacionExistente.BienServicio2 = modelo.ServicioMeta;
+                programacionExistente.NoPersonas2 = modelo.PersonasMeta;
+
+                // Trimestres
                 programacionExistente.Servicio1 = modelo.PrimerServicio;
                 programacionExistente.Servicio2 = modelo.SegundoServicio;
                 programacionExistente.Servicio3 = modelo.TercerServicio;
@@ -675,7 +697,7 @@ namespace Metas.BLL.Implementacion
                 programacionExistente.Personas3 = modelo.TercerPersona;
                 programacionExistente.Personas4 = modelo.CuartoPersona;
 
-                // Actualizar meses servicios
+                // Meses Servicios
                 programacionExistente.Mes1 = modelo.MesesServicios[0];
                 programacionExistente.Mes2 = modelo.MesesServicios[1];
                 programacionExistente.Mes3 = modelo.MesesServicios[2];
@@ -689,7 +711,7 @@ namespace Metas.BLL.Implementacion
                 programacionExistente.Mes11 = modelo.MesesServicios[10];
                 programacionExistente.Mes12 = modelo.MesesServicios[11];
 
-                // Actualizar meses personas
+                // Meses Personas
                 programacionExistente.Mes13 = modelo.MesesPersonas[0];
                 programacionExistente.Mes14 = modelo.MesesPersonas[1];
                 programacionExistente.Mes15 = modelo.MesesPersonas[2];
@@ -703,43 +725,28 @@ namespace Metas.BLL.Implementacion
                 programacionExistente.Mes121 = modelo.MesesPersonas[10];
                 programacionExistente.Mes19 = modelo.MesesPersonas[11];
 
-                // Actualizar acciones
-                if (modelo.Acciones.Count > 0)
-                {
-                    programacionExistente.Actividad1 = modelo.Acciones[0].Descripcion;
-                    programacionExistente.Frecuencia1 = modelo.Acciones[0].Frecuencia;
-                    programacionExistente.FechaProgramacion1 = modelo.Acciones[0].FechaInicio;
-                }
+                // Acciones
+                programacionExistente.Actividad1 = modelo.Acciones.Count > 0 ? modelo.Acciones[0].Descripcion : null;
+                programacionExistente.Frecuencia1 = modelo.Acciones.Count > 0 ? modelo.Acciones[0].Frecuencia : null;
+                programacionExistente.FechaProgramacion1 = modelo.Acciones.Count > 0 ? modelo.Acciones[0].FechaInicio : null;
 
-                if (modelo.Acciones.Count > 1)
-                {
-                    programacionExistente.Actividad2 = modelo.Acciones[1].Descripcion;
-                    programacionExistente.Frecuencia2 = modelo.Acciones[1].Frecuencia;
-                    programacionExistente.FechaProgramacion2 = modelo.Acciones[1].FechaInicio;
-                }
+                programacionExistente.Actividad2 = modelo.Acciones.Count > 1 ? modelo.Acciones[1].Descripcion : null;
+                programacionExistente.Frecuencia2 = modelo.Acciones.Count > 1 ? modelo.Acciones[1].Frecuencia : null;
+                programacionExistente.FechaProgramacion2 = modelo.Acciones.Count > 1 ? modelo.Acciones[1].FechaInicio : null;
 
-                if (modelo.Acciones.Count > 2)
-                {
-                    programacionExistente.Actividad3 = modelo.Acciones[2].Descripcion;
-                    programacionExistente.Frecuencia3 = modelo.Acciones[2].Frecuencia;
-                    programacionExistente.FechaProgramacion3 = modelo.Acciones[2].FechaInicio;
-                }
+                programacionExistente.Actividad3 = modelo.Acciones.Count > 2 ? modelo.Acciones[2].Descripcion : null;
+                programacionExistente.Frecuencia3 = modelo.Acciones.Count > 2 ? modelo.Acciones[2].Frecuencia : null;
+                programacionExistente.FechaProgramacion3 = modelo.Acciones.Count > 2 ? modelo.Acciones[2].FechaInicio : null;
 
-                if (modelo.Acciones.Count > 3)
-                {
-                    programacionExistente.Actividad4 = modelo.Acciones[3].Descripcion;
-                    programacionExistente.Frecuencia4 = modelo.Acciones[3].Frecuencia;
-                    programacionExistente.FechaProgramacion4 = modelo.Acciones[3].FechaInicio;
-                }
+                programacionExistente.Actividad4 = modelo.Acciones.Count > 3 ? modelo.Acciones[3].Descripcion : null;
+                programacionExistente.Frecuencia4 = modelo.Acciones.Count > 3 ? modelo.Acciones[3].Frecuencia : null;
+                programacionExistente.FechaProgramacion4 = modelo.Acciones.Count > 3 ? modelo.Acciones[3].FechaInicio : null;
 
-                if (modelo.Acciones.Count > 4)
-                {
-                    programacionExistente.Actividad5 = modelo.Acciones[4].Descripcion;
-                    programacionExistente.Frecuencia5 = modelo.Acciones[4].Frecuencia;
-                    programacionExistente.FechaProgramacion5 = modelo.Acciones[4].FechaInicio;
-                }
+                programacionExistente.Actividad5 = modelo.Acciones.Count > 4 ? modelo.Acciones[4].Descripcion : null;
+                programacionExistente.Frecuencia5 = modelo.Acciones.Count > 4 ? modelo.Acciones[4].Frecuencia : null;
+                programacionExistente.FechaProgramacion5 = modelo.Acciones.Count > 4 ? modelo.Acciones[4].FechaInicio : null;
 
-                // Actualizar firmas
+                // Firmas
                 programacionExistente.ElaboraNombre = modelo.ElaboraNombre;
                 programacionExistente.ElaboroCargo = modelo.ElaboroCargo;
                 programacionExistente.ValidoNombre = modelo.RevisionNombre;
@@ -747,36 +754,105 @@ namespace Metas.BLL.Implementacion
                 programacionExistente.AutorizoNombre = modelo.AutorizacionNombre;
                 programacionExistente.AutorizoCargo = modelo.AutorizacionCargo;
 
-                // Actualizar totales
+                programacionExistente.Acumulable = modelo.SelectAcumulable;
                 programacionExistente.Totalanos = modelo.TotalAnos;
                 programacionExistente.Totalanos2 = modelo.TotalAnos2;
+                programacionExistente.Beneficiarios = modelo.Beneficiarios;
 
                 await _repositorioProgramacion.Editar(programacionExistente);
 
-                // Actualizar LlenadoInterno
-                var llenadoInterno = await _repositorioLlenadoInterno.Obtener(
-                    l => l.IdProceso == programacionExistente.IdLlenado);
-
-                if (llenadoInterno != null)
+                // 3. Actualizar LlenadoInterno si existe
+                // 3. Actualizar LlenadoInterno si existe
+                if (programacionExistente.IdLlenado.HasValue)
                 {
-                    llenadoInterno.DescripcionActividad = modelo.DescripcionActividad;
-                    llenadoInterno.UnidadMedida = modelo.UnidadMedida;
-                    llenadoInterno.TotalEnero = modelo.MesesServicios[0];
-                    llenadoInterno.TotalFebrero = modelo.MesesServicios[1];
-                    llenadoInterno.TotalMarzo = modelo.MesesServicios[2];
-                    llenadoInterno.TotalAbril = modelo.MesesServicios[3];
-                    llenadoInterno.TotalMayo = modelo.MesesServicios[4];
-                    llenadoInterno.TotalJunio = modelo.MesesServicios[5];
-                    llenadoInterno.TotalJulio = modelo.MesesServicios[6];
-                    llenadoInterno.TotalAgosto = modelo.MesesServicios[7];
-                    llenadoInterno.TotalSeptiembre = modelo.MesesServicios[8];
-                    llenadoInterno.TotalOctubre = modelo.MesesServicios[9];
-                    llenadoInterno.TotalNoviembre = modelo.MesesServicios[10];
-                    llenadoInterno.TotalDiciembre = modelo.MesesServicios[11];
-                    llenadoInterno.TotalProgramado = modelo.PrimerServicio + modelo.SegundoServicio + modelo.TercerServicio + modelo.CuartoServicio;
-                    llenadoInterno.TotalPersona = modelo.PrimerPersona + modelo.SegundoPersona + modelo.TercerPersona + modelo.CuartoPersona;
+                    var llenadoInterno = await _repositorioLlenadoInterno.Obtener(
+                        l => l.IdProceso == programacionExistente.IdLlenado.Value);
 
-                    await _repositorioLlenadoInterno.Editar(llenadoInterno);
+                    if (llenadoInterno != null)
+                    {
+                        // ✅ AGREGAR ESTAS LÍNEAS - Actualizar Pp y Componente
+                        llenadoInterno.Pp = modelo.Pp;
+                        llenadoInterno.Componente = modelo.Componente;
+                        llenadoInterno.Actividad = modelo.NActividad;
+
+                        llenadoInterno.DescripcionActividad = modelo.DescripcionActividad;
+                        llenadoInterno.ProgramaSocial = modelo.ProgramaSocial;
+                        llenadoInterno.UnidadMedida = modelo.UnidadMedida;
+
+                        // Actualizar totales mensuales
+                        llenadoInterno.TotalEnero = modelo.MesesServicios[0];
+                        llenadoInterno.TotalFebrero = modelo.MesesServicios[1];
+                        llenadoInterno.TotalMarzo = modelo.MesesServicios[2];
+                        llenadoInterno.TotalAbril = modelo.MesesServicios[3];
+                        llenadoInterno.TotalMayo = modelo.MesesServicios[4];
+                        llenadoInterno.TotalJunio = modelo.MesesServicios[5];
+                        llenadoInterno.TotalJulio = modelo.MesesServicios[6];
+                        llenadoInterno.TotalAgosto = modelo.MesesServicios[7];
+                        llenadoInterno.TotalSeptiembre = modelo.MesesServicios[8];
+                        llenadoInterno.TotalOctubre = modelo.MesesServicios[9];
+                        llenadoInterno.TotalNoviembre = modelo.MesesServicios[10];
+                        llenadoInterno.TotalDiciembre = modelo.MesesServicios[11];
+
+                        // ✅ AGREGAR - Actualizar personas por mes
+                        llenadoInterno.EneroPersona = modelo.MesesPersonas[0];
+                        llenadoInterno.FebreroPersona = modelo.MesesPersonas[1];
+                        llenadoInterno.MarzoPersona = modelo.MesesPersonas[2];
+                        llenadoInterno.AbrilPersona = modelo.MesesPersonas[3];
+                        llenadoInterno.MayoPersona = modelo.MesesPersonas[4];
+                        llenadoInterno.JunioPersona = modelo.MesesPersonas[5];
+                        llenadoInterno.JulioPersona = modelo.MesesPersonas[6];
+                        llenadoInterno.AgostoPersona = modelo.MesesPersonas[7];
+                        llenadoInterno.SeptiembrePersona = modelo.MesesPersonas[8];
+                        llenadoInterno.OctubrePersona = modelo.MesesPersonas[9];
+                        llenadoInterno.NoviembrePersona = modelo.MesesPersonas[10];
+                        llenadoInterno.DiciembrePersona = modelo.MesesPersonas[11];
+
+                        // ✅ AGREGAR - Actualizar totales
+                        llenadoInterno.TotalProgramado = modelo.PrimerServicio + modelo.SegundoServicio + modelo.TercerServicio + modelo.CuartoServicio;
+                        llenadoInterno.TotalPersona = modelo.PrimerPersona + modelo.SegundoPersona + modelo.TercerPersona + modelo.CuartoPersona;
+
+                        await _repositorioLlenadoInterno.Editar(llenadoInterno);
+                    }
+                }
+
+                // 4. Actualizar ServiciosMunicipio
+                var serviciosExistentes = (await _repositorioServicios.Consultar(
+                    sm => sm.IdLlenado == modelo.Id)).ToList();
+
+                foreach (var servicio in serviciosExistentes)
+                {
+                    await _repositorioServicios.Eliminar(servicio);
+                }
+
+                foreach (var municipio in modelo.MunicipiosServicios)
+                {
+                    var nuevoServicio = new ServiciosMunicipio
+                    {
+                        IdLlenado = modelo.Id,
+                        IdMunicipio = municipio.IdMunicipio,
+                        NumeroBien = municipio.Cantidad
+                    };
+                    await _repositorioServicios.Crear(nuevoServicio);
+                }
+
+                // 5. Actualizar PersonasMunicipio
+                var personasExistentes = (await _repositorioPersonas.Consultar(
+                    pm => pm.IdLlenado == modelo.Id)).ToList();
+
+                foreach (var persona in personasExistentes)
+                {
+                    await _repositorioPersonas.Eliminar(persona);
+                }
+
+                foreach (var municipio in modelo.MunicipiosPersonas)
+                {
+                    var nuevaPersona = new PersonasMunicipio
+                    {
+                        IdLlenado = modelo.Id,
+                        IdMunicipio = municipio.IdMunicipio,
+                        NumeroBien = municipio.Cantidad
+                    };
+                    await _repositorioPersonas.Crear(nuevaPersona);
                 }
 
                 await transaction.CommitAsync();
@@ -789,5 +865,6 @@ namespace Metas.BLL.Implementacion
                 return false;
             }
         }
+
     }
 }
