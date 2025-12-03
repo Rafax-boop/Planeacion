@@ -164,11 +164,15 @@
                     <!-- CAMPOS EXTRAS SOLO PARA AGREGAR NUEVO -->
                     <div id="camposNuevoRegistro" style="display: none;">
                         <div class="row mb-3">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <label for="AnoFiscalModal" class="form-label">Año Fiscal</label>
                                 <input type="number" class="form-control" id="AnoFiscalModal" name="AnoFiscal" readonly>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
+                                <label for="AreaModal" class="form-label">Área</label>
+                                <input type="text" class="form-control" id="AreaModal" name="Area" readonly>
+                            </div>
+                            <div class="col-md-4">
                                 <label for="DepartamentoModal" class="form-label">Departamento</label>
                                 <input type="text" class="form-control" id="DepartamentoModal" name="Departamento" readonly>
                                 <input type="hidden" id="IdDepartamentoModal" name="IdDepartamento">
@@ -619,6 +623,7 @@
                 $('#IdDepartamentoModal').val(departamento);
 
                 // Cargar las unidades de medida
+                cargarAreaDepartamento(departamento);
                 cargarUnidadesMedida();
 
                 // Abrir el modal
@@ -659,6 +664,26 @@
                     }
                 });
             });
+
+            function cargarAreaDepartamento(idDepartamento) {
+                $.ajax({
+                    url: '@Url.Action("ObtenerAreaPorDepartamento", "Monitoreo")',
+                    type: 'GET',
+                    data: { idDepartamento: idDepartamento },
+                    success: function(response) {
+                        if (response.success) {
+                            $('#AreaModal').val(response.area);
+                        } else {
+                            $('#AreaModal').val('');
+                            console.error('No se pudo obtener el área del departamento');
+                        }
+                    },
+                    error: function() {
+                        console.error('Error al cargar el área del departamento');
+                        $('#AreaModal').val('');
+                    }
+                });
+            }
 
             function cargarUnidadesMedida() {
                 $.ajax({

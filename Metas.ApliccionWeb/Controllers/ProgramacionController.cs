@@ -93,7 +93,8 @@ namespace Metas.AplicacionWeb.Controllers
                 {
                     Value = d.IdDepartamento.ToString(),
                     Text = d.Departamento1
-                }).ToList()
+                }).OrderBy(item => item.Text)
+                .ToList()
             };
             return View(modelo);
         }

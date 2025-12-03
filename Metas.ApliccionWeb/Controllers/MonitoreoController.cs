@@ -44,7 +44,8 @@ namespace Metas.AplicacionWeb.Controllers
                 {
                     Value = d.IdDepartamento.ToString(),
                     Text = d.Departamento1
-                }).ToList()
+                }).OrderBy(item => item.Text)
+                .ToList()
             };
             return View(modelo);
         }
@@ -606,6 +607,28 @@ namespace Metas.AplicacionWeb.Controllers
                 12 => "Diciembre",
                 _ => "Desconocido"
             };
+        }
+
+        public async Task<IActionResult> ObtenerAreaPorDepartamento(int idDepartamento)
+        {
+            try
+            {
+                var departamentos = await _departamentoService.ObtenerDepartamentos();
+                var departamento = departamentos.FirstOrDefault(d => d.IdDepartamento == idDepartamento);
+
+                if (departamento != null)
+                {
+                    return Json(new { success = true, area = departamento.Area });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Departamento no encontrado" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
         }
 
         public async Task<IActionResult> ObtenerUnidadesMedida()

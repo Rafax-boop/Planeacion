@@ -8,6 +8,7 @@ namespace Metas.AplicacionWeb.Models.ViewModels
         public int IdProceso { get; set; }
         public int AnoFiscal { get; set; }
         public string Departamento { get; set; }
+        public string Area { get; set; }
 
         // Campos de metadatos (Pueden ser de solo lectura o para referencia)
         public int? Componente { get; set; }

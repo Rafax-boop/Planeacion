@@ -429,6 +429,7 @@ namespace Metas.BLL.Implementacion
                 // Crear la entidad LlenadoInterno
                 var nuevoLlenado = new LlenadoInterno
                 {
+                    Area = modelo.Area,
                     Departamento = modelo.Departamento,
                     Ano = modelo.AnoFiscal,
                     Idpp = modelo.PP,
