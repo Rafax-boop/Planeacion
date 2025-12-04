@@ -33,76 +33,253 @@
     transform: translateY(2px) !important;
 }
 
-/* Estilos personalizados para la tabla */
-#tablaDatos {
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-    font-size: 0.9rem;
+/* ========================================
+       ESTILOS GENERALES
+       ======================================== */
+.tabla-principal {
+    font-size: 12px;
 }
 
-    #tablaDatos thead th {
-        font-weight: 600;
-        letter-spacing: 0.5px;
-        text-transform: uppercase;
-        font-size: 0.8rem;
-    }
-
-    #tablaDatos tbody tr {
-        transition: all 0.2s ease-in-out;
-        border-bottom: 1px solid rgba(0,0,0,0.05);
-    }
-
-        #tablaDatos tbody tr:hover {
-            background-color: rgba(220, 53, 69, 0.08) !important;
-            transform: translateY(-1px);
-        }
-
-    #tablaDatos tbody td {
-        padding: 12px 8px;
+    .tabla-principal th {
+        background-color: #c00000 !important;
+        color: white !important;
+        text-align: center;
         vertical-align: middle;
-        border-right: 1px solid rgba(0,0,0,0.05);
+        padding: 10px 8px;
+        white-space: nowrap;
     }
 
-        #tablaDatos tbody td:last-child {
-            border-right: none;
-        }
-
-/* Botones dentro de la tabla */
-.btn-editar, .btn-eliminar {
-    font-size: 0.75rem;
-    padding: 4px 8px;
-    border-radius: 4px;
-    transition: all 0.2s ease;
-}
-
-    .btn-editar:hover, .btn-eliminar:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    .tabla-principal td {
+        vertical-align: middle;
+        padding: 8px;
     }
 
-/* Para mantener la coherencia con tu diseño glass */
-.glass-table {
-    backdrop-filter: blur(10px);
-    background: rgba(255, 255, 255, 0.7);
-}
-
-/* Estilos para los iconos de meses */
-.clickable-icon {
-    transition: all 0.2s ease;
-}
-
-    .clickable-icon:hover {
-        transform: scale(1.2);
-        color: #0d6efd !important;
+    .tabla-principal tbody tr.fila-principal:hover {
+        background-color: rgba(192, 0, 0, 0.05);
     }
 
-.text-success {
-    color: #198754 !important;
+/* ========================================
+       BOTÓN EXPANDIR
+       ======================================== */
+.btn-expandir {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: none;
+    background-color: #c00000;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.text-primary {
-    color: #0d6efd !important;
+    .btn-expandir:hover {
+        background-color: #a00000;
+        transform: scale(1.1);
+    }
+
+    .btn-expandir.activo {
+        background-color: #198754;
+    }
+
+    .btn-expandir i {
+        transition: transform 0.3s;
+    }
+
+    .btn-expandir.activo i {
+        transform: rotate(180deg);
+    }
+
+/* ========================================
+       FILA DE DETALLE (EXPANDIBLE)
+       ======================================== */
+.fila-detalle {
+    display: none;
+    background-color: #f8f9fa;
 }
 
-.text-danger {
-    color: #dc3545 !important;
+    .fila-detalle.visible {
+        display: table-row;
+    }
+
+.contenedor-detalle {
+    padding: 20px;
 }
+
+/* ========================================
+       TABS DE DETALLE
+       ======================================== */
+.nav-tabs-detalle .nav-link {
+    color: #495057;
+    font-weight: 600;
+    border: none;
+    padding: 10px 20px;
+    margin-right: 5px;
+    border-radius: 8px 8px 0 0;
+}
+
+    .nav-tabs-detalle .nav-link.active {
+        background-color: #c00000;
+        color: white;
+    }
+
+    .nav-tabs-detalle .nav-link:hover:not(.active) {
+        background-color: #e9ecef;
+    }
+
+/* ========================================
+       TABLAS DE MESES
+       ======================================== */
+.tabla-meses {
+    font-size: 11px;
+    margin-bottom: 0;
+}
+
+    .tabla-meses th {
+        background-color: #c00000 !important;
+        color: white !important;
+        text-align: center;
+        padding: 8px 5px;
+        font-size: 10px;
+    }
+
+    .tabla-meses td {
+        text-align: center;
+        padding: 6px 5px;
+    }
+
+    .tabla-meses .celda-total {
+        background-color: #f0f0f0;
+        font-weight: bold;
+    }
+
+/* ========================================
+       ENCABEZADOS DE SECCIÓN
+       ======================================== */
+.header-programado {
+    background-color: #ffc107 !important;
+    color: #000 !important;
+}
+
+.header-realizado {
+    background-color: #5f9ea0 !important;
+    color: white !important;
+}
+
+.header-personas-prog {
+    background-color: #17a2b8 !important;
+    color: white !important;
+}
+
+.header-personas-atendidas {
+    background-color: #bf9000 !important;
+    color: white !important;
+}
+
+/* ========================================
+       BADGES DE TOTALES
+       ======================================== */
+.badge-total {
+    font-size: 11px;
+    padding: 5px 10px;
+    border-radius: 20px;
+}
+
+.badge-programado {
+    background-color: #ffc107;
+    color: #000;
+}
+
+.badge-realizado {
+    background-color: #5f9ea0;
+    color: white;
+}
+
+.badge-personas {
+    background-color: #17a2b8;
+    color: white;
+}
+
+/* ========================================
+       CARDS DE RESUMEN EN DETALLE
+       ======================================== */
+.card-resumen {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+    .card-resumen .card-header {
+        border-radius: 12px 12px 0 0;
+        font-weight: 600;
+        padding: 12px 15px;
+    }
+
+/* ========================================
+       TABLA PERSONAS ATENDIDAS
+       ======================================== */
+.tabla-personas-atendidas {
+    font-size: 10px;
+}
+
+    .tabla-personas-atendidas th {
+        padding: 6px 4px !important;
+        font-size: 9px;
+    }
+
+    .tabla-personas-atendidas td {
+        padding: 4px 3px !important;
+    }
+
+.mes-header {
+    background-color: #bf9000 !important;
+    color: white !important;
+    text-align: center;
+    font-weight: bold;
+}
+
+/* ========================================
+       LOADING Y OTROS
+       ======================================== */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.btn-volver {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-exportar {
+    background-color: #198754;
+    color: white;
+}
+
+.texto-truncado {
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Scroll horizontal para tablas grandes */
+.tabla-scroll {
+    overflow-x: auto;
+    max-width: 100%;
+}
+
+.celda-total-final {
+    background-color: #c00000 !important;
+    color: white !important;
+    font-weight: bold;

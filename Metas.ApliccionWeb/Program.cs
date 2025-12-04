@@ -29,16 +29,32 @@ var app = builder.Build();
 
 app.UseStaticFiles();
 var env = app.Environment;
+// Crear carpeta Evidencia si no existe
+
+var evidenciaPath = Path.Combine(env.WebRootPath, "Evidencia");
+if (!Directory.Exists(evidenciaPath))
+{
+    Directory.CreateDirectory(evidenciaPath);
+}
 
 app.UseStaticFiles(new StaticFileOptions
 {
-    FileProvider = new PhysicalFileProvider(Path.Combine(env.WebRootPath, "Evidencia")),
+    FileProvider = new PhysicalFileProvider(evidenciaPath),
     RequestPath = "/Evidencia"
 });
 
+// Crear carpetas si no existen
+var justificacionPath = Path.Combine(env.WebRootPath, "Justificacion");
+
+if (!Directory.Exists(evidenciaPath))
+    Directory.CreateDirectory(evidenciaPath);
+
+if (!Directory.Exists(justificacionPath))
+    Directory.CreateDirectory(justificacionPath);
+
 app.UseStaticFiles(new StaticFileOptions
 {
-    FileProvider = new PhysicalFileProvider(Path.Combine(env.WebRootPath, "Justificacion")),
+    FileProvider = new PhysicalFileProvider(justificacionPath),
     RequestPath = "/Justificacion"
 });
 
