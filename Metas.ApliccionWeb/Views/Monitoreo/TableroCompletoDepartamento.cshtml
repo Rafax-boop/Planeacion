@@ -78,17 +78,62 @@
     <div class="contenedor-tabla bg-white">
         <table class="tabla-tablero" id="tablaTablero">
             <thead>
-                <!-- FILA 1: Secciones principales -->
+                @* ========================================
+                   FILA 1: Títulos de sección principales
+                   - Las primeras 4 secciones: rowspan=3
+                   - Personas Atendidas: sin rowspan
+                   ======================================== *@
                 <tr>
-                    <th class="header-seccion-info" colspan="8">INFORMACIÓN GENERAL</th>
-                    <th class="header-seccion-programado" colspan="13">SERVICIOS PROGRAMADOS</th>
-                    <th class="header-seccion-realizado" colspan="13">SERVICIOS REALIZADOS</th>
-                    <th class="header-seccion-personas-prog" colspan="13">PERSONAS PROGRAMADAS</th>
-                    <th class="header-seccion-personas-atend" colspan="13">PERSONAS ATENDIDAS</th>
+                    <th class="header-seccion-info" colspan="8" rowspan="3">INFORMACIÓN GENERAL</th>
+                    <th class="header-seccion-programado" colspan="13" rowspan="3">SERVICIOS PROGRAMADOS</th>
+                    <th class="header-seccion-realizado" colspan="13" rowspan="3">SERVICIOS REALIZADOS</th>
+                    <th class="header-seccion-personas-prog" colspan="13" rowspan="3">PERSONAS PROGRAMADAS</th>
+                    <th class="header-seccion-personas-atend" colspan="144">PERSONAS ATENDIDAS</th>
                 </tr>
-                <!-- FILA 2: Columnas detalladas -->
+
+                @* ========================================
+                   FILA 2: Meses para Personas Atendidas
+                   (las primeras 4 secciones están cubiertas por rowspan)
+                   ======================================== *@
                 <tr>
-                    <!-- Información General -->
+                    @{
+                        var meses = new[] { "ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT", "NOV", "DIC" };
+                        foreach (var mes in meses)
+                        {
+                            <th class="header-mes-personas-atend-sub" colspan="12">@mes</th>
+                        }
+                    }
+                </tr>
+
+                @* ========================================
+                   FILA 3: Categorías de Personas Atendidas (rowspan=2)
+                   (las primeras 4 secciones están cubiertas por rowspan)
+                   ======================================== *@
+                <tr>
+                    @for (int mes = 0; mes < 12; mes++)
+                    {
+                        <th class="header-detalle-personas-atend" rowspan="2">Hombre</th>
+                        <th class="header-detalle-personas-atend" rowspan="2">Mujer</th>
+                        <th class="header-detalle-personas-atend" rowspan="2">0-3 AÑOS</th>
+                        <th class="header-detalle-personas-atend" rowspan="2">4-8 AÑOS</th>
+                        <th class="header-detalle-personas-atend" rowspan="2">9-12 AÑOS</th>
+                        <th class="header-detalle-personas-atend" rowspan="2">13-17 AÑOS</th>
+                        <th class="header-detalle-personas-atend" rowspan="2">18-29 AÑOS</th>
+                        <th class="header-detalle-personas-atend" rowspan="2">30-59 AÑOS</th>
+                        <th class="header-detalle-personas-atend" rowspan="2">60+ AÑOS</th>
+                        <th class="header-detalle-personas-atend" rowspan="2">No Definida</th>
+                        <th class="header-detalle-personas-atend" rowspan="2">Indígenas</th>
+                        <th class="header-total-mes-personas-atend" rowspan="2">TOTAL</th>
+                    }
+                </tr>
+
+                @* ========================================
+                   FILA 4: Subencabezados de columnas
+                   - Las primeras 4 secciones: PP, COMP, ENE, FEB, etc.
+                   - Personas Atendidas: cubierto por rowspan de categorías
+                   ======================================== *@
+                <tr class="fila-subencabezados">
+                    <!-- Información General (8 columnas) -->
                     <th class="header-mes-info">PP</th>
                     <th class="header-mes-info">COMP</th>
                     <th class="header-mes-info">ACT</th>
@@ -97,7 +142,8 @@
                     <th class="header-mes-info">DEPTO</th>
                     <th class="header-mes-info col-programa">PROGRAMA</th>
                     <th class="header-mes-info">U.M.</th>
-                    <!-- Programado -->
+
+                    <!-- Servicios Programados (13 columnas) -->
                     <th class="header-mes-programado">ENE</th>
                     <th class="header-mes-programado">FEB</th>
                     <th class="header-mes-programado">MAR</th>
@@ -110,8 +156,9 @@
                     <th class="header-mes-programado">OCT</th>
                     <th class="header-mes-programado">NOV</th>
                     <th class="header-mes-programado">DIC</th>
-                    <th class="header-mes-programado" style="background-color:#d49a00 !important;">TOTAL</th>
-                    <!-- Realizado -->
+                    <th class="header-mes-programado header-total-prog">TOTAL</th>
+
+                    <!-- Servicios Realizados (13 columnas) -->
                     <th class="header-mes-realizado">ENE</th>
                     <th class="header-mes-realizado">FEB</th>
                     <th class="header-mes-realizado">MAR</th>
@@ -124,8 +171,9 @@
                     <th class="header-mes-realizado">OCT</th>
                     <th class="header-mes-realizado">NOV</th>
                     <th class="header-mes-realizado">DIC</th>
-                    <th class="header-mes-realizado" style="background-color:#148060 !important;">TOTAL</th>
-                    <!-- Personas Programadas -->
+                    <th class="header-mes-realizado header-total-real">TOTAL</th>
+
+                    <!-- Personas Programadas (13 columnas) -->
                     <th class="header-mes-personas-prog">ENE</th>
                     <th class="header-mes-personas-prog">FEB</th>
                     <th class="header-mes-personas-prog">MAR</th>
@@ -138,26 +186,14 @@
                     <th class="header-mes-personas-prog">OCT</th>
                     <th class="header-mes-personas-prog">NOV</th>
                     <th class="header-mes-personas-prog">DIC</th>
-                    <th class="header-mes-personas-prog" style="background-color:#0891b2 !important;">TOTAL</th>
-                    <!-- Personas Atendidas -->
-                    <th class="header-mes-personas-atend">ENE</th>
-                    <th class="header-mes-personas-atend">FEB</th>
-                    <th class="header-mes-personas-atend">MAR</th>
-                    <th class="header-mes-personas-atend">ABR</th>
-                    <th class="header-mes-personas-atend">MAY</th>
-                    <th class="header-mes-personas-atend">JUN</th>
-                    <th class="header-mes-personas-atend">JUL</th>
-                    <th class="header-mes-personas-atend">AGO</th>
-                    <th class="header-mes-personas-atend">SEP</th>
-                    <th class="header-mes-personas-atend">OCT</th>
-                    <th class="header-mes-personas-atend">NOV</th>
-                    <th class="header-mes-personas-atend">DIC</th>
-                    <th class="header-mes-personas-atend" style="background-color:#4c1d95 !important;">TOTAL</th>
+                    <th class="header-mes-personas-prog header-total-pers-prog">TOTAL</th>
+
+                    <!-- Personas Atendidas: Ya cubierto por rowspan=2 de las categorías -->
                 </tr>
             </thead>
             <tbody id="tbodyTablero">
                 <tr>
-                    <td colspan="60" class="text-center py-5 text-muted">
+                    <td colspan="191" class="text-center py-5 text-muted">
                         <i class="fas fa-filter fa-2x mb-3 d-block"></i>
                         Seleccione un departamento y año fiscal para ver los datos.
                     </td>
@@ -267,7 +303,7 @@
                 console.error('Error:', error);
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="60" class="text-center py-5 text-danger">
+                        <td colspan="191" class="text-center py-5 text-danger">
                             <i class="fas fa-exclamation-triangle fa-2x mb-3 d-block"></i>
                             Error al cargar los datos: ${error.message}
                         </td>
@@ -280,6 +316,7 @@
 
         // ========================================
         // RENDERIZAR TABLA
+        // Estructura: 8 Info + 13 Prog + 13 Real + 13 PersProg + 144 PersAtend = 191 columnas
         // ========================================
         function renderizarTabla(datos) {
             const tbody = document.getElementById('tbodyTablero');
@@ -287,7 +324,7 @@
             if (!datos || datos.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="60" class="text-center py-5 text-muted">
+                        <td colspan="191" class="text-center py-5 text-muted">
                             <i class="fas fa-inbox fa-2x mb-3 d-block"></i>
                             No hay datos para mostrar.
                         </td>
@@ -304,89 +341,110 @@
                 const persProg = r.personasProgramado || {};
                 const persAtend = r.personasAtendidas || {};
 
-                // Calcular totales de personas atendidas por mes
-                let persAtendMeses = {};
-                let totalPersAtend = 0;
-                for (let m = 1; m <= 12; m++) {
-                    const mes = persAtend[m] || {};
-                    const totalMes = (mes.hombres || 0) + (mes.mujeres || 0);
-                    persAtendMeses[m] = totalMes;
-                    totalPersAtend += totalMes;
+                html += `<tr>`;
+
+                // ============ INFORMACIÓN GENERAL (8 columnas) ============
+                html += `
+                    <td class="celda-info fw-bold">${r.pp || ''}</td>
+                    <td class="celda-info">${r.componente || ''}</td>
+                    <td class="celda-info">${r.actividad || ''}</td>
+                    <td class="celda-info col-descripcion" title="${r.descripcionActividad || ''}">${r.descripcionActividad || ''}</td>
+                    <td class="celda-info">${r.area || ''}</td>
+                    <td class="celda-info">${r.departamento || ''}</td>
+                    <td class="celda-info col-programa" title="${r.programaSocial || ''}">${r.programaSocial || ''}</td>
+                    <td class="celda-info">${r.unidadMedida || ''}</td>
+                `;
+
+                // ============ SERVICIOS PROGRAMADOS (13 columnas) ============
+                html += `
+                    <td class="celda-programado">${prog.ene || 0}</td>
+                    <td class="celda-programado">${prog.feb || 0}</td>
+                    <td class="celda-programado">${prog.mar || 0}</td>
+                    <td class="celda-programado">${prog.abr || 0}</td>
+                    <td class="celda-programado">${prog.may || 0}</td>
+                    <td class="celda-programado">${prog.jun || 0}</td>
+                    <td class="celda-programado">${prog.jul || 0}</td>
+                    <td class="celda-programado">${prog.ago || 0}</td>
+                    <td class="celda-programado">${prog.sep || 0}</td>
+                    <td class="celda-programado">${prog.oct || 0}</td>
+                    <td class="celda-programado">${prog.nov || 0}</td>
+                    <td class="celda-programado">${prog.dic || 0}</td>
+                    <td class="celda-total-programado">${prog.total || 0}</td>
+                `;
+
+                // ============ SERVICIOS REALIZADOS (13 columnas) ============
+                html += `
+                    <td class="celda-realizado">${real.ene || 0}</td>
+                    <td class="celda-realizado">${real.feb || 0}</td>
+                    <td class="celda-realizado">${real.mar || 0}</td>
+                    <td class="celda-realizado">${real.abr || 0}</td>
+                    <td class="celda-realizado">${real.may || 0}</td>
+                    <td class="celda-realizado">${real.jun || 0}</td>
+                    <td class="celda-realizado">${real.jul || 0}</td>
+                    <td class="celda-realizado">${real.ago || 0}</td>
+                    <td class="celda-realizado">${real.sep || 0}</td>
+                    <td class="celda-realizado">${real.oct || 0}</td>
+                    <td class="celda-realizado">${real.nov || 0}</td>
+                    <td class="celda-realizado">${real.dic || 0}</td>
+                    <td class="celda-total-realizado">${real.total || 0}</td>
+                `;
+
+                // ============ PERSONAS PROGRAMADAS (13 columnas) ============
+                html += `
+                    <td class="celda-personas-prog">${persProg.ene || 0}</td>
+                    <td class="celda-personas-prog">${persProg.feb || 0}</td>
+                    <td class="celda-personas-prog">${persProg.mar || 0}</td>
+                    <td class="celda-personas-prog">${persProg.abr || 0}</td>
+                    <td class="celda-personas-prog">${persProg.may || 0}</td>
+                    <td class="celda-personas-prog">${persProg.jun || 0}</td>
+                    <td class="celda-personas-prog">${persProg.jul || 0}</td>
+                    <td class="celda-personas-prog">${persProg.ago || 0}</td>
+                    <td class="celda-personas-prog">${persProg.sep || 0}</td>
+                    <td class="celda-personas-prog">${persProg.oct || 0}</td>
+                    <td class="celda-personas-prog">${persProg.nov || 0}</td>
+                    <td class="celda-personas-prog">${persProg.dic || 0}</td>
+                    <td class="celda-total-personas-prog">${persProg.total || 0}</td>
+                `;
+
+                // ============ PERSONAS ATENDIDAS (144 columnas = 12 meses × 12 categorías) ============
+                // Mapeo según respuesta JSON del controlador ObtenerDatosTableroCompletoOptimizado
+                for (let mes = 1; mes <= 12; mes++) {
+                    const mesData = persAtend[mes] || {};
+
+                    // Nombres exactos que envía el controlador
+                    const hombre = mesData.hombres || 0;
+                    const mujer = mesData.mujeres || 0;
+                    const edad0_3 = mesData.edad0a3 || 0;
+                    const edad4_8 = mesData.edad4a8 || 0;
+                    const edad9_12 = mesData.edad9a12 || 0;
+                    const edad13_17 = mesData.edad13a17 || 0;
+                    const edad18_29 = mesData.edad18a29 || 0;
+                    const edad30_59 = mesData.edad30a59 || 0;
+                    const edad60_mas = mesData.edad60mas || 0;
+                    const noDefinida = mesData.noEspecifica || 0;
+                    const indigenas = mesData.indigenas || 0;
+
+                    // Total del mes = Hombres + Mujeres
+                    const totalMes = hombre + mujer;
+
+                    // 12 celdas por mes
+                    html += `
+                        <td class="celda-personas-atend-detalle">${hombre}</td>
+                        <td class="celda-personas-atend-detalle">${mujer}</td>
+                        <td class="celda-personas-atend-detalle">${edad0_3}</td>
+                        <td class="celda-personas-atend-detalle">${edad4_8}</td>
+                        <td class="celda-personas-atend-detalle">${edad9_12}</td>
+                        <td class="celda-personas-atend-detalle">${edad13_17}</td>
+                        <td class="celda-personas-atend-detalle">${edad18_29}</td>
+                        <td class="celda-personas-atend-detalle">${edad30_59}</td>
+                        <td class="celda-personas-atend-detalle">${edad60_mas}</td>
+                        <td class="celda-personas-atend-detalle">${noDefinida}</td>
+                        <td class="celda-personas-atend-detalle">${indigenas}</td>
+                        <td class="celda-total-mes-personas-atend">${totalMes}</td>
+                    `;
                 }
 
-                html += `
-                    <tr>
-                        <!-- Información General -->
-                        <td class="celda-info fw-bold">${r.pp || ''}</td>
-                        <td class="celda-info">${r.componente || ''}</td>
-                        <td class="celda-info">${r.actividad || ''}</td>
-                        <td class="celda-info col-descripcion" title="${r.descripcionActividad || ''}">${r.descripcionActividad || ''}</td>
-                        <td class="celda-info">${r.area || ''}</td>
-                        <td class="celda-info">${r.departamento || ''}</td>
-                        <td class="celda-info col-programa" title="${r.programaSocial || ''}">${r.programaSocial || ''}</td>
-                        <td class="celda-info">${r.unidadMedida || ''}</td>
-
-                        <!-- Programado -->
-                        <td class="celda-programado">${prog.ene || 0}</td>
-                        <td class="celda-programado">${prog.feb || 0}</td>
-                        <td class="celda-programado">${prog.mar || 0}</td>
-                        <td class="celda-programado">${prog.abr || 0}</td>
-                        <td class="celda-programado">${prog.may || 0}</td>
-                        <td class="celda-programado">${prog.jun || 0}</td>
-                        <td class="celda-programado">${prog.jul || 0}</td>
-                        <td class="celda-programado">${prog.ago || 0}</td>
-                        <td class="celda-programado">${prog.sep || 0}</td>
-                        <td class="celda-programado">${prog.oct || 0}</td>
-                        <td class="celda-programado">${prog.nov || 0}</td>
-                        <td class="celda-programado">${prog.dic || 0}</td>
-                        <td class="celda-total-programado">${prog.total || 0}</td>
-
-                        <!-- Realizado -->
-                        <td class="celda-realizado">${real.ene || 0}</td>
-                        <td class="celda-realizado">${real.feb || 0}</td>
-                        <td class="celda-realizado">${real.mar || 0}</td>
-                        <td class="celda-realizado">${real.abr || 0}</td>
-                        <td class="celda-realizado">${real.may || 0}</td>
-                        <td class="celda-realizado">${real.jun || 0}</td>
-                        <td class="celda-realizado">${real.jul || 0}</td>
-                        <td class="celda-realizado">${real.ago || 0}</td>
-                        <td class="celda-realizado">${real.sep || 0}</td>
-                        <td class="celda-realizado">${real.oct || 0}</td>
-                        <td class="celda-realizado">${real.nov || 0}</td>
-                        <td class="celda-realizado">${real.dic || 0}</td>
-                        <td class="celda-total-realizado">${real.total || 0}</td>
-
-                        <!-- Personas Programadas -->
-                        <td class="celda-personas-prog">${persProg.ene || 0}</td>
-                        <td class="celda-personas-prog">${persProg.feb || 0}</td>
-                        <td class="celda-personas-prog">${persProg.mar || 0}</td>
-                        <td class="celda-personas-prog">${persProg.abr || 0}</td>
-                        <td class="celda-personas-prog">${persProg.may || 0}</td>
-                        <td class="celda-personas-prog">${persProg.jun || 0}</td>
-                        <td class="celda-personas-prog">${persProg.jul || 0}</td>
-                        <td class="celda-personas-prog">${persProg.ago || 0}</td>
-                        <td class="celda-personas-prog">${persProg.sep || 0}</td>
-                        <td class="celda-personas-prog">${persProg.oct || 0}</td>
-                        <td class="celda-personas-prog">${persProg.nov || 0}</td>
-                        <td class="celda-personas-prog">${persProg.dic || 0}</td>
-                        <td class="celda-total-personas-prog">${persProg.total || 0}</td>
-
-                        <!-- Personas Atendidas (total por mes) -->
-                        <td class="celda-personas-atend">${persAtendMeses[1] || 0}</td>
-                        <td class="celda-personas-atend">${persAtendMeses[2] || 0}</td>
-                        <td class="celda-personas-atend">${persAtendMeses[3] || 0}</td>
-                        <td class="celda-personas-atend">${persAtendMeses[4] || 0}</td>
-                        <td class="celda-personas-atend">${persAtendMeses[5] || 0}</td>
-                        <td class="celda-personas-atend">${persAtendMeses[6] || 0}</td>
-                        <td class="celda-personas-atend">${persAtendMeses[7] || 0}</td>
-                        <td class="celda-personas-atend">${persAtendMeses[8] || 0}</td>
-                        <td class="celda-personas-atend">${persAtendMeses[9] || 0}</td>
-                        <td class="celda-personas-atend">${persAtendMeses[10] || 0}</td>
-                        <td class="celda-personas-atend">${persAtendMeses[11] || 0}</td>
-                        <td class="celda-personas-atend">${persAtendMeses[12] || 0}</td>
-                        <td class="celda-total-personas-atend">${totalPersAtend}</td>
-                    </tr>
-                `;
+                html += `</tr>`;
             });
 
             tbody.innerHTML = html;
@@ -407,6 +465,7 @@
                 const pa = r.personasAtendidas || {};
                 for (let m = 1; m <= 12; m++) {
                     const mes = pa[m] || {};
+                    // Usar nombres correctos del JSON
                     totalPers += (mes.hombres || 0) + (mes.mujeres || 0);
                 }
             });
@@ -431,24 +490,13 @@
             try {
                 const wb = XLSX.utils.book_new();
 
-                // Crear datos para Excel
                 const datosExcel = datosTablero.map(r => {
                     const prog = r.programado || {};
                     const real = r.realizado || {};
                     const persProg = r.personasProgramado || {};
                     const persAtend = r.personasAtendidas || {};
 
-                    // Calcular personas atendidas
-                    let persAtendMeses = {};
-                    let totalPersAtend = 0;
-                    for (let m = 1; m <= 12; m++) {
-                        const mes = persAtend[m] || {};
-                        const totalMes = (mes.hombres || 0) + (mes.mujeres || 0);
-                        persAtendMeses[m] = totalMes;
-                        totalPersAtend += totalMes;
-                    }
-
-                    return {
+                    let excelRow = {
                         'PP': r.pp,
                         'Componente': r.componente,
                         'Actividad': r.actividad,
@@ -498,28 +546,39 @@
                         'PersProg_Oct': persProg.oct || 0,
                         'PersProg_Nov': persProg.nov || 0,
                         'PersProg_Dic': persProg.dic || 0,
-                        'PersProg_Total': persProg.total || 0,
-                        // Personas Atendidas
-                        'PersAtend_Ene': persAtendMeses[1] || 0,
-                        'PersAtend_Feb': persAtendMeses[2] || 0,
-                        'PersAtend_Mar': persAtendMeses[3] || 0,
-                        'PersAtend_Abr': persAtendMeses[4] || 0,
-                        'PersAtend_May': persAtendMeses[5] || 0,
-                        'PersAtend_Jun': persAtendMeses[6] || 0,
-                        'PersAtend_Jul': persAtendMeses[7] || 0,
-                        'PersAtend_Ago': persAtendMeses[8] || 0,
-                        'PersAtend_Sep': persAtendMeses[9] || 0,
-                        'PersAtend_Oct': persAtendMeses[10] || 0,
-                        'PersAtend_Nov': persAtendMeses[11] || 0,
-                        'PersAtend_Dic': persAtendMeses[12] || 0,
-                        'PersAtend_Total': totalPersAtend
+                        'PersProg_Total': persProg.total || 0
                     };
+
+                    // Personas Atendidas - 12 meses × 12 categorías
+                    const meses = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'];
+
+                    for (let mes = 1; mes <= 12; mes++) {
+                        const mesData = persAtend[mes] || {};
+                        const mesNombre = meses[mes-1];
+
+                        // Usar nombres correctos del JSON
+                        excelRow[`PA_${mesNombre}_Hombre`] = mesData.hombres || 0;
+                        excelRow[`PA_${mesNombre}_Mujer`] = mesData.mujeres || 0;
+                        excelRow[`PA_${mesNombre}_0-3`] = mesData.edad0a3 || 0;
+                        excelRow[`PA_${mesNombre}_4-8`] = mesData.edad4a8 || 0;
+                        excelRow[`PA_${mesNombre}_9-12`] = mesData.edad9a12 || 0;
+                        excelRow[`PA_${mesNombre}_13-17`] = mesData.edad13a17 || 0;
+                        excelRow[`PA_${mesNombre}_18-29`] = mesData.edad18a29 || 0;
+                        excelRow[`PA_${mesNombre}_30-59`] = mesData.edad30a59 || 0;
+                        excelRow[`PA_${mesNombre}_60+`] = mesData.edad60mas || 0;
+                        excelRow[`PA_${mesNombre}_NoDefinida`] = mesData.noEspecifica || 0;
+                        excelRow[`PA_${mesNombre}_Indigenas`] = mesData.indigenas || 0;
+
+                        const totalMes = (mesData.hombres || 0) + (mesData.mujeres || 0);
+                        excelRow[`PA_${mesNombre}_TOTAL`] = totalMes;
+                    }
+
+                    return excelRow;
                 });
 
                 const ws = XLSX.utils.json_to_sheet(datosExcel);
                 XLSX.utils.book_append_sheet(wb, ws, 'Tablero Completo');
 
-                // Descargar
                 const fecha = new Date().toISOString().split('T')[0];
                 const depto = document.getElementById('filtroDepartamento');
                 const nombreDepto = depto.options[depto.selectedIndex]?.text || 'General';
@@ -546,7 +605,6 @@
                 if (this.value) cargarDatosTablero();
             });
 
-            // Preseleccionar valores si vienen del ViewBag
             @if (ViewBag.AnoFiscalSeleccionado != null)
             {
                     <text>

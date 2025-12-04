@@ -89,11 +89,14 @@
     </h3>
 
     <div class="mt-3 mb-3 text-center">
-        <button class="boton-amarillo"
-                onclick="irATableroCompleto()"
-                style="color: #17a2b8; box-shadow: 0 5px 8px 0 #17a2b8; border: 1px solid #17a2b8 !important;">
-            <i class="fas fa-table"></i> Tablero Completo por Departamento
-        </button>
+        @if (User.IsInRole("Administrador"))
+        {
+            <button class="boton-amarillo"
+                    onclick="irATableroCompleto()"
+                    style="color: #17a2b8; box-shadow: 0 5px 8px 0 #17a2b8; border: 1px solid #17a2b8 !important;">
+                <i class="fas fa-table"></i> Tablero Completo por Departamento
+            </button>            
+        }
 
         <button class="boton-amarillo"
                 onclick="irATablero()"
