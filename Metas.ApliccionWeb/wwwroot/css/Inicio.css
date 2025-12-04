@@ -1,4 +1,4 @@
-﻿.animacion-home{
+﻿.animacion-home {
     animation: fadeInUp 1.5s ease-out;
 }
 
@@ -7,6 +7,7 @@
         opacity: 0;
         transform: translateY(30px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -50,23 +51,24 @@
 }
 
 /* ========================================
-       CONTENEDOR PRINCIPAL
-       ======================================== */
+   CONTENEDOR PRINCIPAL
+   ======================================== */
 .contenedor-tabla {
     overflow-x: auto;
+    overflow-y: auto;
     max-height: 75vh;
     border-radius: 12px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
 /* ========================================
-       TABLA PRINCIPAL
-       ======================================== */
+   TABLA PRINCIPAL
+   ======================================== */
 .tabla-tablero {
     font-size: 11px;
-    border-collapse: separate;
+    border-collapse: collapse;
     border-spacing: 0;
-    min-width: 2500px;
+    min-width: 4500px; /* Aumentado para 191 columnas */
 }
 
     .tabla-tablero th,
@@ -78,60 +80,108 @@
     }
 
 /* ========================================
-       ENCABEZADOS - FILA PRINCIPAL (Secciones)
-       ======================================== */
+   ENCABEZADOS - SECCIONES PRINCIPALES (rowspan=3)
+   ======================================== */
+.header-seccion-rowspan {
+    vertical-align: middle !important;
+    text-align: center !important;
+    writing-mode: horizontal-tb !important;
+}
+
 .header-seccion-info {
     background-color: #c00000 !important;
     color: white !important;
     font-weight: bold;
-    font-size: 12px;
-    position: static !important; /* ELIMINA sticky */
+    font-size: 13px;
 }
 
 .header-seccion-programado {
     background-color: #ffc107 !important;
     color: #000 !important;
     font-weight: bold;
-    font-size: 12px;
-    position: static !important; /* ELIMINA sticky */
+    font-size: 13px;
 }
 
 .header-seccion-realizado {
     background-color: #20c997 !important;
     color: white !important;
     font-weight: bold;
-    font-size: 12px;
-    position: static !important; /* ELIMINA sticky */
+    font-size: 13px;
 }
 
 .header-seccion-personas-prog {
     background-color: #0dcaf0 !important;
     color: #000 !important;
     font-weight: bold;
-    font-size: 12px;
-    position: static !important; /* ELIMINA sticky */
+    font-size: 13px;
 }
 
 .header-seccion-personas-atend {
     background-color: #6f42c1 !important;
     color: white !important;
     font-weight: bold;
-    font-size: 12px;
-    position: static !important; /* ELIMINA sticky */
+    font-size: 13px;
 }
 
 /* ========================================
-       ENCABEZADOS - FILA DE MESES
-       ======================================== */
+   ENCABEZADOS - FILA DE MESES (Personas Atendidas)
+   ======================================== */
+.header-mes-personas-atend-sub {
+    background-color: #7c3aed !important;
+    color: white !important;
+    font-weight: bold;
+    font-size: 11px;
+    text-align: center;
+    padding: 8px 4px !important;
+}
+
+/* ========================================
+   ENCABEZADOS - DETALLES DE CATEGORÍAS
+   ======================================== */
+.header-detalle-personas-atend {
+    background-color: #5a32a3 !important;
+    color: white !important;
+    font-weight: 600;
+    font-size: 8px;
+    min-width: 30px;
+    max-width: 35px;
+    text-align: center;
+    writing-mode: vertical-lr;
+    transform: rotate(180deg);
+    height: 70px;
+    padding: 3px 2px !important;
+    white-space: nowrap;
+}
+
+.header-total-mes-personas-atend {
+    background-color: #4c1d95 !important;
+    color: white !important;
+    font-weight: bold;
+    font-size: 8px;
+    min-width: 30px;
+    max-width: 35px;
+    text-align: center;
+    writing-mode: vertical-lr;
+    transform: rotate(180deg);
+    height: 70px;
+    padding: 3px 2px !important;
+}
+
+/* ========================================
+   ENCABEZADOS - FILA DE SUBENCABEZADOS (Fila 4)
+   ======================================== */
+.fila-subencabezados th {
+    font-size: 10px;
+    font-weight: 600;
+    min-width: 40px;
+}
+
 .header-mes-info {
     background-color: #a00000 !important;
     color: white !important;
     font-weight: 600;
     font-size: 10px;
     min-width: 45px;
-    position: sticky; /* MANTIENE sticky solo en meses */
-    top: 0;
-    z-index: 9;
 }
 
 .header-mes-programado {
@@ -140,9 +190,6 @@
     font-weight: 600;
     font-size: 10px;
     min-width: 40px;
-    position: sticky;
-    top: 0;
-    z-index: 9;
 }
 
 .header-mes-realizado {
@@ -151,9 +198,6 @@
     font-weight: 600;
     font-size: 10px;
     min-width: 40px;
-    position: sticky;
-    top: 0;
-    z-index: 9;
 }
 
 .header-mes-personas-prog {
@@ -162,25 +206,29 @@
     font-weight: 600;
     font-size: 10px;
     min-width: 40px;
-    position: sticky;
-    top: 0;
-    z-index: 9;
 }
 
-.header-mes-personas-atend {
-    background-color: #5a32a3 !important;
-    color: white !important;
-    font-weight: 600;
-    font-size: 10px;
-    min-width: 40px;
-    position: sticky;
-    top: 0;
-    z-index: 9;
+/* Encabezados TOTAL destacados */
+.header-total-prog {
+    background-color: #d49a00 !important;
+}
+
+.header-total-real {
+    background-color: #148060 !important;
+}
+
+.header-total-pers-prog {
+    background-color: #0891b2 !important;
+}
+
+/* Celdas vacías en fila 4 para personas atendidas */
+.header-detalle-vacio {
+    display: none;
 }
 
 /* ========================================
-       CELDAS DE DATOS
-       ======================================== */
+   CELDAS DE DATOS
+   ======================================== */
 .celda-info {
     background-color: #fff5f5;
     text-align: left;
@@ -199,43 +247,35 @@
     background-color: #e6fcff;
 }
 
-.celda-personas-atend {
+.celda-personas-atend-detalle {
     background-color: #f3e8ff;
+    text-align: center;
+    font-size: 10px;
+    min-width: 30px;
+    padding: 4px 2px !important;
 }
 
 /* ========================================
-       COLUMNA PP FIJA (solo esta columna)
-       ======================================== */
-/* Solo la primera columna (PP) fija */
-.tabla-tablero th:first-child,
-.tabla-tablero td:first-child {
+   COLUMNA PP FIJA
+   ======================================== */
+.tabla-tablero tbody td:first-child {
     position: sticky;
     left: 0;
-    z-index: 10;
+    z-index: 5;
     box-shadow: 2px 0 5px rgba(0,0,0,0.1);
 }
 
-/* Encabezado PP de la fila de meses (necesita z-index mayor) */
-.tabla-tablero thead tr:nth-child(2) th:first-child {
-    z-index: 11; /* Mayor que el resto */
-}
-
-/* Asegurar que el fondo se mantenga al ser fijo */
-.tabla-tablero th:first-child.header-mes-info {
-    background-color: #a00000 !important;
-}
-
-.tabla-tablero td:first-child.celda-info {
-    background-color: #fff5f5;
-}
+    .tabla-tablero tbody td:first-child.celda-info {
+        background-color: #fff5f5;
+    }
 
 .tabla-tablero tbody tr:nth-child(even) td:first-child.celda-info {
     background-color: #ffecec;
 }
 
 /* ========================================
-       COLUMNA TOTAL (destacada)
-       ======================================== */
+   COLUMNAS TOTAL (destacadas)
+   ======================================== */
 .celda-total-programado {
     background-color: #ffc107 !important;
     color: #000 !important;
@@ -254,15 +294,18 @@
     font-weight: bold;
 }
 
-.celda-total-personas-atend {
-    background-color: #6f42c1 !important;
-    color: white !important;
+.celda-total-mes-personas-atend {
+    background-color: #d1bcf0 !important;
+    text-align: center;
     font-weight: bold;
+    font-size: 10px;
+    min-width: 30px;
+    padding: 4px 2px !important;
 }
 
 /* ========================================
-       FILAS ALTERNADAS
-       ======================================== */
+   FILAS ALTERNADAS
+   ======================================== */
 .tabla-tablero tbody tr:nth-child(even) .celda-info {
     background-color: #ffecec;
 }
@@ -279,8 +322,12 @@
     background-color: #cff4fc;
 }
 
-.tabla-tablero tbody tr:nth-child(even) .celda-personas-atend {
+.tabla-tablero tbody tr:nth-child(even) .celda-personas-atend-detalle {
     background-color: #e2d5f0;
+}
+
+.tabla-tablero tbody tr:nth-child(even) .celda-total-mes-personas-atend {
+    background-color: #c4a7e8 !important;
 }
 
 .tabla-tablero tbody tr:hover td {
@@ -288,23 +335,8 @@
 }
 
 /* ========================================
-       ELIMINA TODOS LOS OTROS STICKY
-       ======================================== */
-/* Elimina sticky del thead completo */
-.tabla-tablero thead {
-    position: static !important;
-}
-
-/* Elimina sticky de las demás columnas que no sean PP */
-.tabla-tablero th:not(:first-child),
-.tabla-tablero td:not(:first-child) {
-    position: static !important;
-    left: auto !important;
-}
-
-/* ========================================
-       LOADING Y BOTONES
-       ======================================== */
+   LOADING Y BOTONES
+   ======================================== */
 .loading-overlay {
     position: fixed;
     top: 0;
@@ -323,14 +355,24 @@
     color: white;
 }
 
+    .btn-volver:hover {
+        background-color: #5a6268;
+        color: white;
+    }
+
 .btn-exportar {
     background-color: #198754;
     color: white;
 }
 
+    .btn-exportar:hover {
+        background-color: #157347;
+        color: white;
+    }
+
 /* ========================================
-       LEYENDA
-======================================== */
+   LEYENDA
+   ======================================== */
 .leyenda-item {
     display: inline-flex;
     align-items: center;
@@ -347,8 +389,8 @@
 }
 
 /* ========================================
-       CARDS DE RESUMEN
-======================================== */
+   CARDS DE RESUMEN
+   ======================================== */
 .card-resumen-small {
     border: none;
     border-radius: 10px;
@@ -369,17 +411,29 @@
         margin-bottom: 0;
     }
 
-/* Descripción más ancha */
+/* ========================================
+   COLUMNAS ESPECIALES
+   ======================================== */
 .col-descripcion {
-    min-width: 200px;
-    max-width: 250px;
+    min-width: 180px;
+    max-width: 220px;
     white-space: normal;
     word-wrap: break-word;
+    text-align: left !important;
 }
 
 .col-programa {
-    min-width: 150px;
-    max-width: 180px;
+    min-width: 130px;
+    max-width: 160px;
     white-space: normal;
     word-wrap: break-word;
+    text-align: left !important;
+}
+
+/* ========================================
+   MENSAJE VACÍO
+   ======================================== */
+#tbodyTablero tr td[colspan="191"] {
+    text-align: center;
+    padding: 40px !important;
 }
