@@ -192,7 +192,7 @@
 
     @* Datos generales *@
     <h2 class="text-center my-4 titulo fw-semibold pt-2 pb-2 glass-effect rounded-5 ">DATOS GENERALES</h2>
-    
+
     <div class="border p-3 mb-4 mt-4 rounded-4 shadow">
         <div class="row border-bottom">
             <label class="col-md-4 align-content-center">10. PROGRAMA SOCIAL, SERVICIO Y/O PROYECTO</label>
@@ -674,7 +674,7 @@
                 var mesesSegundoSemestre = new[] { "JUL", "AGO", "SEP", "OCT", "NOV", "DIC" };
             }
 
-            <div class="row mt-3">              
+            <div class="row mt-3">
                 <div class="col-md-6 border-end">
                     <div class="row text-center ">
                         @for (int i = 0; i < 6; i++)
@@ -687,7 +687,7 @@
                         {
                             <div class="col-2 p-1">
                                 <input @(!ViewBag.EsAdministrador ? "disabled" : "") type="number" class="input-arena form-control titulo text-center mes-grupo1"
-                                       value="@(Model.MesesServicios != null && Model.MesesServicios.Count > i ? Model.MesesServicios[i] : 0)" 
+                                       value="@(Model.MesesServicios != null && Model.MesesServicios.Count > i ? Model.MesesServicios[i] : 0)"
                                        min="0" data-mes="@mesesPrimerSemestre[i]">
                             </div>
                         }
@@ -705,7 +705,7 @@
                             var index = i + 6;
                             <div class="col-2 p-1">
                                 <input @(!ViewBag.EsAdministrador ? "disabled" : "") type="number" class="input-arena form-control titulo text-center mes-grupo1"
-                                       value="@(Model.MesesServicios != null && Model.MesesServicios.Count > index ? Model.MesesServicios[index] : 0)" 
+                                       value="@(Model.MesesServicios != null && Model.MesesServicios.Count > index ? Model.MesesServicios[index] : 0)"
                                        min="0" data-mes="@mesesSegundoSemestre[i]">
                             </div>
                         }
@@ -724,7 +724,7 @@
                         {
                             <div class="col-2 p-1">
                                 <input @(!ViewBag.EsAdministrador ? "disabled" : "") type="number" class="input-arena form-control titulo text-center mes-grupo2"
-                                       value="@(Model.MesesPersonas != null && Model.MesesPersonas.Count > i ? Model.MesesPersonas[i] : 0)" 
+                                       value="@(Model.MesesPersonas != null && Model.MesesPersonas.Count > i ? Model.MesesPersonas[i] : 0)"
                                        min="0" data-mes="@mesesPrimerSemestre[i]">
                             </div>
                         }
@@ -742,7 +742,7 @@
                             var index = i + 6;
                             <div class="col-2 p-1">
                                 <input @(!ViewBag.EsAdministrador ? "disabled" : "") type="number" class="input-arena form-control titulo text-center mes-grupo2"
-                                       value="@(Model.MesesPersonas != null && Model.MesesPersonas.Count > index ? Model.MesesPersonas[index] : 0)" 
+                                       value="@(Model.MesesPersonas != null && Model.MesesPersonas.Count > index ? Model.MesesPersonas[index] : 0)"
                                        min="0" data-mes="@mesesSegundoSemestre[i]">
                             </div>
                         }
@@ -847,7 +847,7 @@
                 </div>
             </div>
         </div>
-    </div> 
+    </div>
 
     @* Acciones necesarias *@
     <div class="border p-3 mb-4 rounded-4 shadow" id="accionesContainer">

@@ -1,0 +1,565 @@
+﻿@model Metas.AplicacionWeb.Models.ViewModels.VMDepartamentos
+@{
+    ViewData["Title"] = "Tablero Completo por Departamento";
+}
+
+<div class="container-fluid mt-4">
+
+    @* Encabezado *@
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="titulo fw-semibold pt-2 pb-2 px-4 glass-effect rounded-5 mb-0">
+            <i class="fas fa-table me-2"></i> TABLERO COMPLETO POR DEPARTAMENTO
+        </h2>
+        <div>
+            <a href="@Url.Action("Monitoreo", "Monitoreo")" class="btn btn-volver me-2">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+            <button class="btn btn-exportar" id="btnExportarExcel">
+                <i class="fas fa-file-excel"></i> Exportar Excel
+            </button>
+        </div>
+    </div>
+
+    @* Filtros *@
+    <div class="card shadow-sm mb-4 rounded-4">
+        <div class="card-body">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-5">
+                    <label class="form-label fw-semibold small">Departamento</label>
+                    <select class="form-select" id="filtroDepartamento" asp-items="Model.ListaDepartamentos">
+                        <option value="">-- Seleccione un departamento --</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold small">Año Fiscal</label>
+                    <select class="form-select" id="filtroAno">
+                        @{
+                            var anoActual = DateTime.Now.Year;
+                            var anoMaximo = anoActual + 1;
+                            var anoMinimo = anoActual - 5;
+
+                            for (int ano = anoMaximo; ano >= anoMinimo; ano--)
+                            {
+                                <option value="@ano">@ano</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <button class="btn btn-primary w-100" id="btnFiltrar">
+                        <i class="fas fa-search me-2"></i> Cargar Datos
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* Leyenda de colores *@
+    <div class="mb-3 p-3 bg-white rounded-3 shadow-sm">
+        <strong class="me-3">Leyenda:</strong>
+        <span class="leyenda-item">
+            <span class="leyenda-color" style="background-color: #c00000;"></span> Información General
+        </span>
+        <span class="leyenda-item">
+            <span class="leyenda-color" style="background-color: #ffc107;"></span> Servicios Programados
+        </span>
+        <span class="leyenda-item">
+            <span class="leyenda-color" style="background-color: #20c997;"></span> Servicios Realizados
+        </span>
+        <span class="leyenda-item">
+            <span class="leyenda-color" style="background-color: #0dcaf0;"></span> Personas Programadas
+        </span>
+        <span class="leyenda-item">
+            <span class="leyenda-color" style="background-color: #6f42c1;"></span> Personas Atendidas
+        </span>
+    </div>
+
+    @* Tabla Principal *@
+    <div class="contenedor-tabla bg-white">
+        <table class="tabla-tablero" id="tablaTablero">
+            <thead>
+                <!-- FILA 1: Secciones principales -->
+                <tr>
+                    <th class="header-seccion-info" colspan="8">INFORMACIÓN GENERAL</th>
+                    <th class="header-seccion-programado" colspan="13">SERVICIOS PROGRAMADOS</th>
+                    <th class="header-seccion-realizado" colspan="13">SERVICIOS REALIZADOS</th>
+                    <th class="header-seccion-personas-prog" colspan="13">PERSONAS PROGRAMADAS</th>
+                    <th class="header-seccion-personas-atend" colspan="13">PERSONAS ATENDIDAS</th>
+                </tr>
+                <!-- FILA 2: Columnas detalladas -->
+                <tr>
+                    <!-- Información General -->
+                    <th class="header-mes-info">PP</th>
+                    <th class="header-mes-info">COMP</th>
+                    <th class="header-mes-info">ACT</th>
+                    <th class="header-mes-info col-descripcion">DESCRIPCIÓN</th>
+                    <th class="header-mes-info">ÁREA</th>
+                    <th class="header-mes-info">DEPTO</th>
+                    <th class="header-mes-info col-programa">PROGRAMA</th>
+                    <th class="header-mes-info">U.M.</th>
+                    <!-- Programado -->
+                    <th class="header-mes-programado">ENE</th>
+                    <th class="header-mes-programado">FEB</th>
+                    <th class="header-mes-programado">MAR</th>
+                    <th class="header-mes-programado">ABR</th>
+                    <th class="header-mes-programado">MAY</th>
+                    <th class="header-mes-programado">JUN</th>
+                    <th class="header-mes-programado">JUL</th>
+                    <th class="header-mes-programado">AGO</th>
+                    <th class="header-mes-programado">SEP</th>
+                    <th class="header-mes-programado">OCT</th>
+                    <th class="header-mes-programado">NOV</th>
+                    <th class="header-mes-programado">DIC</th>
+                    <th class="header-mes-programado" style="background-color:#d49a00 !important;">TOTAL</th>
+                    <!-- Realizado -->
+                    <th class="header-mes-realizado">ENE</th>
+                    <th class="header-mes-realizado">FEB</th>
+                    <th class="header-mes-realizado">MAR</th>
+                    <th class="header-mes-realizado">ABR</th>
+                    <th class="header-mes-realizado">MAY</th>
+                    <th class="header-mes-realizado">JUN</th>
+                    <th class="header-mes-realizado">JUL</th>
+                    <th class="header-mes-realizado">AGO</th>
+                    <th class="header-mes-realizado">SEP</th>
+                    <th class="header-mes-realizado">OCT</th>
+                    <th class="header-mes-realizado">NOV</th>
+                    <th class="header-mes-realizado">DIC</th>
+                    <th class="header-mes-realizado" style="background-color:#148060 !important;">TOTAL</th>
+                    <!-- Personas Programadas -->
+                    <th class="header-mes-personas-prog">ENE</th>
+                    <th class="header-mes-personas-prog">FEB</th>
+                    <th class="header-mes-personas-prog">MAR</th>
+                    <th class="header-mes-personas-prog">ABR</th>
+                    <th class="header-mes-personas-prog">MAY</th>
+                    <th class="header-mes-personas-prog">JUN</th>
+                    <th class="header-mes-personas-prog">JUL</th>
+                    <th class="header-mes-personas-prog">AGO</th>
+                    <th class="header-mes-personas-prog">SEP</th>
+                    <th class="header-mes-personas-prog">OCT</th>
+                    <th class="header-mes-personas-prog">NOV</th>
+                    <th class="header-mes-personas-prog">DIC</th>
+                    <th class="header-mes-personas-prog" style="background-color:#0891b2 !important;">TOTAL</th>
+                    <!-- Personas Atendidas -->
+                    <th class="header-mes-personas-atend">ENE</th>
+                    <th class="header-mes-personas-atend">FEB</th>
+                    <th class="header-mes-personas-atend">MAR</th>
+                    <th class="header-mes-personas-atend">ABR</th>
+                    <th class="header-mes-personas-atend">MAY</th>
+                    <th class="header-mes-personas-atend">JUN</th>
+                    <th class="header-mes-personas-atend">JUL</th>
+                    <th class="header-mes-personas-atend">AGO</th>
+                    <th class="header-mes-personas-atend">SEP</th>
+                    <th class="header-mes-personas-atend">OCT</th>
+                    <th class="header-mes-personas-atend">NOV</th>
+                    <th class="header-mes-personas-atend">DIC</th>
+                    <th class="header-mes-personas-atend" style="background-color:#4c1d95 !important;">TOTAL</th>
+                </tr>
+            </thead>
+            <tbody id="tbodyTablero">
+                <tr>
+                    <td colspan="60" class="text-center py-5 text-muted">
+                        <i class="fas fa-filter fa-2x mb-3 d-block"></i>
+                        Seleccione un departamento y año fiscal para ver los datos.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    @* Resumen General *@
+    <div class="row mt-4 g-3">
+        <div class="col-md-3 col-6">
+            <div class="card card-resumen-small">
+                <div class="card-body text-center">
+                    <h6 class="text-muted">Total Registros</h6>
+                    <h4 class="fw-bold text-dark" id="totalRegistros">0</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card card-resumen-small" style="border-left: 4px solid #ffc107;">
+                <div class="card-body text-center">
+                    <h6 class="text-muted">Total Programado</h6>
+                    <h4 class="fw-bold" style="color: #d49a00;" id="totalProgramado">0</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card card-resumen-small" style="border-left: 4px solid #20c997;">
+                <div class="card-body text-center">
+                    <h6 class="text-muted">Total Realizado</h6>
+                    <h4 class="fw-bold" style="color: #20c997;" id="totalRealizado">0</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card card-resumen-small" style="border-left: 4px solid #6f42c1;">
+                <div class="card-body text-center">
+                    <h6 class="text-muted">Personas Atendidas</h6>
+                    <h4 class="fw-bold" style="color: #6f42c1;" id="totalPersonas">0</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@* Loading Overlay *@
+<div class="loading-overlay" id="loadingOverlay" style="display: none;">
+    <div class="text-center">
+        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+            <span class="visually-hidden">Cargando...</span>
+        </div>
+        <p class="mt-3 fw-semibold text-muted">Cargando datos del tablero...</p>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script>
+        // ========================================
+        // VARIABLES GLOBALES
+        // ========================================
+        let datosTablero = [];
+
+        // ========================================
+        // FUNCIONES DE LOADING
+        // ========================================
+        function mostrarLoading() {
+            document.getElementById('loadingOverlay').style.display = 'flex';
+        }
+
+        function ocultarLoading() {
+            document.getElementById('loadingOverlay').style.display = 'none';
+        }
+
+        // ========================================
+        // CARGAR DATOS
+        // ========================================
+        async function cargarDatosTablero() {
+            const departamento = document.getElementById('filtroDepartamento').value;
+            const anoFiscal = document.getElementById('filtroAno').value;
+            const tbody = document.getElementById('tbodyTablero');
+
+            if (!departamento) {
+                Swal.fire('Aviso', 'Por favor seleccione un departamento', 'warning');
+                return;
+            }
+
+            mostrarLoading();
+
+            try {
+                const response = await fetch(`/Monitoreo/ObtenerDatosTableroCompletoOptimizado?anoFiscal=${anoFiscal}&departamento=${departamento}`);
+
+                if (!response.ok) throw new Error('Error al cargar datos');
+
+                const result = await response.json();
+
+                if (!result.success) {
+                    throw new Error(result.mensaje || 'Error desconocido');
+                }
+
+                datosTablero = result.datos;
+                renderizarTabla(datosTablero);
+                actualizarResumen(datosTablero);
+
+            } catch (error) {
+                console.error('Error:', error);
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="60" class="text-center py-5 text-danger">
+                            <i class="fas fa-exclamation-triangle fa-2x mb-3 d-block"></i>
+                            Error al cargar los datos: ${error.message}
+                        </td>
+                    </tr>
+                `;
+            } finally {
+                ocultarLoading();
+            }
+        }
+
+        // ========================================
+        // RENDERIZAR TABLA
+        // ========================================
+        function renderizarTabla(datos) {
+            const tbody = document.getElementById('tbodyTablero');
+
+            if (!datos || datos.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="60" class="text-center py-5 text-muted">
+                            <i class="fas fa-inbox fa-2x mb-3 d-block"></i>
+                            No hay datos para mostrar.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            let html = '';
+
+            datos.forEach((r) => {
+                const prog = r.programado || {};
+                const real = r.realizado || {};
+                const persProg = r.personasProgramado || {};
+                const persAtend = r.personasAtendidas || {};
+
+                // Calcular totales de personas atendidas por mes
+                let persAtendMeses = {};
+                let totalPersAtend = 0;
+                for (let m = 1; m <= 12; m++) {
+                    const mes = persAtend[m] || {};
+                    const totalMes = (mes.hombres || 0) + (mes.mujeres || 0);
+                    persAtendMeses[m] = totalMes;
+                    totalPersAtend += totalMes;
+                }
+
+                html += `
+                    <tr>
+                        <!-- Información General -->
+                        <td class="celda-info fw-bold">${r.pp || ''}</td>
+                        <td class="celda-info">${r.componente || ''}</td>
+                        <td class="celda-info">${r.actividad || ''}</td>
+                        <td class="celda-info col-descripcion" title="${r.descripcionActividad || ''}">${r.descripcionActividad || ''}</td>
+                        <td class="celda-info">${r.area || ''}</td>
+                        <td class="celda-info">${r.departamento || ''}</td>
+                        <td class="celda-info col-programa" title="${r.programaSocial || ''}">${r.programaSocial || ''}</td>
+                        <td class="celda-info">${r.unidadMedida || ''}</td>
+
+                        <!-- Programado -->
+                        <td class="celda-programado">${prog.ene || 0}</td>
+                        <td class="celda-programado">${prog.feb || 0}</td>
+                        <td class="celda-programado">${prog.mar || 0}</td>
+                        <td class="celda-programado">${prog.abr || 0}</td>
+                        <td class="celda-programado">${prog.may || 0}</td>
+                        <td class="celda-programado">${prog.jun || 0}</td>
+                        <td class="celda-programado">${prog.jul || 0}</td>
+                        <td class="celda-programado">${prog.ago || 0}</td>
+                        <td class="celda-programado">${prog.sep || 0}</td>
+                        <td class="celda-programado">${prog.oct || 0}</td>
+                        <td class="celda-programado">${prog.nov || 0}</td>
+                        <td class="celda-programado">${prog.dic || 0}</td>
+                        <td class="celda-total-programado">${prog.total || 0}</td>
+
+                        <!-- Realizado -->
+                        <td class="celda-realizado">${real.ene || 0}</td>
+                        <td class="celda-realizado">${real.feb || 0}</td>
+                        <td class="celda-realizado">${real.mar || 0}</td>
+                        <td class="celda-realizado">${real.abr || 0}</td>
+                        <td class="celda-realizado">${real.may || 0}</td>
+                        <td class="celda-realizado">${real.jun || 0}</td>
+                        <td class="celda-realizado">${real.jul || 0}</td>
+                        <td class="celda-realizado">${real.ago || 0}</td>
+                        <td class="celda-realizado">${real.sep || 0}</td>
+                        <td class="celda-realizado">${real.oct || 0}</td>
+                        <td class="celda-realizado">${real.nov || 0}</td>
+                        <td class="celda-realizado">${real.dic || 0}</td>
+                        <td class="celda-total-realizado">${real.total || 0}</td>
+
+                        <!-- Personas Programadas -->
+                        <td class="celda-personas-prog">${persProg.ene || 0}</td>
+                        <td class="celda-personas-prog">${persProg.feb || 0}</td>
+                        <td class="celda-personas-prog">${persProg.mar || 0}</td>
+                        <td class="celda-personas-prog">${persProg.abr || 0}</td>
+                        <td class="celda-personas-prog">${persProg.may || 0}</td>
+                        <td class="celda-personas-prog">${persProg.jun || 0}</td>
+                        <td class="celda-personas-prog">${persProg.jul || 0}</td>
+                        <td class="celda-personas-prog">${persProg.ago || 0}</td>
+                        <td class="celda-personas-prog">${persProg.sep || 0}</td>
+                        <td class="celda-personas-prog">${persProg.oct || 0}</td>
+                        <td class="celda-personas-prog">${persProg.nov || 0}</td>
+                        <td class="celda-personas-prog">${persProg.dic || 0}</td>
+                        <td class="celda-total-personas-prog">${persProg.total || 0}</td>
+
+                        <!-- Personas Atendidas (total por mes) -->
+                        <td class="celda-personas-atend">${persAtendMeses[1] || 0}</td>
+                        <td class="celda-personas-atend">${persAtendMeses[2] || 0}</td>
+                        <td class="celda-personas-atend">${persAtendMeses[3] || 0}</td>
+                        <td class="celda-personas-atend">${persAtendMeses[4] || 0}</td>
+                        <td class="celda-personas-atend">${persAtendMeses[5] || 0}</td>
+                        <td class="celda-personas-atend">${persAtendMeses[6] || 0}</td>
+                        <td class="celda-personas-atend">${persAtendMeses[7] || 0}</td>
+                        <td class="celda-personas-atend">${persAtendMeses[8] || 0}</td>
+                        <td class="celda-personas-atend">${persAtendMeses[9] || 0}</td>
+                        <td class="celda-personas-atend">${persAtendMeses[10] || 0}</td>
+                        <td class="celda-personas-atend">${persAtendMeses[11] || 0}</td>
+                        <td class="celda-personas-atend">${persAtendMeses[12] || 0}</td>
+                        <td class="celda-total-personas-atend">${totalPersAtend}</td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+        }
+
+        // ========================================
+        // ACTUALIZAR RESUMEN
+        // ========================================
+        function actualizarResumen(datos) {
+            let totalProg = 0;
+            let totalReal = 0;
+            let totalPers = 0;
+
+            datos.forEach(r => {
+                totalProg += r.programado?.total || 0;
+                totalReal += r.realizado?.total || 0;
+
+                const pa = r.personasAtendidas || {};
+                for (let m = 1; m <= 12; m++) {
+                    const mes = pa[m] || {};
+                    totalPers += (mes.hombres || 0) + (mes.mujeres || 0);
+                }
+            });
+
+            document.getElementById('totalRegistros').textContent = datos.length.toLocaleString();
+            document.getElementById('totalProgramado').textContent = totalProg.toLocaleString();
+            document.getElementById('totalRealizado').textContent = totalReal.toLocaleString();
+            document.getElementById('totalPersonas').textContent = totalPers.toLocaleString();
+        }
+
+        // ========================================
+        // EXPORTAR A EXCEL
+        // ========================================
+        function exportarExcel() {
+            if (!datosTablero || datosTablero.length === 0) {
+                Swal.fire('Aviso', 'No hay datos para exportar', 'warning');
+                return;
+            }
+
+            mostrarLoading();
+
+            try {
+                const wb = XLSX.utils.book_new();
+
+                // Crear datos para Excel
+                const datosExcel = datosTablero.map(r => {
+                    const prog = r.programado || {};
+                    const real = r.realizado || {};
+                    const persProg = r.personasProgramado || {};
+                    const persAtend = r.personasAtendidas || {};
+
+                    // Calcular personas atendidas
+                    let persAtendMeses = {};
+                    let totalPersAtend = 0;
+                    for (let m = 1; m <= 12; m++) {
+                        const mes = persAtend[m] || {};
+                        const totalMes = (mes.hombres || 0) + (mes.mujeres || 0);
+                        persAtendMeses[m] = totalMes;
+                        totalPersAtend += totalMes;
+                    }
+
+                    return {
+                        'PP': r.pp,
+                        'Componente': r.componente,
+                        'Actividad': r.actividad,
+                        'Descripción': r.descripcionActividad,
+                        'Área': r.area,
+                        'Departamento': r.departamento,
+                        'Programa Social': r.programaSocial,
+                        'Unidad Medida': r.unidadMedida,
+                        // Programado
+                        'Prog_Ene': prog.ene || 0,
+                        'Prog_Feb': prog.feb || 0,
+                        'Prog_Mar': prog.mar || 0,
+                        'Prog_Abr': prog.abr || 0,
+                        'Prog_May': prog.may || 0,
+                        'Prog_Jun': prog.jun || 0,
+                        'Prog_Jul': prog.jul || 0,
+                        'Prog_Ago': prog.ago || 0,
+                        'Prog_Sep': prog.sep || 0,
+                        'Prog_Oct': prog.oct || 0,
+                        'Prog_Nov': prog.nov || 0,
+                        'Prog_Dic': prog.dic || 0,
+                        'Prog_Total': prog.total || 0,
+                        // Realizado
+                        'Real_Ene': real.ene || 0,
+                        'Real_Feb': real.feb || 0,
+                        'Real_Mar': real.mar || 0,
+                        'Real_Abr': real.abr || 0,
+                        'Real_May': real.may || 0,
+                        'Real_Jun': real.jun || 0,
+                        'Real_Jul': real.jul || 0,
+                        'Real_Ago': real.ago || 0,
+                        'Real_Sep': real.sep || 0,
+                        'Real_Oct': real.oct || 0,
+                        'Real_Nov': real.nov || 0,
+                        'Real_Dic': real.dic || 0,
+                        'Real_Total': real.total || 0,
+                        // Personas Programadas
+                        'PersProg_Ene': persProg.ene || 0,
+                        'PersProg_Feb': persProg.feb || 0,
+                        'PersProg_Mar': persProg.mar || 0,
+                        'PersProg_Abr': persProg.abr || 0,
+                        'PersProg_May': persProg.may || 0,
+                        'PersProg_Jun': persProg.jun || 0,
+                        'PersProg_Jul': persProg.jul || 0,
+                        'PersProg_Ago': persProg.ago || 0,
+                        'PersProg_Sep': persProg.sep || 0,
+                        'PersProg_Oct': persProg.oct || 0,
+                        'PersProg_Nov': persProg.nov || 0,
+                        'PersProg_Dic': persProg.dic || 0,
+                        'PersProg_Total': persProg.total || 0,
+                        // Personas Atendidas
+                        'PersAtend_Ene': persAtendMeses[1] || 0,
+                        'PersAtend_Feb': persAtendMeses[2] || 0,
+                        'PersAtend_Mar': persAtendMeses[3] || 0,
+                        'PersAtend_Abr': persAtendMeses[4] || 0,
+                        'PersAtend_May': persAtendMeses[5] || 0,
+                        'PersAtend_Jun': persAtendMeses[6] || 0,
+                        'PersAtend_Jul': persAtendMeses[7] || 0,
+                        'PersAtend_Ago': persAtendMeses[8] || 0,
+                        'PersAtend_Sep': persAtendMeses[9] || 0,
+                        'PersAtend_Oct': persAtendMeses[10] || 0,
+                        'PersAtend_Nov': persAtendMeses[11] || 0,
+                        'PersAtend_Dic': persAtendMeses[12] || 0,
+                        'PersAtend_Total': totalPersAtend
+                    };
+                });
+
+                const ws = XLSX.utils.json_to_sheet(datosExcel);
+                XLSX.utils.book_append_sheet(wb, ws, 'Tablero Completo');
+
+                // Descargar
+                const fecha = new Date().toISOString().split('T')[0];
+                const depto = document.getElementById('filtroDepartamento');
+                const nombreDepto = depto.options[depto.selectedIndex]?.text || 'General';
+                XLSX.writeFile(wb, `Tablero_${nombreDepto}_${fecha}.xlsx`);
+
+                Swal.fire('Éxito', 'Excel generado correctamente', 'success');
+
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire('Error', 'No se pudo generar el Excel', 'error');
+            } finally {
+                ocultarLoading();
+            }
+        }
+
+        // ========================================
+        // INICIALIZACIÓN
+        // ========================================
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('btnFiltrar').addEventListener('click', cargarDatosTablero);
+            document.getElementById('btnExportarExcel').addEventListener('click', exportarExcel);
+
+            document.getElementById('filtroDepartamento').addEventListener('change', function() {
+                if (this.value) cargarDatosTablero();
+            });
+
+            // Preseleccionar valores si vienen del ViewBag
+            @if (ViewBag.AnoFiscalSeleccionado != null)
+            {
+                    <text>
+                    document.getElementById('filtroAno').value = '@ViewBag.AnoFiscalSeleccionado';
+                    </text>
+            }
+            @if (ViewBag.DepartamentoSeleccionado != null)
+            {
+                    <text>
+                    document.getElementById('filtroDepartamento').value = '@ViewBag.DepartamentoSeleccionado';
+                    cargarDatosTablero();
+                    </text>
+            }
+        });
+    </script>
+}

@@ -75,6 +75,7 @@
                 }
                 <button class="boton-rojo" type="button" id="btnBuscar">Buscar</button>
             </div>
+
         </div>
     </div>
 </div>
@@ -89,8 +90,14 @@
 
     <div class="mt-3 mb-3 text-center">
         <button class="boton-amarillo"
+                onclick="irATableroCompleto()"
+                style="color: #17a2b8; box-shadow: 0 5px 8px 0 #17a2b8; border: 1px solid #17a2b8 !important;">
+            <i class="fas fa-table"></i> Tablero Completo por Departamento
+        </button>
+
+        <button class="boton-amarillo"
                 onclick="irATablero()"
-                style="color: forestgreen; box-shadow: 0 5px 8px 0 forestgreen; border: 1px solid forestgreen !important; text-decoration: none; display: inline-block; padding: 8px 16px;">
+                style="color: forestgreen; box-shadow: 0 5px 8px 0 forestgreen; border: 1px solid forestgreen !important; text-decoration: none; display: inline-block; padding: 4px 16px;">
             Tablero
         </button>
     </div>
@@ -303,6 +310,20 @@
 
             // Redirigir a TableroControl con parámetros
             window.location.href = '@Url.Action("TableroControl", "Monitoreo")' +
+                                  '?anoFiscal=' + anoFiscal +
+                                  '&departamento=' + departamento;
+        }
+
+        function irATableroCompleto() {
+            var anoFiscal = $('#selectAnoFiscal').val();
+            var departamento = $('#selectDepartamento').val();
+
+            if (!anoFiscal || !departamento) {
+                alert('Por favor, seleccione año fiscal y departamento primero');
+                return;
+            }
+
+            window.location.href = '@Url.Action("TableroCompletoDepartamento", "Monitoreo")' +
                                   '?anoFiscal=' + anoFiscal +
                                   '&departamento=' + departamento;
         }

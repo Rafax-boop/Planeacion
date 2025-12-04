@@ -389,7 +389,7 @@ namespace Metas.AplicacionWeb.Controllers
                     NombreReviso = primerRegistro?.NombreRealizo ?? "Sin asignar",
                     NombreValido = primerRegistro?.NombreValido ?? "Sin asignar",
                     CargoReviso = primerRegistro?.CargoRealizo ?? "Sin asignar",
-                    CargoValido = primerRegistro?.CargoValido ?? "Sin asignar",  
+                    CargoValido = primerRegistro?.CargoValido ?? "Sin asignar",
                     Ano = primerRegistro?.Ano ?? DateTime.Now.Year
                 };
 
@@ -422,7 +422,7 @@ namespace Metas.AplicacionWeb.Controllers
 
             if (registro == null)
             {
-                return NotFound(); 
+                return NotFound();
             }
 
             var datosEdicion = new VMDatosEdicionActividad
@@ -626,6 +626,138 @@ namespace Metas.AplicacionWeb.Controllers
             {
                 return Json(new { success = false, message = ex.Message });
             }
-        }        
+        }
+
+        public async Task<IActionResult> TableroCompletoDepartamento(int? anoFiscal, int? departamento)
+        {
+            var departamentos = await _departamentoService.ObtenerDepartamentos();
+
+            var modelo = new VMDepartamentos
+            {
+                ListaDepartamentos = departamentos.Select(d => new SelectListItem
+                {
+                    Value = d.IdDepartamento.ToString(),
+                    Text = d.Departamento1
+                }).ToList()
+            };
+
+            // Pasar los valores por ViewBag para preseleccionar
+            ViewBag.AnoFiscalSeleccionado = anoFiscal;
+            ViewBag.DepartamentoSeleccionado = departamento;
+
+            return View(modelo);
+        }
+        public async Task<IActionResult> ObtenerDatosTableroCompletoOptimizado(int anoFiscal, int departamento)
+        {
+            try
+            {
+                var datos = await _programacionService.ObtenerDatosProgramacion(anoFiscal, departamento);
+
+                if (datos == null || !datos.Any())
+                {
+                    return Json(new { success = true, datos = new List<object>() });
+                }
+
+                var idsProcesos = datos.Select(d => d.IdProceso).ToList();
+                var todosLosLlenados = await _monitoreoService.ObtenerLlenadosPorProcesos(idsProcesos);
+
+                var resultado = datos.Select(x =>
+                {
+                    var personasAtendidas = new Dictionary<int, object>();
+
+                    for (int mes = 1; mes <= 12; mes++)
+                    {
+                        var datosExternos = todosLosLlenados?
+                            .FirstOrDefault(l => l.IdProceso == x.IdProceso && l.Meses == mes);
+
+                        personasAtendidas[mes] = new
+                        {
+                            hombres = datosExternos?.HombresAtendidos ?? 0,
+                            mujeres = datosExternos?.MujeresAtendidas ?? 0,
+                            edad0a3 = datosExternos?._03anos ?? 0,
+                            edad4a8 = datosExternos?._48anos ?? 0,
+                            edad9a12 = datosExternos?._912anos ?? 0,
+                            edad13a17 = datosExternos?._1317anos ?? 0,
+                            edad18a29 = datosExternos?._1829anos ?? 0,
+                            edad30a59 = datosExternos?._3059anos ?? 0,
+                            edad60mas = datosExternos?._60amasanos ?? 0,
+                            noEspecifica = datosExternos?.NoDefinida ?? 0,
+                            indigenas = datosExternos?.Indigena ?? 0
+                        };
+                    }
+
+                    return new
+                    {
+                        idProceso = x.IdProceso,
+                        pp = x.Pp,
+                        componente = x.Componente,
+                        actividad = x.Actividad,
+                        descripcionActividad = x.DescripcionActividad,
+                        area = x.Area,
+                        departamento = x.Departamento,
+                        programaSocial = x.ProgramaSocial,
+                        unidadMedida = x.UnidadMedida,
+                        programado = new
+                        {
+                            ene = x.TotalEnero ?? 0,
+                            feb = x.TotalFebrero ?? 0,
+                            mar = x.TotalMarzo ?? 0,
+                            abr = x.TotalAbril ?? 0,
+                            may = x.TotalMayo ?? 0,
+                            jun = x.TotalJunio ?? 0,
+                            jul = x.TotalJulio ?? 0,
+                            ago = x.TotalAgosto ?? 0,
+                            sep = x.TotalSeptiembre ?? 0,
+                            oct = x.TotalOctubre ?? 0,
+                            nov = x.TotalNoviembre ?? 0,
+                            dic = x.TotalDiciembre ?? 0,
+                            total = x.TotalProgramado ?? 0
+                        },
+                        realizado = new
+                        {
+                            ene = x.TotalEneroRealizado ?? 0,
+                            feb = x.TotalFebreroRealizado ?? 0,
+                            mar = x.TotalMarzoRealizado ?? 0,
+                            abr = x.TotalAbrilRealizado ?? 0,
+                            may = x.TotalMayoRealizado ?? 0,
+                            jun = x.TotalJunioRealizado ?? 0,
+                            jul = x.TotalJulioRealizado ?? 0,
+                            ago = x.TotalAgostoRealizado ?? 0,
+                            sep = x.TotalSeptiembreRealizado ?? 0,
+                            oct = x.TotalOctubreRealizado ?? 0,
+                            nov = x.TotalNoviembreRealizado ?? 0,
+                            dic = x.TotalDiciembreRealizado ?? 0,
+                            total = x.TotalRealizado ?? 0
+                        },
+                        personasProgramado = new
+                        {
+                            ene = x.EneroPersona ?? 0,
+                            feb = x.FebreroPersona ?? 0,
+                            mar = x.MarzoPersona ?? 0,
+                            abr = x.AbrilPersona ?? 0,
+                            may = x.MayoPersona ?? 0,
+                            jun = x.JunioPersona ?? 0,
+                            jul = x.JulioPersona ?? 0,
+                            ago = x.AgostoPersona ?? 0,
+                            sep = x.SeptiembrePersona ?? 0,
+                            oct = x.OctubrePersona ?? 0,
+                            nov = x.NoviembrePersona ?? 0,
+                            dic = x.DiciembrePersona ?? 0,
+                            total = (x.EneroPersona ?? 0) + (x.FebreroPersona ?? 0) + (x.MarzoPersona ?? 0) +
+                                    (x.AbrilPersona ?? 0) + (x.MayoPersona ?? 0) + (x.JunioPersona ?? 0) +
+                                    (x.JulioPersona ?? 0) + (x.AgostoPersona ?? 0) + (x.SeptiembrePersona ?? 0) +
+                                    (x.OctubrePersona ?? 0) + (x.NoviembrePersona ?? 0) + (x.DiciembrePersona ?? 0)
+                        },
+                        personasAtendidas = personasAtendidas
+                    };
+                }).ToList();
+
+                return Json(new { success = true, datos = resultado });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, mensaje = $"Error: {ex.Message}" });
+            }
+        }
     }
 }

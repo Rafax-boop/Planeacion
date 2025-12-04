@@ -16,5 +16,6 @@ namespace Metas.BLL.Interfaces
         Task<bool> ActualizarRegistro(DatosEdicionDTO modelo);
         Task<bool> EliminarCapturaMes(int idProceso, int mes);
         Task<bool> CrearNuevoProceso(DatosEdicionDTO modelo);
+        Task<List<LlenadoExterno>> ObtenerLlenadosPorProcesos(List<int> idsProcesos);
     }
 }

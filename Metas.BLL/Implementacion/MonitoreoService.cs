@@ -544,5 +544,28 @@ namespace Metas.BLL.Implementacion
                     return string.Empty;
             }
         }
+
+        public async Task<List<LlenadoExterno>> ObtenerLlenadosPorProcesos(List<int> idsProcesos)
+        {
+            try
+            {
+                if (idsProcesos == null || !idsProcesos.Any())
+                {
+                    return new List<LlenadoExterno>();
+                }
+
+                // Usar el repositorio genérico - convertir IdProceso nullable a int
+                var llenados = await _llenadoExternoRepository.Consultar(
+                    l => l.IdProceso.HasValue && idsProcesos.Contains(l.IdProceso.Value)
+                );
+
+                return llenados.ToList();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error en ObtenerLlenadosPorProcesos: {ex.Message}");
+                return new List<LlenadoExterno>();
+            }
+        }
     }
 }
