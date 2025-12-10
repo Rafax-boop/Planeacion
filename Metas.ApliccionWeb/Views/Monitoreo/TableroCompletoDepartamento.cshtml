@@ -80,8 +80,6 @@
             <thead>
                 @* ========================================
                    FILA 1: Títulos de sección principales
-                   - Las primeras 4 secciones: rowspan=3
-                   - Personas Atendidas: sin rowspan
                    ======================================== *@
                 <tr>
                     <th class="header-seccion-info" colspan="8" rowspan="3">INFORMACIÓN GENERAL</th>
@@ -93,7 +91,6 @@
 
                 @* ========================================
                    FILA 2: Meses para Personas Atendidas
-                   (las primeras 4 secciones están cubiertas por rowspan)
                    ======================================== *@
                 <tr>
                     @{
@@ -106,8 +103,7 @@
                 </tr>
 
                 @* ========================================
-                   FILA 3: Categorías de Personas Atendidas (rowspan=2)
-                   (las primeras 4 secciones están cubiertas por rowspan)
+                   FILA 3: Categorías de Personas Atendidas 
                    ======================================== *@
                 <tr>
                     @for (int mes = 0; mes < 12; mes++)
@@ -130,7 +126,6 @@
                 @* ========================================
                    FILA 4: Subencabezados de columnas
                    - Las primeras 4 secciones: PP, COMP, ENE, FEB, etc.
-                   - Personas Atendidas: cubierto por rowspan de categorías
                    ======================================== *@
                 <tr class="fila-subencabezados">
                     <!-- Información General (8 columnas) -->
@@ -188,7 +183,6 @@
                     <th class="header-mes-personas-prog">DIC</th>
                     <th class="header-mes-personas-prog header-total-pers-prog">TOTAL</th>
 
-                    <!-- Personas Atendidas: Ya cubierto por rowspan=2 de las categorías -->
                 </tr>
             </thead>
             <tbody id="tbodyTablero">
@@ -251,7 +245,8 @@
 </div>
 
 @section Scripts {
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
     <script>
         // ========================================
         // VARIABLES GLOBALES
@@ -411,7 +406,6 @@
                 for (let mes = 1; mes <= 12; mes++) {
                     const mesData = persAtend[mes] || {};
 
-                    // Nombres exactos que envía el controlador
                     const hombre = mesData.hombres || 0;
                     const mujer = mesData.mujeres || 0;
                     const edad0_3 = mesData.edad0a3 || 0;
@@ -465,7 +459,6 @@
                 const pa = r.personasAtendidas || {};
                 for (let m = 1; m <= 12; m++) {
                     const mes = pa[m] || {};
-                    // Usar nombres correctos del JSON
                     totalPers += (mes.hombres || 0) + (mes.mujeres || 0);
                 }
             });
@@ -477,9 +470,9 @@
         }
 
         // ========================================
-        // EXPORTAR A EXCEL
+        // EXPORTAR A EXCEL CON ESTILOS (ExcelJS)
         // ========================================
-        function exportarExcel() {
+        async function exportarExcel() {
             if (!datosTablero || datosTablero.length === 0) {
                 Swal.fire('Aviso', 'No hay datos para exportar', 'warning');
                 return;
@@ -488,107 +481,282 @@
             mostrarLoading();
 
             try {
-                const wb = XLSX.utils.book_new();
+                const workbook = new ExcelJS.Workbook();
+                const sheet = workbook.addWorksheet('Tablero Completo');
 
-                const datosExcel = datosTablero.map(r => {
+                // ========== COLORES ==========
+                const colores = {
+                    info: { header: 'FFC00000', subheader: 'FFA00000', celda: 'FFFFF5F5' },
+                    programado: { header: 'FFFFC107', subheader: 'FFE0A800', celda: 'FFFFFBEB', total: 'FFD49A00' },
+                    realizado: { header: 'FF20C997', subheader: 'FF1AA179', celda: 'FFE6FFF7', total: 'FF148060' },
+                    personasProg: { header: 'FF0DCAF0', subheader: 'FF0BB5D6', celda: 'FFE6FCFF', total: 'FF0891B2' },
+                    personasAtend: { header: 'FF6F42C1', subheader: 'FF5A32A3', celda: 'FFF3E8FF', total: 'FF4C1D95' }
+                };
+
+                // ========== ESTILOS BASE ==========
+                const estiloHeaderPrincipal = (color, textColor = 'FFFFFFFF') => ({
+                    font: { bold: true, size: 12, color: { argb: textColor } },
+                    fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: color } },
+                    alignment: { horizontal: 'center', vertical: 'middle', wrapText: true },
+                    border: { top: {style:'thin'}, left: {style:'thin'}, bottom: {style:'thin'}, right: {style:'thin'} }
+                });
+
+                const estiloSubheader = (color, textColor = 'FFFFFFFF') => ({
+                    font: { bold: true, size: 9, color: { argb: textColor } },
+                    fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: color } },
+                    alignment: { horizontal: 'center', vertical: 'middle', wrapText: true },
+                    border: { top: {style:'thin'}, left: {style:'thin'}, bottom: {style:'thin'}, right: {style:'thin'} }
+                });
+
+                const estiloCelda = (color) => ({
+                    font: { size: 10 },
+                    fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: color } },
+                    alignment: { horizontal: 'center', vertical: 'middle' },
+                    border: { top: {style:'thin'}, left: {style:'thin'}, bottom: {style:'thin'}, right: {style:'thin'} }
+                });
+
+                // ========== ESTRUCTURA DE COLUMNAS ==========
+                const mesesNombres = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'];
+                const categoriasPA = ['Hombre', 'Mujer', '0-3', '4-8', '9-12', '13-17', '18-29', '30-59', '60+', 'No Def.', 'Indíg.', 'TOTAL'];
+
+                // ========== FILA 1: TÍTULOS PRINCIPALES ==========
+                const fila1 = sheet.getRow(1);
+                fila1.height = 30;
+
+                // Info General (columnas 1-8)
+                sheet.mergeCells('A1:H1');
+                const celdaInfo = sheet.getCell('A1');
+                celdaInfo.value = 'INFORMACIÓN GENERAL';
+                Object.assign(celdaInfo, estiloHeaderPrincipal(colores.info.header));
+
+                // Servicios Programados (columnas 9-21)
+                sheet.mergeCells('I1:U1');
+                const celdaProg = sheet.getCell('I1');
+                celdaProg.value = 'SERVICIOS PROGRAMADOS';
+                Object.assign(celdaProg, estiloHeaderPrincipal(colores.programado.header, 'FF000000'));
+
+                // Servicios Realizados (columnas 22-34)
+                sheet.mergeCells('V1:AH1');
+                const celdaReal = sheet.getCell('V1');
+                celdaReal.value = 'SERVICIOS REALIZADOS';
+                Object.assign(celdaReal, estiloHeaderPrincipal(colores.realizado.header));
+
+                // Personas Programadas (columnas 35-47)
+                sheet.mergeCells('AI1:AU1');
+                const celdaPersProg = sheet.getCell('AI1');
+                celdaPersProg.value = 'PERSONAS PROGRAMADAS';
+                Object.assign(celdaPersProg, estiloHeaderPrincipal(colores.personasProg.header, 'FF000000'));
+
+                // Personas Atendidas (columnas 48-191 = 144 columnas)
+                sheet.mergeCells('AV1:GI1');
+                const celdaPersAtend = sheet.getCell('AV1');
+                celdaPersAtend.value = 'PERSONAS ATENDIDAS';
+                Object.assign(celdaPersAtend, estiloHeaderPrincipal(colores.personasAtend.header));
+
+                // ========== FILA 2: MESES PARA PERSONAS ATENDIDAS ==========
+                const fila2 = sheet.getRow(2);
+                fila2.height = 25;
+
+                // Info (vacío pero con estilo)
+                for (let col = 1; col <= 8; col++) {
+                    const celda = sheet.getCell(2, col);
+                    Object.assign(celda, estiloSubheader(colores.info.subheader));
+                }
+
+                // Prog meses
+                const headersProg = [...mesesNombres, 'TOTAL'];
+                for (let i = 0; i < 13; i++) {
+                    const celda = sheet.getCell(2, 9 + i);
+                    celda.value = headersProg[i];
+                    Object.assign(celda, estiloSubheader(colores.programado.subheader, 'FF000000'));
+                }
+
+                // Real meses
+                for (let i = 0; i < 13; i++) {
+                    const celda = sheet.getCell(2, 22 + i);
+                    celda.value = headersProg[i];
+                    Object.assign(celda, estiloSubheader(colores.realizado.subheader));
+                }
+
+                // PersProg meses
+                for (let i = 0; i < 13; i++) {
+                    const celda = sheet.getCell(2, 35 + i);
+                    celda.value = headersProg[i];
+                    Object.assign(celda, estiloSubheader(colores.personasProg.subheader, 'FF000000'));
+                }
+
+                // PersAtend - Meses con merge (cada mes = 12 columnas)
+                let colPersAtend = 48;
+                for (let m = 0; m < 12; m++) {
+                    const startCol = colPersAtend + (m * 12);
+                    const endCol = startCol + 11;
+                    const startCell = sheet.getCell(2, startCol);
+                    const endCell = sheet.getCell(2, endCol);
+                    sheet.mergeCells(2, startCol, 2, endCol);
+                    startCell.value = mesesNombres[m];
+                    Object.assign(startCell, estiloSubheader(colores.personasAtend.subheader));
+                }
+
+                // ========== FILA 3: SUBENCABEZADOS ==========
+                const fila3 = sheet.getRow(3);
+                fila3.height = 20;
+
+                // Info headers
+                const headersInfo = ['PP', 'COMP', 'ACT', 'DESCRIPCIÓN', 'ÁREA', 'DEPTO', 'PROGRAMA', 'U.M.'];
+                for (let i = 0; i < 8; i++) {
+                    const celda = sheet.getCell(3, i + 1);
+                    celda.value = headersInfo[i];
+                    Object.assign(celda, estiloSubheader(colores.info.subheader));
+                }
+
+                // Prog (vacío, ya tiene meses en fila 2)
+                for (let i = 0; i < 13; i++) {
+                    const celda = sheet.getCell(3, 9 + i);
+                    Object.assign(celda, estiloSubheader(colores.programado.subheader, 'FF000000'));
+                }
+
+                // Real
+                for (let i = 0; i < 13; i++) {
+                    const celda = sheet.getCell(3, 22 + i);
+                    Object.assign(celda, estiloSubheader(colores.realizado.subheader));
+                }
+
+                // PersProg
+                for (let i = 0; i < 13; i++) {
+                    const celda = sheet.getCell(3, 35 + i);
+                    Object.assign(celda, estiloSubheader(colores.personasProg.subheader, 'FF000000'));
+                }
+
+                // PersAtend - Categorías para cada mes
+                for (let m = 0; m < 12; m++) {
+                    for (let c = 0; c < 12; c++) {
+                        const col = 48 + (m * 12) + c;
+                        const celda = sheet.getCell(3, col);
+                        celda.value = categoriasPA[c];
+                        Object.assign(celda, estiloSubheader(colores.personasAtend.subheader));
+                    }
+                }
+
+                // ========== FILAS DE DATOS ==========
+                let filaActual = 4;
+                datosTablero.forEach((r, index) => {
                     const prog = r.programado || {};
                     const real = r.realizado || {};
                     const persProg = r.personasProgramado || {};
                     const persAtend = r.personasAtendidas || {};
 
-                    let excelRow = {
-                        'PP': r.pp,
-                        'Componente': r.componente,
-                        'Actividad': r.actividad,
-                        'Descripción': r.descripcionActividad,
-                        'Área': r.area,
-                        'Departamento': r.departamento,
-                        'Programa Social': r.programaSocial,
-                        'Unidad Medida': r.unidadMedida,
-                        // Programado
-                        'Prog_Ene': prog.ene || 0,
-                        'Prog_Feb': prog.feb || 0,
-                        'Prog_Mar': prog.mar || 0,
-                        'Prog_Abr': prog.abr || 0,
-                        'Prog_May': prog.may || 0,
-                        'Prog_Jun': prog.jun || 0,
-                        'Prog_Jul': prog.jul || 0,
-                        'Prog_Ago': prog.ago || 0,
-                        'Prog_Sep': prog.sep || 0,
-                        'Prog_Oct': prog.oct || 0,
-                        'Prog_Nov': prog.nov || 0,
-                        'Prog_Dic': prog.dic || 0,
-                        'Prog_Total': prog.total || 0,
-                        // Realizado
-                        'Real_Ene': real.ene || 0,
-                        'Real_Feb': real.feb || 0,
-                        'Real_Mar': real.mar || 0,
-                        'Real_Abr': real.abr || 0,
-                        'Real_May': real.may || 0,
-                        'Real_Jun': real.jun || 0,
-                        'Real_Jul': real.jul || 0,
-                        'Real_Ago': real.ago || 0,
-                        'Real_Sep': real.sep || 0,
-                        'Real_Oct': real.oct || 0,
-                        'Real_Nov': real.nov || 0,
-                        'Real_Dic': real.dic || 0,
-                        'Real_Total': real.total || 0,
-                        // Personas Programadas
-                        'PersProg_Ene': persProg.ene || 0,
-                        'PersProg_Feb': persProg.feb || 0,
-                        'PersProg_Mar': persProg.mar || 0,
-                        'PersProg_Abr': persProg.abr || 0,
-                        'PersProg_May': persProg.may || 0,
-                        'PersProg_Jun': persProg.jun || 0,
-                        'PersProg_Jul': persProg.jul || 0,
-                        'PersProg_Ago': persProg.ago || 0,
-                        'PersProg_Sep': persProg.sep || 0,
-                        'PersProg_Oct': persProg.oct || 0,
-                        'PersProg_Nov': persProg.nov || 0,
-                        'PersProg_Dic': persProg.dic || 0,
-                        'PersProg_Total': persProg.total || 0
-                    };
+                    const fila = sheet.getRow(filaActual);
+                    fila.height = 18;
 
-                    // Personas Atendidas - 12 meses × 12 categorías
-                    const meses = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'];
-
-                    for (let mes = 1; mes <= 12; mes++) {
-                        const mesData = persAtend[mes] || {};
-                        const mesNombre = meses[mes-1];
-
-                        // Usar nombres correctos del JSON
-                        excelRow[`PA_${mesNombre}_Hombre`] = mesData.hombres || 0;
-                        excelRow[`PA_${mesNombre}_Mujer`] = mesData.mujeres || 0;
-                        excelRow[`PA_${mesNombre}_0-3`] = mesData.edad0a3 || 0;
-                        excelRow[`PA_${mesNombre}_4-8`] = mesData.edad4a8 || 0;
-                        excelRow[`PA_${mesNombre}_9-12`] = mesData.edad9a12 || 0;
-                        excelRow[`PA_${mesNombre}_13-17`] = mesData.edad13a17 || 0;
-                        excelRow[`PA_${mesNombre}_18-29`] = mesData.edad18a29 || 0;
-                        excelRow[`PA_${mesNombre}_30-59`] = mesData.edad30a59 || 0;
-                        excelRow[`PA_${mesNombre}_60+`] = mesData.edad60mas || 0;
-                        excelRow[`PA_${mesNombre}_NoDefinida`] = mesData.noEspecifica || 0;
-                        excelRow[`PA_${mesNombre}_Indigenas`] = mesData.indigenas || 0;
-
-                        const totalMes = (mesData.hombres || 0) + (mesData.mujeres || 0);
-                        excelRow[`PA_${mesNombre}_TOTAL`] = totalMes;
+                    // Info General (8 columnas)
+                    const datosInfo = [r.pp, r.componente, r.actividad, r.descripcionActividad, r.area, r.departamento, r.programaSocial, r.unidadMedida];
+                    for (let i = 0; i < 8; i++) {
+                        const celda = sheet.getCell(filaActual, i + 1);
+                        celda.value = datosInfo[i] || '';
+                        Object.assign(celda, estiloCelda(colores.info.celda));
+                        if (i === 3 || i === 6) celda.alignment = { horizontal: 'left', vertical: 'middle', wrapText: true };
                     }
 
-                    return excelRow;
+                    // Programado (13 columnas)
+                    const datosProg = [prog.ene, prog.feb, prog.mar, prog.abr, prog.may, prog.jun, prog.jul, prog.ago, prog.sep, prog.oct, prog.nov, prog.dic, prog.total];
+                    for (let i = 0; i < 13; i++) {
+                        const celda = sheet.getCell(filaActual, 9 + i);
+                        celda.value = datosProg[i] || 0;
+                        if (i === 12) {
+                            Object.assign(celda, estiloCelda(colores.programado.total));
+                            celda.font = { bold: true, size: 10 };
+                        } else {
+                            Object.assign(celda, estiloCelda(colores.programado.celda));
+                        }
+                    }
+
+                    // Realizado (13 columnas)
+                    const datosReal = [real.ene, real.feb, real.mar, real.abr, real.may, real.jun, real.jul, real.ago, real.sep, real.oct, real.nov, real.dic, real.total];
+                    for (let i = 0; i < 13; i++) {
+                        const celda = sheet.getCell(filaActual, 22 + i);
+                        celda.value = datosReal[i] || 0;
+                        if (i === 12) {
+                            Object.assign(celda, estiloCelda(colores.realizado.total));
+                            celda.font = { bold: true, size: 10, color: { argb: 'FFFFFFFF' } };
+                        } else {
+                            Object.assign(celda, estiloCelda(colores.realizado.celda));
+                        }
+                    }
+
+                    // Personas Programadas (13 columnas)
+                    const datosPersProg = [persProg.ene, persProg.feb, persProg.mar, persProg.abr, persProg.may, persProg.jun, persProg.jul, persProg.ago, persProg.sep, persProg.oct, persProg.nov, persProg.dic, persProg.total];
+                    for (let i = 0; i < 13; i++) {
+                        const celda = sheet.getCell(filaActual, 35 + i);
+                        celda.value = datosPersProg[i] || 0;
+                        if (i === 12) {
+                            Object.assign(celda, estiloCelda(colores.personasProg.total));
+                            celda.font = { bold: true, size: 10 };
+                        } else {
+                            Object.assign(celda, estiloCelda(colores.personasProg.celda));
+                        }
+                    }
+
+                    // Personas Atendidas (144 columnas = 12 meses × 12 categorías)
+                    for (let mes = 1; mes <= 12; mes++) {
+                        const mesData = persAtend[mes] || {};
+                        const hombre = mesData.hombres || 0;
+                        const mujer = mesData.mujeres || 0;
+                        const datosMes = [
+                            hombre, mujer,
+                            mesData.edad0a3 || 0, mesData.edad4a8 || 0, mesData.edad9a12 || 0,
+                            mesData.edad13a17 || 0, mesData.edad18a29 || 0, mesData.edad30a59 || 0,
+                            mesData.edad60mas || 0, mesData.noEspecifica || 0, mesData.indigenas || 0,
+                            hombre + mujer
+                        ];
+
+                        for (let c = 0; c < 12; c++) {
+                            const col = 48 + ((mes - 1) * 12) + c;
+                            const celda = sheet.getCell(filaActual, col);
+                            celda.value = datosMes[c];
+                            if (c === 11) {
+                                Object.assign(celda, estiloCelda(colores.personasAtend.total));
+                                celda.font = { bold: true, size: 9, color: { argb: 'FFFFFFFF' } };
+                            } else {
+                                Object.assign(celda, estiloCelda(colores.personasAtend.celda));
+                            }
+                        }
+                    }
+
+                    filaActual++;
                 });
 
-                const ws = XLSX.utils.json_to_sheet(datosExcel);
-                XLSX.utils.book_append_sheet(wb, ws, 'Tablero Completo');
+                // ========== AJUSTAR ANCHOS DE COLUMNA ==========
+                sheet.getColumn(1).width = 8;   // PP
+                sheet.getColumn(2).width = 7;   // COMP
+                sheet.getColumn(3).width = 6;   // ACT
+                sheet.getColumn(4).width = 35;  // Descripción
+                sheet.getColumn(5).width = 12;  // Área
+                sheet.getColumn(6).width = 12;  // Depto
+                sheet.getColumn(7).width = 25;  // Programa
+                sheet.getColumn(8).width = 10;  // U.M.
+
+                // Columnas de meses (ancho pequeño)
+                for (let col = 9; col <= 191; col++) {
+                    sheet.getColumn(col).width = 6;
+                }
+
+                // ========== CONGELAR PANELES ==========
+                sheet.views = [{ state: 'frozen', xSplit: 4, ySplit: 3 }];
+
+                // ========== DESCARGAR ==========
+                const buffer = await workbook.xlsx.writeBuffer();
+                const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
 
                 const fecha = new Date().toISOString().split('T')[0];
                 const depto = document.getElementById('filtroDepartamento');
                 const nombreDepto = depto.options[depto.selectedIndex]?.text || 'General';
-                XLSX.writeFile(wb, `Tablero_${nombreDepto}_${fecha}.xlsx`);
+                saveAs(blob, `Tablero_${nombreDepto}_${fecha}.xlsx`);
 
-                Swal.fire('Éxito', 'Excel generado correctamente', 'success');
+                Swal.fire('Éxito', 'Excel generado correctamente con formato', 'success');
 
             } catch (error) {
                 console.error('Error:', error);
-                Swal.fire('Error', 'No se pudo generar el Excel', 'error');
+                Swal.fire('Error', `No se pudo generar el Excel: ${error.message}`, 'error');
             } finally {
                 ocultarLoading();
             }
