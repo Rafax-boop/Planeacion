@@ -962,6 +962,11 @@
 
         function calcularSumatorias() {
             const selectAcumulable = document.getElementById('selectAcumulable');
+            const selectPersonas = document.getElementById('selectPersonas');
+
+            const esAcumulable = selectAcumulable.value === 'si';
+            const esPersonas = selectPersonas.value === 'Personas';
+
             let sumaGrupo1 = 0;
             let sumaGrupo2 = 0;
 
@@ -969,9 +974,16 @@
                 sumaGrupo1 += parseInt(input.value) || 0;
             });
 
-            if (selectAcumulable.value === 'si') {
+            if (esAcumulable) {
                 document.querySelectorAll('.mes-grupo2').forEach(input => {
                     sumaGrupo2 += parseInt(input.value) || 0;
+                });
+            } else if (esPersonas && selectAcumulable.value === 'no') {
+                document.querySelectorAll('.mes-grupo2').forEach(input => {
+                    const valor = parseInt(input.value) || 0;
+                    if (valor > sumaGrupo2) {
+                        sumaGrupo2 = valor;
+                    }
                 });
             }
 
@@ -985,10 +997,13 @@
         }
 
         function actualizarServiciosPorMunicipio() {
-            let totalPersonasGrupo1 = calcularTotalPersonas('Grupo1');
-            let totalPersonasGrupo2 = calcularTotalPersonas('Grupo2');
-            const totalPersonasMunicipios = totalPersonasGrupo1 + totalPersonasGrupo2;
-            document.getElementById('valorServiciosMunicipio').value = totalPersonasMunicipios;
+            let totalGrupo1 = calcularTotalPersonas('Grupo1');
+            let totalGrupo2 = calcularTotalPersonas('Grupo2');
+
+            document.getElementById('valorServiciosMunicipio').value = totalGrupo1;
+
+            document.getElementById('valorPersonasMunicipio').value = totalGrupo2;
+
             actualizarCamposMeta();
         }
 
@@ -1192,26 +1207,31 @@
 
         function configurarSelectAcumulable() {
             const selectAcumulable = document.getElementById('selectAcumulable');
+            const selectPersonas = document.getElementById('selectPersonas');
             const inputsGrupo2 = document.querySelectorAll('.mes-grupo2');
             const selectEstadoGrupo2 = document.getElementById('selectEstadoGrupo2');
             const personasAtendidasGrupo2 = document.getElementById('personasAtendidasGrupo2');
             const btnAgregarGrupo2 = document.getElementById('btnAgregarGrupo2');
 
             selectAcumulable.addEventListener('change', function() {
-                const habilitar = this.value === 'si';
+                const esAcumulable = this.value === 'si';
+                const esPersonas = selectPersonas.value === 'Personas';
+                const esInstituciones = selectPersonas.value === 'Instituciones';
+                const habilitarMeses = esAcumulable || (this.value === 'no' && esPersonas);
 
                 inputsGrupo2.forEach(input => {
-                    input.disabled = !habilitar;
-                    if (!habilitar) {
+                    input.disabled = !habilitarMeses;
+                    if (esInstituciones && !esAcumulable) {
                         input.value = 0;
                     }
                 });
 
-                selectEstadoGrupo2.disabled = !habilitar;
-                personasAtendidasGrupo2.disabled = !habilitar;
-                btnAgregarGrupo2.disabled = !habilitar;
+                const habilitarMunicipios = esAcumulable || (this.value === 'no' && esPersonas);
+                selectEstadoGrupo2.disabled = !habilitarMunicipios;
+                personasAtendidasGrupo2.disabled = !habilitarMunicipios;
+                btnAgregarGrupo2.disabled = !habilitarMunicipios;
 
-                if (!habilitar) {
+                if (esInstituciones && !esAcumulable) {
                     selectEstadoGrupo2.value = '';
                     personasAtendidasGrupo2.value = 0;
                 }
