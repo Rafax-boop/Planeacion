@@ -830,7 +830,9 @@
     </div>
 
     <div class="text-center mb-2">
-        <button class="boton-rojo" id="btnGuardarProgramacion">Guardar</button>
+        <button class="boton-rojo ms-2"  id="btnGuardarProgramacion" style="color: #17a2b8; box-shadow: 0 5px 8px 0 #17a2b8; border: 1px solid #17a2b8 !important;">
+            <i class="fa-solid fa-arrow-right"></i> Enviar a revisión
+        </button>
     </div>
 
 </div>
@@ -1290,6 +1292,26 @@
 
                     // Enfocar el primer campo faltante
                     enfocarPrimerCampoFaltante(erroresValidacion);
+                    return;
+                }
+
+                // ========================================
+                // CONFIRMACIÓN ANTES DE GUARDAR
+                // ========================================
+                const confirmacion = await Swal.fire({
+                    title: '¿Enviar a revisión?',
+                    html: `<p>Está a punto de enviar su registro a revisión.</p>
+                           <p class="text-muted"><small>Una vez enviada, el administrador revisará su información.</small></p>`,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#28a745',
+                    cancelButtonColor: '#dc3545',
+                    confirmButtonText: '<i class="fas fa-check"></i> Sí, enviar',
+                    cancelButtonText: '<i class="fas fa-times"></i> No, revisar datos',
+                    reverseButtons: true
+                });
+
+                if (!confirmacion.isConfirmed) {
                     return;
                 }
 

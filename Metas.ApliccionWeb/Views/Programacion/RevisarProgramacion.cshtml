@@ -774,7 +774,31 @@
                     </div>
                 </div>
 
+                @* Sección para agregar municipios Grupo 1 *@
                 <div class="mt-4">
+                    <div class="row align-items-center py-3">
+                        <div class="col-md-8">
+                            <select @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control titulo" id="selectEstadoGrupo1">
+                                <option value="">Seleccione un municipio</option>
+                                @if (Model.ListaMunicipios != null)
+                                {
+                                    foreach (var mun in Model.ListaMunicipios)
+                                    {
+                                        <option value="@mun.Value">@mun.Text</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="number" @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control titulo text-center"
+                                   id="personasAtendidasGrupo1" value="0" min="0" placeholder="Número">
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-2">
+                        <button class="titulo boton-rojo fs-6" id="btnAgregarGrupo1" type="button" @(!ViewBag.EsAdministrador ? "disabled" : "")>Agregar</button>
+                    </div>
+
                     <div class="mt-3" id="tablaGrupo1" style="display: none;">
                         <div class="table-responsive">
                             <table class="table table-bordered table-sm">
@@ -785,6 +809,7 @@
                                         <th>Región</th>
                                         <th>Número de región</th>
                                         <th>Clave del municipio</th>
+                                        <th>Acción</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tbodyGrupo1"></tbody>
@@ -821,7 +846,31 @@
                     </div>
                 </div>
 
+                @* Sección para agregar municipios Grupo 2 *@
                 <div class="mt-4">
+                    <div class="row align-items-center py-3">
+                        <div class="col-md-8">
+                            <select @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control titulo" id="selectEstadoGrupo2">
+                                <option value="">Seleccione un municipio</option>
+                                @if (Model.ListaMunicipios != null)
+                                {
+                                    foreach (var mun in Model.ListaMunicipios)
+                                    {
+                                        <option value="@mun.Value">@mun.Text</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="number" @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control titulo text-center"
+                                   id="personasAtendidasGrupo2" value="0" min="0" placeholder="Número">
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-2">
+                        <button class="titulo boton-rojo fs-6" id="btnAgregarGrupo2" type="button" @(!ViewBag.EsAdministrador ? "disabled" : "")>Agregar</button>
+                    </div>
+
                     <div class="mt-3" id="tablaGrupo2" style="display: none;">
                         <div class="table-responsive">
                             <table class="table table-bordered table-sm">
@@ -832,6 +881,7 @@
                                         <th>Región</th>
                                         <th>Número de región</th>
                                         <th>Clave del municipio</th>
+                                        <th>Acción</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tbodyGrupo2"></tbody>
@@ -931,10 +981,11 @@
         <div class="text-center mb-5 mt-4">
             @if (Model.Estatus != 3)
             {
-                <button class="btn btn-primary btn-lg me-3" id="btnGuardarAdmin">
+                <button class="boton-amarillo me-2" id="btnGuardarAdmin">
                     <i class="fas fa-save"></i> Guardar Cambios
                 </button>
-                <button class="btn btn-success btn-lg" id="btnValidarProgramacion" data-idprogramacion="@Model.Id">
+                <button class="boton-amarillo" style="color: forestgreen; box-shadow: 0 5px 8px 0 forestgreen; border: 1px solid forestgreen !important; text-decoration: none; display: inline-block; padding: 4px 16px;"
+                    id="btnValidarProgramacion" data-idprogramacion="@Model.Id">
                     <i class="fas fa-check-circle"></i> Validar Programación
                 </button>
             }
@@ -996,8 +1047,15 @@
 
 </div>
 
+
 <input type="hidden" id="esAdministrador" value="@User.IsInRole("Administrador").ToString().ToLower()">
 <input type="hidden" id="idProgramacionHidden" value="@ViewData["IdProgramacion"]">
+
+@* Datos de municipios existentes *@
+<script>
+    var municipiosServiciosExistentes = @Html.Raw(Json.Serialize(Model.MunicipiosServicios ?? new List<Metas.BLL.DTO.DTOMunicipioAgregado>()));
+    var municipiosPersonasExistentes = @Html.Raw(Json.Serialize(Model.MunicipiosPersonas ?? new List<Metas.BLL.DTO.DTOMunicipioAgregado>()));
+</script>
 
 @section Scripts {
     <script>
@@ -1020,13 +1078,192 @@
         };
 
         // ========================================
+        // FUNCIONES DE MUNICIPIOS
+        // ========================================
+        async function cargarMunicipios() {
+            try {
+                const response = await fetch('/Programacion/ObtenerMunicipiosJson');
+                if (!response.ok) throw new Error('Error al cargar municipios');
+
+                const municipios = await response.json();
+
+                datosEstados = {};
+                municipios.forEach(m => {
+                    datosEstados[m.id] = {
+                        municipio: m.municipio,
+                        region: m.region,
+                        numeroRegion: m.numeroRegion,
+                        clave: m.clave
+                    };
+                });
+
+            } catch (error) {
+                console.error('Error al cargar municipios:', error);
+            }
+        }
+
+        function calcularTotalPersonas(grupo) {
+            let total = 0;
+            document.querySelectorAll(`#tbody${grupo} tr`).forEach(fila => {
+                total += parseInt(fila.cells[0].textContent) || 0;
+            });
+            document.getElementById(`total${grupo}`).textContent = total;
+            return total;
+        }
+
+        function actualizarServiciosPorMunicipio() {
+            let totalGrupo1 = calcularTotalPersonas('Grupo1');
+            let totalGrupo2 = calcularTotalPersonas('Grupo2');
+
+            document.getElementById('valorServiciosMunicipio').value = totalGrupo1;
+
+            document.getElementById('valorPersonasMunicipio').value = totalGrupo2;
+
+            actualizarCamposMeta();
+        }
+
+        function actualizarMaximosPersonas(maxGrupo1, maxGrupo2) {
+            const input1 = document.getElementById('personasAtendidasGrupo1');
+            const input2 = document.getElementById('personasAtendidasGrupo2');
+            if (input1) input1.max = maxGrupo1;
+            if (input2) input2.max = maxGrupo2;
+        }
+
+        function puedeAgregarPersonas(grupo, cantidad) {
+            const maxServicios = grupo === 'Grupo1'
+                ? parseInt(document.getElementById('valorServicios').value) || 0
+                : parseInt(document.getElementById('valorPersonas').value) || 0;
+
+            const totalActual = calcularTotalPersonas(grupo);
+            return (totalActual + cantidad) <= maxServicios;
+        }
+
+        function actualizarCamposMeta() {
+            const valorServicios = parseInt(document.getElementById('valorServicios').value) || 0;
+            const valorPersonas = parseInt(document.getElementById('valorPersonas').value) || 0;
+
+            const inputServicioMeta = document.getElementById('inputServicioMeta');
+            const inputServicioMetas = document.getElementById('inputServicioMetas');
+            const inputPorcentajeMeta = document.getElementById('inputPorcentajeMeta');
+
+            if (inputServicioMeta) inputServicioMeta.value = valorServicios;
+            if (inputServicioMetas) inputServicioMetas.value = valorPersonas;
+            if (inputPorcentajeMeta) inputPorcentajeMeta.value = 100;
+        }
+
+        function configurarAgregarPersonas(grupo) {
+            const btnAgregar = document.getElementById(`btnAgregar${grupo}`);
+            const selectEstado = document.getElementById(`selectEstado${grupo}`);
+            const inputPersonas = document.getElementById(`personasAtendidas${grupo}`);
+            const tbody = document.getElementById(`tbody${grupo}`);
+            const tabla = document.getElementById(`tabla${grupo}`);
+
+            if (!btnAgregar || !selectEstado || !inputPersonas || !tbody || !tabla) return;
+
+            btnAgregar.addEventListener('click', function() {
+                const estado = selectEstado.value;
+                const personas = parseInt(inputPersonas.value) || 0;
+
+                if (!estado) {
+                    Swal.fire('Error', 'Por favor, seleccione un municipio', 'warning');
+                    return;
+                }
+
+                if (personas <= 0) {
+                    Swal.fire('Error', 'Por favor, ingrese un número válido de personas', 'warning');
+                    return;
+                }
+
+                if (!puedeAgregarPersonas(grupo, personas)) {
+                    const maxServicios = grupo === 'Grupo1'
+                        ? parseInt(document.getElementById('valorServicios').value) || 0
+                        : parseInt(document.getElementById('valorPersonas').value) || 0;
+
+                    const totalActual = calcularTotalPersonas(grupo);
+                    const disponibles = maxServicios - totalActual;
+                    Swal.fire('Error', `No se pueden agregar ${personas} personas. Solo hay ${disponibles} disponibles.`, 'warning');
+                    return;
+                }
+
+                const datos = datosEstados[estado];
+
+                if (!datos) {
+                    Swal.fire('Error', 'No se encontraron datos para el municipio seleccionado', 'error');
+                    return;
+                }
+
+                agregarFilaMunicipio(grupo, estado, personas, datos);
+
+                inputPersonas.value = '0';
+                selectEstado.value = '';
+            });
+        }
+
+        function agregarFilaMunicipio(grupo, idMunicipio, personas, datos) {
+            const tbody = document.getElementById(`tbody${grupo}`);
+            const tabla = document.getElementById(`tabla${grupo}`);
+            const esAdmin = document.getElementById('esAdministrador')?.value?.toLowerCase() === 'true';
+
+            const nuevaFila = document.createElement('tr');
+            nuevaFila.setAttribute('data-id-municipio', idMunicipio);
+            nuevaFila.setAttribute('data-cantidad', personas);
+            nuevaFila.innerHTML = `
+                <td>${personas}</td>
+                <td>${datos.municipio}</td>
+                <td>${datos.region}</td>
+                <td>${datos.numeroRegion}</td>
+                <td>${datos.clave}</td>
+                <td>${esAdmin ? '<button class="btn btn-sm btn-outline-danger btn-eliminar">Eliminar</button>' : ''}</td>
+            `;
+
+            tbody.appendChild(nuevaFila);
+
+            if (tabla.style.display === 'none') {
+                tabla.style.display = 'block';
+            }
+
+            if (esAdmin) {
+                nuevaFila.querySelector('.btn-eliminar')?.addEventListener('click', function() {
+                    nuevaFila.remove();
+                    calcularTotalPersonas(grupo);
+                    actualizarServiciosPorMunicipio();
+                    if (tbody.children.length === 0) {
+                        tabla.style.display = 'none';
+                    }
+                });
+            }
+
+            calcularTotalPersonas(grupo);
+            actualizarServiciosPorMunicipio();
+        }
+
+        function cargarMunicipiosExistentes() {
+            if (typeof municipiosServiciosExistentes !== 'undefined' && municipiosServiciosExistentes.length > 0) {
+                municipiosServiciosExistentes.forEach(mun => {
+                    const datos = datosEstados[mun.idMunicipio];
+                    if (datos) {
+                        agregarFilaMunicipio('Grupo1', mun.idMunicipio, mun.cantidad, datos);
+                    }
+                });
+            }
+
+            if (typeof municipiosPersonasExistentes !== 'undefined' && municipiosPersonasExistentes.length > 0) {
+                municipiosPersonasExistentes.forEach(mun => {
+                    const datos = datosEstados[mun.idMunicipio];
+                    if (datos) {
+                        agregarFilaMunicipio('Grupo2', mun.idMunicipio, mun.cantidad, datos);
+                    }
+                });
+            }
+        }
+
+        // ========================================
         // INICIALIZAR SISTEMA DE COMENTARIOS
         // ========================================
         function inicializarComentarios() {
             const inputAdmin = document.getElementById('esAdministrador');
             const esAdministrador = inputAdmin?.value?.toLowerCase() === 'true';
 
-            // Inicializar modal
             const modalElement = document.getElementById('modalComentario');
             if (!modalElement || typeof bootstrap === 'undefined') return;
 
@@ -1037,7 +1274,6 @@
                 return;
             }
 
-            // Configurar botones de comentario
             const botonesComentario = document.querySelectorAll('.btn-comentario');
             botonesComentario.forEach(btn => {
                 btn.addEventListener('click', function(e) {
@@ -1056,7 +1292,6 @@
                 });
             });
 
-            // Configurar botones del modal (solo admin)
             if (esAdministrador) {
                 const btnGuardar = document.getElementById('btnGuardarComentario');
                 const btnEliminar = document.getElementById('btnEliminarComentario');
@@ -1065,7 +1300,6 @@
                 if (btnEliminar) btnEliminar.addEventListener('click', eliminarComentario);
             }
 
-            // Cargar comentarios existentes
             cargarComentariosExistentes().then(() => {
                 const adminCheck = document.getElementById('esAdministrador');
                 const esAdmin = adminCheck?.value?.toLowerCase() === 'true';
@@ -1114,7 +1348,6 @@
         // BLOQUEAR CAMPOS SIN COMENTARIOS (USUARIOS)
         // ========================================
         function bloquearCamposSinComentarios() {
-            // Bloquear TODOS los campos editables, EXCEPTO botones
             const todosLosCampos = document.querySelectorAll('input:not([type="hidden"]), select, textarea');
 
             todosLosCampos.forEach(campo => {
@@ -1793,6 +2026,75 @@
             }
         }
 
+                // ========================================
+        // CONFIGURACIÓN DE SELECTS (CORREGIDAS)
+        // ========================================
+        function configurarSelectPersonas() {
+            const selectPersonas = document.getElementById('selectPersonas');
+            const selectAcumulable = document.getElementById('selectAcumulable');
+            const inputsGrupo2 = document.querySelectorAll('.mes-grupo2');
+
+            if (!selectPersonas || !selectAcumulable) return;
+
+            selectPersonas.addEventListener('change', function() {
+                if (this.value === 'Personas' || this.value === 'Instituciones') {
+                    selectAcumulable.disabled = false;
+                } else {
+                    selectAcumulable.disabled = true;
+                    selectAcumulable.value = '';
+
+                    inputsGrupo2.forEach(input => {
+                        input.disabled = true;
+                        input.value = 0;
+                    });
+
+                    calcularSumatorias();
+                }
+            });
+        }
+
+        function configurarSelectAcumulable() {
+            const selectAcumulable = document.getElementById('selectAcumulable');
+            const selectPersonas = document.getElementById('selectPersonas');
+            const inputsGrupo2 = document.querySelectorAll('.mes-grupo2');
+            const selectEstadoGrupo2 = document.getElementById('selectEstadoGrupo2');
+            const personasAtendidasGrupo2 = document.getElementById('personasAtendidasGrupo2');
+            const btnAgregarGrupo2 = document.getElementById('btnAgregarGrupo2');
+
+            if (!selectAcumulable) return;
+
+            selectAcumulable.addEventListener('change', function() {
+                const esAcumulable = this.value === 'si';
+                const esPersonas = selectPersonas?.value === 'Personas';
+                const esInstituciones = selectPersonas?.value === 'Instituciones';
+                const habilitarMeses = esAcumulable || (this.value === 'no' && esPersonas);
+
+                inputsGrupo2.forEach(input => {
+                    input.disabled = !habilitarMeses;
+                    if (esInstituciones && !esAcumulable) {
+                        input.value = 0;
+                    }
+                });
+
+                // Controles de municipio
+                const habilitarMunicipios = esAcumulable || (this.value === 'no' && esPersonas);
+                if (selectEstadoGrupo2) selectEstadoGrupo2.disabled = !habilitarMunicipios;
+                if (personasAtendidasGrupo2) personasAtendidasGrupo2.disabled = !habilitarMunicipios;
+                if (btnAgregarGrupo2) btnAgregarGrupo2.disabled = !habilitarMunicipios;
+
+                if (esInstituciones && !esAcumulable) {
+                    if (selectEstadoGrupo2) selectEstadoGrupo2.value = '';
+                    if (personasAtendidasGrupo2) personasAtendidasGrupo2.value = 0;
+                }
+
+                calcularSumatorias();
+            });
+
+            if (selectAcumulable.value) {
+                selectAcumulable.dispatchEvent(new Event('change'));
+            }
+        }
+
         // ========================================
         // CONFIGURAR SELECT PROGRAMA-COMPONENTE
         // ========================================
@@ -1871,8 +2173,44 @@
         }
 
         // ========================================
-        // CALCULAR TRIMESTRES
+        // FUNCIONES DE CÁLCULO (CORREGIDAS)
         // ========================================
+        function calcularSumatorias() {
+            const selectAcumulable = document.getElementById('selectAcumulable');
+            const selectPersonas = document.getElementById('selectPersonas');
+
+            const esAcumulable = selectAcumulable?.value === 'si';
+            const esPersonas = selectPersonas?.value === 'Personas';
+
+            let sumaGrupo1 = 0;
+            let sumaGrupo2 = 0;
+
+            document.querySelectorAll('.mes-grupo1').forEach(input => {
+                sumaGrupo1 += parseInt(input.value) || 0;
+            });
+
+            if (esAcumulable) {
+                document.querySelectorAll('.mes-grupo2').forEach(input => {
+                    sumaGrupo2 += parseInt(input.value) || 0;
+                });
+            } else if (esPersonas && selectAcumulable?.value === 'no') {
+                document.querySelectorAll('.mes-grupo2').forEach(input => {
+                    const valor = parseInt(input.value) || 0;
+                    if (valor > sumaGrupo2) {
+                        sumaGrupo2 = valor;
+                    }
+                });
+            }
+
+            document.getElementById('valorServicios').value = sumaGrupo1;
+            document.getElementById('valorPersonas').value = sumaGrupo2;
+
+            actualizarMaximosPersonas(sumaGrupo1, sumaGrupo2);
+            actualizarServiciosPorMunicipio();
+            actualizarCamposMeta();
+            calcularTrimestres();
+        }
+
         function calcularTrimestres() {
             const trimestres = {
                 1: ['ENE', 'FEB', 'MAR'],
@@ -1904,38 +2242,45 @@
             }
         }
 
+
         // ========================================
         // INICIALIZACIÓN PRINCIPAL
         // ========================================
-        document.addEventListener('DOMContentLoaded', function() {
-            inicializarComentarios();
-            configurarSelectProgramaComponente();
+        document.addEventListener('DOMContentLoaded', async function() {
+            await cargarMunicipios();
 
-            // Eventos de cálculo para admin
+            cargarMunicipiosExistentes();
+
+            inicializarComentarios();
+
+            configurarSelectProgramaComponente();
+            configurarSelectPersonas();
+            configurarSelectAcumulable();
+
+            configurarAgregarPersonas('Grupo1');
+            configurarAgregarPersonas('Grupo2');
+
             document.querySelectorAll('.mes-grupo1, .mes-grupo2').forEach(input => {
-                if (!input.disabled) {
-                    input.addEventListener('input', calcularSumatorias);
-                }
+                input.addEventListener('input', calcularSumatorias);
             });
 
-            // Botón guardar admin
+            // Botones
             const btnGuardarAdmin = document.getElementById('btnGuardarAdmin');
             if (btnGuardarAdmin) {
                 btnGuardarAdmin.addEventListener('click', guardarCambiosAdmin);
             }
 
-            // Botón validar
             const btnValidar = document.getElementById('btnValidarProgramacion');
             if (btnValidar) {
                 btnValidar.addEventListener('click', validarProgramacion);
             }
 
-            // Botón guardar usuario
             const btnGuardarUsuario = document.getElementById('btnGuardarCambiosUsuario');
             if (btnGuardarUsuario) {
                 btnGuardarUsuario.addEventListener('click', guardarCambiosUsuario);
             }
 
+            // Calcular valores iniciales
             calcularSumatorias();
         });
 
