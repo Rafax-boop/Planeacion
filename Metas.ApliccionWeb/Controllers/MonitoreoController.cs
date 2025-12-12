@@ -209,15 +209,11 @@ namespace Metas.AplicacionWeb.Controllers
                     // Crear la estructura de carpetas para Evidencia si no existe
                     Directory.CreateDirectory(folderPathEvidencia);
 
-                    // Generar nombre de archivo único: [IdProceso]_E_[Mes]_[Ticks].ext
-                    string extension = Path.GetExtension(modelo.InputEvidencia.FileName);
-                    // Opción Segura (Recomendada) para Evidencia:
+                    // Usar el nombre original del archivo
                     string originalFileName = Path.GetFileName(modelo.InputEvidencia.FileName);
-                    // Se asegura unicidad por proceso/mes y aún conserva el nombre original
-                    string newFileName = $"{idProceso}_E_{mes}_{originalFileName}";
 
                     // Ruta física donde se guardará el archivo
-                    string rutaFisicaEvidencia = Path.Combine(folderPathEvidencia, newFileName);
+                    string rutaFisicaEvidencia = Path.Combine(folderPathEvidencia, originalFileName);
 
                     // Guardar el archivo físicamente
                     using (var fileStream = new FileStream(rutaFisicaEvidencia, FileMode.Create))
@@ -226,7 +222,7 @@ namespace Metas.AplicacionWeb.Controllers
                     }
 
                     // Guardamos la RUTA RELATIVA para la DB (ej: /Evidencia/123/5/nombre.ext)
-                    rutaEvidencia = $"/{BASE_FOLDER_EVIDENCIA}/{idProceso}/{mes}/{newFileName}";
+                    rutaEvidencia = $"/{BASE_FOLDER_EVIDENCIA}/{idProceso}/{mes}/{originalFileName}";
                 }
 
                 // B. Justificación
@@ -235,15 +231,11 @@ namespace Metas.AplicacionWeb.Controllers
                     // Crear la estructura de carpetas para Justificación si no existe
                     Directory.CreateDirectory(folderPathJustificacion);
 
-                    // Generar nombre de archivo único: [IdProceso]_J_[Mes]_[Ticks].ext
-                    string extension = Path.GetExtension(modelo.InputJustificacion.FileName);
-                    // Opción Segura (Recomendada) para Evidencia:
-                    string originalFileName = Path.GetFileName(modelo.InputEvidencia.FileName);
-                    // Se asegura unicidad por proceso/mes y aún conserva el nombre original
-                    string newFileName = $"{idProceso}_J_{mes}_{originalFileName}";
+                    // Usar el nombre original del archivo (CORREGIDO: estaba usando InputEvidencia)
+                    string originalFileName = Path.GetFileName(modelo.InputJustificacion.FileName);
 
                     // Ruta física donde se guardará el archivo
-                    string rutaFisicaJustificacion = Path.Combine(folderPathJustificacion, newFileName);
+                    string rutaFisicaJustificacion = Path.Combine(folderPathJustificacion, originalFileName);
 
                     // Guardar el archivo físicamente
                     using (var fileStream = new FileStream(rutaFisicaJustificacion, FileMode.Create))
@@ -252,7 +244,7 @@ namespace Metas.AplicacionWeb.Controllers
                     }
 
                     // Guardamos la RUTA RELATIVA para la DB (ej: /Justificacion/123/5/nombre.ext)
-                    rutaJustificacion = $"/{BASE_FOLDER_JUSTIFICACION}/{idProceso}/{mes}/{newFileName}";
+                    rutaJustificacion = $"/{BASE_FOLDER_JUSTIFICACION}/{idProceso}/{mes}/{originalFileName}";
                 }
 
                 // 3. LLAMADA AL SERVICIO Y PERSISTENCIA DE DATOS (Tu lógica de negocio)
@@ -428,6 +420,7 @@ namespace Metas.AplicacionWeb.Controllers
 
             var datosEdicion = new VMDatosEdicionActividad
             {
+                IdProceso = registro.IdProceso,
                 PP = registro.Idpp,
                 Componente = registro.Componente,
                 Actividad = registro.Actividad,
@@ -670,6 +663,7 @@ namespace Metas.AplicacionWeb.Controllers
 
             return View(modelo);
         }
+
         public async Task<IActionResult> ObtenerDatosTableroCompletoOptimizado(int anoFiscal, int departamento)
         {
             try

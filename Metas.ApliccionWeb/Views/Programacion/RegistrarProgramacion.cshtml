@@ -1516,20 +1516,39 @@
 
                 // Mostrar error específico con SweetAlert
                 let mensajeError = 'Error al guardar la programación';
+                let detalleError = '';
+
                 if (error.message.includes('HTTP')) {
                     mensajeError = 'Error de conexión con el servidor';
+                    detalleError = `Código de estado: ${error.message}`;
                 } else if (error.message.includes('JSON')) {
                     mensajeError = 'Error en el formato de datos';
+                    detalleError = error.message;
                 } else {
-                    mensajeError = error.message;
+                    mensajeError = error.message || 'Error desconocido';
+                    detalleError = error.stack ? `Detalles técnicos: ${error.stack.split('\n')[0]}` : '';
                 }
+
+                // Mostrar el error completo en consola para debugging
+                console.error('Detalles completos del error:', {
+                    mensaje: error.message,
+                    stack: error.stack,
+                    nombre: error.name
+                });
 
                 await Swal.fire({
                     title: 'Error',
-                    text: `${mensajeError}\n\nPor favor, intente nuevamente.`,
+                    html: `
+                        <div style="text-align: left;">
+                            <p><strong>${mensajeError}</strong></p>
+                            ${detalleError ? `<p style="font-size: 0.9em; color: #666;">${detalleError}</p>` : ''}
+                            <p style="margin-top: 15px;">Por favor, intente nuevamente.</p>
+                        </div>
+                    `,
                     icon: 'error',
                     confirmButtonText: 'Aceptar',
-                    confirmButtonColor: '#d33'
+                    confirmButtonColor: '#d33',
+                    width: '600px'
                 });
             }
         }
