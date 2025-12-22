@@ -1382,14 +1382,18 @@
                 };
 
                 // Recolectar meses
+                const mesesOrden = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'];
+
                 const mesesServicios = [];
-                document.querySelectorAll('.mes-grupo1').forEach(input => {
-                    mesesServicios.push(parseInt(input.value) || 0);
+                mesesOrden.forEach(mes => {
+                    const input = document.querySelector(`.mes-grupo1[data-mes="${mes}"]`);
+                    mesesServicios.push(parseInt(input?.value) || 0);
                 });
 
                 const mesesPersonas = [];
-                document.querySelectorAll('.mes-grupo2').forEach(input => {
-                    mesesPersonas.push(parseInt(input.value) || 0);
+                mesesOrden.forEach(mes => {
+                    const input = document.querySelector(`.mes-grupo2[data-mes="${mes}"]`);
+                    mesesPersonas.push(parseInt(input?.value) || 0);
                 });
 
                 // Recolectar municipios del Grupo 1 (Servicios)

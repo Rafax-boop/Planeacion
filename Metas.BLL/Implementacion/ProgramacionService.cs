@@ -96,31 +96,31 @@ namespace Metas.BLL.Implementacion
                     Personas3 = modelo.TercerPersona,
                     Personas4 = modelo.CuartoPersona,
 
-                    Mes1 = modelo.MesesServicios[0],
-                    Mes2 = modelo.MesesServicios[1],
-                    Mes3 = modelo.MesesServicios[2],
-                    Mes4 = modelo.MesesServicios[3],
-                    Mes5 = modelo.MesesServicios[4],
-                    Mes6 = modelo.MesesServicios[5],
-                    Mes7 = modelo.MesesServicios[6],
-                    Mes8 = modelo.MesesServicios[7],
-                    Mes9 = modelo.MesesServicios[8],
-                    Mes10 = modelo.MesesServicios[9],
-                    Mes11 = modelo.MesesServicios[10],
-                    Mes12 = modelo.MesesServicios[11],
+                    Mes1 = modelo.MesesServicios[0],    // ENE
+                    Mes2 = modelo.MesesServicios[1],    // FEB
+                    Mes3 = modelo.MesesServicios[2],    // MAR
+                    Mes4 = modelo.MesesServicios[3],    // ABR
+                    Mes5 = modelo.MesesServicios[4],    // MAY
+                    Mes6 = modelo.MesesServicios[5],    // JUN
+                    Mes7 = modelo.MesesServicios[6],    // JUL
+                    Mes8 = modelo.MesesServicios[7],    // AGO
+                    Mes9 = modelo.MesesServicios[8],    // SEP
+                    Mes10 = modelo.MesesServicios[9],   // OCT
+                    Mes111 = modelo.MesesServicios[10],  // NOV
+                    Mes121 = modelo.MesesServicios[11],  // DIC
 
-                    Mes13 = modelo.MesesPersonas[0],
-                    Mes14 = modelo.MesesPersonas[1],
-                    Mes15 = modelo.MesesPersonas[2],
-                    Mes16 = modelo.MesesPersonas[3],
-                    Mes17 = modelo.MesesPersonas[4],
-                    Mes18 = modelo.MesesPersonas[5],
-                    Mes111 = modelo.MesesPersonas[6],
-                    Mes112 = modelo.MesesPersonas[7],
-                    Mes1111 = modelo.MesesPersonas[8],
+                    Mes11 = modelo.MesesPersonas[0],
+                    Mes12 = modelo.MesesPersonas[1],
+                    Mes13 = modelo.MesesPersonas[2],
+                    Mes14 = modelo.MesesPersonas[3],
+                    Mes15 = modelo.MesesPersonas[4],
+                    Mes16 = modelo.MesesPersonas[5],
+                    Mes17 = modelo.MesesPersonas[6],
+                    Mes18 = modelo.MesesPersonas[7],
+                    Mes19 = modelo.MesesPersonas[8],
                     Mes110 = modelo.MesesPersonas[9],
-                    Mes121 = modelo.MesesPersonas[10],
-                    Mes19 = modelo.MesesPersonas[11],
+                    Mes1111 = modelo.MesesPersonas[10],
+                    Mes112 = modelo.MesesPersonas[11],
 
                     Actividad1 = modelo.Acciones.Count > 0 ? modelo.Acciones[0].Descripcion : null,
                     Frecuencia1 = modelo.Acciones.Count > 0 ? modelo.Acciones[0].Frecuencia : null,
@@ -432,27 +432,27 @@ namespace Metas.BLL.Implementacion
                 programacionEntidad.Mes8 ?? 0,
                 programacionEntidad.Mes9 ?? 0,
                 programacionEntidad.Mes10 ?? 0,
-                programacionEntidad.Mes11 ?? 0,
-                programacionEntidad.Mes12 ?? 0
+                programacionEntidad.Mes111 ?? 0,
+                programacionEntidad.Mes121 ?? 0
             },
                     TotalAnos = programacionEntidad.Totalanos ?? 0,
 
                     // Meses Personas (12 meses)
                     MesesPersonas = new List<int>
-            {
-                programacionEntidad.Mes111 ?? 0,
-                programacionEntidad.Mes121 ?? 0,
-                programacionEntidad.Mes13 ?? 0,
-                programacionEntidad.Mes14 ?? 0,
-                programacionEntidad.Mes15 ?? 0,
-                programacionEntidad.Mes16 ?? 0,
-                programacionEntidad.Mes17 ?? 0,
-                programacionEntidad.Mes18 ?? 0,
-                programacionEntidad.Mes19 ?? 0,
-                programacionEntidad.Mes110 ?? 0,
-                programacionEntidad.Mes1111 ?? 0,
-                programacionEntidad.Mes112 ?? 0
-            },
+                    {
+                        programacionEntidad.Mes11 ?? 0,    // [0] ENE
+                        programacionEntidad.Mes12 ?? 0,    // [1] FEB
+                        programacionEntidad.Mes13 ?? 0,    // [2] MAR
+                        programacionEntidad.Mes14 ?? 0,    // [3] ABR
+                        programacionEntidad.Mes15 ?? 0,    // [4] MAY
+                        programacionEntidad.Mes16 ?? 0,    // [5] JUN
+                        programacionEntidad.Mes17 ?? 0,   // [6] JUL
+                        programacionEntidad.Mes18 ?? 0,   // [7] AGO
+                        programacionEntidad.Mes19 ?? 0,  // [8] SEP
+                        programacionEntidad.Mes110 ?? 0,   // [9] OCT
+                        programacionEntidad.Mes1111 ?? 0,   // [10] NOV
+                        programacionEntidad.Mes112 ?? 0     // [11] DIC
+                    },
                     TotalAnos2 = programacionEntidad.Totalanos2 ?? 0,
 
                     // Municipios Servicios
@@ -708,22 +708,22 @@ namespace Metas.BLL.Implementacion
                 programacionExistente.Mes8 = modelo.MesesServicios[7];
                 programacionExistente.Mes9 = modelo.MesesServicios[8];
                 programacionExistente.Mes10 = modelo.MesesServicios[9];
-                programacionExistente.Mes11 = modelo.MesesServicios[10];
-                programacionExistente.Mes12 = modelo.MesesServicios[11];
+                programacionExistente.Mes111 = modelo.MesesServicios[10];
+                programacionExistente.Mes121 = modelo.MesesServicios[11];
 
                 // Meses Personas
-                programacionExistente.Mes13 = modelo.MesesPersonas[0];
-                programacionExistente.Mes14 = modelo.MesesPersonas[1];
-                programacionExistente.Mes15 = modelo.MesesPersonas[2];
-                programacionExistente.Mes16 = modelo.MesesPersonas[3];
-                programacionExistente.Mes17 = modelo.MesesPersonas[4];
-                programacionExistente.Mes18 = modelo.MesesPersonas[5];
-                programacionExistente.Mes111 = modelo.MesesPersonas[6];
-                programacionExistente.Mes112 = modelo.MesesPersonas[7];
-                programacionExistente.Mes1111 = modelo.MesesPersonas[8];
+                programacionExistente.Mes11 = modelo.MesesPersonas[0];
+                programacionExistente.Mes12 = modelo.MesesPersonas[1];
+                programacionExistente.Mes13 = modelo.MesesPersonas[2];
+                programacionExistente.Mes14 = modelo.MesesPersonas[3];
+                programacionExistente.Mes15 = modelo.MesesPersonas[4];
+                programacionExistente.Mes16 = modelo.MesesPersonas[5];
+                programacionExistente.Mes17 = modelo.MesesPersonas[6];
+                programacionExistente.Mes18 = modelo.MesesPersonas[7];
+                programacionExistente.Mes19 = modelo.MesesPersonas[8];
                 programacionExistente.Mes110 = modelo.MesesPersonas[9];
-                programacionExistente.Mes121 = modelo.MesesPersonas[10];
-                programacionExistente.Mes19 = modelo.MesesPersonas[11];
+                programacionExistente.Mes1111 = modelo.MesesPersonas[10];
+                programacionExistente.Mes112 = modelo.MesesPersonas[11];
 
                 // Acciones
                 programacionExistente.Actividad1 = modelo.Acciones.Count > 0 ? modelo.Acciones[0].Descripcion : null;
