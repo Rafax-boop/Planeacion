@@ -55,12 +55,10 @@
 
                         if (departamentoUsuarioObjeto != null)
                         {
-                            // Si se encuentra, usamos el Value (ID) y el Text (Nombre)
                             <option value="@departamentoUsuarioObjeto.Value">@departamentoUsuarioObjeto.Text</option>
                         }
                         else
                         {
-                            // Opcional: Manejo si no se encuentra (solo mostrar el texto como fallback)
                             <option value="">Recargué la página</option>
                         }
                     }
@@ -70,6 +68,16 @@
         <div>
             <div class="mt-4 text-center">
                 <button class="boton-rojo" type="button" id="btnBuscar">Buscar</button>
+            </div>
+            <div class="mt-3 mb-3 text-center">
+                @if (User.IsInRole("Administrador"))
+                {
+                    <button class="boton-amarillo"
+                            onclick="irATableroProgramacion()"
+                            style="color: #17a2b8; box-shadow: 0 5px 8px 0 #17a2b8; border: 1px solid #17a2b8 !important;">
+                        <i class="fas fa-table"></i> Tablero Completo de Programación
+                    </button>
+                }
             </div>
         </div>
     </div>
@@ -83,7 +91,7 @@
     <h3 class="fw-light" id="tituloDepartamento">
         Departamento:
     </h3>
-    <div class="text-center mb-3">
+    <div class="text-center mb-3 ">
         <button class="boton-rojo" type="button" id="btnIniciarProgramacion" >Iniciar Programación</button>
     </div>
     <div class="table-responsive">
@@ -122,6 +130,14 @@
 
 @section Scripts {
     <script>
+
+        function irATableroProgramacion() {
+            var anoFiscal = $('#selectAnoFiscal').val();
+
+            window.location.href = '@Url.Action("TableroCompletoProgramacion", "Programacion")' +
+                                  '?anoFiscal=' + anoFiscal;
+        }
+
         $(document).ready(function() {
 
             // ========================================
