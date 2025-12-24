@@ -507,10 +507,6 @@ namespace Metas.AplicacionWeb.Controllers
                     await _programacionService.GuardarComentarios(modelo.Comentarios);
                 }
 
-                // 3. El estatus se actualiza automáticamente en GuardarComentarios:
-                //    - Si hay comentarios con texto → estatus 2 (Con Comentarios)
-                //    - Si no hay comentarios → estatus 1 (En Revisión)
-
                 return Ok(new { success = true, message = "Cambios guardados correctamente" });
             }
             catch (Exception ex)
@@ -518,5 +514,112 @@ namespace Metas.AplicacionWeb.Controllers
                 return StatusCode(500, new { success = false, message = ex.Message });
             }
         }
+
+        [HttpGet]
+        [Authorize(Roles = "Administrador")]
+        public IActionResult TableroCompletoProgramacion(int? anoFiscal)
+        {
+            ViewBag.AnoFiscalSeleccionado = anoFiscal;
+            return View();
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> ObtenerDatosTableroProgramacion(int anoFiscal)
+        {
+            try
+            {
+                var departamentos = await _departamentoService.ObtenerDepartamentos();
+                var todosLosDatos = new List<object>();
+
+                foreach (var depto in departamentos)
+                {
+                    var datosProgramacion = await _programacionService
+                        .ObtenerDatosProgramacion(anoFiscal, depto.IdDepartamento);
+
+                    if (datosProgramacion == null || !datosProgramacion.Any())
+                        continue;
+
+                    foreach (var proceso in datosProgramacion)
+                    {
+                        var datosCompletos = await _programacionService
+                            .ObtenerDatosCompletos(proceso.IdProceso);
+
+                        if (datosCompletos == null)
+                            continue;
+
+                        var registro = new
+                        {
+                            idProceso = proceso.IdProceso,
+
+                            area = datosCompletos.Area ?? "",
+                            departamento = datosCompletos.Departamento ?? "",
+                            correoContacto = datosCompletos.CorreoContacto ?? "",
+
+                            pp = datosCompletos.Pp ?? "",
+                            componente = datosCompletos.NComponente ?? "",
+                            actividad = datosCompletos.NActividad,
+                            justificacion = datosCompletos.Justificacion ?? "",
+                            descripcionDocumento = datosCompletos.DescripcionDocumento ?? "",
+                            recursoFederal = datosCompletos.RecursoFederal ?? "",
+                            recursoEstatal = datosCompletos.RecursoEstatal ?? "",
+
+                            programaSocial = datosCompletos.ProgramaSocial ?? "",
+                            descripcionActividad = datosCompletos.DescripcionActividad ?? "",
+                            nombreIndicador = datosCompletos.NombreIndicador ?? "",
+                            definicionIndicador = datosCompletos.DefinicionIndicador ?? "",
+
+                            primerServicio = datosCompletos.PrimerServicio,
+                            segundoServicio = datosCompletos.SegundoServicio,
+                            tercerServicio = datosCompletos.TercerServicio,
+                            cuartoServicio = datosCompletos.CuartoServicio,
+
+                            primerPersona = datosCompletos.PrimerPersona,
+                            segundoPersona = datosCompletos.SegundoPersona,
+                            tercerPersona = datosCompletos.TercerPersona,
+                            cuartoPersona = datosCompletos.CuartoPersona,
+
+                            unidadMedida = datosCompletos.UnidadMedida ?? "",
+                            mediosVerificacion = datosCompletos.MediosVerificacion ?? "",
+                            serieInformacionDesde = datosCompletos.SerieInformacionDesde ?? "",
+                            serieInformacionHasta = datosCompletos.SerieInformacionHasta ?? "",
+                            fuenteInformacion = datosCompletos.FuenteInformacion ?? "",
+                            intervienenDelegaciones = datosCompletos.IntervienenDelegaciones ?? "",
+                            intervienenDelegacionesManera = datosCompletos.IntervienenDelegacionesManera ?? "",
+
+                            anoBase = datosCompletos.AnoBase,
+                            porcentajeBase = datosCompletos.PorcentajeBase,
+                            servicioBase = datosCompletos.ServicioBase,
+                            personasBase = datosCompletos.PersonasBase,
+
+                            anoMeta = datosCompletos.AnoMeta,
+                            porcentajeMeta = datosCompletos.PorcentajeMeta,
+                            servicioMeta = datosCompletos.ServicioMeta,
+                            personasMeta = datosCompletos.PersonasMeta,
+
+                            beneficiarios = datosCompletos.Beneficiarios ?? "",
+                            acumulable = datosCompletos.SelectAcumulable ?? "",
+
+                            mesesServicios = datosCompletos.MesesServicios,
+                            mesesPersonas = datosCompletos.MesesPersonas,
+
+                            totalServicios = datosCompletos.TotalAnos,
+                            totalPersonas = datosCompletos.TotalAnos2,
+
+                            estatus = datosCompletos.Estatus
+                        };
+
+                        todosLosDatos.Add(registro);
+                    }
+                }
+
+                return Json(new { success = true, datos = todosLosDatos });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, mensaje = $"Error: {ex.Message}" });
+            }
+        }
+
     }
 }

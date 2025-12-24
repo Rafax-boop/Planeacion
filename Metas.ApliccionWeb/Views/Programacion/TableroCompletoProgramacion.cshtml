@@ -1,0 +1,689 @@
+﻿@{
+    ViewData["Title"] = "Tablero Completo de Programación";
+}
+
+<div class="container-fluid mt-4">
+
+    @* Encabezado *@
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="titulo fw-semibold pt-2 pb-2 px-4 glass-effect rounded-5 mb-0">
+            <i class="fas fa-table me-2"></i> TABLERO COMPLETO DE PROGRAMACIÓN
+        </h2>
+        <div>
+            <a href="@Url.Action("Programacion", "Programacion")" class="btn btn-volver me-2">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+            <button class="btn btn-exportar" id="btnExportarExcel">
+                <i class="fas fa-file-excel"></i> Exportar Excel
+            </button>
+        </div>
+    </div>
+
+    @* Filtros *@
+    <div class="card shadow-sm mb-4 rounded-4">
+        <div class="card-body">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold small">Año Fiscal</label>
+                    <select class="form-select" id="filtroAno">
+                        @{
+                            var anoActual = DateTime.Now.Year;
+                            var anoMaximo = anoActual + 1;
+                            var anoMinimo = anoActual - 5;
+
+                            for (int ano = anoMaximo; ano >= anoMinimo; ano--)
+                            {
+                                <option value="@ano">@ano</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <button class="btn btn-primary w-100" id="btnFiltrar">
+                        <i class="fas fa-search me-2"></i> Cargar Datos
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* Leyenda de colores *@
+    <div class="mb-3 p-3 bg-white rounded-3 shadow-sm">
+        <strong class="me-3">Secciones:</strong>
+        <span class="leyenda-item">
+            <span class="leyenda-color" style="background-color: #6c757d;"></span> Datos del Solicitante
+        </span>
+        <span class="leyenda-item">
+            <span class="leyenda-color" style="background-color: #c00000;"></span> Datos de la Solicitud
+        </span>
+        <span class="leyenda-item">
+            <span class="leyenda-color" style="background-color: #0d6efd;"></span> Datos Generales
+        </span>
+        <span class="leyenda-item">
+            <span class="leyenda-color" style="background-color: #198754;"></span> Determinación de Metas
+        </span>
+        <span class="leyenda-item">
+            <span class="leyenda-color" style="background-color: #6f42c1;"></span> Meta Anual
+        </span>
+        <span class="leyenda-item">
+            <span class="leyenda-color" style="background-color: #fd7e14;"></span> Estatus
+        </span>
+    </div>
+
+    @* Tabla Principal *@
+    <div class="contenedor-tabla bg-white">
+        <table class="tabla-tablero" id="tablaTablero">
+            <thead>
+                @* ========================================
+                   FILA 1: Títulos de sección principales
+                   ======================================== *@
+                <tr>
+                    <th class="header-seccion-solicitante" colspan="3" rowspan="2">DATOS DEL SOLICITANTE</th>
+                    <th class="header-seccion-solicitud" colspan="6" rowspan="2">DATOS DE LA SOLICITUD</th>
+                    <th class="header-seccion-generales" colspan="17">DATOS GENERALES</th>
+                    <th class="header-seccion-metas" colspan="8">DETERMINACIÓN DE METAS</th>
+                    <th class="header-seccion-metaanual" colspan="26">META ANUAL</th>
+                    <th class="header-seccion-estatus" colspan="1" rowspan="2">ESTATUS</th>
+                    <th class="header-seccion-ir" colspan="1" rowspan="2">REGISTRO</th>
+                </tr>
+
+                @* ========================================
+                   FILA 2: Sub-secciones
+                   ======================================== *@
+                <tr>
+                    <th class="header-sub-generales" colspan="4">INFORMACIÓN</th>
+                    <th class="header-sub-generales" colspan="4">CALEND. SERVICIOS</th>
+                    <th class="header-sub-generales" colspan="4">CALEND. PERSONAS</th>
+                    <th class="header-sub-generales" colspan="5">OTROS DATOS</th>
+
+                    <th class="header-sub-metas-base" colspan="4">LÍNEA BASE</th>
+                    <th class="header-sub-metas-meta" colspan="4">META Y PERÍODO</th>
+
+                    <th class="header-sub-metaanual" colspan="2">CONFIG.</th>
+                    <th class="header-sub-metaanual-serv" colspan="12">SERVICIOS POR MES</th>
+                    <th class="header-sub-metaanual-pers" colspan="12">PERSONAS POR MES</th>
+                </tr>
+
+                @* ========================================
+                   FILA 3: Encabezados de columnas
+                   ======================================== *@
+                <tr class="fila-subencabezados">
+                    <!-- DATOS DEL SOLICITANTE -->
+                    <th class="header-col-solicitante">ÁREA</th>
+                    <th class="header-col-solicitante">DEPTO</th>
+                    <th class="header-col-solicitante">CORREO</th>
+
+                    <!-- DATOS DE LA SOLICITUD -->
+                    <th class="header-col-solicitud">PP</th>
+                    <th class="header-col-solicitud">COMP</th>
+                    <th class="header-col-solicitud">ACT</th>
+                    <th class="header-col-solicitud">JUSTIFICACIÓN</th>
+                    <th class="header-col-solicitud">DOC. SOPORTE</th>
+                    <th class="header-col-solicitud">RECURSOS</th>
+
+                    <!-- DATOS GENERALES - Información -->
+                    <th class="header-col-generales">PROG. SOCIAL</th>
+                    <th class="header-col-generales">DESC. ACTIVIDAD</th>
+                    <th class="header-col-generales">NOM. INDICADOR</th>
+                    <th class="header-col-generales">DEF. INDICADOR</th>
+
+                    <!-- DATOS GENERALES - Calendarización Servicios -->
+                    <th class="header-col-calendario">1ER TRIM</th>
+                    <th class="header-col-calendario">2DO TRIM</th>
+                    <th class="header-col-calendario">3ER TRIM</th>
+                    <th class="header-col-calendario">4TO TRIM</th>
+
+                    <!-- DATOS GENERALES - Calendarización Personas -->
+                    <th class="header-col-calendario-pers">1ER TRIM</th>
+                    <th class="header-col-calendario-pers">2DO TRIM</th>
+                    <th class="header-col-calendario-pers">3ER TRIM</th>
+                    <th class="header-col-calendario-pers">4TO TRIM</th>
+
+                    <!-- DATOS GENERALES - Otros -->
+                    <th class="header-col-generales">U.M.</th>
+                    <th class="header-col-generales">MEDIOS VERIF.</th>
+                    <th class="header-col-generales">SERIE INFO</th>
+                    <th class="header-col-generales">FUENTES</th>
+                    <th class="header-col-generales">DELEGACIONES</th>
+
+                    <!-- DETERMINACIÓN DE METASe -->
+                    <th class="header-col-base">AÑO</th>
+                    <th class="header-col-base">% CUMPL.</th>
+                    <th class="header-col-base">SERVICIOS</th>
+                    <th class="header-col-base">PERSONAS</th>
+
+                    <!-- DETERMINACIÓN DE METAS -->
+                    <th class="header-col-meta">AÑO</th>
+                    <th class="header-col-meta">% CUMPL.</th>
+                    <th class="header-col-meta">SERVICIOS</th>
+                    <th class="header-col-meta">PERSONAS</th>
+
+                    <!-- META ANUAL -->
+                    <th class="header-col-config">BENEF.</th>
+                    <th class="header-col-config">ACUM.</th>
+
+                    <!-- META ANUAL -->
+                    <th class="header-col-mes-serv">ENE</th>
+                    <th class="header-col-mes-serv">FEB</th>
+                    <th class="header-col-mes-serv">MAR</th>
+                    <th class="header-col-mes-serv">ABR</th>
+                    <th class="header-col-mes-serv">MAY</th>
+                    <th class="header-col-mes-serv">JUN</th>
+                    <th class="header-col-mes-serv">JUL</th>
+                    <th class="header-col-mes-serv">AGO</th>
+                    <th class="header-col-mes-serv">SEP</th>
+                    <th class="header-col-mes-serv">OCT</th>
+                    <th class="header-col-mes-serv">NOV</th>
+                    <th class="header-col-mes-serv">DIC</th>
+
+                    <!-- META ANUAL -->
+                    <th class="header-col-mes-pers">ENE</th>
+                    <th class="header-col-mes-pers">FEB</th>
+                    <th class="header-col-mes-pers">MAR</th>
+                    <th class="header-col-mes-pers">ABR</th>
+                    <th class="header-col-mes-pers">MAY</th>
+                    <th class="header-col-mes-pers">JUN</th>
+                    <th class="header-col-mes-pers">JUL</th>
+                    <th class="header-col-mes-pers">AGO</th>
+                    <th class="header-col-mes-pers">SEP</th>
+                    <th class="header-col-mes-pers">OCT</th>
+                    <th class="header-col-mes-pers">NOV</th>
+                    <th class="header-col-mes-pers">DIC</th>
+
+                    <!-- ESTATUS -->
+                    <th class="header-col-estatus">ESTADO</th>
+                    <th class="header-col-estatus">VISITAR</th>
+                </tr>
+            </thead>
+            <tbody id="tbodyTablero">
+                <tr>
+                    <td colspan="61" class="text-center py-5 text-muted">
+                        <i class="fas fa-filter fa-2x mb-3 d-block"></i>
+                        Seleccione un año fiscal para ver los datos.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+@* Loading Overlay *@
+<div class="loading-overlay" id="loadingOverlay" style="display: none;">
+    <div class="text-center">
+        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+            <span class="visually-hidden">Cargando...</span>
+        </div>
+        <p class="mt-3 fw-semibold text-muted">Cargando datos del tablero...</p>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+    <script>
+        // ========================================
+        // VARIABLES GLOBALES
+        // ========================================
+        let datosTablero = [];
+
+        // ========================================
+        // FUNCIONES DE LOADING
+        // ========================================
+        function mostrarLoading() {
+            document.getElementById('loadingOverlay').style.display = 'flex';
+        }
+
+        function ocultarLoading() {
+            document.getElementById('loadingOverlay').style.display = 'none';
+        }
+
+        // ========================================
+        // CARGAR DATOS
+        // ========================================
+        async function cargarDatosTablero() {
+            const anoFiscal = document.getElementById('filtroAno').value;
+            const tbody = document.getElementById('tbodyTablero');
+
+            if (!anoFiscal) {
+                Swal.fire('Aviso', 'Por favor seleccione un año fiscal', 'warning');
+                return;
+            }
+
+            mostrarLoading();
+
+            try {
+                const response = await fetch(`/Programacion/ObtenerDatosTableroProgramacion?anoFiscal=${anoFiscal}`);
+
+                if (!response.ok) throw new Error('Error al cargar datos');
+
+                const result = await response.json();
+
+                if (!result.success) {
+                    throw new Error(result.mensaje || 'Error desconocido');
+                }
+
+                datosTablero = result.datos;
+                renderizarTabla(datosTablero);
+
+            } catch (error) {
+                console.error('Error:', error);
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="61" class="text-center py-5 text-danger">
+                            <i class="fas fa-exclamation-triangle fa-2x mb-3 d-block"></i>
+                            Error al cargar los datos: ${error.message}
+                        </td>
+                    </tr>
+                `;
+            } finally {
+                ocultarLoading();
+            }
+        }
+
+        // ========================================
+        // RENDERIZAR TABLA
+        // ========================================
+        function renderizarTabla(datos) {
+            const tbody = document.getElementById('tbodyTablero');
+
+            if (!datos || datos.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="61" class="text-center py-5 text-muted">
+                            <i class="fas fa-inbox fa-2x mb-3 d-block"></i>
+                            No hay datos para mostrar.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            let html = '';
+
+            datos.forEach((r) => {
+                html += `<tr>`;
+
+                // ============ DATOS DEL SOLICITANTE ============
+                html += `
+                    <td class="celda-solicitante col-texto-largo" title="${r.area || ''}">${r.area || ''}</td>
+                    <td class="celda-solicitante col-texto-largo" title="${r.departamento || ''}">${r.departamento || ''}</td>
+                    <td class="celda-solicitante col-texto-largo" title="${r.correoContacto || ''}">${r.correoContacto || ''}</td>
+                `;
+
+                // ============ DATOS DE LA SOLICITUD ============
+                html += `
+                    <td class="celda-solicitud fw-bold">${r.pp || ''}</td>
+                    <td class="celda-solicitud">${r.componente || ''}</td>
+                    <td class="celda-solicitud">${r.actividad || ''}</td>
+                    <td class="celda-solicitud col-texto-largo" title="${r.justificacion || ''}">${r.justificacion || ''}</td>
+                    <td class="celda-solicitud col-texto-largo" title="${r.descripcionDocumento || ''}">${r.descripcionDocumento || ''}</td>
+                    <td class="celda-solicitud">${r.recursoFederal || ''} / ${r.recursoEstatal || ''}</td>
+                `;
+
+                // ============ DATOS GENERALES ============
+                html += `
+                    <td class="celda-generales col-texto-largo" title="${r.programaSocial || ''}">${r.programaSocial || ''}</td>
+                    <td class="celda-generales col-texto-largo" title="${r.descripcionActividad || ''}">${r.descripcionActividad || ''}</td>
+                    <td class="celda-generales col-texto-largo" title="${r.nombreIndicador || ''}">${r.nombreIndicador || ''}</td>
+                    <td class="celda-generales col-texto-largo" title="${r.definicionIndicador || ''}">${r.definicionIndicador || ''}</td>
+                `;
+
+                // ============ DATOS GENERALES ============
+                html += `
+                    <td class="celda-calendario">${r.primerServicio || 0}</td>
+                    <td class="celda-calendario">${r.segundoServicio || 0}</td>
+                    <td class="celda-calendario">${r.tercerServicio || 0}</td>
+                    <td class="celda-calendario">${r.cuartoServicio || 0}</td>
+                `;
+
+                // ============ DATOS GENERALES ============
+                html += `
+                    <td class="celda-calendario-pers">${r.primerPersona || 0}</td>
+                    <td class="celda-calendario-pers">${r.segundoPersona || 0}</td>
+                    <td class="celda-calendario-pers">${r.tercerPersona || 0}</td>
+                    <td class="celda-calendario-pers">${r.cuartoPersona || 0}</td>
+                `;
+
+                // ============ DATOS GENERALES ============
+                html += `
+                    <td class="celda-generales">${r.unidadMedida || ''}</td>
+                    <td class="celda-generales col-texto-largo" title="${r.mediosVerificacion || ''}">${r.mediosVerificacion || ''}</td>
+                    <td class="celda-generales">${r.serieInformacionDesde || ''} - ${r.serieInformacionHasta || ''}</td>
+                    <td class="celda-generales col-texto-largo" title="${r.fuenteInformacion || ''}">${r.fuenteInformacion || ''}</td>
+                    <td class="celda-generales">${r.intervienenDelegaciones || ''}</td>
+                `;
+
+                // ============ DETERMINACIÓN DE METAS ============
+                html += `
+                    <td class="celda-base">${r.anoBase || ''}</td>
+                    <td class="celda-base">${r.porcentajeBase || 0}%</td>
+                    <td class="celda-base">${r.servicioBase || 0}</td>
+                    <td class="celda-base">${r.personasBase || 0}</td>
+                `;
+
+                // ============ DETERMINACIÓN DE METAS ============
+                html += `
+                    <td class="celda-meta">${r.anoMeta || ''}</td>
+                    <td class="celda-meta">${r.porcentajeMeta || 0}%</td>
+                    <td class="celda-meta">${r.servicioMeta || 0}</td>
+                    <td class="celda-meta">${r.personasMeta || 0}</td>
+                `;
+
+                // ============ META ANUAL ============
+                html += `
+                    <td class="celda-config">${r.beneficiarios || ''}</td>
+                    <td class="celda-config">${r.acumulable || ''}</td>
+                `;
+
+                // ============ META ANUAL ============
+                const mesesServ = r.mesesServicios || [];
+                for (let i = 0; i < 12; i++) {
+                    html += `<td class="celda-mes-serv">${mesesServ[i] || 0}</td>`;
+                }
+
+                // ============ META ANUAL ============
+                const mesesPers = r.mesesPersonas || [];
+                for (let i = 0; i < 12; i++) {
+                    html += `<td class="celda-mes-pers">${mesesPers[i] || 0}</td>`;
+                }
+
+                // ============ ESTATUS ============
+                let badgeClass = 'badge-revision';
+                let estatusTexto = 'En Revisión';
+
+                if (r.estatus === 2) {
+                    badgeClass = 'badge-comentarios';
+                    estatusTexto = 'Con Comentarios';
+                } else if (r.estatus === 3) {
+                    badgeClass = 'badge-validado';
+                    estatusTexto = 'Validado';
+                }
+
+                html += `<td class="celda-estatus"><span class="${badgeClass}">${estatusTexto}</span></td>`;
+
+                html += `
+                    <td class="celda-estatus text-center">
+                        <a href="/Programacion/RevisarProgramacion?id=${r.idProceso}"
+                           class="btn btn-sm btn-outline-primary"
+                           title="Ir al registro">
+                            <i class="fas fa-arrow-right"></i> Ir
+                        </a>
+                    </td>
+                `;
+            });
+
+            tbody.innerHTML = html;
+        }
+
+        // ========================================
+        // EXPORTAR A EXCEL CON ESTILOS (ExcelJS)
+        // ========================================
+        async function exportarExcel() {
+            if (!datosTablero || datosTablero.length === 0) {
+                Swal.fire('Aviso', 'No hay datos para exportar', 'warning');
+                return;
+            }
+
+            mostrarLoading();
+
+            try {
+                const workbook = new ExcelJS.Workbook();
+                const sheet = workbook.addWorksheet('Tablero Programación');
+
+                // ========== COLORES ==========
+                const colores = {
+                    solicitante: { header: 'FF6c757d', subheader: 'FFadb5bd', celda: 'FFf8f9fa' },
+                    solicitud: { header: 'FFc00000', subheader: 'FFf8d7da', celda: 'FFfff5f5' },
+                    generales: { header: 'FF0d6efd', subheader: 'FFcfe2ff', celda: 'FFf0f7ff' },
+                    calendario: { header: 'FFffc107', subheader: 'FFfff3cd', celda: 'FFfffbeb' },
+                    calendarioPers: { header: 'FF20c997', subheader: 'FFd1e7dd', celda: 'FFf0fdf4' },
+                    metas: { header: 'FF198754', subheader: 'FFd1e7dd', celda: 'FFecfdf5' },
+                    metaAnual: { header: 'FF6f42c1', subheader: 'FFe2d9f3', celda: 'FFfaf5ff' },
+                    estatus: { header: 'FFfd7e14', subheader: 'FFffe5d0', celda: 'FFfff7ed' }
+                };
+
+                // ========== ESTILOS BASE ==========
+                const estiloHeader = (color) => ({
+                    font: { bold: true, size: 11, color: { argb: 'FFFFFFFF' } },
+                    fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: color } },
+                    alignment: { horizontal: 'center', vertical: 'middle', wrapText: true },
+                    border: { top: {style:'thin'}, left: {style:'thin'}, bottom: {style:'thin'}, right: {style:'thin'} }
+                });
+
+                const estiloSubheader = (color) => ({
+                    font: { bold: true, size: 9, color: { argb: 'FF000000' } },
+                    fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: color } },
+                    alignment: { horizontal: 'center', vertical: 'middle', wrapText: true },
+                    border: { top: {style:'thin'}, left: {style:'thin'}, bottom: {style:'thin'}, right: {style:'thin'} }
+                });
+
+                const estiloCelda = (color) => ({
+                    font: { size: 10 },
+                    fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: color } },
+                    alignment: { horizontal: 'center', vertical: 'middle', wrapText: true },
+                    border: { top: {style:'thin'}, left: {style:'thin'}, bottom: {style:'thin'}, right: {style:'thin'} }
+                });
+
+                // ========== FILA 1: TÍTULOS PRINCIPALES ==========
+                sheet.getRow(1).height = 25;
+
+                // Datos del Solicitante (1-3)
+                sheet.mergeCells('A1:C1');
+                Object.assign(sheet.getCell('A1'), { value: 'DATOS DEL SOLICITANTE', ...estiloHeader(colores.solicitante.header) });
+
+                // Datos de la Solicitud (4-9)
+                sheet.mergeCells('D1:I1');
+                Object.assign(sheet.getCell('D1'), { value: 'DATOS DE LA SOLICITUD', ...estiloHeader(colores.solicitud.header) });
+
+                // Datos Generales (10-26)
+                sheet.mergeCells('J1:Z1');
+                Object.assign(sheet.getCell('J1'), { value: 'DATOS GENERALES', ...estiloHeader(colores.generales.header) });
+
+                // Determinación de Metas (27-34)
+                sheet.mergeCells('AA1:AH1');
+                Object.assign(sheet.getCell('AA1'), { value: 'DETERMINACIÓN DE METAS', ...estiloHeader(colores.metas.header) });
+
+                // Meta Anual (35-60)
+                sheet.mergeCells('AI1:BH1');
+                Object.assign(sheet.getCell('AI1'), { value: 'META ANUAL', ...estiloHeader(colores.metaAnual.header) });
+
+                // Estatus (61)
+                Object.assign(sheet.getCell('BI1'), { value: 'ESTATUS', ...estiloHeader(colores.estatus.header) });
+
+                // ========== FILA 2: SUB-HEADERS ==========
+                sheet.getRow(2).height = 20;
+
+                // Aplicar estilos vacíos para Solicitante y Solicitud
+                for (let col = 1; col <= 3; col++) {
+                    Object.assign(sheet.getCell(2, col), estiloSubheader(colores.solicitante.subheader));
+                }
+                for (let col = 4; col <= 9; col++) {
+                    Object.assign(sheet.getCell(2, col), estiloSubheader(colores.solicitud.subheader));
+                }
+
+                // Sub-headers de Datos Generales
+                sheet.mergeCells('J2:M2');
+                Object.assign(sheet.getCell('J2'), { value: 'INFORMACIÓN', ...estiloSubheader(colores.generales.subheader) });
+
+                sheet.mergeCells('N2:Q2');
+                Object.assign(sheet.getCell('N2'), { value: 'CALEND. SERVICIOS', ...estiloSubheader(colores.calendario.subheader) });
+
+                sheet.mergeCells('R2:U2');
+                Object.assign(sheet.getCell('R2'), { value: 'CALEND. PERSONAS', ...estiloSubheader(colores.calendarioPers.subheader) });
+
+                sheet.mergeCells('V2:Z2');
+                Object.assign(sheet.getCell('V2'), { value: 'OTROS DATOS', ...estiloSubheader(colores.generales.subheader) });
+
+                // Sub-headers de Metas
+                sheet.mergeCells('AA2:AD2');
+                Object.assign(sheet.getCell('AA2'), { value: 'LÍNEA BASE', ...estiloSubheader(colores.metas.subheader) });
+
+                sheet.mergeCells('AE2:AH2');
+                Object.assign(sheet.getCell('AE2'), { value: 'META Y PERÍODO', ...estiloSubheader('FF157347') });
+
+                // Sub-headers de Meta Anual
+                sheet.mergeCells('AI2:AJ2');
+                Object.assign(sheet.getCell('AI2'), { value: 'CONFIG.', ...estiloSubheader(colores.metaAnual.subheader) });
+
+                sheet.mergeCells('AK2:AV2');
+                Object.assign(sheet.getCell('AK2'), { value: 'SERVICIOS POR MES', ...estiloSubheader('FFa78bfa') });
+
+                sheet.mergeCells('AW2:BH2');
+                Object.assign(sheet.getCell('AW2'), { value: 'PERSONAS POR MES', ...estiloSubheader('FFc4b5fd') });
+
+                Object.assign(sheet.getCell('BI2'), estiloSubheader(colores.estatus.subheader));
+
+                // ========== FILA 3: HEADERS DE COLUMNAS ==========
+                sheet.getRow(3).height = 18;
+
+                const headersColumnas = [
+                    'ÁREA', 'DEPTO', 'CORREO',
+                    'PP', 'COMP', 'ACT', 'JUSTIFICACIÓN', 'DOC. SOPORTE', 'RECURSOS',
+                    'PROG. SOCIAL', 'DESC. ACTIVIDAD', 'NOM. INDICADOR', 'DEF. INDICADOR',
+                    '1ER TRIM', '2DO TRIM', '3ER TRIM', '4TO TRIM',
+                    '1ER TRIM', '2DO TRIM', '3ER TRIM', '4TO TRIM',
+                    'U.M.', 'MEDIOS VERIF.', 'SERIE INFO', 'FUENTES', 'DELEGACIONES',
+                    'AÑO', '% CUMPL.', 'SERVICIOS', 'PERSONAS',
+                    'AÑO', '% CUMPL.', 'SERVICIOS', 'PERSONAS',
+                    'BENEF.', 'ACUM.',
+                    'ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC',
+                    'ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC',
+                    'ESTADO'
+                ];
+
+                const coloresColumnas = [
+                    ...Array(3).fill(colores.solicitante.subheader),
+                    ...Array(6).fill(colores.solicitud.subheader),
+                    ...Array(4).fill(colores.generales.subheader),
+                    ...Array(4).fill(colores.calendario.subheader),
+                    ...Array(4).fill(colores.calendarioPers.subheader),
+                    ...Array(5).fill(colores.generales.subheader),
+                    ...Array(4).fill(colores.metas.subheader),
+                    ...Array(4).fill('FF157347'),
+                    ...Array(2).fill(colores.metaAnual.subheader),
+                    ...Array(12).fill('FFa78bfa'),
+                    ...Array(12).fill('FFc4b5fd'),
+                    colores.estatus.subheader
+                ];
+
+                headersColumnas.forEach((header, index) => {
+                    const celda = sheet.getCell(3, index + 1);
+                    celda.value = header;
+                    Object.assign(celda, estiloSubheader(coloresColumnas[index]));
+                });
+
+                // ========== FILAS DE DATOS ==========
+                let filaActual = 4;
+
+                datosTablero.forEach((r) => {
+                    const fila = sheet.getRow(filaActual);
+                    fila.height = 20;
+
+                    const mesesServ = r.mesesServicios || [];
+                    const mesesPers = r.mesesPersonas || [];
+
+                    let estatusTexto = 'En Revisión';
+                    if (r.estatus === 2) estatusTexto = 'Con Comentarios';
+                    else if (r.estatus === 3) estatusTexto = 'Validado';
+
+                    const datosColumnas = [
+                        r.area || '', r.departamento || '', r.correoContacto || '',
+                        r.pp || '', r.componente || '', r.actividad || '', r.justificacion || '', r.descripcionDocumento || '', `${r.recursoFederal || ''} / ${r.recursoEstatal || ''}`,
+                        r.programaSocial || '', r.descripcionActividad || '', r.nombreIndicador || '', r.definicionIndicador || '',
+                        r.primerServicio || 0, r.segundoServicio || 0, r.tercerServicio || 0, r.cuartoServicio || 0,
+                        r.primerPersona || 0, r.segundoPersona || 0, r.tercerPersona || 0, r.cuartoPersona || 0,
+                        r.unidadMedida || '', r.mediosVerificacion || '', `${r.serieInformacionDesde || ''} - ${r.serieInformacionHasta || ''}`, r.fuenteInformacion || '', r.intervienenDelegaciones || '',
+                        r.anoBase || '', `${r.porcentajeBase || 0}%`, r.servicioBase || 0, r.personasBase || 0,
+                        r.anoMeta || '', `${r.porcentajeMeta || 0}%`, r.servicioMeta || 0, r.personasMeta || 0,
+                        r.beneficiarios || '', r.acumulable || '',
+                        ...Array(12).fill(0).map((_, i) => mesesServ[i] || 0),
+                        ...Array(12).fill(0).map((_, i) => mesesPers[i] || 0),
+                        estatusTexto
+                    ];
+
+                    const coloresCeldas = [
+                        ...Array(3).fill(colores.solicitante.celda),
+                        ...Array(6).fill(colores.solicitud.celda),
+                        ...Array(4).fill(colores.generales.celda),
+                        ...Array(4).fill(colores.calendario.celda),
+                        ...Array(4).fill(colores.calendarioPers.celda),
+                        ...Array(5).fill(colores.generales.celda),
+                        ...Array(4).fill(colores.metas.celda),
+                        ...Array(4).fill('FFd1fae5'),
+                        ...Array(2).fill(colores.metaAnual.celda),
+                        ...Array(12).fill('FFfdf4ff'),
+                        ...Array(12).fill('FFfdf2f8'),
+                        colores.estatus.celda
+                    ];
+
+                    datosColumnas.forEach((dato, index) => {
+                        const celda = sheet.getCell(filaActual, index + 1);
+                        celda.value = dato;
+                        Object.assign(celda, estiloCelda(coloresCeldas[index]));
+                    });
+
+                    filaActual++;
+                });
+
+                // ========== AJUSTAR ANCHOS DE COLUMNA ==========
+                const anchos = [
+                    15, 15, 25,  
+                    8, 8, 6, 30, 30, 12,  
+                    25, 30, 25, 25,  
+                    8, 8, 8, 8, 
+                    8, 8, 8, 8,  
+                    12, 25, 15, 25, 12, 
+                    8, 10, 10, 10,  
+                    8, 10, 10, 10,  
+                    12, 8,  
+                    ...Array(24).fill(6),  
+                    12  
+                ];
+
+                anchos.forEach((ancho, index) => {
+                    sheet.getColumn(index + 1).width = ancho;
+                });
+
+                // ========== CONGELAR PANELES ==========
+                sheet.views = [{ state: 'frozen', xSplit: 3, ySplit: 3 }];
+
+                // ========== DESCARGAR ==========
+                const buffer = await workbook.xlsx.writeBuffer();
+                const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+                const fecha = new Date().toISOString().split('T')[0];
+                const anoFiscal = document.getElementById('filtroAno').value;
+                saveAs(blob, `Tablero_Programacion_${anoFiscal}_${fecha}.xlsx`);
+
+                Swal.fire('Éxito', 'Excel generado correctamente', 'success');
+
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire('Error', `No se pudo generar el Excel: ${error.message}`, 'error');
+            } finally {
+                ocultarLoading();
+            }
+        }
+
+        // ========================================
+        // INICIALIZACIÓN
+        // ========================================
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('btnFiltrar').addEventListener('click', cargarDatosTablero);
+            document.getElementById('btnExportarExcel').addEventListener('click', exportarExcel);
+
+            document.getElementById('filtroAno').addEventListener('change', function() {
+                if (this.value) cargarDatosTablero();
+            });
+
+            @if (ViewBag.AnoFiscalSeleccionado != null)
+            {
+                    <text>
+                    document.getElementById('filtroAno').value = '@ViewBag.AnoFiscalSeleccionado';
+                    cargarDatosTablero();
+                    </text>
+            }
+        });
+    </script>
+}
