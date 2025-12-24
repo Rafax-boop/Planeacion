@@ -142,6 +142,23 @@ namespace Metas.AplicacionWeb.Controllers
                 _ => null
             };
 
+            int? totalPersonas = mes switch
+            {
+                1 => datosInternos.EneroPersona,
+                2 => datosInternos.FebreroPersona,
+                3 => datosInternos.MarzoPersona,
+                4 => datosInternos.AbrilPersona,
+                5 => datosInternos.MayoPersona,
+                6 => datosInternos.JunioPersona,
+                7 => datosInternos.JulioPersona,
+                8 => datosInternos.AgostoPersona,
+                9 => datosInternos.SeptiembrePersona,
+                10 => datosInternos.OctubrePersona,
+                11 => datosInternos.NoviembrePersona,
+                12 => datosInternos.DiciembrePersona,
+                _ => null
+            };
+
             var modelo = new VMGuardarActualizacion
             {
                 IdProceso = idProceso,
@@ -149,6 +166,7 @@ namespace Metas.AplicacionWeb.Controllers
                 MesNum = mes,
                 FechaFin = fechaRegistro.FechaFin,
                 Total = totalMes,
+                TotalPersonas = totalPersonas,
                 pp = datosInternos.Pp,
                 Componente = datosInternos.Componente,
                 Actividad = datosInternos.Actividad,

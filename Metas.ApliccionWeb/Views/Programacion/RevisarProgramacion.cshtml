@@ -273,16 +273,16 @@
                 <label class="fw-light">SERVICIOS</label>
             </div>
             <div class="col-md-2">
-                <input type="number" @(!ViewBag.EsAdministrador ? "disabled" : "") id="primerServicio" class="input-arena form-control titulo text-center" value="@Model.PrimerServicio" min="0">
+                <input type="text" @(!ViewBag.EsAdministrador ? "disabled" : "") id="primerServicio" class="input-arena form-control titulo text-center formato-miles" value="@Model.PrimerServicio" min="0">
             </div>
             <div class="col-md-2">
-                <input type="number" @(!ViewBag.EsAdministrador ? "disabled" : "") id="segundoServicio" class="input-arena form-control titulo text-center" value="@Model.SegundoServicio" min="0">
+                <input type="text" @(!ViewBag.EsAdministrador ? "disabled" : "") id="segundoServicio" class="input-arena form-control titulo text-center formato-miles" value="@Model.SegundoServicio" min="0">
             </div>
             <div class="col-md-2">
-                <input type="number" @(!ViewBag.EsAdministrador ? "disabled" : "") id="tercerServicio" class="input-arena form-control titulo text-center" value="@Model.TercerServicio" min="0">
+                <input type="text" @(!ViewBag.EsAdministrador ? "disabled" : "") id="tercerServicio" class="input-arena form-control titulo text-center formato-miles" value="@Model.TercerServicio" min="0">
             </div>
             <div class="col-md-2">
-                <input type="number" @(!ViewBag.EsAdministrador ? "disabled" : "") id="cuartoServicio" class="input-arena form-control titulo text-center" value="@Model.CuartoServicio" min="0">
+                <input type="text" @(!ViewBag.EsAdministrador ? "disabled" : "") id="cuartoServicio" class="input-arena form-control titulo text-center formato-miles" value="@Model.CuartoServicio" min="0">
             </div>
             <div class="col-md-1 align-content-center">
                 <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
@@ -298,16 +298,16 @@
                 <label class="fw-light">PERSONAS</label>
             </div>
             <div class="col-md-2">
-                <input type="number" @(!ViewBag.EsAdministrador ? "disabled" : "") id="primerPersona" class="input-arena form-control titulo text-center" value="@Model.PrimerPersona" min="0">
+                <input type="text" @(!ViewBag.EsAdministrador ? "disabled" : "") id="primerPersona" class="input-arena form-control titulo text-center formato-miles" value="@Model.PrimerPersona" min="0">
             </div>
             <div class="col-md-2">
-                <input type="number" @(!ViewBag.EsAdministrador ? "disabled" : "") id="segundoPersona" class="input-arena form-control titulo text-center" value="@Model.SegundoPersona" min="0">
+                <input type="text" @(!ViewBag.EsAdministrador ? "disabled" : "") id="segundoPersona" class="input-arena form-control titulo text-center formato-miles" value="@Model.SegundoPersona" min="0">
             </div>
             <div class="col-md-2">
-                <input type="number" @(!ViewBag.EsAdministrador ? "disabled" : "") id="tercerPersona" class="input-arena form-control titulo text-center" value="@Model.TercerPersona" min="0">
+                <input type="text" @(!ViewBag.EsAdministrador ? "disabled" : "") id="tercerPersona" class="input-arena form-control titulo text-center formato-miles" value="@Model.TercerPersona" min="0">
             </div>
             <div class="col-md-2">
-                <input type="number" @(!ViewBag.EsAdministrador ? "disabled" : "") id="cuartoPersona" class="input-arena form-control titulo text-center" value="@Model.CuartoPersona" min="0">
+                <input type="text" @(!ViewBag.EsAdministrador ? "disabled" : "") id="cuartoPersona" class="input-arena form-control titulo text-center formato-miles" value="@Model.CuartoPersona" min="0">
             </div>
         </div>
 
@@ -515,7 +515,7 @@
                         <label class="mb-0">23. NO. DE BIEN O SERVICIO ENTREGADO</label>
                     </div>
                     <div class="col-md-5">
-                        <input @(!ViewBag.EsAdministrador ? "disabled" : "") id="inputServicioBase" type="number" class="input-arena form-control titulo text-center" value="@Model.ServicioBase" min="0">
+                        <input @(!ViewBag.EsAdministrador ? "disabled" : "") id="inputServicioBase" type="text" class="input-arena form-control titulo text-center formato-miles" value="@Model.ServicioBase" min="0">
                     </div>
                     <div class="col-md-1 align-content-center">
                         <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
@@ -530,7 +530,7 @@
                         <label class="mb-0">24. NO. DE PERSONAS ATENDIDAS</label>
                     </div>
                     <div class="col-md-5">
-                        <input @(!ViewBag.EsAdministrador ? "disabled" : "") id="inputPersonasBase" type="number" class="input-arena form-control titulo text-center" value="@Model.PersonasBase" min="0">
+                        <input @(!ViewBag.EsAdministrador ? "disabled" : "") id="inputPersonasBase" type="text" class="input-arena form-control titulo text-center formato-miles" value="@Model.PersonasBase" min="0">
                     </div>
                     <div class="col-md-1 align-content-center">
                         <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
@@ -581,7 +581,7 @@
                         <label class="mb-0">27. NO. DE BIEN O SERVICIO A ENTREGAR</label>
                     </div>
                     <div class="col-md-5">
-                        <input id="inputServicioMeta" @(!ViewBag.EsAdministrador ? "disabled" : "") type="number" class="input-arena form-control titulo text-center" value="@Model.ServicioMeta" min="0">
+                        <input id="inputServicioMeta" @(!ViewBag.EsAdministrador ? "disabled" : "") type="text" class="input-arena form-control titulo text-center formato-miles" value="@Model.ServicioMeta" min="0">
                     </div>
                     <div class="col-md-1 align-content-center">
                         <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
@@ -596,7 +596,7 @@
                         <label class="mb-0">28. NO. DE PERSONAS POR ATENDER</label>
                     </div>
                     <div class="col-md-5">
-                        <input id="inputServicioMetas" @(!ViewBag.EsAdministrador ? "disabled" : "") type="number" class="input-arena form-control titulo text-center" value="@Model.PersonasMeta" min="0">
+                        <input id="inputServicioMetas" @(!ViewBag.EsAdministrador ? "disabled" : "") type="text" class="input-arena form-control titulo text-center formato-miles" value="@Model.PersonasMeta" min="0">
                     </div>
                     <div class="col-md-1 align-content-center">
                         <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
@@ -686,7 +686,7 @@
                         @for (int i = 0; i < 6; i++)
                         {
                             <div class="col-2 p-1">
-                                <input @(!ViewBag.EsAdministrador ? "disabled" : "") type="number" class="input-arena form-control titulo text-center mes-grupo1"
+                                <input @(!ViewBag.EsAdministrador ? "disabled" : "") type="text" class="input-arena form-control titulo text-center mes-grupo1 formato-miles"
                                        value="@(Model.MesesServicios != null && Model.MesesServicios.Count > i ? Model.MesesServicios[i] : 0)"
                                        min="0" data-mes="@mesesPrimerSemestre[i]">
                             </div>
@@ -704,7 +704,7 @@
                         {
                             var index = i + 6;
                             <div class="col-2 p-1">
-                                <input @(!ViewBag.EsAdministrador ? "disabled" : "") type="number" class="input-arena form-control titulo text-center mes-grupo1"
+                                <input @(!ViewBag.EsAdministrador ? "disabled" : "") type="text" class="input-arena form-control titulo text-center mes-grupo1 formato-miles"
                                        value="@(Model.MesesServicios != null && Model.MesesServicios.Count > index ? Model.MesesServicios[index] : 0)"
                                        min="0" data-mes="@mesesSegundoSemestre[i]">
                             </div>
@@ -723,7 +723,7 @@
                         @for (int i = 0; i < 6; i++)
                         {
                             <div class="col-2 p-1">
-                                <input @(!ViewBag.EsAdministrador ? "disabled" : "") type="number" class="input-arena form-control titulo text-center mes-grupo2"
+                                <input @(!ViewBag.EsAdministrador ? "disabled" : "") type="text" class="input-arena form-control titulo text-center mes-grupo2 formato-miles"
                                        value="@(Model.MesesPersonas != null && Model.MesesPersonas.Count > i ? Model.MesesPersonas[i] : 0)"
                                        min="0" data-mes="@mesesPrimerSemestre[i]">
                             </div>
@@ -741,7 +741,7 @@
                         {
                             var index = i + 6;
                             <div class="col-2 p-1">
-                                <input @(!ViewBag.EsAdministrador ? "disabled" : "") type="number" class="input-arena form-control titulo text-center mes-grupo2"
+                                <input @(!ViewBag.EsAdministrador ? "disabled" : "") type="text" class="input-arena form-control titulo text-center mes-grupo2 formato-miles"
                                        value="@(Model.MesesPersonas != null && Model.MesesPersonas.Count > index ? Model.MesesPersonas[index] : 0)"
                                        min="0" data-mes="@mesesSegundoSemestre[i]">
                             </div>
@@ -759,7 +759,7 @@
                         <label class="mb-0 fw-semibold">Valor de servicios</label>
                     </div>
                     <div class="col-md-4">
-                        <input class="input-arena form-control titulo text-center fw-bold"
+                        <input class="input-arena form-control titulo text-center fw-bold formato-miles"
                                id="valorServicios" value="@Model.TotalAnos" disabled>
                     </div>
                 </div>
@@ -769,7 +769,7 @@
                         <label class="mb-0 fw-semibold">Valor de servicios por municipio</label>
                     </div>
                     <div class="col-md-4">
-                        <input class="input-arena form-control titulo text-center"
+                        <input class="input-arena form-control titulo text-center formato-miles"
                                id="valorServiciosMunicipio" value="0" disabled>
                     </div>
                 </div>
@@ -790,7 +790,7 @@
                             </select>
                         </div>
                         <div class="col-md-4">
-                            <input type="number" @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control titulo text-center"
+                            <input type="text" @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control titulo text-center formato-miles"
                                    id="personasAtendidasGrupo1" value="0" min="0" placeholder="Número">
                         </div>
                     </div>
@@ -831,7 +831,7 @@
                         <label class="mb-0 fw-semibold">Valor de personas</label>
                     </div>
                     <div class="col-md-4">
-                        <input class="input-arena form-control titulo text-center fw-bold"
+                        <input class="input-arena form-control titulo text-center fw-bold formato-miles"
                                id="valorPersonas" value="@Model.TotalAnos2" disabled>
                     </div>
                 </div>
@@ -841,7 +841,7 @@
                         <label class="mb-0 fw-semibold">Valor de personas por municipio</label>
                     </div>
                     <div class="col-md-4">
-                        <input class="input-arena form-control titulo text-center"
+                        <input class="input-arena form-control titulo text-center formato-miles"
                                id="valorPersonasMunicipio" value="0" disabled>
                     </div>
                 </div>
@@ -862,7 +862,7 @@
                             </select>
                         </div>
                         <div class="col-md-4">
-                            <input type="number" @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control titulo text-center"
+                            <input type="text" @(!ViewBag.EsAdministrador ? "disabled" : "") class="input-arena form-control titulo text-center formato-miles"
                                    id="personasAtendidasGrupo2" value="0" min="0" placeholder="Número">
                         </div>
                     </div>
@@ -1064,6 +1064,7 @@
         // ========================================
         let comentariosTemp = {};
         let modalComentario = null;
+        let datosEstados = {};
 
         const descripcionesCampos = {
             '4': 'PROGRAMA PRESUPUESTARIO', '5': 'NÚMERO DE COMPONENTE', '6': 'NÚMERO DE ACTIVIDAD',
@@ -1105,9 +1106,9 @@
         function calcularTotalPersonas(grupo) {
             let total = 0;
             document.querySelectorAll(`#tbody${grupo} tr`).forEach(fila => {
-                total += parseInt(fila.cells[0].textContent) || 0;
+                total += parseInt(fila.cells[0].textContent.replace(/,/g, '')) || 0;
             });
-            document.getElementById(`total${grupo}`).textContent = total;
+            document.getElementById(`total${grupo}`).textContent = total.toLocaleString('en-US');
             return total;
         }
 
@@ -1115,9 +1116,9 @@
             let totalGrupo1 = calcularTotalPersonas('Grupo1');
             let totalGrupo2 = calcularTotalPersonas('Grupo2');
 
-            document.getElementById('valorServiciosMunicipio').value = totalGrupo1;
+            document.getElementById('valorServiciosMunicipio').value = formatearMiles(totalGrupo1);
 
-            document.getElementById('valorPersonasMunicipio').value = totalGrupo2;
+            document.getElementById('valorPersonasMunicipio').value = formatearMiles(totalGrupo2);
 
             actualizarCamposMeta();
         }
@@ -1131,23 +1132,23 @@
 
         function puedeAgregarPersonas(grupo, cantidad) {
             const maxServicios = grupo === 'Grupo1'
-                ? parseInt(document.getElementById('valorServicios').value) || 0
-                : parseInt(document.getElementById('valorPersonas').value) || 0;
+                ? removerFormatoMiles(document.getElementById('valorServicios').value)
+                : removerFormatoMiles(document.getElementById('valorPersonas').value);
 
             const totalActual = calcularTotalPersonas(grupo);
             return (totalActual + cantidad) <= maxServicios;
         }
 
         function actualizarCamposMeta() {
-            const valorServicios = parseInt(document.getElementById('valorServicios').value) || 0;
-            const valorPersonas = parseInt(document.getElementById('valorPersonas').value) || 0;
+            const valorServicios = removerFormatoMiles(document.getElementById('valorServicios').value);
+            const valorPersonas = removerFormatoMiles(document.getElementById('valorPersonas').value);
 
             const inputServicioMeta = document.getElementById('inputServicioMeta');
             const inputServicioMetas = document.getElementById('inputServicioMetas');
             const inputPorcentajeMeta = document.getElementById('inputPorcentajeMeta');
 
-            if (inputServicioMeta) inputServicioMeta.value = valorServicios;
-            if (inputServicioMetas) inputServicioMetas.value = valorPersonas;
+            if (inputServicioMeta) inputServicioMeta.value = formatearMiles(valorServicios);
+            if (inputServicioMetas) inputServicioMetas.value = formatearMiles(valorPersonas);
             if (inputPorcentajeMeta) inputPorcentajeMeta.value = 100;
         }
 
@@ -1162,7 +1163,7 @@
 
             btnAgregar.addEventListener('click', function() {
                 const estado = selectEstado.value;
-                const personas = parseInt(inputPersonas.value) || 0;
+                const personas = removerFormatoMiles(inputPersonas.value);
 
                 if (!estado) {
                     Swal.fire('Error', 'Por favor, seleccione un municipio', 'warning');
@@ -1176,12 +1177,12 @@
 
                 if (!puedeAgregarPersonas(grupo, personas)) {
                     const maxServicios = grupo === 'Grupo1'
-                        ? parseInt(document.getElementById('valorServicios').value) || 0
-                        : parseInt(document.getElementById('valorPersonas').value) || 0;
+                        ? removerFormatoMiles(document.getElementById('valorServicios').value)
+                        : removerFormatoMiles(document.getElementById('valorPersonas').value);
 
                     const totalActual = calcularTotalPersonas(grupo);
                     const disponibles = maxServicios - totalActual;
-                    Swal.fire('Error', `No se pueden agregar ${personas} personas. Solo hay ${disponibles} disponibles.`, 'warning');
+                    Swal.fire('Error', `No se pueden agregar ${personas.toLocaleString('en-US')} personas. Solo hay ${disponibles} disponibles.`, 'warning');
                     return;
                 }
 
@@ -1208,7 +1209,7 @@
             nuevaFila.setAttribute('data-id-municipio', idMunicipio);
             nuevaFila.setAttribute('data-cantidad', personas);
             nuevaFila.innerHTML = `
-                <td>${personas}</td>
+                <td>${personas.toLocaleString('en-US')}</td>
                 <td>${datos.municipio}</td>
                 <td>${datos.region}</td>
                 <td>${datos.numeroRegion}</td>
@@ -1654,7 +1655,15 @@
 
                 const obtenerValorNumerico = (id, valorDefault = 0) => {
                     const elemento = document.getElementById(id);
-                    return elemento ? (parseInt(elemento.value) || valorDefault) : valorDefault;
+                    if (!elemento) return valorDefault;
+
+                    // Si el elemento tiene la clase formato-miles, remover formato
+                    if (elemento.classList.contains('formato-miles')) {
+                        return removerFormatoMiles(elemento.value);
+                    }
+
+                    // Si no, usar parseInt normal
+                    return parseInt(elemento.value) || valorDefault;
                 };
 
                 const obtenerValorDecimal = (id, valorDefault = 0) => {
@@ -1725,10 +1734,10 @@
 
                 // Meses
                 document.querySelectorAll('.mes-grupo1').forEach(input => {
-                    datosCompletos.mesesServicios.push(parseInt(input.value) || 0);
+                    datosCompletos.mesesServicios.push(removerFormatoMiles(input.value));
                 });
                 document.querySelectorAll('.mes-grupo2').forEach(input => {
-                    datosCompletos.mesesPersonas.push(parseInt(input.value) || 0);
+                    datosCompletos.mesesPersonas.push(removerFormatoMiles(input.value));
                 });
 
                 // Municipios
@@ -1852,7 +1861,15 @@
 
                 const obtenerValorNumerico = (id, valorDefault = 0) => {
                     const elemento = document.getElementById(id);
-                    return elemento ? (parseInt(elemento.value) || valorDefault) : valorDefault;
+                    if (!elemento) return valorDefault;
+
+                    // Si el elemento tiene la clase formato-miles, remover formato
+                    if (elemento.classList.contains('formato-miles')) {
+                        return removerFormatoMiles(elemento.value);
+                    }
+
+                    // Si no, usar parseInt normal
+                    return parseInt(elemento.value) || valorDefault;
                 };
 
                 const obtenerValorDecimal = (id, valorDefault = 0) => {
@@ -1933,10 +1950,10 @@
 
                 // Meses
                 document.querySelectorAll('.mes-grupo1').forEach(input => {
-                    datosCompletos.mesesServicios.push(parseInt(input.value) || 0);
+                    datosCompletos.mesesServicios.push(removerFormatoMiles(input.value));
                 });
                 document.querySelectorAll('.mes-grupo2').forEach(input => {
-                    datosCompletos.mesesPersonas.push(parseInt(input.value) || 0);
+                    datosCompletos.mesesPersonas.push(removerFormatoMiles(input.value));
                 });
 
                 // Municipios
@@ -2036,7 +2053,15 @@
 
                 const obtenerValorNumerico = (id, valorDefault = 0) => {
                     const elemento = document.getElementById(id);
-                    return elemento ? (parseInt(elemento.value) || valorDefault) : valorDefault;
+                    if (!elemento) return valorDefault;
+
+                    // Si el elemento tiene la clase formato-miles, remover formato
+                    if (elemento.classList.contains('formato-miles')) {
+                        return removerFormatoMiles(elemento.value);
+                    }
+
+                    // Si no, usar parseInt normal
+                    return parseInt(elemento.value) || valorDefault;
                 };
 
                 const obtenerValorDecimal = (id, valorDefault = 0) => {
@@ -2117,10 +2142,10 @@
 
                 // Meses
                 document.querySelectorAll('.mes-grupo1').forEach(input => {
-                    datosCompletos.mesesServicios.push(parseInt(input.value) || 0);
+                    datosCompletos.mesesServicios.push(removerFormatoMiles(input.value));
                 });
                 document.querySelectorAll('.mes-grupo2').forEach(input => {
-                    datosCompletos.mesesPersonas.push(parseInt(input.value) || 0);
+                    datosCompletos.mesesPersonas.push(removerFormatoMiles(input.value));
                 });
 
                 // Municipios
@@ -2185,7 +2210,7 @@
             }
         }
 
-                // ========================================
+        // ========================================
         // CONFIGURACIÓN DE SELECTS (CORREGIDAS)
         // ========================================
         function configurarSelectPersonas() {
@@ -2305,33 +2330,6 @@
         }
 
         // ========================================
-        // CALCULAR SUMATORIAS
-        // ========================================
-        function calcularSumatorias() {
-            const selectAcumulable = document.getElementById('selectAcumulable');
-            let sumaGrupo1 = 0;
-            let sumaGrupo2 = 0;
-
-            document.querySelectorAll('.mes-grupo1').forEach(input => {
-                sumaGrupo1 += parseInt(input.value) || 0;
-            });
-
-            if (selectAcumulable && selectAcumulable.value === 'si') {
-                document.querySelectorAll('.mes-grupo2').forEach(input => {
-                    sumaGrupo2 += parseInt(input.value) || 0;
-                });
-            }
-
-            const valorServiciosEl = document.getElementById('valorServicios');
-            const valorPersonasEl = document.getElementById('valorPersonas');
-
-            if (valorServiciosEl) valorServiciosEl.value = sumaGrupo1;
-            if (valorPersonasEl) valorPersonasEl.value = sumaGrupo2;
-
-            calcularTrimestres();
-        }
-
-        // ========================================
         // FUNCIONES DE CÁLCULO (CORREGIDAS)
         // ========================================
         function calcularSumatorias() {
@@ -2344,25 +2342,28 @@
             let sumaGrupo1 = 0;
             let sumaGrupo2 = 0;
 
+            // Sumar servicios (Grupo 1)
             document.querySelectorAll('.mes-grupo1').forEach(input => {
-                sumaGrupo1 += parseInt(input.value) || 0;
+                sumaGrupo1 += removerFormatoMiles(input.value);
             });
 
+            // Sumar personas (Grupo 2) según lógica
             if (esAcumulable) {
                 document.querySelectorAll('.mes-grupo2').forEach(input => {
-                    sumaGrupo2 += parseInt(input.value) || 0;
+                    sumaGrupo2 += removerFormatoMiles(input.value);
                 });
             } else if (esPersonas && selectAcumulable?.value === 'no') {
                 document.querySelectorAll('.mes-grupo2').forEach(input => {
-                    const valor = parseInt(input.value) || 0;
+                    const valor = removerFormatoMiles(input.value);
                     if (valor > sumaGrupo2) {
                         sumaGrupo2 = valor;
                     }
                 });
             }
 
-            document.getElementById('valorServicios').value = sumaGrupo1;
-            document.getElementById('valorPersonas').value = sumaGrupo2;
+            // Actualizar campos con formato
+            document.getElementById('valorServicios').value = formatearMiles(sumaGrupo1);
+            document.getElementById('valorPersonas').value = formatearMiles(sumaGrupo2);
 
             actualizarMaximosPersonas(sumaGrupo1, sumaGrupo2);
             actualizarServiciosPorMunicipio();
@@ -2378,27 +2379,138 @@
                 4: ['OCT', 'NOV', 'DIC']
             };
 
-            const camposServicios = { 1: 'primerServicio', 2: 'segundoServicio', 3: 'tercerServicio', 4: 'cuartoServicio' };
-            const camposPersonas = { 1: 'primerPersona', 2: 'segundoPersona', 3: 'tercerPersona', 4: 'cuartoPersona' };
+            const camposServicios = {
+                1: 'primerServicio',
+                2: 'segundoServicio',
+                3: 'tercerServicio',
+                4: 'cuartoServicio'
+            };
 
+            const camposPersonas = {
+                1: 'primerPersona',
+                2: 'segundoPersona',
+                3: 'tercerPersona',
+                4: 'cuartoPersona'
+            };
+
+            // Calcular trimestres de SERVICIOS
             for (let i = 1; i <= 4; i++) {
                 let sumaServicios = 0;
-                let sumaPersonas = 0;
 
                 trimestres[i].forEach(mes => {
                     const inputServicio = document.querySelector(`.mes-grupo1[data-mes="${mes}"]`);
-                    const inputPersona = document.querySelector(`.mes-grupo2[data-mes="${mes}"]`);
-
-                    if (inputServicio) sumaServicios += parseInt(inputServicio.value) || 0;
-                    if (inputPersona) sumaPersonas += parseInt(inputPersona.value) || 0;
+                    if (inputServicio) {
+                        sumaServicios += removerFormatoMiles(inputServicio.value);
+                    }
                 });
 
                 const campoServicio = document.getElementById(camposServicios[i]);
-                const campoPersona = document.getElementById(camposPersonas[i]);
-
-                if (campoServicio) campoServicio.value = sumaServicios;
-                if (campoPersona) campoPersona.value = sumaPersonas;
+                if (campoServicio) {
+                    campoServicio.value = formatearMiles(sumaServicios);
+                }
             }
+
+            // Calcular trimestres de PERSONAS
+            for (let i = 1; i <= 4; i++) {
+                let sumaPersonas = 0;
+
+                trimestres[i].forEach(mes => {
+                    const inputPersona = document.querySelector(`.mes-grupo2[data-mes="${mes}"]`);
+                    if (inputPersona) {
+                        sumaPersonas += removerFormatoMiles(inputPersona.value);
+                    }
+                });
+
+                const campoPersona = document.getElementById(camposPersonas[i]);
+                if (campoPersona) {
+                    campoPersona.value = formatearMiles(sumaPersonas);
+                }
+            }
+        }
+
+        // ========================================
+        // FUNCIONES DE FORMATO DE MILES
+        // ========================================
+
+        function formatearMiles(valor) {
+            // Convertir a string y remover cualquier formato existente
+            const numero = valor.toString().replace(/,/g, '');
+
+            // Si está vacío o no es un número válido, retornar vacío
+            if (numero === '' || isNaN(numero)) {
+                return '';
+            }
+
+            // Formatear con separador de miles
+            return parseInt(numero).toLocaleString('en-US');
+        }
+
+        function removerFormatoMiles(valorFormateado) {
+            return parseInt(valorFormateado.replace(/,/g, '')) || 0;
+        }
+
+        function configurarFormatoMiles(nombreClase = 'formato-miles') {
+            const inputs = document.querySelectorAll(`.${nombreClase}`);
+
+            inputs.forEach(input => {
+                // Formatear valor inicial si existe
+                if (input.value && input.value !== '0') {
+                    input.value = formatearMiles(input.value);
+                }
+
+                // Evento al escribir/pegar
+                input.addEventListener('input', function(e) {
+                    const cursorPos = this.selectionStart;
+                    const valorAnterior = this.value;
+                    const longitudAnterior = valorAnterior.length;
+
+                    // Remover formato, validar y reformatear
+                    const valorSinFormato = this.value.replace(/,/g, '');
+
+                    // Solo permitir números
+                    if (valorSinFormato && !/^\d+$/.test(valorSinFormato)) {
+                        this.value = valorAnterior;
+                        return;
+                    }
+
+                    // Aplicar formato
+                    const valorFormateado = formatearMiles(valorSinFormato);
+                    this.value = valorFormateado;
+
+                    // Ajustar posición del cursor
+                    const longitudNueva = valorFormateado.length;
+                    const diferencia = longitudNueva - longitudAnterior;
+                    const nuevaPos = cursorPos + diferencia;
+
+                    this.setSelectionRange(nuevaPos, nuevaPos);
+                });
+
+                // Evento al perder foco - asegurar formato correcto
+                input.addEventListener('blur', function() {
+                    if (this.value === '' || this.value === '0') {
+                        this.value = '0';
+                    } else {
+                        this.value = formatearMiles(this.value);
+                    }
+                });
+
+                // Evento al obtener foco - útil para algunos casos
+                input.addEventListener('focus', function() {
+                    // Opcional: podrías remover el formato al hacer focus
+                    // para facilitar la edición
+                    // this.value = removerFormatoMiles(this.value);
+                });
+            });
+        }
+
+        // ========================================
+        // FUNCIÓN AUXILIAR PARA OBTENER VALOR NUMÉRICO
+        // ========================================
+        function obtenerValorNumerico(idElemento) {
+            const elemento = document.getElementById(idElemento);
+            if (!elemento) return 0;
+
+            return removerFormatoMiles(elemento.value);
         }
 
 
@@ -2418,6 +2530,8 @@
 
             configurarAgregarPersonas('Grupo1');
             configurarAgregarPersonas('Grupo2');
+
+            configurarFormatoMiles('formato-miles');  
 
             document.querySelectorAll('.mes-grupo1, .mes-grupo2').forEach(input => {
                 input.addEventListener('input', calcularSumatorias);

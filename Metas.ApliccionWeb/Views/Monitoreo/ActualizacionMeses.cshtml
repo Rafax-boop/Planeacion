@@ -47,11 +47,11 @@ else
                     <div class="row g-3 text-center mt-1 mx-2 pb-3 border-bottom">
                         <div class="col-2 border-end">
                             <label for="metaProgramada" class="form-label fw-semibold titulo">Meta Programada</label>
-                            <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" id="metaProgramada" value="@Model.Total" readonly>
+                            <input type="text" class="form-control fw-light input-arena titulo formato-miles" style="background-color:#f7f2ed;" id="metaProgramada" value="@Model.Total" readonly>
                         </div>
                         <div class="col-2 border-end">
                             <label for="input2" class="form-label fw-semibold titulo">Personas Programadas</label>
-                            <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" readonly id="input2">
+                            <input type="text" class="form-control fw-light input-arena titulo formato-miles" style="background-color:#f7f2ed;" value="@Model.TotalPersonas" readonly id="input2">
                         </div>
                         <div class="col-2 border-end">
                             <label for="input3" class="form-label fw-semibold titulo">Pp</label>
@@ -110,7 +110,7 @@ else
                     <div class="row g-3 mt-1 mx-2 pb-3 border-bottom">
                         <div class="col-6 border-end">
                             <label for="realizadoInput" class="form-label fw-semibold titulo">Realizado</label>
-                            <input type="number" class="form-control fw-light input-arena titulo" id="realizadoInput" name="Realizado" value="@Model.Realizado" @(esSoloVista ? "disabled" : "")>
+                            <input type="text" class="form-control fw-light input-arena titulo formato-miles" id="realizadoInput" name="Realizado" value="@Model.Realizado" @(esSoloVista ? "disabled" : "")>
                         </div>
                         <div class="col-6">
                             <label for="totalPorcentaje" class="form-label fw-semibold titulo">Total de porcentaje:</label>
@@ -131,15 +131,15 @@ else
                     <div class="row g-3 mt-1 mx-2 pb-3 border-bottom">
                         <div class="col-4">
                             <label for="mujeresAtendidas" class="form-label fw-semibold titulo">Mujeres Atendidas</label>
-                            <input type="number" class="form-control fw-light input-arena titulo personas-input" disabled id="mujeresAtendidas" name="MujeresAtendidas" value="@Model.MujeresAtendidas" @(esSoloVista ? "disabled" : "")>
+                            <input type="text" class="form-control fw-light input-arena titulo personas-input formato-miles" disabled id="mujeresAtendidas" name="MujeresAtendidas" value="@Model.MujeresAtendidas" @(esSoloVista ? "disabled" : "")>
                         </div>
                         <div class="col-4 border-end">
                             <label for="hombresAtendidos" class="form-label fw-semibold titulo">Hombres Atendidos</label>
-                            <input type="number" class="form-control fw-light input-arena titulo personas-input" disabled id="hombresAtendidos" name="HombresAtendidos" value="@Model.HombresAtendidos" @(esSoloVista ? "disabled" : "")>
+                            <input type="text" class="form-control fw-light input-arena titulo personas-input formato-miles" disabled id="hombresAtendidos" name="HombresAtendidos" value="@Model.HombresAtendidos" @(esSoloVista ? "disabled" : "")>
                         </div>
                         <div class="col-4">
                             <label for="personasAtendidas" class="form-label fw-semibold titulo">Personas Atendidas</label>
-                            <input type="number" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" readonly id="personasAtendidas" value="0">
+                            <input type="text" class="form-control fw-light input-arena titulo formato-miles" style="background-color:#f7f2ed;" readonly id="personasAtendidas" value="0">
                         </div>
                     </div>
                 </div>
@@ -156,19 +156,19 @@ else
                     <div class="row g-3 mt-1 mx-2 pb-3">
                         <div class="col-3">
                             <label for="rango0a3" class="form-label fw-semibold titulo">0 - 3 AÑOS</label>
-                            <input type="number" class="form-control fw-light input-arena titulo rango-input" disabled id="rango0a3" name="Rango0a3" value="@Model.Rango0a3" @(esSoloVista ? "disabled" : "")>
+                            <input type="text" class="form-control fw-light input-arena titulo rango-input formato-miles" disabled id="rango0a3" name="Rango0a3" value="@Model.Rango0a3" @(esSoloVista ? "disabled" : "")>
                         </div>
                         <div class="col-3">
                             <label for="rango4a8" class="form-label fw-semibold titulo">4 - 8 AÑOS</label>
-                            <input type="number" class="form-control fw-light input-arena titulo rango-input" disabled id="rango4a8" name="Rango4a8" value="@Model.Rango4a8" @(esSoloVista ? "disabled" : "")>
+                            <input type="text" class="form-control fw-light input-arena titulo rango-input formato-miles" disabled id="rango4a8" name="Rango4a8" value="@Model.Rango4a8" @(esSoloVista ? "disabled" : "")>
                         </div>
                         <div class="col-3">
                             <label for="rango9a12" class="form-label fw-semibold titulo">9 - 12 AÑOS</label>
-                            <input type="number" class="form-control fw-light input-arena titulo rango-input" disabled id="rango9a12" name="Rango9a12" value="@Model.Rango9a12" @(esSoloVista ? "disabled" : "")>
+                            <input type="text" class="form-control fw-light input-arena titulo rango-input formato-miles" disabled id="rango9a12" name="Rango9a12" value="@Model.Rango9a12" @(esSoloVista ? "disabled" : "")>
                         </div>
                         <div class="col-3">
                             <label for="rango13a17" class="form-label fw-semibold titulo">13 - 17 AÑOS</label>
-                            <input type="number" class="form-control fw-light input-arena titulo rango-input" disabled id="rango13a17" name="Rango13a17" value="@Model.Rango13a17" @(esSoloVista ? "disabled" : "")>
+                            <input type="text" class="form-control fw-light input-arena titulo rango-input formato-miles" disabled id="rango13a17" name="Rango13a17" value="@Model.Rango13a17" @(esSoloVista ? "disabled" : "")>
                         </div>
                     </div>
                 </div>
@@ -176,19 +176,19 @@ else
                     <div class="row g-3 mt-1 mx-2 pb-3 border-bottom">
                         <div class="col-3">
                             <label for="rango18a29" class="form-label fw-semibold titulo">18 - 29 AÑOS</label>
-                            <input type="number" class="form-control fw-light input-arena titulo rango-input" disabled id="rango18a29" name="Rango18a29" value="@Model.Rango18a29" @(esSoloVista ? "disabled" : "")>
+                            <input type="text" class="form-control fw-light input-arena titulo rango-input formato-miles" disabled id="rango18a29" name="Rango18a29" value="@Model.Rango18a29" @(esSoloVista ? "disabled" : "")>
                         </div>
                         <div class="col-3">
                             <label for="rango30a59" class="form-label fw-semibold titulo">30 - 59 AÑOS</label>
-                            <input type="number" class="form-control fw-light input-arena titulo rango-input" disabled id="rango30a59" name="Rango30a59" value="@Model.Rango30a59" @(esSoloVista ? "disabled" : "")>
+                            <input type="text" class="form-control fw-light input-arena titulo rango-input formato-miles" disabled id="rango30a59" name="Rango30a59" value="@Model.Rango30a59" @(esSoloVista ? "disabled" : "")>
                         </div>
                         <div class="col-3">
                             <label for="rango60adelante" class="form-label fw-semibold titulo">DE 60 AÑOS EN ADELANTE</label>
-                            <input type="number" class="form-control fw-light input-arena titulo rango-input" disabled id="rango60adelante" name="Rango60adelante" value="@Model.Rango60adelante" @(esSoloVista ? "disabled" : "")>
+                            <input type="text" class="form-control fw-light input-arena titulo rango-input formato-miles" disabled id="rango60adelante" name="Rango60adelante" value="@Model.Rango60adelante" @(esSoloVista ? "disabled" : "")>
                         </div>
                         <div class="col-3">
                             <label for="rangoNoEspecifica" class="form-label fw-semibold titulo">NO SE ESPECIFICA</label>
-                            <input type="number" class="form-control fw-light input-arena titulo rango-input" disabled id="rangoNoEspecifica" name="RangoNoEspecifica" value="@Model.RangoNoEspecifica" @(esSoloVista ? "disabled" : "")>
+                            <input type="text" class="form-control fw-light input-arena titulo rango-input formato-miles" disabled id="rangoNoEspecifica" name="RangoNoEspecifica" value="@Model.RangoNoEspecifica" @(esSoloVista ? "disabled" : "")>
                         </div>
                     </div>
                 </div>
@@ -197,7 +197,7 @@ else
                     <div class="row g-3 mt-1 mx-2 pb-3 border-bottom text-center">          
                         <div class="col-12">
                             <label for="totalPersonas" class="form-label fw-semibold titulo">TOTAL</label>
-                            <input type="number" class="form-control fw-light input-arena titulo" style="background-color:#c09866;" disabled id="totalPersonas" value="0" @(esSoloVista ? "disabled" : "")>
+                            <input type="text" class="form-control fw-light input-arena titulo formato-miles" style="background-color:#c09866;" disabled id="totalPersonas" value="0" @(esSoloVista ? "disabled" : "")>
                         </div>
                     </div>
                 </div>
@@ -213,7 +213,7 @@ else
                                 </h5>
                             </div>
                             <label for="indigena" class="form-label fw-semibold titulo">Indígena</label>
-                            <input type="number" class="form-control fw-light input-arena titulo" id="indigena" name="Indigena" value="@Model.Indigena" @(esSoloVista ? "disabled" : "")>
+                            <input type="text" class="form-control fw-light input-arena titulo formato-miles" id="indigena" name="Indigena" value="@Model.Indigena" @(esSoloVista ? "disabled" : "")>
                         </div>
 
                         @* evidencia *@
@@ -343,6 +343,79 @@ else
             const urlAccion = '@Url.Action("GuardarActualizacion", "Monitoreo")';
 
             // =======================================================
+            // FORMATO DE MILES AUTOMÁTICO CON CLASE "formato-miles"
+            // =======================================================
+
+            // Función para formatear números con comas
+            function formatearConComas(numero) {
+                return numero.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            }
+
+            // Función para remover formato (comas)
+            function removerFormato(valor) {
+                return valor.replace(/,/g, '');
+            }
+
+            // Aplicar formato a todos los inputs con la clase "formato-miles"
+            $('.formato-miles').each(function() {
+                // Formatear el valor inicial si existe
+                let valorInicial = $(this).val();
+                if (valorInicial && valorInicial !== '0') {
+                    let numeroLimpio = removerFormato(valorInicial);
+                    if (!isNaN(numeroLimpio) && numeroLimpio !== '') {
+                        $(this).val(formatearConComas(numeroLimpio));
+                    }
+                }
+            });
+
+            // Evento al escribir en campos con formato de miles
+            $('.formato-miles').on('input', function() {
+                let valor = $(this).val();
+                let valorLimpio = removerFormato(valor);
+
+                // Solo permitir números
+                if (!/^\d*$/.test(valorLimpio)) {
+                    valorLimpio = valorLimpio.replace(/\D/g, '');
+                }
+
+                // Aplicar formato si hay un número válido
+                if (valorLimpio !== '') {
+                    let cursorPos = this.selectionStart;
+                    let longitudAnterior = valor.length;
+
+                    $(this).val(formatearConComas(valorLimpio));
+
+                    // Ajustar posición del cursor
+                    let longitudNueva = $(this).val().length;
+                    let diferencia = longitudNueva - longitudAnterior;
+                    this.setSelectionRange(cursorPos + diferencia, cursorPos + diferencia);
+                } else {
+                    $(this).val('');
+                }
+
+                // Guardar el valor sin formato en un atributo data
+                $(this).attr('data-valor-real', valorLimpio);
+            });
+
+            // También limpiar formato antes de envíos AJAX
+            function prepararFormularioParaEnvio() {
+                $('.formato-miles').each(function() {
+                    let valorReal = $(this).attr('data-valor-real') || removerFormato($(this).val());
+                    $(this).val(valorReal);
+                });
+            }
+
+            // Restaurar formato después de envío AJAX
+            function restaurarFormatoVisual() {
+                $('.formato-miles').each(function() {
+                    let valor = $(this).val();
+                    if (valor && valor !== '' && valor !== '0') {
+                        $(this).val(formatearConComas(valor));
+                    }
+                });
+            }
+
+            // =======================================================
             // FUNCIÓN CENTRAL: ENVÍO DEL FORMULARIO VÍA AJAX
             // =======================================================
             function enviarFormulario(esBorrador) {
@@ -352,6 +425,8 @@ else
                     formElement.reportValidity(); // Muestra los mensajes de error de HTML5
                     return; // Detiene el envío
                 }
+
+                prepararFormularioParaEnvio();
 
                 const formData = new FormData(formElement);
                 // 1. Añade el indicador de si es borrador (true) o envío final (false)
@@ -382,6 +457,7 @@ else
                     },
                     success: function(response) {
                         Swal.close();
+                        restaurarFormatoVisual();
                         if (response.success) {
                             Swal.fire("Éxito", response.message, "success")
                                 .then(() => {
@@ -393,6 +469,7 @@ else
                     },
                     error: function(xhr, status, error) {
                         Swal.close();
+                        restaurarFormatoVisual();
                         console.error("Error AJAX:", status, error, xhr.responseText);
                         Swal.fire("Error de Conexión", "No se pudo comunicar con el servidor o el servidor devolvió un error.", "error");
                     }
@@ -421,8 +498,9 @@ else
 
             // --- Lógica del campo "Realizado" ---
             $('#realizadoInput').on('input', function() {
-                let meta = parseFloat($('#metaProgramada').val()) || 0;
-                let realizado = parseFloat($(this).val()) || 0;
+                let valorReal = removerFormato($(this).val());
+                let meta = parseFloat(removerFormato($('#metaProgramada').val())) || 0;
+                let realizado = parseFloat(valorReal) || 0;
                 let porcentaje = 0;
 
                 // Cálculo del Porcentaje
@@ -447,8 +525,8 @@ else
                 }                
             }).on('blur', function() {
                 // --- Lógica de Justificación (al salir del campo) ---
-                let meta = parseFloat($('#metaProgramada').val()) || 0;
-                let realizado = parseFloat($(this).val()) || 0;
+                let meta = parseFloat(removerFormato($('#metaProgramada').val())) || 0;
+                let realizado = parseFloat(removerFormato($(this).val())) || 0;
                 let porcentaje = 0;
 
                 if (meta > 0 && realizado > 0) {
@@ -494,10 +572,10 @@ else
 
             // --- Lógica de suma y validación de Personas (Mujeres/Hombres) ---
             $('#mujeresAtendidas, #hombresAtendidos').on('input', function() {
-                let mujeres = parseInt($('#mujeresAtendidas').val()) || 0;
-                let hombres = parseInt($('#hombresAtendidos').val()) || 0;
+                let mujeres = parseInt(removerFormato($('#mujeresAtendidas').val())) || 0;
+                let hombres = parseInt(removerFormato($('#hombresAtendidos').val())) || 0;
                 let total = mujeres + hombres;
-                let realizado = parseInt($('#realizadoInput').val()) || 0;
+                let realizado = parseInt(removerFormato($('#realizadoInput').val())) || 0;
 
                 $('#personasAtendidas').val(total);
 
@@ -510,8 +588,8 @@ else
                     });
                     $(this).val('0');
                     // Recalcular
-                    mujeres = parseInt($('#mujeresAtendidas').val()) || 0;
-                    hombres = parseInt($('#hombresAtendidos').val()) || 0;
+                    mujeres = parseInt(removerFormato($('#mujeresAtendidas').val())) || 0;
+                    hombres = parseInt(removerFormato($('#hombresAtendidos').val())) || 0;
                     $('#personasAtendidas').val(mujeres + hombres);
                 }
             });
@@ -520,10 +598,10 @@ else
             $('.rango-input').on('input', function() {
                 let total = 0;
                 $('.rango-input').each(function() {
-                    total += parseInt($(this).val()) || 0;
+                    total += parseInt(removerFormato($(this).val())) || 0;
                 });
 
-                let realizado = parseInt($('#realizadoInput').val()) || 0;
+                let realizado = parseInt(removerFormato($('#realizadoInput').val())) || 0;
                 $('#totalPersonas').val(total);
 
                 if (total > realizado) {
@@ -537,7 +615,7 @@ else
                     // Recalcular
                     total = 0;
                     $('.rango-input').each(function() {
-                        total += parseInt($(this).val()) || 0;
+                        total += parseInt(removerFormato($(this).val())) || 0;
                     });
                     $('#totalPersonas').val(total);
                 }

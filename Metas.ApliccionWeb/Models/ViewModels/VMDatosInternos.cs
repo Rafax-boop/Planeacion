@@ -37,6 +37,7 @@
         public string? FechaNoviembre { get; set; }
         public string? FechaDiciembre { get; set; }
         public int? Total { get; set; }
+        public int? TotalPersonas { get; set; }
         public string? UnidadMedida { get; set; }
         public string Mes { get; set; }
         public int MesNum { get; set; }
