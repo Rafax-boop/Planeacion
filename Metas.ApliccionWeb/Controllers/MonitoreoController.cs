@@ -337,9 +337,15 @@ namespace Metas.AplicacionWeb.Controllers
 
         public async Task<IActionResult> TableroControl(int anoFiscal, int departamento)
         {
+            ViewBag.AnoFiscal = anoFiscal;
+            ViewBag.Departamento = departamento;
+            return View();
+        }
+
+        public async Task<IActionResult> ObtenerDatosTableroControl(int anoFiscal, int departamento)
+        {
             try
             {
-                // Obtener los mismos datos que en la vista Monitoreo
                 var datos = await _programacionService.ObtenerDatosProgramacion(anoFiscal, departamento);
 
                 var datosParaJSON = datos.Select(x => new
@@ -350,7 +356,6 @@ namespace Metas.AplicacionWeb.Controllers
                     x.DescripcionActividad,
                     x.UnidadMedida,
                     x.ProgramaSocial,
-                    // Asumo que tu entidad x tiene estas propiedades para Programado y Realizado:
                     Programado = new
                     {
                         Ene = x.TotalEnero,
@@ -365,7 +370,7 @@ namespace Metas.AplicacionWeb.Controllers
                         Oct = x.TotalOctubre,
                         Nov = x.TotalNoviembre,
                         Dic = x.TotalDiciembre,
-                        Total = x.TotalProgramado
+                        Total = x.TotalProgramado ?? 0
                     },
                     Realizado = new
                     {
@@ -381,20 +386,11 @@ namespace Metas.AplicacionWeb.Controllers
                         Oct = x.TotalOctubreRealizado,
                         Nov = x.TotalNoviembreRealizado,
                         Dic = x.TotalDiciembreRealizado,
-                        Total = x.TotalRealizado
+                        Total = x.TotalRealizado ?? 0
                     }
                 }).ToList();
 
-                // Serializar la lista a una cadena JSON
-                string datosJson = System.Text.Json.JsonSerializer.Serialize(datosParaJSON);
-
-                // Obtener datos de llenado interno
                 var primerRegistro = datos.FirstOrDefault();
-
-                // Agregar logs para depuración
-                System.Diagnostics.Debug.WriteLine($"NombreRealizo: {primerRegistro?.NombreRealizo}");
-                System.Diagnostics.Debug.WriteLine($"NombreValido: {primerRegistro?.NombreValido}");
-
                 var llenadoInterno = new
                 {
                     NombreReviso = primerRegistro?.NombreRealizo ?? "Sin asignar",
@@ -404,25 +400,20 @@ namespace Metas.AplicacionWeb.Controllers
                     Ano = primerRegistro?.Ano ?? DateTime.Now.Year
                 };
 
-                string llenadoInternoJson = System.Text.Json.JsonSerializer.Serialize(llenadoInterno);
-                ViewBag.LlenadoInternoJson = llenadoInternoJson;
-
-                ViewBag.AnoFiscal = anoFiscal;
-                ViewBag.Departamento = departamento;
-                ViewBag.NumeroRegistros = datosParaJSON.Count;
-                ViewBag.DatosJson = datosJson;
-
-                return View();
+                return Json(new
+                {
+                    success = true,
+                    datos = datosParaJSON,
+                    llenadoInterno = llenadoInterno
+                });
             }
             catch (Exception ex)
             {
-                ViewBag.NumeroRegistros = 0;
-                ViewBag.LlenadoInternoJson = System.Text.Json.JsonSerializer.Serialize(new
+                return Json(new
                 {
-                    NombreReviso = "Sin asignar",
-                    NombreValido = "Sin asignar"
+                    success = false,
+                    mensaje = ex.Message
                 });
-                return View();
             }
         }
 
@@ -672,7 +663,8 @@ namespace Metas.AplicacionWeb.Controllers
                 {
                     Value = d.IdDepartamento.ToString(),
                     Text = d.Departamento1
-                }).ToList()
+                }).OrderBy(item => item.Text)
+                .ToList()
             };
 
             // Pasar los valores por ViewBag para preseleccionar
@@ -682,7 +674,7 @@ namespace Metas.AplicacionWeb.Controllers
             return View(modelo);
         }
 
-        public async Task<IActionResult> ObtenerDatosTableroCompletoOptimizado(int anoFiscal, int departamento)
+        public async Task<IActionResult> ObtenerDatosTableroCompletoOptimizado(int anoFiscal, int? departamento)
         {
             try
             {

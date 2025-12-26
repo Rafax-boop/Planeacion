@@ -242,10 +242,22 @@ namespace Metas.BLL.Implementacion
             }
         }
 
-        public async Task<List<LlenadoInterno>> ObtenerDatosProgramacion(int anoFiscal, int departamentoId)
+        public async Task<List<LlenadoInterno>> ObtenerDatosProgramacion(int anoFiscal, int? departamentoId)
         {
             try
             {
+                if (!departamentoId.HasValue || departamentoId.Value == 0)
+                {
+                    var queryTodos = await _repositorioLlenadoInterno.Consultar(x => x.Ano == anoFiscal);
+
+                    var resultadoTodos = await queryTodos
+                        .Include(x => x.Programacions)
+                            .ThenInclude(p => p.IdEstatusNavigation)
+                        .ToListAsync();
+
+                    return resultadoTodos;
+                }
+
                 // Primero obtener el nombre del departamento
                 var departamento = await _repositoryDepartamento.Obtener(x => x.IdDepartamento == departamentoId);
 

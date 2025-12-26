@@ -11,7 +11,7 @@
         <div class="row align-items-center">
             <div class="col-md-8">
                 <h2 class="fw-bold titulo mb-1">TABLERO DE CONTROL</h2>
-                <p class="mb-0 text-muted">Ejercicio Fiscal: @anoFiscal - Total de Actividades: @numeroRegistros</p>
+                <p class="mb-0 text-muted" id="infoEncabezado">Ejercicio Fiscal: @anoFiscal - Cargando...</p>
             </div>
             <div class="col-md-4 text-end">
                 <a asp-controller="Monitoreo" asp-action="Monitoreo"
@@ -22,65 +22,87 @@
         </div>
     </div>
 
-    @if (numeroRegistros == 0)
-    {
-        <div class="alert alert-info text-center">
-            <h5>No hay datos disponibles para mostrar</h5>
-            <p>No se encontraron registros para los criterios seleccionados.</p>
-        </div>
-    }
-    else
-    {
-        <div id="contenedor-tableros">
-            <!-- Los tableros se generarán aquí automáticamente -->
-        </div>
-    }
+    
+    <div id="contenedor-tableros">
+        <!-- Los tableros se generarán aquí automáticamente -->
+    </div>
 </div>
 
 @section Scripts {
     <script>
-        // 1. Cargar el JSON serializado de C# y parsearlo a un objeto JS
-        const datosTableroJSON = '@Html.Raw(ViewBag.DatosJson ?? "[]")';
         let datosTablero = [];
-
-        try {
-            datosTablero = JSON.parse(datosTableroJSON);
-        } catch (e) {
-            console.error("Error al parsear datos JSON:", e);
-        }
-
-        // 2. Cargar datos de llenado interno
-        const llenadoInternoJSON = '@Html.Raw(ViewBag.LlenadoInternoJson ?? "{}")';
         let llenadoInterno = {};
+        const anoFiscal = @ViewBag.AnoFiscal;
+        const departamento = @ViewBag.Departamento;
 
-        try {
-            llenadoInterno = JSON.parse(llenadoInternoJSON);
-            console.log("✅ Datos de llenado interno cargados:", llenadoInterno);
-        } catch (e) {
-            console.error("❌ Error al parsear llenadoInterno:", e);
-            llenadoInterno = {
-                NombreReviso: "Sin asignar",
-                NombreValido: "Sin asignar"
-            };
-        }
-
-        $(document).ready(function() {
-            const numeroRegistros = datosTablero.length;
+        $(document).ready(async function() {
             const contenedor = $('#contenedor-tableros');
 
-            if (numeroRegistros > 0) {
-                // 2. Iterar sobre los datos reales (forEach)
-                datosTablero.forEach((item, index) => {
-                    // El número de tablero es el índice + 1
-                    const numeroTablero = index + 1;
+            // Mostrar indicador de carga
+            contenedor.html(`
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+                        <span class="visually-hidden">Cargando...</span>
+                    </div>
+                    <p class="mt-3 text-muted fw-semibold">Cargando tableros de control...</p>
+                </div>
+            `);
 
-                    // Pasar el objeto de datos (item) a la función crearTablero
-                    const tableroHTML = crearTablero(numeroTablero, item);
-                    contenedor.append(tableroHTML);
-                });
+            try {
+                // Cargar datos mediante AJAX
+                const response = await fetch(`/Monitoreo/ObtenerDatosTableroControl?anoFiscal=${anoFiscal}&departamento=${departamento}`);
 
-                // Aplicar colores después de generar todos los tableros
-                setTimeout(aplicarColoresAutomaticos, 100);
+                if (!response.ok) {
+                    throw new Error('Error al cargar los datos del servidor');
+                }
+
+                const result = await response.json();
+
+                if (!result.success) {
+                    throw new Error(result.mensaje || 'Error desconocido al procesar los datos');
+                }
+
+                datosTablero = result.datos;
+                llenadoInterno = result.llenadoInterno;
+
+                console.log("✅ Datos cargados:", datosTablero.length, "registros");
+                console.log("✅ Llenado interno:", llenadoInterno);
+
+                // Actualizar el contador en el encabezado
+                $('#infoEncabezado').html(`Ejercicio Fiscal: ${anoFiscal} - Total de Actividades: ${datosTablero.length}`);
+
+                contenedor.empty();
+
+                if (datosTablero.length > 0) {
+                    // Generar tableros
+                    datosTablero.forEach((item, index) => {
+                        const numeroTablero = index + 1;
+                        const tableroHTML = crearTablero(numeroTablero, item);
+                        contenedor.append(tableroHTML);
+                    });
+
+                    // Aplicar colores después de generar todos los tableros
+                    setTimeout(aplicarColoresAutomaticos, 100);
+                } else {
+                    contenedor.html(`
+                        <div class="alert alert-info text-center">
+                            <h5><i class="fas fa-info-circle"></i> No hay datos disponibles</h5>
+                            <p>No se encontraron registros para los criterios seleccionados.</p>
+                        </div>
+                    `);
+                }
+
+            } catch (error) {
+                console.error('❌ Error al cargar datos:', error);
+                contenedor.html(`
+                    <div class="alert alert-danger text-center">
+                        <h5><i class="fas fa-exclamation-triangle"></i> Error al cargar los datos</h5>
+                        <p>${error.message}</p>
+                        <button class="btn btn-primary mt-3" onclick="location.reload()">
+                            <i class="fas fa-redo"></i> Reintentar
+                        </button>
+                    </div>
+                `);
             }
         });
 
@@ -88,31 +110,36 @@
         // 3. Modificar la función crearTablero para aceptar y usar los datos
         function crearTablero(numeroTablero, data) {
 
+            if (!data || !data.programado || !data.realizado) {
+                console.error("❌ Datos inválidos para tablero:", numeroTablero, data);
+                return '<div class="alert alert-warning">Error: Datos incompletos para este registro</div>';
+            }
+
             // Calculamos los porcentajes necesarios en el lado del cliente (JS)
-            const porcentajeAnual = data.Realizado.Total > 0 ?
-                Math.round((data.Realizado.Total / data.Programado.Total) * 100) : 0;
+            const porcentajeAnual = (data.realizado.total > 0 && data.programado.total > 0) ?
+                Math.round((data.realizado.total / data.programado.total) * 100) : 0;
 
             // Los meses en tu data JSON (Ene, Feb, etc.)
-            const mesesAbreviados = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+            const mesesAbreviados = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
 
             // Función para calcular el porcentaje de un mes
             const calcularPorcentajeMes = (mes) => {
-                const prog = data.Programado[mes] || 0;
-                const real = data.Realizado[mes] || 0;
+                const prog = (data.programado && data.programado[mes]) || 0;
+                const real = (data.realizado && data.realizado[mes]) || 0;
                 return prog > 0 ? Math.round((real / prog) * 100) : 0;
             };
 
             // Función para calcular el porcentaje de un trimestre
             const calcularPorcentajeTrimestre = (m1, m2, m3) => {
-                const progTotal = data.Programado[m1] + data.Programado[m2] + data.Programado[m3];
-                const realTotal = data.Realizado[m1] + data.Realizado[m2] + data.Realizado[m3];
+                const progTotal = (data.programado[m1] || 0) + (data.programado[m2] || 0) + (data.programado[m3] || 0);
+                const realTotal = (data.realizado[m1] || 0) + (data.realizado[m2] || 0) + (data.realizado[m3] || 0);
                 return progTotal > 0 ? Math.round((realTotal / progTotal) * 100) : 0;
             };
 
-            const trim1Porcentaje = calcularPorcentajeTrimestre('Ene', 'Feb', 'Mar');
-            const trim2Porcentaje = calcularPorcentajeTrimestre('Abr', 'May', 'Jun');
-            const trim3Porcentaje = calcularPorcentajeTrimestre('Jul', 'Ago', 'Sep');
-            const trim4Porcentaje = calcularPorcentajeTrimestre('Oct', 'Nov', 'Dic');
+            const trim1Porcentaje = calcularPorcentajeTrimestre('ene', 'feb', 'mar');
+            const trim2Porcentaje = calcularPorcentajeTrimestre('abr', 'may', 'jun');
+            const trim3Porcentaje = calcularPorcentajeTrimestre('jul', 'ago', 'sep');
+            const trim4Porcentaje = calcularPorcentajeTrimestre('oct', 'nov', 'dic');
 
 
             return `
@@ -122,13 +149,13 @@
                     <div class="row align-items-center">
                         <div class="col-md-8">
                             <h4 class="fw-bold titulo mb-1">
-                                ${data.Componente} / ${data.Actividad}
+                                ${data.componente} / ${data.actividad}
                             </h4>
-                            <p class="mb-1 text-muted">${data.DescripcionActividad}</p>
-                            <small class="text-muted">${data.ProgramaSocial}</small>
+                            <p class="mb-1 text-muted">${data.descripcionActividad}</p>
+                            <small class="text-muted">${data.programaSocial}</small>
                         </div>
                         <div class="col-md-4 text-end">
-                            <span class="badge bg-info fs-6">ID Proceso ${data.IdProceso}</span>
+                            <span class="badge bg-info fs-6">ID Proceso ${data.idProceso}</span>
                             <button class="boton-amarillo m-2"
                                     onclick="exportarTableroComoImagen(this)"
                                     style="color: red; box-shadow: 0 4px 6px 0 red; border: 1px solid red !important; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; padding: 6px 13px; font-size: 12.8px;">
@@ -144,25 +171,25 @@
                         <div class="col-md-6 border-end pe-3">
                             <div class="mb-2">
                                 <span class="fw-semibold titulo">Componente:</span>
-                                <span>${data.Componente}</span>
+                                <span>${data.componente}</span>
                             </div>
                             <div class="mb-2">
                                 <span class="fw-semibold titulo">Número de Actividad:</span>
-                                <span>${data.Actividad}</span>
+                                <span>${data.actividad}</span>
                             </div>
                             <div class="mb-2">
                                 <span class="fw-semibold titulo">Programa Social:</span>
-                                <span>${data.ProgramaSocial}</span>
+                                <span>${data.programaSocial}</span>
                             </div>
                         </div>
                         <div class="col-md-6 ps-3">
                             <div class="mb-2">
                                 <span class="fw-semibold titulo">Unidad de Medida:</span>
-                                <span>${data.UnidadMedida || 'N/A'}</span>
+                                <span>${data.unidadMedida || 'N/A'}</span>
                             </div>
                             <div class="mb-2">
                                 <span class="fw-semibold titulo">Descripción:</span>
-                                <span>${data.DescripcionActividad}</span>
+                                <span>${data.descripcionActividad}</span>
                             </div>
                         </div>
                     </div>
@@ -185,8 +212,8 @@
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            ${mesesAbreviados.map(mes => `<td>${data.Programado[mes] || 0}</td>`).join('')}
-                                            <td class="fw-bold bg-info bg-opacity-10">${data.Programado.Total}</td>
+                                            ${mesesAbreviados.map(mes => `<td>${data.programado[mes] || 0}</td>`).join('')}
+                                            <td class="fw-bold bg-info bg-opacity-10">${data.programado.total}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -206,8 +233,8 @@
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            ${mesesAbreviados.map(mes => `<td>${data.Realizado[mes] || 0}</td>`).join('')}
-                                            <td class="fw-bold bg-success bg-opacity-10">${data.Realizado.Total}</td>
+                                            ${mesesAbreviados.map(mes => `<td>${data.realizado[mes] || 0}</td>`).join('')}
+                                            <td class="fw-bold bg-success bg-opacity-10">${data.realizado.total}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -291,11 +318,11 @@
                                 <div class="row small text-center">
                                     <div class="col-6">
                                         <div class="fw-semibold">Prog:</div>
-                                        <div class="text-primary">${data.Programado.Total}</div>
+                                        <div class="text-primary">${data.programado.total}</div>
                                     </div>
                                     <div class="col-6">
                                         <div class="fw-semibold">Real:</div>
-                                        <div class="text-success">${data.Realizado.Total}</div>
+                                        <div class="text-success">${data.realizado.total}</div>
                                     </div>
                                 </div>
                             </div>

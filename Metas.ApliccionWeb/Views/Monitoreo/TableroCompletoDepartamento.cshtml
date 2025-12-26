@@ -27,7 +27,7 @@
                 <div class="col-md-5">
                     <label class="form-label fw-semibold small">Departamento</label>
                     <select class="form-select" id="filtroDepartamento" asp-items="Model.ListaDepartamentos">
-                        <option value="">-- Seleccione un departamento --</option>
+                        <option value="0">-- Todos los departamentos --</option>
                     </select>
                 </div>
                 <div class="col-md-3">
@@ -189,7 +189,7 @@
                 <tr>
                     <td colspan="191" class="text-center py-5 text-muted">
                         <i class="fas fa-filter fa-2x mb-3 d-block"></i>
-                        Seleccione un departamento y año fiscal para ver los datos.
+                        Seleccione un año fiscal y presione "Cargar Datos" para ver la información.
                     </td>
                 </tr>
             </tbody>
@@ -272,15 +272,11 @@
             const anoFiscal = document.getElementById('filtroAno').value;
             const tbody = document.getElementById('tbodyTablero');
 
-            if (!departamento) {
-                Swal.fire('Aviso', 'Por favor seleccione un departamento', 'warning');
-                return;
-            }
-
             mostrarLoading();
 
             try {
-                const response = await fetch(`/Monitoreo/ObtenerDatosTableroCompletoOptimizado?anoFiscal=${anoFiscal}&departamento=${departamento}`);
+                const deptoParam = departamento ? `&departamento=${departamento}` : '&departamento=0';
+                const response = await fetch(`/Monitoreo/ObtenerDatosTableroCompletoOptimizado?anoFiscal=${anoFiscal}${deptoParam}`);
 
                 if (!response.ok) throw new Error('Error al cargar datos');
 
@@ -770,7 +766,7 @@
             document.getElementById('btnExportarExcel').addEventListener('click', exportarExcel);
 
             document.getElementById('filtroDepartamento').addEventListener('change', function() {
-                if (this.value) cargarDatosTablero();
+                cargarDatosTablero();
             });
 
             @if (ViewBag.AnoFiscalSeleccionado != null)
