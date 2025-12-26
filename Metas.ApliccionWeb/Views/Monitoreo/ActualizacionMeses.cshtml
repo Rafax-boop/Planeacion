@@ -423,7 +423,7 @@ else
                 // Si es envío final, forzamos la validación del navegador
                 if (!esBorrador && !formElement.checkValidity()) {
                     formElement.reportValidity(); // Muestra los mensajes de error de HTML5
-                    return; // Detiene el envío
+                    return; 
                 }
 
                 prepararFormularioParaEnvio();
@@ -483,7 +483,7 @@ else
             // Botón "Guardar" (Borrador)
             $('#btnGuardarBorrador').click(function(e) {
                 e.preventDefault();
-                enviarFormulario(true); // Es Borrador = TRUE
+                enviarFormulario(true); 
             });
 
             // Botón "Enviar" (Final)
@@ -578,20 +578,6 @@ else
                 let realizado = parseInt(removerFormato($('#realizadoInput').val())) || 0;
 
                 $('#personasAtendidas').val(total);
-
-                if (total > realizado) {
-                    // Mensaje de advertencia y corrección
-                    Swal.fire({
-                        title: "Advertencia",
-                        text: 'La suma de personas (' + total + ') no puede exceder el realizado: ' + realizado,
-                        icon: "warning"
-                    });
-                    $(this).val('0');
-                    // Recalcular
-                    mujeres = parseInt(removerFormato($('#mujeresAtendidas').val())) || 0;
-                    hombres = parseInt(removerFormato($('#hombresAtendidos').val())) || 0;
-                    $('#personasAtendidas').val(mujeres + hombres);
-                }
             });
 
             // --- Lógica de suma y validación de Rangos de edad ---
@@ -618,6 +604,23 @@ else
                         total += parseInt(removerFormato($(this).val())) || 0;
                     });
                     $('#totalPersonas').val(total);
+                }
+            });
+
+            // --- Lógica de suma y validación de Rangos de edad ---
+            $('#indigena').on('input', function() {
+                let indigena = parseInt($(this).val()) || 0;
+                let realizado = parseInt($('#personasAtendidas').val()) || 0;
+
+                if (indigena > realizado) {
+                    $(this).val(realizado);
+                    Swal.fire({
+                        title: "Advertencia",
+                        text: 'Máximo permitido: ' + realizado + ' personas',
+                        icon: "warning",
+                        timer: 2000,
+                        showConfirmButton: true
+                    });
                 }
             });
 
