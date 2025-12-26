@@ -577,7 +577,7 @@ else
                 let total = mujeres + hombres;
                 let realizado = parseInt(removerFormato($('#realizadoInput').val())) || 0;
 
-                $('#personasAtendidas').val(total);
+                $('#personasAtendidas').val(total).trigger('input');
             });
 
             // --- Lógica de suma y validación de Rangos de edad ---
@@ -587,14 +587,14 @@ else
                     total += parseInt(removerFormato($(this).val())) || 0;
                 });
 
-                let realizado = parseInt(removerFormato($('#realizadoInput').val())) || 0;
-                $('#totalPersonas').val(total);
+                let realizado = parseInt(removerFormato($('#personasAtendidas').val())) || 0;
+                $('#totalPersonas').val(total).trigger('input');
 
                 if (total > realizado) {
                     // Mensaje de advertencia y corrección
                     Swal.fire({
                         title: "Advertencia",
-                        text: 'El total de personas por edad (' + total + ') no puede exceder el realizado: ' + realizado,
+                        text: 'El total de personas por edad (' + formatearConComas(total) + ') no puede exceder el realizado: ' + formatearConComas(realizado),
                         icon: "warning"
                     });
                     $(this).val('0');
@@ -609,14 +609,14 @@ else
 
             // --- Lógica de suma y validación de Rangos de edad ---
             $('#indigena').on('input', function() {
-                let indigena = parseInt($(this).val()) || 0;
-                let realizado = parseInt($('#personasAtendidas').val()) || 0;
+                let indigena = parseInt(removerFormato($(this).val())) || 0;
+                let realizado = parseInt(removerFormato($('#personasAtendidas').val())) || 0;
 
                 if (indigena > realizado) {
-                    $(this).val(realizado);
+                    $(this).val(realizado).trigger('input');
                     Swal.fire({
                         title: "Advertencia",
-                        text: 'Máximo permitido: ' + realizado + ' personas',
+                        text: 'Máximo permitido: ' + formatearConComas(realizado) + ' personas',
                         icon: "warning",
                         timer: 2000,
                         showConfirmButton: true
