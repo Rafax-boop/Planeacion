@@ -268,6 +268,7 @@
         </div>
 
         @* Fila para SERVICIOS *@
+        @* Fila para SERVICIOS *@
         <div class="row align-items-center pb-2 mb-2">
             <div class="col-md-3 text-center">
                 <label class="fw-light">SERVICIOS</label>
@@ -283,12 +284,6 @@
             </div>
             <div class="col-md-2">
                 <input type="number" @(!ViewBag.EsAdministrador ? "disabled" : "") id="cuartoServicio" class="input-arena form-control titulo text-center" value="@Model.CuartoServicio" min="0">
-            </div>
-            <div class="col-md-1 align-content-center">
-                <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
-                        data-campo="14" data-bs-toggle="tooltip" title="Agregar comentario">
-                    <i class="fas fa-comment-medical"></i>
-                </button>
             </div>
         </div>
 
@@ -550,14 +545,8 @@
                     <div class="col-md-6">
                         <label class="mb-0">25. AÑO</label>
                     </div>
-                    <div class="col-md-5">
-                        <input id="inputAnoMeta" type="text" class="input-arena form-control titulo text-center fw-semibold" value="@Model.AnoMeta" @(!ViewBag.EsAdministrador ? "disabled" : "")>
-                    </div>
-                    <div class="col-md-1 align-content-center">
-                        <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
-                                data-campo="25" data-bs-toggle="tooltip" title="Agregar comentario">
-                            <i class="fas fa-comment-medical"></i>
-                        </button>
+                    <div class="col-md-6">
+                        <input id="inputAnoMeta" type="text" disabled class="input-arena form-control titulo text-center fw-semibold" value="@Model.AnoMeta">
                     </div>
                 </div>
 
@@ -565,14 +554,8 @@
                     <div class="col-md-6">
                         <label class="mb-0">26. PORCENTAJE DE CUMPLIMIENTO</label>
                     </div>
-                    <div class="col-md-5">
-                        <input id="inputPorcentajeMeta" @(!ViewBag.EsAdministrador ? "disabled" : "") type="number" class="input-arena form-control titulo text-center" value="@Model.PorcentajeMeta" min="0" max="100">
-                    </div>
-                    <div class="col-md-1 align-content-center">
-                        <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
-                                data-campo="26" data-bs-toggle="tooltip" title="Agregar comentario">
-                            <i class="fas fa-comment-medical"></i>
-                        </button>
+                    <div class="col-md-6">
+                        <input id="inputPorcentajeMeta" disabled type="number" class="input-arena form-control titulo text-center" value="@Model.PorcentajeMeta" min="0" max="100">
                     </div>
                 </div>
 
@@ -580,14 +563,8 @@
                     <div class="col-md-6">
                         <label class="mb-0">27. NO. DE BIEN O SERVICIO A ENTREGAR</label>
                     </div>
-                    <div class="col-md-5">
-                        <input id="inputServicioMeta" @(!ViewBag.EsAdministrador ? "disabled" : "") type="number" class="input-arena form-control titulo text-center" value="@Model.ServicioMeta" min="0">
-                    </div>
-                    <div class="col-md-1 align-content-center">
-                        <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
-                                data-campo="27" data-bs-toggle="tooltip" title="Agregar comentario">
-                            <i class="fas fa-comment-medical"></i>
-                        </button>
+                    <div class="col-md-6">
+                        <input id="inputServicioMeta" disabled type="number" class="input-arena form-control titulo text-center" value="@Model.ServicioMeta" min="0">
                     </div>
                 </div>
 
@@ -595,14 +572,8 @@
                     <div class="col-md-6">
                         <label class="mb-0">28. NO. DE PERSONAS POR ATENDER</label>
                     </div>
-                    <div class="col-md-5">
-                        <input id="inputServicioMetas" @(!ViewBag.EsAdministrador ? "disabled" : "") type="number" class="input-arena form-control titulo text-center" value="@Model.PersonasMeta" min="0">
-                    </div>
-                    <div class="col-md-1 align-content-center">
-                        <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
-                                data-campo="28" data-bs-toggle="tooltip" title="Agregar comentario">
-                            <i class="fas fa-comment-medical"></i>
-                        </button>
+                    <div class="col-md-6">
+                        <input id="inputServicioMetas" disabled type="number" class="input-arena form-control titulo text-center" value="@Model.PersonasMeta" min="0">
                     </div>
                 </div>
             </div>
@@ -899,13 +870,21 @@
         </div>
     </div>
 
-    @* Acciones necesarias *@
+@* Acciones necesarias *@
     <div class="border p-3 mb-4 rounded-4 shadow" id="accionesContainer">
         <div class="mb-2 text-center pb-1">
             <h5 class="pt-2 glass-effect rounded-5 mb-2 text-center border-bottom pb-3 fw-semibold titulo">
                 ACCIONES NECESARIAS PARA REALIZAR LA ACTIVIDAD PRINCIPAL
             </h5>
+            <div class="d-flex justify-content-center">
+                <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
+                        data-campo="31" data-bs-toggle="tooltip" title="Agregar comentario">
+                    <i class="fas fa-comment-medical"></i>
+                </button>
+            </div>
         </div>
+
+        <div id="accionesList">
 
         <div id="accionesList">
             @if (Model.Acciones != null && Model.Acciones.Any())
@@ -1065,17 +1044,16 @@
         let comentariosTemp = {};
         let modalComentario = null;
 
-        const descripcionesCampos = {
-            '4': 'PROGRAMA PRESUPUESTARIO', '5': 'NÚMERO DE COMPONENTE', '6': 'NÚMERO DE ACTIVIDAD',
-            '7': 'JUSTIFICACIÓN', '8': 'DOCUMENTACIÓN SOPORTE', '9': 'ORIGEN DE RECURSOS',
-            '10': 'PROGRAMA SOCIAL', '11': 'DESCRIPCIÓN ACTIVIDAD', '12': 'NOMBRE INDICADOR',
-            '13': 'DEFINICIÓN INDICADOR', '14': 'CALENDARIZACIÓN', '15': 'UNIDAD DE MEDIDA',
-            '16': 'MEDIOS VERIFICACIÓN', '17': 'SERIE INFORMACIÓN', '18': 'FUENTES INFORMACIÓN',
-            '19': 'DELEGACIONES REGIONALES', '20': '¿DE QUÉ MANERA?', '21': 'AÑO (LÍNEA BASE)',
-            '22': 'PORCENTAJE CUMPLIMIENTO', '23': 'BIEN/SERVICIO ENTREGADO', '24': 'PERSONAS ATENDIDAS',
-            '25': 'AÑO (META)', '26': 'PORCENTAJE META', '27': 'BIEN/SERVICIO A ENTREGAR',
-            '28': 'PERSONAS POR ATENDER', '29': 'BIEN O SERVICIO', '30': 'PERSONAS'
-        };
+            const descripcionesCampos = {
+                '4': 'PROGRAMA PRESUPUESTARIO', '5': 'NÚMERO DE COMPONENTE', '6': 'NÚMERO DE ACTIVIDAD',
+                '7': 'JUSTIFICACIÓN', '8': 'DOCUMENTACIÓN SOPORTE', '9': 'ORIGEN DE RECURSOS',
+                '10': 'PROGRAMA SOCIAL', '11': 'DESCRIPCIÓN ACTIVIDAD', '12': 'NOMBRE INDICADOR',
+                '13': 'DEFINICIÓN INDICADOR', '15': 'UNIDAD DE MEDIDA',
+                '16': 'MEDIOS VERIFICACIÓN', '17': 'SERIE INFORMACIÓN', '18': 'FUENTES INFORMACIÓN',
+                '19': 'DELEGACIONES REGIONALES', '20': '¿DE QUÉ MANERA?', '21': 'AÑO (LÍNEA BASE)',
+                '22': 'PORCENTAJE CUMPLIMIENTO', '23': 'BIEN/SERVICIO ENTREGADO', '24': 'PERSONAS ATENDIDAS',
+                '29': 'BIEN O SERVICIO', '30': 'PERSONAS', '31': 'ACCIONES NECESARIAS'
+            };
 
         // ========================================
         // FUNCIONES DE MUNICIPIOS
@@ -1314,22 +1292,22 @@
         // ========================================
         // MOSTRAR COMENTARIO SOLO LECTURA (USUARIOS)
         // ========================================
-        function mostrarComentarioSoloLectura(campo) {
-            const comentario = comentariosTemp[campo];
+            function mostrarComentarioSoloLectura(campo) {
+                const comentario = comentariosTemp[campo];
 
-            if (!comentario || !comentario.texto || comentario.texto.trim() === '') {
+                if (!comentario || !comentario.texto || comentario.texto.trim() === '') {
+                    Swal.fire({
+                        title: 'Sin comentarios',
+                        text: `${descripcionesCampos[campo] || 'Campo'} no tiene comentarios.`,
+                        icon: 'info',
+                        confirmButtonText: 'Aceptar'
+                    });
+                    return;
+                }
+
                 Swal.fire({
-                    title: 'Sin comentarios',
-                    text: `El campo ${campo}: ${descripcionesCampos[campo] || 'Desconocido'} no tiene comentarios.`,
-                    icon: 'info',
-                    confirmButtonText: 'Aceptar'
-                });
-                return;
-            }
-
-            Swal.fire({
-                title: `Comentario - Campo ${campo}`,
-                html: `
+                    title: `Comentario - ${descripcionesCampos[campo] || 'Campo'}`,
+                    html: `
                     <div class="text-start">
                         <p class="mb-2"><strong>${descripcionesCampos[campo] || 'Campo'}</strong></p>
                         <div class="alert alert-info">
@@ -1416,7 +1394,8 @@
                 27: ['inputServicioMeta'],
                 28: ['inputServicioMetas'],
                 29: [],
-                30: ['selectPersonas', 'selectAcumulable']
+                30: ['selectPersonas', 'selectAcumulable'],
+                31: []
             };
 
             const ids = mapaCampos[campo] || [];
@@ -1484,15 +1463,15 @@
         // ========================================
         // BORRAR COMENTARIO AL EDITAR
         // ========================================
-        function borrarComentarioAlEditar(campo) {
-            if (comentariosTemp[campo]) {
-                delete comentariosTemp[campo];
-                actualizarBotonComentario(campo, false);
+            function borrarComentarioAlEditar(campo) {
+                if (comentariosTemp[campo]) {
+                    delete comentariosTemp[campo];
+                    actualizarBotonComentario(campo, false);
 
-                Swal.fire({
-                    title: 'Comentario eliminado',
-                    html: `El comentario del campo <strong>${campo}: ${descripcionesCampos[campo]}</strong> se eliminó porque editaste este campo.<br><br>
-                           <small class="text-muted">Recuerda guardar los cambios cuando termines.</small>`,
+                    Swal.fire({
+                        title: 'Comentario eliminado',
+                        html: `El comentario de <strong>${descripcionesCampos[campo]}</strong> se eliminó porque editaste este campo.<br><br>
+                               <small class="text-muted">Recuerda guardar los cambios cuando termines.</small>`,
                     icon: 'info',
                     timer: 4000,
                     showConfirmButton: true,
@@ -1504,14 +1483,14 @@
         // ========================================
         // ABRIR MODAL COMENTARIO (ADMIN)
         // ========================================
-        function abrirModalComentario(campo) {
-            const campoActual = document.getElementById('campoActual');
-            const infoCampo = document.getElementById('infoCampo');
-            const textoComentario = document.getElementById('textoComentario');
-            const btnEliminar = document.getElementById('btnEliminarComentario');
+            function abrirModalComentario(campo) {
+                const campoActual = document.getElementById('campoActual');
+                const infoCampo = document.getElementById('infoCampo');
+                const textoComentario = document.getElementById('textoComentario');
+                const btnEliminar = document.getElementById('btnEliminarComentario');
 
-            campoActual.value = campo;
-            infoCampo.textContent = `Campo ${campo}: ${descripcionesCampos[campo] || 'Desconocido'}`;
+                campoActual.value = campo;
+                infoCampo.textContent = descripcionesCampos[campo] || 'Desconocido';
 
             const comentarioExistente = comentariosTemp[campo];
             textoComentario.value = comentarioExistente?.texto || '';
