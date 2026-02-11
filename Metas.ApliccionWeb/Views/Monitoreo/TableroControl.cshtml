@@ -494,13 +494,10 @@
                 pdf.setTextColor(0, 0, 0);
 
                 // Obtener nombres y cargos
-                const nombreReviso = (llenadoInterno && llenadoInterno.NombreReviso) ? llenadoInterno.NombreReviso : 'Sin asignar';
-                const nombreValido = (llenadoInterno && llenadoInterno.NombreValido) ? llenadoInterno.NombreValido : 'Sin asignar';
-                const cargoReviso = (llenadoInterno && llenadoInterno.CargoReviso) ? llenadoInterno.CargoReviso : 'Sin asignar';
-                const cargoValido = (llenadoInterno && llenadoInterno.CargoValido) ? llenadoInterno.CargoValido : 'Sin asignar';
-
-                console.log("✍️ Datos Revisó:", nombreReviso, cargoReviso);
-                console.log("✍️ Datos Autorizó:", nombreValido, cargoValido);
+                const nombreReviso = (llenadoInterno && llenadoInterno.nombreReviso) ? llenadoInterno.nombreReviso : 'Sin asignar';
+                const nombreValido = (llenadoInterno && llenadoInterno.nombreValido) ? llenadoInterno.nombreValido : 'Sin asignar';
+                const cargoReviso = (llenadoInterno && llenadoInterno.cargoReviso) ? llenadoInterno.cargoReviso : 'Sin asignar';
+                const cargoValido = (llenadoInterno && llenadoInterno.cargoValido) ? llenadoInterno.cargoValido : 'Sin asignar';
 
                 // ========== PRIMERA FIRMA - REVISÓ ==========
                 const xCentroReviso = margin + (colWidth / 2);
@@ -546,6 +543,7 @@
                 // Cargo debajo del nombre
                 pdf.setFont(undefined, 'normal');
                 pdf.setFontSize(8);
+
                 pdf.text(cargoValido, xCentroAutorizo, firmaY + 23, { align: 'center' });
 
                 // Pie de página

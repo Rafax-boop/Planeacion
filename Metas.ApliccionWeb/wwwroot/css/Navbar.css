@@ -273,7 +273,6 @@
     text-overflow: ellipsis;
 }
 
-/* Scroll horizontal para tablas grandes */
 .tabla-scroll {
     overflow-x: auto;
     max-width: 100%;
