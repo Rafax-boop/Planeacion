@@ -334,8 +334,6 @@
         }
 
         async function exportarTableroComoImagen(boton) {
-            console.log("🔍 Iniciando exportación...");
-            console.log("📋 llenadoInterno disponible:", llenadoInterno);
 
             const tablero = $(boton).closest('.tablero-individual');
 
@@ -493,11 +491,14 @@
 
                 pdf.setTextColor(0, 0, 0);
 
-                // Obtener nombres y cargos
-                const nombreReviso = (llenadoInterno && llenadoInterno.nombreReviso) ? llenadoInterno.nombreReviso : 'Sin asignar';
-                const nombreValido = (llenadoInterno && llenadoInterno.nombreValido) ? llenadoInterno.nombreValido : 'Sin asignar';
-                const cargoReviso = (llenadoInterno && llenadoInterno.cargoReviso) ? llenadoInterno.cargoReviso : 'Sin asignar';
-                const cargoValido = (llenadoInterno && llenadoInterno.cargoValido) ? llenadoInterno.cargoValido : 'Sin asignar';
+                // Obtener el registro específico de este tablero
+                const idProcesoNum = parseInt(idProceso.replace('ID Proceso ', ''));
+                const dataActual = datosTablero.find(d => d.idProceso === idProcesoNum);
+
+                const nombreReviso = dataActual?.nombreReviso || 'Sin asignar';
+                const nombreValido = dataActual?.nombreValido || 'Sin asignar';
+                const cargoReviso = dataActual?.cargoReviso || 'Sin asignar';
+                const cargoValido = dataActual?.cargoValido || 'Sin asignar';
 
                 // ========== PRIMERA FIRMA - REVISÓ ==========
                 const xCentroReviso = margin + (colWidth / 2);

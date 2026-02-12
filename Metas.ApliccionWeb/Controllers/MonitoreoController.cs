@@ -356,6 +356,10 @@ namespace Metas.AplicacionWeb.Controllers
                     x.DescripcionActividad,
                     x.UnidadMedida,
                     x.ProgramaSocial,
+                    NombreReviso = x.NombreRealizo ?? "Sin asignar",
+                    NombreValido = x.NombreValido ?? "Sin asignar",
+                    CargoReviso = x.CargoRealizo ?? "Sin asignar",
+                    CargoValido = x.CargoValido ?? "Sin asignar",
                     Programado = new
                     {
                         Ene = x.TotalEnero,
@@ -393,10 +397,6 @@ namespace Metas.AplicacionWeb.Controllers
                 var primerRegistro = datos.FirstOrDefault();
                 var llenadoInterno = new
                 {
-                    NombreReviso = primerRegistro?.NombreRealizo ?? "Sin asignar",
-                    NombreValido = primerRegistro?.NombreValido ?? "Sin asignar",
-                    CargoReviso = primerRegistro?.CargoRealizo ?? "Sin asignar",
-                    CargoValido = primerRegistro?.CargoValido ?? "Sin asignar",
                     Ano = primerRegistro?.Ano ?? DateTime.Now.Year
                 };
 
