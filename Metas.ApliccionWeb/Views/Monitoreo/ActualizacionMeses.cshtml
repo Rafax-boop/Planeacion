@@ -545,7 +545,7 @@ else
                     $('#inputEvidencia').prop('required', true);
 
                     // Si el porcentaje es <= 94.99 (incumplimiento) O >= 111 (sobre-cumplimiento extremo)
-                    if (porcentaje <= 94.99 || porcentaje >= 111) {
+                    if (porcentaje <= 69.99 || porcentaje >= 110) {
                         // Requerir Justificación
                         $('#justificacionDiv').show();
                         $('#inputJustificacion').prop('required', true);
@@ -562,7 +562,7 @@ else
                 }
 
                 // Lógica de color de porcentaje
-                if (porcentaje < 95 || porcentaje > 110) {
+                if (porcentaje < 70 || porcentaje >= 110) {
                     $('#totalPorcentaje').css('color', 'red');
                 } else {
                     $('#totalPorcentaje').css('color', 'green');
@@ -624,15 +624,14 @@ else
                 }
             });
 
-            if (parseInt($('#realizadoInput').val()) > 0) {
-                $('#realizadoInput').trigger('input').trigger('blur');
-            }
-            if (parseInt($('#mujeresAtendidas').val()) > 0 || parseInt($('#hombresAtendidos').val()) > 0) {
+            $('#realizadoInput').trigger('input').trigger('blur');
+
+            if (parseInt(removerFormato($('#mujeresAtendidas').val())) > 0 || parseInt(removerFormato($('#hombresAtendidos').val())) > 0) {
                 $('#mujeresAtendidas').trigger('input');
             }
-            if (parseInt($('.rango-input:first').val()) > 0) {
+            if (parseInt(removerFormato($('.rango-input:first').val())) > 0) {
                 $('.rango-input:first').trigger('input');
             }
-        });
+            });
     </script>
 }
