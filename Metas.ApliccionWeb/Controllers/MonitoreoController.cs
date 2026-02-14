@@ -201,19 +201,19 @@ namespace Metas.AplicacionWeb.Controllers
         [HttpPost]
         public async Task<IActionResult> GuardarActualizacion(GuardarActualizacionDTO modelo)
         {
-            // Variables de ruta inicializadas a null
-            string rutaEvidencia = null;
-            string rutaJustificacion = null;
+            // Variables de ruta - inicializamos con las rutas existentes del modelo
+            string rutaEvidencia = modelo.RutaEvidenciaExistente; // Nueva propiedad que necesitarás agregar
+            string rutaJustificacion = modelo.RutaJustificacionExistente; // Nueva propiedad que necesitarás agregar
 
             // Variables de ruta para construcción
             string idProceso = modelo.IdProceso.ToString();
-            string mes = modelo.Mes.ToString(); // El mes es un INT (1-12)
+            string mes = modelo.Mes.ToString();
 
             // Definición de las carpetas base en wwwroot
             const string BASE_FOLDER_EVIDENCIA = "Evidencia";
             const string BASE_FOLDER_JUSTIFICACION = "Justificacion";
 
-            // 1. Definir rutas físicas completas para las carpetas destino (ej: wwwroot/Evidencia/123/5)
+            // 1. Definir rutas físicas completas para las carpetas destino
             string folderPathEvidencia = Path.Combine(_hostEnvironment.WebRootPath, BASE_FOLDER_EVIDENCIA, idProceso, mes);
             string folderPathJustificacion = Path.Combine(_hostEnvironment.WebRootPath, BASE_FOLDER_JUSTIFICACION, idProceso, mes);
 
@@ -221,11 +221,21 @@ namespace Metas.AplicacionWeb.Controllers
             {
                 // 2. PROCESAMIENTO DE ARCHIVOS Y CREACIÓN DE CARPETAS
 
-                // A. Evidencia
+                // A. Evidencia - SOLO si se subió un archivo nuevo
                 if (modelo.InputEvidencia != null && modelo.InputEvidencia.Length > 0)
                 {
                     // Crear la estructura de carpetas para Evidencia si no existe
                     Directory.CreateDirectory(folderPathEvidencia);
+
+                    // OPCIONAL: Eliminar archivo anterior si existía
+                    if (!string.IsNullOrEmpty(rutaEvidencia))
+                    {
+                        string rutaFisicaAnterior = Path.Combine(_hostEnvironment.WebRootPath, rutaEvidencia.TrimStart('/'));
+                        if (System.IO.File.Exists(rutaFisicaAnterior))
+                        {
+                            System.IO.File.Delete(rutaFisicaAnterior);
+                        }
+                    }
 
                     // Usar el nombre original del archivo
                     string originalFileName = Path.GetFileName(modelo.InputEvidencia.FileName);
@@ -239,17 +249,28 @@ namespace Metas.AplicacionWeb.Controllers
                         await modelo.InputEvidencia.CopyToAsync(fileStream);
                     }
 
-                    // Guardamos la RUTA RELATIVA para la DB (ej: /Evidencia/123/5/nombre.ext)
+                    // Actualizamos la ruta para guardar en BD
                     rutaEvidencia = $"/{BASE_FOLDER_EVIDENCIA}/{idProceso}/{mes}/{originalFileName}";
                 }
+                // Si NO se subió archivo nuevo, rutaEvidencia conserva el valor existente
 
-                // B. Justificación
+                // B. Justificación - SOLO si se subió un archivo nuevo
                 if (modelo.InputJustificacion != null && modelo.InputJustificacion.Length > 0)
                 {
                     // Crear la estructura de carpetas para Justificación si no existe
                     Directory.CreateDirectory(folderPathJustificacion);
 
-                    // Usar el nombre original del archivo (CORREGIDO: estaba usando InputEvidencia)
+                    // OPCIONAL: Eliminar archivo anterior si existía
+                    if (!string.IsNullOrEmpty(rutaJustificacion))
+                    {
+                        string rutaFisicaAnterior = Path.Combine(_hostEnvironment.WebRootPath, rutaJustificacion.TrimStart('/'));
+                        if (System.IO.File.Exists(rutaFisicaAnterior))
+                        {
+                            System.IO.File.Delete(rutaFisicaAnterior);
+                        }
+                    }
+
+                    // Usar el nombre original del archivo
                     string originalFileName = Path.GetFileName(modelo.InputJustificacion.FileName);
 
                     // Ruta física donde se guardará el archivo
@@ -261,19 +282,19 @@ namespace Metas.AplicacionWeb.Controllers
                         await modelo.InputJustificacion.CopyToAsync(fileStream);
                     }
 
-                    // Guardamos la RUTA RELATIVA para la DB (ej: /Justificacion/123/5/nombre.ext)
+                    // Actualizamos la ruta para guardar en BD
                     rutaJustificacion = $"/{BASE_FOLDER_JUSTIFICACION}/{idProceso}/{mes}/{originalFileName}";
                 }
+                // Si NO se subió archivo nuevo, rutaJustificacion conserva el valor existente
 
-                // 3. LLAMADA AL SERVICIO Y PERSISTENCIA DE DATOS (Tu lógica de negocio)
+                // 3. LLAMADA AL SERVICIO Y PERSISTENCIA DE DATOS
                 bool resultado = await _monitoreoService.GuardarActualizacion(
                     modelo,
                     rutaEvidencia,
                     rutaJustificacion
                 );
 
-                // 4. MANEJO DE RESULTADO Y RESPUESTA JSON (para la función AJAX en JS)
-
+                // 4. MANEJO DE RESULTADO Y RESPUESTA JSON
                 if (resultado)
                 {
                     string mensaje = modelo.EsBorrador ? "El borrador se guardó exitosamente." : "La actualización se envió con éxito.";

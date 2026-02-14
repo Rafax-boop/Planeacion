@@ -22,8 +22,9 @@ else
     <form method="post" action="@Url.Action("GuardarActualizacion", "Monitoreo")" enctype="multipart/form-data">
 
         <input type="hidden" name="IdProceso" value="@Model.IdProceso" /> 
-        <input type="hidden" name="Mes" value="@Model.MesNum" /> 
-
+        <input type="hidden" name="Mes" value="@Model.MesNum" />
+        <input type="hidden" name="RutaEvidenciaExistente" value="@Model.RutaEvidencia" />
+        <input type="hidden" name="RutaJustificacionExistente" value="@Model.RutaJustificacion" />
         <div class="glass-effect rounded-5 mt-4">
             @* Encabezado *@
             <div class="">
@@ -222,14 +223,39 @@ else
                                 <h5 class="fw-semibold text-center m-2 titulo">
                                     EVIDENCIA
                                 </h5>
-                            </div>                        
+                            </div>
                             @if (!esSoloVista)
                             {
-                                <label for="inputEvidencia" class="form-label fw-semibold titulo">Evidencia Realizada</label>
+                                @* Mostrar archivo existente si hay uno *@
+                                @if (!string.IsNullOrEmpty(Model.RutaEvidencia))
+                                {
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold titulo">Evidencia actual:</label>
+                                        <br />
+                                        <a target="_blank" href="@Model.RutaEvidencia" class="btn btn-success btn-sm">
+                                            <i class="fas fa-download me-2"></i>
+                                            Ver evidencia actual
+                                        </a>
+                                        <p class="text-muted small mt-2">
+                                            <i class="fas fa-info-circle me-1"></i>
+                                            Si subes un nuevo archivo, reemplazará el actual
+                                        </p>
+                                    </div>
+                                }
+
+                                @* Input para subir/reemplazar archivo *@
+                                <label for="inputEvidencia" class="form-label fw-semibold titulo">
+                                    @(!string.IsNullOrEmpty(Model.RutaEvidencia) ? "Reemplazar evidencia (opcional):" : "Subir evidencia:")
+                                </label>
                                 <label for="inputEvidencia" class="form-label fw-semibold titulo">Favor de llenar el Formato de Evidencia y subirlo.</label>
-                                <a target="_blank" href="@Url.Content("~/FormatoEvidencia/EVIDENCIA.xlsx")" download="Evidencia.xlsx" class="btn btn-success">Descargar formato de evidencia</a>
-                                <input type="file" class="form-control fw-light input-arena titulo" id="inputEvidencia" name="InputEvidencia">
-                            }else
+                                <a target="_blank" href="@Url.Content("~/FormatoEvidencia/EVIDENCIA.xlsx")" download="Evidencia.xlsx" class="btn btn-success mb-2">Descargar formato de evidencia</a>
+                                <input type="file"
+                                       class="form-control fw-light input-arena titulo"
+                                       id="inputEvidencia"
+                                       name="InputEvidencia"
+                                       data-tiene-archivo-existente="@(!string.IsNullOrEmpty(Model.RutaEvidencia))">
+                            }
+                            else
                             {
                                 @if (!string.IsNullOrEmpty(Model.RutaEvidencia))
                                 {
@@ -242,7 +268,6 @@ else
                                 }
                                 else
                                 {
-                                    // Si no hay evidencia subida para este mes/proceso
                                     <p class="text-danger fw-semibold">No se ha cargado ninguna evidencia.</p>
                                 }
                             }
@@ -256,11 +281,37 @@ else
                                 </h5>
                             </div>
                             <div id="justificacionDiv" style="display:none;">
-                                @if(!esSoloVista)
+                                @if (!esSoloVista)
                                 {
+                                    @* Mostrar archivo existente si hay uno *@
+                                    @if (!string.IsNullOrEmpty(Model.RutaJustificacion))
+                                    {
+                                        <div class="mb-3">
+                                            <label class="form-label fw-semibold titulo">Justificación actual:</label>
+                                            <br />
+                                            <a target="_blank" href="@Model.RutaJustificacion" class="btn btn-success btn-sm">
+                                                <i class="fas fa-download me-2"></i>
+                                                Ver justificación actual
+                                            </a>
+                                            <p class="text-muted small mt-2">
+                                                <i class="fas fa-info-circle me-1"></i>
+                                                Si subes un nuevo archivo, reemplazará el actual
+                                            </p>
+                                        </div>
+                                    }
+
+                                    @* Input para subir/reemplazar archivo *@
+                                    <label for="inputJustificacion" class="form-label fw-semibold titulo">
+                                        @(!string.IsNullOrEmpty(Model.RutaJustificacion) ? "Reemplazar justificación (opcional):" : "Subir justificación:")
+                                    </label>
                                     <label for="inputJustificacion" class="form-label fw-semibold titulo">Favor de descargar el Formato de Justificación y subirlo en PDF debidamente requisitado y firmado.</label>
-                                    <a target="_blank" href="@Url.Content("~/FormatoEvidencia/JUSTIFICACION.xlsx")" download="JUSTIFICACION.xlsx" class="btn btn-success">Descargar formato de evidencia</a>
-                                    <input type="file" class="form-control fw-light input-arena titulo" id="inputJustificacion" name="InputJustificacion" accept=".pdf">
+                                    <a target="_blank" href="@Url.Content("~/FormatoEvidencia/JUSTIFICACION.xlsx")" download="JUSTIFICACION.xlsx" class="btn btn-success mb-2">Descargar formato de justificación</a>
+                                    <input type="file"
+                                           class="form-control fw-light input-arena titulo"
+                                           id="inputJustificacion"
+                                           name="InputJustificacion"
+                                           accept=".pdf"
+                                           data-tiene-archivo-existente="@(!string.IsNullOrEmpty(Model.RutaJustificacion))">
                                 }
                                 else
                                 {
@@ -275,7 +326,6 @@ else
                                     }
                                     else
                                     {
-                                        // Si no hay evidencia subida para este mes/proceso
                                         <p class="text-danger fw-semibold">No se ha cargado ninguna justificación.</p>
                                     }
                                 }
@@ -533,26 +583,50 @@ else
                     porcentaje = (realizado / meta) * 100;
                 }
 
+                // Verificar si ya existen archivos cargados
+                const tieneEvidenciaExistente = $('#inputEvidencia').attr('data-tiene-archivo-existente') === 'True';
+                const tieneJustificacionExistente = $('#inputJustificacion').attr('data-tiene-archivo-existente') === 'True';
+
                 // Lógica principal de Justificación y Evidencia
                 if (realizado == 0) {
                     // 1. Realizado es CERO -> Justificación OBLIGATORIA
-                    $('#inputEvidencia').prop('required', false).val('');
+                    if (!tieneEvidenciaExistente) {
+                        $('#inputEvidencia').prop('required', false).val('');
+                    } else {
+                        $('#inputEvidencia').prop('required', false);
+                    }
+
                     $('#justificacionDiv').show();
-                    $('#inputJustificacion').prop('required', true);
+
+                    // Solo requerir si NO hay archivo existente
+                    if (!tieneJustificacionExistente) {
+                        $('#inputJustificacion').prop('required', true);
+                    }
 
                 } else if (realizado > 0) {
                     // 2. Realizado es MAYOR a CERO -> Evidencia OBLIGATORIA
-                    $('#inputEvidencia').prop('required', true);
+                    // Solo requerir evidencia si NO hay archivo existente
+                    if (!tieneEvidenciaExistente) {
+                        $('#inputEvidencia').prop('required', true);
+                    } else {
+                        $('#inputEvidencia').prop('required', false);
+                    }
 
-                    // Si el porcentaje es <= 94.99 (incumplimiento) O >= 111 (sobre-cumplimiento extremo)
+                    // Si el porcentaje es <= 69.99 (incumplimiento) O >= 110 (sobre-cumplimiento extremo)
                     if (porcentaje <= 69.99 || porcentaje >= 110) {
                         // Requerir Justificación
                         $('#justificacionDiv').show();
-                        $('#inputJustificacion').prop('required', true);
+
+                        // Solo requerir si NO hay archivo existente
+                        if (!tieneJustificacionExistente) {
+                            $('#inputJustificacion').prop('required', true);
+                        } else {
+                            $('#inputJustificacion').prop('required', false);
+                        }
                     } else {
                         // No requerir Justificación
                         $('#justificacionDiv').hide();
-                        $('#inputJustificacion').prop('required', false).val(''); // Limpiar si se oculta
+                        $('#inputJustificacion').prop('required', false).val('');
                     }
                 } else {
                     // 3. Campo vacío
@@ -567,7 +641,6 @@ else
                 } else {
                     $('#totalPorcentaje').css('color', 'green');
                 }
-
             });
 
             // --- Lógica de suma y validación de Personas (Mujeres/Hombres) ---

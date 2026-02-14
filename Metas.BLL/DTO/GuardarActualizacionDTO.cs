@@ -36,6 +36,9 @@ namespace Metas.BLL.DTO
         public IFormFile InputEvidencia { get; set; }  // name="InputEvidencia"
         public IFormFile InputJustificacion { get; set; } // name="InputJustificacion"
 
+        public string RutaEvidenciaExistente { get; set; }
+        public string RutaJustificacionExistente { get; set; }
+
         // =====================================
         // SECCIÓN REALIZÓ Y AUTORIZÓ (Firmas)
         // =====================================
