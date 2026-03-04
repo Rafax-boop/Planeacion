@@ -381,6 +381,7 @@ namespace Metas.AplicacionWeb.Controllers
                     NombreValido = x.NombreValido ?? "Sin asignar",
                     CargoReviso = x.CargoRealizo ?? "Sin asignar",
                     CargoValido = x.CargoValido ?? "Sin asignar",
+                    ProPre = x.IdppNavigation.NombrePp ?? "Sin programa",
                     Programado = new
                     {
                         Ene = x.TotalEnero,

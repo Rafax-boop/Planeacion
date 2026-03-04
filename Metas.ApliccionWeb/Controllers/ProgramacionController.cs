@@ -530,7 +530,7 @@ namespace Metas.AplicacionWeb.Controllers
             try
             {
                 var departamentos = await _departamentoService.ObtenerDepartamentos();
-                var todosLosDatos = new List<object>();
+                var todosLosDatos = new List<dynamic>();
 
                 foreach (var depto in departamentos)
                 {
@@ -613,7 +613,11 @@ namespace Metas.AplicacionWeb.Controllers
                     }
                 }
 
-                return Json(new { success = true, datos = todosLosDatos });
+                return Json(new { success = true, datos = todosLosDatos.OrderBy(x => (string)x.pp)
+        .ThenBy(x => (string)x.componente)
+        .ThenBy(x => (int)x.actividad)
+        .ToList()
+                });
             }
             catch (Exception ex)
             {

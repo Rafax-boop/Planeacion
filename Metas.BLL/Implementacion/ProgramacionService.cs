@@ -253,6 +253,10 @@ namespace Metas.BLL.Implementacion
                     var resultadoTodos = await queryTodos
                         .Include(x => x.Programacions)
                             .ThenInclude(p => p.IdEstatusNavigation)
+                         .Include(x => x.IdppNavigation)
+                        .OrderBy(x => x.Pp)
+                            .ThenBy(x => x.Componente)
+                            .ThenBy(x => x.Actividad)
                         .ToListAsync();
 
                     return resultadoTodos;
@@ -274,6 +278,10 @@ namespace Metas.BLL.Implementacion
                 var resultado = await query
                     .Include(x => x.Programacions)
                         .ThenInclude(p => p.IdEstatusNavigation)
+                    .Include(x => x.IdppNavigation)
+                    .OrderBy(x => x.Pp)
+                        .ThenBy(x => x.Componente)
+                        .ThenBy(x => x.Actividad)
                     .ToListAsync();
 
                 return resultado;
