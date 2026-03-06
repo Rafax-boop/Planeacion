@@ -14,6 +14,11 @@
     <link href="~/css/site.css" rel="stylesheet" />
     <link href="~/js/RegistrarProgramacion.js" rel="stylesheet" />
     <link href="~/css/Inicio.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
@@ -70,7 +75,7 @@
                             <div class="fw-semibold text-dark">@User.Identity.Name</div>
                         </li>
                         <li>
-                            <a class="dropdown-item py-2 fw-semibold titulo btn-cerrar" href="@Url.Action("CerrarSesion", "Acceso")">
+                            <a class="dropdown-item btn-cerrar" href="@Url.Action("CerrarSesion", "Acceso")">
                                 <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
                             </a>
                         </li>

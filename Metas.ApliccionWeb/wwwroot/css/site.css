@@ -29,3 +29,301 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+
+/* ========== ESTILOS GENERALES DE LA TABLA ========== */
+.contenedor-tabla {
+    overflow-x: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.tabla-tablero {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+    min-width: 4000px;
+}
+
+    .tabla-tablero th,
+    .tabla-tablero td {
+        border: 1px solid #dee2e6;
+        padding: 6px 8px;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+/* ========== HEADERS DE SECCIONES PRINCIPALES ========== */
+.header-seccion-solicitante {
+    background-color: #6c757d;
+    color: white;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.header-seccion-solicitud {
+    background-color: #c00000;
+    color: white;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.header-seccion-generales {
+    background-color: #0d6efd;
+    color: white;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.header-seccion-metas {
+    background-color: #198754;
+    color: white;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.header-seccion-metaanual {
+    background-color: #6f42c1;
+    color: white;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.header-seccion-estatus {
+    background-color: #fd7e14;
+    color: white;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.header-seccion-ir {
+    background-color: #3c3c3a;
+    color: white;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+/* ========== SUB-HEADERS ========== */
+.header-sub-generales {
+    background-color: #3d8bfd;
+    color: white;
+    font-size: 10px;
+}
+
+.header-sub-metas-base {
+    background-color: #20c997;
+    color: white;
+    font-size: 10px;
+}
+
+.header-sub-metas-meta {
+    background-color: #157347;
+    color: white;
+    font-size: 10px;
+}
+
+.header-sub-metaanual {
+    background-color: #8b5cf6;
+    color: white;
+    font-size: 10px;
+}
+
+.header-sub-metaanual-serv {
+    background-color: #a78bfa;
+    color: white;
+    font-size: 10px;
+}
+
+.header-sub-metaanual-pers {
+    background-color: #c4b5fd;
+    color: #1f2937;
+    font-size: 10px;
+}
+
+/* ========== HEADERS DE COLUMNAS ========== */
+.header-col-solicitante {
+    background-color: #adb5bd;
+    color: #1f2937;
+    font-size: 9px;
+    font-weight: bold;
+}
+
+.header-col-solicitud {
+    background-color: #f8d7da;
+    color: #842029;
+    font-size: 9px;
+    font-weight: bold;
+}
+
+.header-col-generales {
+    background-color: #cfe2ff;
+    color: #084298;
+    font-size: 9px;
+    font-weight: bold;
+}
+
+.header-col-calendario {
+    background-color: #fff3cd;
+    color: #664d03;
+    font-size: 9px;
+    font-weight: bold;
+}
+
+.header-col-calendario-pers {
+    background-color: #d1e7dd;
+    color: #0f5132;
+    font-size: 9px;
+    font-weight: bold;
+}
+
+.header-col-base {
+    background-color: #d1e7dd;
+    color: #0f5132;
+    font-size: 9px;
+    font-weight: bold;
+}
+
+.header-col-meta {
+    background-color: #badbcc;
+    color: #0f5132;
+    font-size: 9px;
+    font-weight: bold;
+}
+
+.header-col-config {
+    background-color: #e2d9f3;
+    color: #432874;
+    font-size: 9px;
+    font-weight: bold;
+}
+
+.header-col-mes-serv {
+    background-color: #f3e8ff;
+    color: #6b21a8;
+    font-size: 9px;
+    font-weight: bold;
+}
+
+.header-col-mes-pers {
+    background-color: #fae8ff;
+    color: #86198f;
+    font-size: 9px;
+    font-weight: bold;
+}
+
+.header-col-estatus {
+    background-color: #ffe5d0;
+    color: #984c0c;
+    font-size: 9px;
+    font-weight: bold;
+}
+
+/* ========== CELDAS DE DATOS ========== */
+.celda-solicitante {
+    background-color: #f8f9fa;
+}
+
+.celda-solicitud {
+    background-color: #fff5f5;
+}
+
+.celda-generales {
+    background-color: #f0f7ff;
+}
+
+.celda-calendario {
+    background-color: #fffbeb;
+    font-weight: 500;
+}
+
+.celda-calendario-pers {
+    background-color: #f0fdf4;
+    font-weight: 500;
+}
+
+.celda-base {
+    background-color: #ecfdf5;
+}
+
+.celda-meta {
+    background-color: #d1fae5;
+}
+
+.celda-config {
+    background-color: #faf5ff;
+}
+
+.celda-mes-serv {
+    background-color: #fdf4ff;
+}
+
+.celda-mes-pers {
+    background-color: #fdf2f8;
+}
+
+.celda-estatus {
+    font-weight: bold;
+}
+
+/* ========== COLUMNAS ESPECIALES ========== */
+.col-texto-largo {
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left !important;
+}
+
+/* ========== LEYENDA ========== */
+.leyenda-item {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 15px;
+    font-size: 12px;
+}
+
+.leyenda-color {
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+    margin-right: 5px;
+    display: inline-block;
+}
+
+/* ========== LOADING OVERLAY ========== */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+/* ========== BADGES DE ESTATUS ========== */
+.badge-revision {
+    background-color: #cfe2ff;
+    color: #084298;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+}
+
+.badge-comentarios {
+    background-color: #fff3cd;
+    color: #664d03;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+}
+
+.badge-validado {
+    background-color: #d1e7dd;
+    color: #0f5132;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+}

@@ -1,4 +1,4 @@
-﻿.animacion-home{
+﻿.animacion-home {
     animation: fadeInUp 1.5s ease-out;
 }
 
@@ -7,6 +7,7 @@
         opacity: 0;
         transform: translateY(30px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -47,4 +48,392 @@
 
 .btn-comentario:hover {
     transform: scale(1.1);
+}
+
+/* ========================================
+   CONTENEDOR PRINCIPAL
+   ======================================== */
+.contenedor-tabla {
+    overflow-x: auto;
+    overflow-y: auto;
+    max-height: 75vh;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+/* ========================================
+   TABLA PRINCIPAL
+   ======================================== */
+.tabla-tablero {
+    font-size: 11px;
+    border-collapse: collapse;
+    border-spacing: 0;
+    min-width: 4500px; /* Aumentado para 191 columnas */
+}
+
+    .tabla-tablero th,
+    .tabla-tablero td {
+        border: 1px solid #dee2e6;
+        padding: 6px 8px;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+/* ========================================
+   ENCABEZADOS - SECCIONES PRINCIPALES (rowspan=3)
+   ======================================== */
+.header-seccion-rowspan {
+    vertical-align: middle !important;
+    text-align: center !important;
+    writing-mode: horizontal-tb !important;
+}
+
+.header-seccion-info {
+    background-color: #c00000 !important;
+    color: white !important;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.header-seccion-programado {
+    background-color: #ffc107 !important;
+    color: #000 !important;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.header-seccion-realizado {
+    background-color: #20c997 !important;
+    color: white !important;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.header-seccion-personas-prog {
+    background-color: #0dcaf0 !important;
+    color: #000 !important;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.header-seccion-personas-atend {
+    background-color: #6f42c1 !important;
+    color: white !important;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+/* ========================================
+   ENCABEZADOS - FILA DE MESES (Personas Atendidas)
+   ======================================== */
+.header-mes-personas-atend-sub {
+    background-color: #7c3aed !important;
+    color: white !important;
+    font-weight: bold;
+    font-size: 11px;
+    text-align: center;
+    padding: 8px 4px !important;
+}
+
+/* ========================================
+   ENCABEZADOS - DETALLES DE CATEGORÍAS
+   ======================================== */
+.header-detalle-personas-atend {
+    background-color: #5a32a3 !important;
+    color: white !important;
+    font-weight: 600;
+    font-size: 8px;
+    min-width: 30px;
+    max-width: 35px;
+    text-align: center;
+    writing-mode: vertical-lr;
+    transform: rotate(180deg);
+    height: 70px;
+    padding: 3px 2px !important;
+    white-space: nowrap;
+}
+
+.header-total-mes-personas-atend {
+    background-color: #4c1d95 !important;
+    color: white !important;
+    font-weight: bold;
+    font-size: 8px;
+    min-width: 30px;
+    max-width: 35px;
+    text-align: center;
+    writing-mode: vertical-lr;
+    transform: rotate(180deg);
+    height: 70px;
+    padding: 3px 2px !important;
+}
+
+/* ========================================
+   ENCABEZADOS - FILA DE SUBENCABEZADOS (Fila 4)
+   ======================================== */
+.fila-subencabezados th {
+    font-size: 10px;
+    font-weight: 600;
+    min-width: 40px;
+}
+
+.header-mes-info {
+    background-color: #a00000 !important;
+    color: white !important;
+    font-weight: 600;
+    font-size: 10px;
+    min-width: 45px;
+}
+
+.header-mes-programado {
+    background-color: #e0a800 !important;
+    color: #000 !important;
+    font-weight: 600;
+    font-size: 10px;
+    min-width: 40px;
+}
+
+.header-mes-realizado {
+    background-color: #1aa179 !important;
+    color: white !important;
+    font-weight: 600;
+    font-size: 10px;
+    min-width: 40px;
+}
+
+.header-mes-personas-prog {
+    background-color: #0bb5d6 !important;
+    color: #000 !important;
+    font-weight: 600;
+    font-size: 10px;
+    min-width: 40px;
+}
+
+/* Encabezados TOTAL destacados */
+.header-total-prog {
+    background-color: #d49a00 !important;
+}
+
+.header-total-real {
+    background-color: #148060 !important;
+}
+
+.header-total-pers-prog {
+    background-color: #0891b2 !important;
+}
+
+/* Celdas vacías en fila 4 para personas atendidas */
+.header-detalle-vacio {
+    display: none;
+}
+
+/* ========================================
+   CELDAS DE DATOS
+   ======================================== */
+.celda-info {
+    background-color: #fff5f5;
+    text-align: left;
+    font-size: 11px;
+}
+
+.celda-programado {
+    background-color: #fffbeb;
+}
+
+.celda-realizado {
+    background-color: #e6fff7;
+}
+
+.celda-personas-prog {
+    background-color: #e6fcff;
+}
+
+.celda-personas-atend-detalle {
+    background-color: #f3e8ff;
+    text-align: center;
+    font-size: 10px;
+    min-width: 30px;
+    padding: 4px 2px !important;
+}
+
+/* ========================================
+   COLUMNA PP FIJA
+   ======================================== */
+.tabla-tablero tbody td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 5;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+}
+
+    .tabla-tablero tbody td:first-child.celda-info {
+        background-color: #fff5f5;
+    }
+
+.tabla-tablero tbody tr:nth-child(even) td:first-child.celda-info {
+    background-color: #ffecec;
+}
+
+/* ========================================
+   COLUMNAS TOTAL (destacadas)
+   ======================================== */
+.celda-total-programado {
+    background-color: #ffc107 !important;
+    color: #000 !important;
+    font-weight: bold;
+}
+
+.celda-total-realizado {
+    background-color: #20c997 !important;
+    color: white !important;
+    font-weight: bold;
+}
+
+.celda-total-personas-prog {
+    background-color: #0dcaf0 !important;
+    color: #000 !important;
+    font-weight: bold;
+}
+
+.celda-total-mes-personas-atend {
+    background-color: #d1bcf0 !important;
+    text-align: center;
+    font-weight: bold;
+    font-size: 10px;
+    min-width: 30px;
+    padding: 4px 2px !important;
+}
+
+/* ========================================
+   FILAS ALTERNADAS
+   ======================================== */
+.tabla-tablero tbody tr:nth-child(even) .celda-info {
+    background-color: #ffecec;
+}
+
+.tabla-tablero tbody tr:nth-child(even) .celda-programado {
+    background-color: #fff3cd;
+}
+
+.tabla-tablero tbody tr:nth-child(even) .celda-realizado {
+    background-color: #d1f2eb;
+}
+
+.tabla-tablero tbody tr:nth-child(even) .celda-personas-prog {
+    background-color: #cff4fc;
+}
+
+.tabla-tablero tbody tr:nth-child(even) .celda-personas-atend-detalle {
+    background-color: #e2d5f0;
+}
+
+.tabla-tablero tbody tr:nth-child(even) .celda-total-mes-personas-atend {
+    background-color: #c4a7e8 !important;
+}
+
+.tabla-tablero tbody tr:hover td {
+    filter: brightness(0.95);
+}
+
+/* ========================================
+   LOADING Y BOTONES
+   ======================================== */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.btn-volver {
+    background-color: #6c757d;
+    color: white;
+}
+
+    .btn-volver:hover {
+        background-color: #5a6268;
+        color: white;
+    }
+
+.btn-exportar {
+    background-color: #198754;
+    color: white;
+}
+
+    .btn-exportar:hover {
+        background-color: #157347;
+        color: white;
+    }
+
+/* ========================================
+   LEYENDA
+   ======================================== */
+.leyenda-item {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 20px;
+    font-size: 12px;
+}
+
+.leyenda-color {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    margin-right: 6px;
+    border: 1px solid rgba(0,0,0,0.1);
+}
+
+/* ========================================
+   CARDS DE RESUMEN
+   ======================================== */
+.card-resumen-small {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+    .card-resumen-small .card-body {
+        padding: 15px;
+    }
+
+    .card-resumen-small h6 {
+        font-size: 11px;
+        margin-bottom: 5px;
+    }
+
+    .card-resumen-small h4 {
+        font-size: 20px;
+        margin-bottom: 0;
+    }
+
+/* ========================================
+   COLUMNAS ESPECIALES
+   ======================================== */
+.col-descripcion {
+    min-width: 180px;
+    max-width: 220px;
+    white-space: normal;
+    word-wrap: break-word;
+    text-align: left !important;
+}
+
+.col-programa {
+    min-width: 130px;
+    max-width: 160px;
+    white-space: normal;
+    word-wrap: break-word;
+    text-align: left !important;
+}
+
+/* ========================================
+   MENSAJE VACÍO
+   ======================================== */
+#tbodyTablero tr td[colspan="191"] {
+    text-align: center;
+    padding: 40px !important;
 }

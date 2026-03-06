@@ -77,7 +77,6 @@ namespace Metas.AplicacionWeb.Controllers
             }
         }
 
-        // Clase para el request (agregar fuera del controller)
         public class ValidacionRequest
         {
             public int IdProgramacion { get; set; }
@@ -94,7 +93,8 @@ namespace Metas.AplicacionWeb.Controllers
                 {
                     Value = d.IdDepartamento.ToString(),
                     Text = d.Departamento1
-                }).ToList()
+                }).OrderBy(item => item.Text)
+                .ToList()
             };
             return View(modelo);
         }
@@ -297,50 +297,10 @@ namespace Metas.AplicacionWeb.Controllers
         public async Task<IActionResult> RevisarProgramacion(int id)
         {
             var componentes = await _departamentoService.ObtenerComponentes();
-            var departamentos = await _departamentoService.ObtenerDepartamentos();
             var medidas = await _departamentoService.ObtenerMedidas();
             var municipios = await _departamentoService.ObtenerMunicipios();
 
-            // 1. Construir el ViewModel
-            var modelo = new VMProgramacion
-            {
-                ListaProgramas = componentes
-                    .GroupBy(x => x.Pp)
-                    .Select(g => new SelectListItem
-                    {
-                        Value = g.Key.ToString(),
-                        Text = g.First().PpCompuesto1
-                    })
-                    .OrderBy(item => item.Text)
-                    .ToList(),
-
-                ListaComponentes = componentes
-                    .Select(c => new SelectListItem
-                    {
-                        Value = c.Componente.ToString(),
-                        Text = c.ComponenteCompuesto,
-                        Group = new SelectListGroup { Name = c.PpCompuesto1 }
-                    })
-                    .ToList(),
-
-                ListaMedidas = medidas
-                    .Select(g => new SelectListItem
-                    {
-                        Value = g.IdUnidad.ToString(),
-                        Text = g.Valor
-                    })
-                    .ToList(),
-
-                ListaMunicipios = municipios
-                    .Select(g => new SelectListItem
-                    {
-                        Value = g.IdMunicipio.ToString(),
-                        Text = g.NombreMunicipios
-                    })
-                    .ToList()
-            };
             var datosCompletos = await _programacionService.ObtenerDatosCompletos(id);
-            var idProgramacion = datosCompletos.Id;
 
             if (datosCompletos == null)
             {
@@ -348,19 +308,50 @@ namespace Metas.AplicacionWeb.Controllers
                 return RedirectToAction("Programacion");
             }
 
-            // Obtener comentarios existentes para esta programación
+            // ✅ Asignar lista de programas
+            datosCompletos.ListaProgramas = componentes
+                .GroupBy(x => x.Pp)
+                .Select(g => new SelectListItem
+                {
+                    Value = g.Key.ToString(),
+                    Text = g.First().PpCompuesto1
+                })
+                .OrderBy(item => item.Text)
+                .ToList();
+
+            // ✅ CAMBIO: Cargar TODOS los componentes (como en RegistrarProgramacion)
+            datosCompletos.ListaComponentes = componentes
+                .Select(c => new SelectListItem
+                {
+                    Value = c.Componente.ToString(),
+                    Text = c.ComponenteCompuesto,
+                    Group = new SelectListGroup { Name = c.PpCompuesto1 } // 🎯 Texto del programa
+                })
+                .ToList();
+
+            datosCompletos.ListaMedidas = medidas
+                .Select(m => new SelectListItem
+                {
+                    Value = m.IdUnidad.ToString(),
+                    Text = m.Valor
+                })
+                .ToList();
+
+            datosCompletos.ListaMunicipios = municipios
+                .Select(m => new SelectListItem
+                {
+                    Value = m.IdMunicipio.ToString(),
+                    Text = m.NombreMunicipios
+                })
+                .ToList();
+
+            var idProgramacion = datosCompletos.Id;
             var comentariosExistentes = await _programacionService.ObtenerComentariosPorProgramacion(idProgramacion);
+
             ViewBag.ComentariosExistentes = comentariosExistentes;
             ViewBag.IdProgramacion = idProgramacion;
-
-            // Pasar el ID de programación a la vista para usarlo en el guardado
             ViewData["IdProgramacion"] = idProgramacion;
-
-            // ✅ DETECTAR TIPO DE USUARIO
-            var esAdministrador = User.IsInRole("Administrador");
-            ViewBag.EsAdministrador = esAdministrador;
-
-            // ✅ PASAR EL ESTATUS ACTUAL A LA VISTA
+            ViewBag.EsAdministrador = User.IsInRole("Administrador");
             ViewBag.EstatusActual = datosCompletos.Estatus;
 
             return View(datosCompletos);
@@ -416,5 +407,223 @@ namespace Metas.AplicacionWeb.Controllers
                 return StatusCode(500, new { success = false, message = ex.Message });
             }
         }
+
+        [HttpPost]
+        [Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> ActualizarProgramacion([FromBody] ProgramacionDTO modelo)
+        {
+            try
+            {
+                // Validaciones
+                if (modelo == null || modelo.Id <= 0)
+                {
+                    return BadRequest(new { success = false, message = "Datos inválidos" });
+                }
+
+                if (string.IsNullOrWhiteSpace(modelo.Pp))
+                    return BadRequest(new { success = false, message = "El programa presupuestario es requerido" });
+
+                if (string.IsNullOrWhiteSpace(modelo.NComponente))
+                    return BadRequest(new { success = false, message = "El número de componente es requerido" });
+
+                // Llamar al servicio
+                bool resultado = await _programacionService.ActualizarProgramacion(modelo);
+
+                if (resultado)
+                {
+                    return Ok(new { success = true, message = "Programación actualizada correctamente" });
+                }
+                else
+                {
+                    return BadRequest(new { success = false, message = "Error al actualizar la programación" });
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error en ActualizarProgramacion: {ex.Message}");
+                return StatusCode(500, new { success = false, message = "Error interno del servidor", error = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GuardarCambiosUsuario([FromBody] ProgramacionDTO modelo)
+        {
+            try
+            {
+                if (modelo == null || modelo.Id <= 0)
+                {
+                    return BadRequest(new { success = false, message = "Datos inválidos" });
+                }
+
+                // Actualizar la programación
+                bool resultado = await _programacionService.ActualizarProgramacion(modelo);
+
+                if (resultado)
+                {
+                    // ✅ NUEVO: Actualizar comentarios (eliminar los que el usuario borró al editar)
+                    if (modelo.Comentarios != null && modelo.Comentarios.Any())
+                    {
+                        await _programacionService.GuardarComentarios(modelo.Comentarios);
+                    }
+
+                    // Cambiar estatus a 1 (En Revisión) después de que el usuario guarda
+                    await _programacionService.ActualizarEstatusProgramacion(modelo.Id, 1);
+
+                    return Ok(new { success = true, message = "Cambios guardados correctamente" });
+                }
+                else
+                {
+                    return BadRequest(new { success = false, message = "Error al guardar los cambios" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> GuardarCambiosAdmin([FromBody] ProgramacionDTO modelo)
+        {
+            try
+            {
+                if (modelo == null || modelo.Id <= 0)
+                {
+                    return BadRequest(new { success = false, message = "Datos inválidos" });
+                }
+
+                // 1. Actualizar la programación
+                bool resultado = await _programacionService.ActualizarProgramacion(modelo);
+
+                if (!resultado)
+                {
+                    return BadRequest(new { success = false, message = "Error al actualizar la programación" });
+                }
+
+                // 2. Guardar comentarios
+                if (modelo.Comentarios != null && modelo.Comentarios.Any())
+                {
+                    await _programacionService.GuardarComentarios(modelo.Comentarios);
+                }
+
+                return Ok(new { success = true, message = "Cambios guardados correctamente" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Administrador")]
+        public IActionResult TableroCompletoProgramacion(int? anoFiscal)
+        {
+            ViewBag.AnoFiscalSeleccionado = anoFiscal;
+            return View();
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> ObtenerDatosTableroProgramacion(int anoFiscal)
+        {
+            try
+            {
+                var departamentos = await _departamentoService.ObtenerDepartamentos();
+                var todosLosDatos = new List<dynamic>();
+
+                foreach (var depto in departamentos)
+                {
+                    var datosProgramacion = await _programacionService
+                        .ObtenerDatosProgramacion(anoFiscal, depto.IdDepartamento);
+
+                    if (datosProgramacion == null || !datosProgramacion.Any())
+                        continue;
+
+                    foreach (var proceso in datosProgramacion)
+                    {
+                        var datosCompletos = await _programacionService
+                            .ObtenerDatosCompletos(proceso.IdProceso);
+
+                        if (datosCompletos == null)
+                            continue;
+
+                        var registro = new
+                        {
+                            idProceso = proceso.IdProceso,
+
+                            area = datosCompletos.Area ?? "",
+                            departamento = datosCompletos.Departamento ?? "",
+                            correoContacto = datosCompletos.CorreoContacto ?? "",
+
+                            pp = datosCompletos.Pp ?? "",
+                            componente = datosCompletos.NComponente ?? "",
+                            actividad = datosCompletos.NActividad,
+                            justificacion = datosCompletos.Justificacion ?? "",
+                            descripcionDocumento = datosCompletos.DescripcionDocumento ?? "",
+                            recursoFederal = datosCompletos.RecursoFederal ?? "",
+                            recursoEstatal = datosCompletos.RecursoEstatal ?? "",
+
+                            programaSocial = datosCompletos.ProgramaSocial ?? "",
+                            descripcionActividad = datosCompletos.DescripcionActividad ?? "",
+                            nombreIndicador = datosCompletos.NombreIndicador ?? "",
+                            definicionIndicador = datosCompletos.DefinicionIndicador ?? "",
+
+                            primerServicio = datosCompletos.PrimerServicio,
+                            segundoServicio = datosCompletos.SegundoServicio,
+                            tercerServicio = datosCompletos.TercerServicio,
+                            cuartoServicio = datosCompletos.CuartoServicio,
+
+                            primerPersona = datosCompletos.PrimerPersona,
+                            segundoPersona = datosCompletos.SegundoPersona,
+                            tercerPersona = datosCompletos.TercerPersona,
+                            cuartoPersona = datosCompletos.CuartoPersona,
+
+                            unidadMedida = datosCompletos.UnidadMedida ?? "",
+                            mediosVerificacion = datosCompletos.MediosVerificacion ?? "",
+                            serieInformacionDesde = datosCompletos.SerieInformacionDesde ?? "",
+                            serieInformacionHasta = datosCompletos.SerieInformacionHasta ?? "",
+                            fuenteInformacion = datosCompletos.FuenteInformacion ?? "",
+                            intervienenDelegaciones = datosCompletos.IntervienenDelegaciones ?? "",
+                            intervienenDelegacionesManera = datosCompletos.IntervienenDelegacionesManera ?? "",
+
+                            anoBase = datosCompletos.AnoBase,
+                            porcentajeBase = datosCompletos.PorcentajeBase,
+                            servicioBase = datosCompletos.ServicioBase,
+                            personasBase = datosCompletos.PersonasBase,
+
+                            anoMeta = datosCompletos.AnoMeta,
+                            porcentajeMeta = datosCompletos.PorcentajeMeta,
+                            servicioMeta = datosCompletos.ServicioMeta,
+                            personasMeta = datosCompletos.PersonasMeta,
+
+                            beneficiarios = datosCompletos.Beneficiarios ?? "",
+                            acumulable = datosCompletos.SelectAcumulable ?? "",
+
+                            mesesServicios = datosCompletos.MesesServicios,
+                            mesesPersonas = datosCompletos.MesesPersonas,
+
+                            totalServicios = datosCompletos.TotalAnos,
+                            totalPersonas = datosCompletos.TotalAnos2,
+
+                            estatus = datosCompletos.Estatus
+                        };
+
+                        todosLosDatos.Add(registro);
+                    }
+                }
+
+                return Json(new { success = true, datos = todosLosDatos.OrderBy(x => (string)x.pp)
+        .ThenBy(x => (string)x.componente)
+        .ThenBy(x => (int)x.actividad)
+        .ToList()
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, mensaje = $"Error: {ex.Message}" });
+            }
+        }
+
     }
 }

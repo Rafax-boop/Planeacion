@@ -44,15 +44,9 @@ public partial class MetasContext : DbContext
 
     public virtual DbSet<PpCompuesto> PpCompuestos { get; set; }
 
-    public virtual DbSet<Programa> Programas { get; set; }
-
     public virtual DbSet<Programacion> Programacions { get; set; }
 
     public virtual DbSet<ServiciosMunicipio> ServiciosMunicipios { get; set; }
-
-    public virtual DbSet<TemporalPersonasMunicipio> TemporalPersonasMunicipios { get; set; }
-
-    public virtual DbSet<TemporalServiciosMunicipio> TemporalServiciosMunicipios { get; set; }
 
     public virtual DbSet<UnidadMedidum> UnidadMedida { get; set; }
 
@@ -60,7 +54,7 @@ public partial class MetasContext : DbContext
 
     public virtual DbSet<Vinculacion> Vinculacions { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder){ }
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -217,13 +211,6 @@ public partial class MetasContext : DbContext
             entity.Property(e => e.PpCompuesto1).HasColumnName("PpCompuesto");
         });
 
-        modelBuilder.Entity<Programa>(entity =>
-        {
-            entity.HasKey(e => e.IdProgramas).HasName("PK__Programa__6A731CB9C22CDC78");
-
-            entity.Property(e => e.Departamento).HasMaxLength(1000);
-        });
-
         modelBuilder.Entity<Programacion>(entity =>
         {
             entity.HasKey(e => e.IdRegistro).HasName("PK__Programa__FFA45A99928B1100");
@@ -282,32 +269,6 @@ public partial class MetasContext : DbContext
             entity.HasOne(d => d.IdMunicipioNavigation).WithMany(p => p.ServiciosMunicipios)
                 .HasForeignKey(d => d.IdMunicipio)
                 .HasConstraintName("FK_ServiciosMunicipios_Municipio");
-        });
-
-        modelBuilder.Entity<TemporalPersonasMunicipio>(entity =>
-        {
-            entity.HasKey(e => e.IdTemporal).HasName("PK__Temporal__73AC1D22E10F1998");
-
-            entity.ToTable("TemporalPersonasMunicipio");
-
-            entity.Property(e => e.Tiempo).HasMaxLength(100);
-
-            entity.HasOne(d => d.IdMunicipioNavigation).WithMany(p => p.TemporalPersonasMunicipios)
-                .HasForeignKey(d => d.IdMunicipio)
-                .HasConstraintName("FK_TemporalPersonasMunicipio_Municipio");
-        });
-
-        modelBuilder.Entity<TemporalServiciosMunicipio>(entity =>
-        {
-            entity.HasKey(e => e.IdTemporal).HasName("PK__Temporal__73AC1D224F3290BD");
-
-            entity.ToTable("TemporalServiciosMunicipio");
-
-            entity.Property(e => e.Tiempo).HasMaxLength(100);
-
-            entity.HasOne(d => d.IdMunicipioNavigation).WithMany(p => p.TemporalServiciosMunicipios)
-                .HasForeignKey(d => d.IdMunicipio)
-                .HasConstraintName("FK_TemporalServiciosMunicipio_Municipio");
         });
 
         modelBuilder.Entity<UnidadMedidum>(entity =>

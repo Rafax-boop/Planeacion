@@ -22,8 +22,9 @@ else
     <form method="post" action="@Url.Action("GuardarActualizacion", "Monitoreo")" enctype="multipart/form-data">
 
         <input type="hidden" name="IdProceso" value="@Model.IdProceso" /> 
-        <input type="hidden" name="Mes" value="@Model.MesNum" /> 
-
+        <input type="hidden" name="Mes" value="@Model.MesNum" />
+        <input type="hidden" name="RutaEvidenciaExistente" value="@Model.RutaEvidencia" />
+        <input type="hidden" name="RutaJustificacionExistente" value="@Model.RutaJustificacion" />
         <div class="glass-effect rounded-5 mt-4">
             @* Encabezado *@
             <div class="">
@@ -47,11 +48,11 @@ else
                     <div class="row g-3 text-center mt-1 mx-2 pb-3 border-bottom">
                         <div class="col-2 border-end">
                             <label for="metaProgramada" class="form-label fw-semibold titulo">Meta Programada</label>
-                            <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" id="metaProgramada" value="@Model.Total" readonly>
+                            <input type="text" class="form-control fw-light input-arena titulo formato-miles" style="background-color:#f7f2ed;" id="metaProgramada" value="@Model.Total" readonly>
                         </div>
                         <div class="col-2 border-end">
                             <label for="input2" class="form-label fw-semibold titulo">Personas Programadas</label>
-                            <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" readonly id="input2">
+                            <input type="text" class="form-control fw-light input-arena titulo formato-miles" style="background-color:#f7f2ed;" value="@Model.TotalPersonas" readonly id="input2">
                         </div>
                         <div class="col-2 border-end">
                             <label for="input3" class="form-label fw-semibold titulo">Pp</label>
@@ -110,7 +111,7 @@ else
                     <div class="row g-3 mt-1 mx-2 pb-3 border-bottom">
                         <div class="col-6 border-end">
                             <label for="realizadoInput" class="form-label fw-semibold titulo">Realizado</label>
-                            <input type="number" class="form-control fw-light input-arena titulo" id="realizadoInput" name="Realizado" value="@Model.Realizado" @(esSoloVista ? "disabled" : "")>
+                            <input type="text" class="form-control fw-light input-arena titulo formato-miles" id="realizadoInput" name="Realizado" value="@Model.Realizado" @(esSoloVista ? "disabled" : "")>
                         </div>
                         <div class="col-6">
                             <label for="totalPorcentaje" class="form-label fw-semibold titulo">Total de porcentaje:</label>
@@ -131,15 +132,15 @@ else
                     <div class="row g-3 mt-1 mx-2 pb-3 border-bottom">
                         <div class="col-4">
                             <label for="mujeresAtendidas" class="form-label fw-semibold titulo">Mujeres Atendidas</label>
-                            <input type="number" class="form-control fw-light input-arena titulo personas-input" disabled id="mujeresAtendidas" name="MujeresAtendidas" value="@Model.MujeresAtendidas" @(esSoloVista ? "disabled" : "")>
+                            <input type="text" class="form-control fw-light input-arena titulo personas-input formato-miles" disabled id="mujeresAtendidas" name="MujeresAtendidas" value="@Model.MujeresAtendidas" @(esSoloVista ? "disabled" : "")>
                         </div>
                         <div class="col-4 border-end">
                             <label for="hombresAtendidos" class="form-label fw-semibold titulo">Hombres Atendidos</label>
-                            <input type="number" class="form-control fw-light input-arena titulo personas-input" disabled id="hombresAtendidos" name="HombresAtendidos" value="@Model.HombresAtendidos" @(esSoloVista ? "disabled" : "")>
+                            <input type="text" class="form-control fw-light input-arena titulo personas-input formato-miles" disabled id="hombresAtendidos" name="HombresAtendidos" value="@Model.HombresAtendidos" @(esSoloVista ? "disabled" : "")>
                         </div>
                         <div class="col-4">
                             <label for="personasAtendidas" class="form-label fw-semibold titulo">Personas Atendidas</label>
-                            <input type="number" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" readonly id="personasAtendidas" value="0">
+                            <input type="text" class="form-control fw-light input-arena titulo formato-miles" style="background-color:#f7f2ed;" readonly id="personasAtendidas" value="0">
                         </div>
                     </div>
                 </div>
@@ -156,19 +157,19 @@ else
                     <div class="row g-3 mt-1 mx-2 pb-3">
                         <div class="col-3">
                             <label for="rango0a3" class="form-label fw-semibold titulo">0 - 3 AÑOS</label>
-                            <input type="number" class="form-control fw-light input-arena titulo rango-input" disabled id="rango0a3" name="Rango0a3" value="@Model.Rango0a3" @(esSoloVista ? "disabled" : "")>
+                            <input type="text" class="form-control fw-light input-arena titulo rango-input formato-miles" disabled id="rango0a3" name="Rango0a3" value="@Model.Rango0a3" @(esSoloVista ? "disabled" : "")>
                         </div>
                         <div class="col-3">
                             <label for="rango4a8" class="form-label fw-semibold titulo">4 - 8 AÑOS</label>
-                            <input type="number" class="form-control fw-light input-arena titulo rango-input" disabled id="rango4a8" name="Rango4a8" value="@Model.Rango4a8" @(esSoloVista ? "disabled" : "")>
+                            <input type="text" class="form-control fw-light input-arena titulo rango-input formato-miles" disabled id="rango4a8" name="Rango4a8" value="@Model.Rango4a8" @(esSoloVista ? "disabled" : "")>
                         </div>
                         <div class="col-3">
                             <label for="rango9a12" class="form-label fw-semibold titulo">9 - 12 AÑOS</label>
-                            <input type="number" class="form-control fw-light input-arena titulo rango-input" disabled id="rango9a12" name="Rango9a12" value="@Model.Rango9a12" @(esSoloVista ? "disabled" : "")>
+                            <input type="text" class="form-control fw-light input-arena titulo rango-input formato-miles" disabled id="rango9a12" name="Rango9a12" value="@Model.Rango9a12" @(esSoloVista ? "disabled" : "")>
                         </div>
                         <div class="col-3">
                             <label for="rango13a17" class="form-label fw-semibold titulo">13 - 17 AÑOS</label>
-                            <input type="number" class="form-control fw-light input-arena titulo rango-input" disabled id="rango13a17" name="Rango13a17" value="@Model.Rango13a17" @(esSoloVista ? "disabled" : "")>
+                            <input type="text" class="form-control fw-light input-arena titulo rango-input formato-miles" disabled id="rango13a17" name="Rango13a17" value="@Model.Rango13a17" @(esSoloVista ? "disabled" : "")>
                         </div>
                     </div>
                 </div>
@@ -176,19 +177,19 @@ else
                     <div class="row g-3 mt-1 mx-2 pb-3 border-bottom">
                         <div class="col-3">
                             <label for="rango18a29" class="form-label fw-semibold titulo">18 - 29 AÑOS</label>
-                            <input type="number" class="form-control fw-light input-arena titulo rango-input" disabled id="rango18a29" name="Rango18a29" value="@Model.Rango18a29" @(esSoloVista ? "disabled" : "")>
+                            <input type="text" class="form-control fw-light input-arena titulo rango-input formato-miles" disabled id="rango18a29" name="Rango18a29" value="@Model.Rango18a29" @(esSoloVista ? "disabled" : "")>
                         </div>
                         <div class="col-3">
                             <label for="rango30a59" class="form-label fw-semibold titulo">30 - 59 AÑOS</label>
-                            <input type="number" class="form-control fw-light input-arena titulo rango-input" disabled id="rango30a59" name="Rango30a59" value="@Model.Rango30a59" @(esSoloVista ? "disabled" : "")>
+                            <input type="text" class="form-control fw-light input-arena titulo rango-input formato-miles" disabled id="rango30a59" name="Rango30a59" value="@Model.Rango30a59" @(esSoloVista ? "disabled" : "")>
                         </div>
                         <div class="col-3">
                             <label for="rango60adelante" class="form-label fw-semibold titulo">DE 60 AÑOS EN ADELANTE</label>
-                            <input type="number" class="form-control fw-light input-arena titulo rango-input" disabled id="rango60adelante" name="Rango60adelante" value="@Model.Rango60adelante" @(esSoloVista ? "disabled" : "")>
+                            <input type="text" class="form-control fw-light input-arena titulo rango-input formato-miles" disabled id="rango60adelante" name="Rango60adelante" value="@Model.Rango60adelante" @(esSoloVista ? "disabled" : "")>
                         </div>
                         <div class="col-3">
                             <label for="rangoNoEspecifica" class="form-label fw-semibold titulo">NO SE ESPECIFICA</label>
-                            <input type="number" class="form-control fw-light input-arena titulo rango-input" disabled id="rangoNoEspecifica" name="RangoNoEspecifica" value="@Model.RangoNoEspecifica" @(esSoloVista ? "disabled" : "")>
+                            <input type="text" class="form-control fw-light input-arena titulo rango-input formato-miles" disabled id="rangoNoEspecifica" name="RangoNoEspecifica" value="@Model.RangoNoEspecifica" @(esSoloVista ? "disabled" : "")>
                         </div>
                     </div>
                 </div>
@@ -197,7 +198,7 @@ else
                     <div class="row g-3 mt-1 mx-2 pb-3 border-bottom text-center">          
                         <div class="col-12">
                             <label for="totalPersonas" class="form-label fw-semibold titulo">TOTAL</label>
-                            <input type="number" class="form-control fw-light input-arena titulo" style="background-color:#c09866;" disabled id="totalPersonas" value="0" @(esSoloVista ? "disabled" : "")>
+                            <input type="text" class="form-control fw-light input-arena titulo formato-miles" style="background-color:#c09866;" disabled id="totalPersonas" value="0" @(esSoloVista ? "disabled" : "")>
                         </div>
                     </div>
                 </div>
@@ -213,7 +214,7 @@ else
                                 </h5>
                             </div>
                             <label for="indigena" class="form-label fw-semibold titulo">Indígena</label>
-                            <input type="number" class="form-control fw-light input-arena titulo" id="indigena" name="Indigena" value="@Model.Indigena" @(esSoloVista ? "disabled" : "")>
+                            <input type="text" class="form-control fw-light input-arena titulo formato-miles" id="indigena" name="Indigena" value="@Model.Indigena" @(esSoloVista ? "disabled" : "")>
                         </div>
 
                         @* evidencia *@
@@ -222,14 +223,39 @@ else
                                 <h5 class="fw-semibold text-center m-2 titulo">
                                     EVIDENCIA
                                 </h5>
-                            </div>                        
+                            </div>
                             @if (!esSoloVista)
                             {
-                                <label for="inputEvidencia" class="form-label fw-semibold titulo">Evidencia Realizada</label>
+                                @* Mostrar archivo existente si hay uno *@
+                                @if (!string.IsNullOrEmpty(Model.RutaEvidencia))
+                                {
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold titulo">Evidencia actual:</label>
+                                        <br />
+                                        <a target="_blank" href="@Model.RutaEvidencia" class="btn btn-success btn-sm">
+                                            <i class="fas fa-download me-2"></i>
+                                            Ver evidencia actual
+                                        </a>
+                                        <p class="text-muted small mt-2">
+                                            <i class="fas fa-info-circle me-1"></i>
+                                            Si subes un nuevo archivo, reemplazará el actual
+                                        </p>
+                                    </div>
+                                }
+
+                                @* Input para subir/reemplazar archivo *@
+                                <label for="inputEvidencia" class="form-label fw-semibold titulo">
+                                    @(!string.IsNullOrEmpty(Model.RutaEvidencia) ? "Reemplazar evidencia (opcional):" : "Subir evidencia:")
+                                </label>
                                 <label for="inputEvidencia" class="form-label fw-semibold titulo">Favor de llenar el Formato de Evidencia y subirlo.</label>
-                                <a target="_blank" href="@Url.Content("~/FormatoEvidencia/MUNICIPIOS1.xlsx")" download="MUNICIPIOS1.xlsx" class="btn btn-success">Descargar formato de evidencia</a>
-                                <input type="file" class="form-control fw-light input-arena titulo" id="inputEvidencia" name="InputEvidencia">
-                            }else
+                                <a target="_blank" href="@Url.Content("~/FormatoEvidencia/EVIDENCIA.xlsx")" download="Evidencia.xlsx" class="btn btn-success mb-2">Descargar formato de evidencia</a>
+                                <input type="file"
+                                       class="form-control fw-light input-arena titulo"
+                                       id="inputEvidencia"
+                                       name="InputEvidencia"
+                                       data-tiene-archivo-existente="@(!string.IsNullOrEmpty(Model.RutaEvidencia))">
+                            }
+                            else
                             {
                                 @if (!string.IsNullOrEmpty(Model.RutaEvidencia))
                                 {
@@ -242,7 +268,6 @@ else
                                 }
                                 else
                                 {
-                                    // Si no hay evidencia subida para este mes/proceso
                                     <p class="text-danger fw-semibold">No se ha cargado ninguna evidencia.</p>
                                 }
                             }
@@ -256,11 +281,37 @@ else
                                 </h5>
                             </div>
                             <div id="justificacionDiv" style="display:none;">
-                                @if(!esSoloVista)
+                                @if (!esSoloVista)
                                 {
+                                    @* Mostrar archivo existente si hay uno *@
+                                    @if (!string.IsNullOrEmpty(Model.RutaJustificacion))
+                                    {
+                                        <div class="mb-3">
+                                            <label class="form-label fw-semibold titulo">Justificación actual:</label>
+                                            <br />
+                                            <a target="_blank" href="@Model.RutaJustificacion" class="btn btn-success btn-sm">
+                                                <i class="fas fa-download me-2"></i>
+                                                Ver justificación actual
+                                            </a>
+                                            <p class="text-muted small mt-2">
+                                                <i class="fas fa-info-circle me-1"></i>
+                                                Si subes un nuevo archivo, reemplazará el actual
+                                            </p>
+                                        </div>
+                                    }
+
+                                    @* Input para subir/reemplazar archivo *@
+                                    <label for="inputJustificacion" class="form-label fw-semibold titulo">
+                                        @(!string.IsNullOrEmpty(Model.RutaJustificacion) ? "Reemplazar justificación (opcional):" : "Subir justificación:")
+                                    </label>
                                     <label for="inputJustificacion" class="form-label fw-semibold titulo">Favor de descargar el Formato de Justificación y subirlo en PDF debidamente requisitado y firmado.</label>
-                                    <a target="_blank" href="@Url.Content("~/FormatoEvidencia/JUSTIFICACION.xlsx")" download="JUSTIFICACION.xlsx" class="btn btn-success">Descargar formato de evidencia</a>
-                                    <input type="file" class="form-control fw-light input-arena titulo" id="inputJustificacion" name="InputJustificacion" accept=".pdf">
+                                    <a target="_blank" href="@Url.Content("~/FormatoEvidencia/JUSTIFICACION.xlsx")" download="JUSTIFICACION.xlsx" class="btn btn-success mb-2">Descargar formato de justificación</a>
+                                    <input type="file"
+                                           class="form-control fw-light input-arena titulo"
+                                           id="inputJustificacion"
+                                           name="InputJustificacion"
+                                           accept=".pdf"
+                                           data-tiene-archivo-existente="@(!string.IsNullOrEmpty(Model.RutaJustificacion))">
                                 }
                                 else
                                 {
@@ -275,7 +326,6 @@ else
                                     }
                                     else
                                     {
-                                        // Si no hay evidencia subida para este mes/proceso
                                         <p class="text-danger fw-semibold">No se ha cargado ninguna justificación.</p>
                                     }
                                 }
@@ -343,6 +393,79 @@ else
             const urlAccion = '@Url.Action("GuardarActualizacion", "Monitoreo")';
 
             // =======================================================
+            // FORMATO DE MILES AUTOMÁTICO CON CLASE "formato-miles"
+            // =======================================================
+
+            // Función para formatear números con comas
+            function formatearConComas(numero) {
+                return numero.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            }
+
+            // Función para remover formato (comas)
+            function removerFormato(valor) {
+                return valor.replace(/,/g, '');
+            }
+
+            // Aplicar formato a todos los inputs con la clase "formato-miles"
+            $('.formato-miles').each(function() {
+                // Formatear el valor inicial si existe
+                let valorInicial = $(this).val();
+                if (valorInicial && valorInicial !== '0') {
+                    let numeroLimpio = removerFormato(valorInicial);
+                    if (!isNaN(numeroLimpio) && numeroLimpio !== '') {
+                        $(this).val(formatearConComas(numeroLimpio));
+                    }
+                }
+            });
+
+            // Evento al escribir en campos con formato de miles
+            $('.formato-miles').on('input', function() {
+                let valor = $(this).val();
+                let valorLimpio = removerFormato(valor);
+
+                // Solo permitir números
+                if (!/^\d*$/.test(valorLimpio)) {
+                    valorLimpio = valorLimpio.replace(/\D/g, '');
+                }
+
+                // Aplicar formato si hay un número válido
+                if (valorLimpio !== '') {
+                    let cursorPos = this.selectionStart;
+                    let longitudAnterior = valor.length;
+
+                    $(this).val(formatearConComas(valorLimpio));
+
+                    // Ajustar posición del cursor
+                    let longitudNueva = $(this).val().length;
+                    let diferencia = longitudNueva - longitudAnterior;
+                    this.setSelectionRange(cursorPos + diferencia, cursorPos + diferencia);
+                } else {
+                    $(this).val('');
+                }
+
+                // Guardar el valor sin formato en un atributo data
+                $(this).attr('data-valor-real', valorLimpio);
+            });
+
+            // También limpiar formato antes de envíos AJAX
+            function prepararFormularioParaEnvio() {
+                $('.formato-miles').each(function() {
+                    let valorReal = $(this).attr('data-valor-real') || removerFormato($(this).val());
+                    $(this).val(valorReal);
+                });
+            }
+
+            // Restaurar formato después de envío AJAX
+            function restaurarFormatoVisual() {
+                $('.formato-miles').each(function() {
+                    let valor = $(this).val();
+                    if (valor && valor !== '' && valor !== '0') {
+                        $(this).val(formatearConComas(valor));
+                    }
+                });
+            }
+
+            // =======================================================
             // FUNCIÓN CENTRAL: ENVÍO DEL FORMULARIO VÍA AJAX
             // =======================================================
             function enviarFormulario(esBorrador) {
@@ -350,8 +473,10 @@ else
                 // Si es envío final, forzamos la validación del navegador
                 if (!esBorrador && !formElement.checkValidity()) {
                     formElement.reportValidity(); // Muestra los mensajes de error de HTML5
-                    return; // Detiene el envío
+                    return; 
                 }
+
+                prepararFormularioParaEnvio();
 
                 const formData = new FormData(formElement);
                 // 1. Añade el indicador de si es borrador (true) o envío final (false)
@@ -382,6 +507,7 @@ else
                     },
                     success: function(response) {
                         Swal.close();
+                        restaurarFormatoVisual();
                         if (response.success) {
                             Swal.fire("Éxito", response.message, "success")
                                 .then(() => {
@@ -393,6 +519,7 @@ else
                     },
                     error: function(xhr, status, error) {
                         Swal.close();
+                        restaurarFormatoVisual();
                         console.error("Error AJAX:", status, error, xhr.responseText);
                         Swal.fire("Error de Conexión", "No se pudo comunicar con el servidor o el servidor devolvió un error.", "error");
                     }
@@ -406,7 +533,7 @@ else
             // Botón "Guardar" (Borrador)
             $('#btnGuardarBorrador').click(function(e) {
                 e.preventDefault();
-                enviarFormulario(true); // Es Borrador = TRUE
+                enviarFormulario(true); 
             });
 
             // Botón "Enviar" (Final)
@@ -421,8 +548,9 @@ else
 
             // --- Lógica del campo "Realizado" ---
             $('#realizadoInput').on('input', function() {
-                let meta = parseFloat($('#metaProgramada').val()) || 0;
-                let realizado = parseFloat($(this).val()) || 0;
+                let valorReal = removerFormato($(this).val());
+                let meta = parseFloat(removerFormato($('#metaProgramada').val())) || 0;
+                let realizado = parseFloat(valorReal) || 0;
                 let porcentaje = 0;
 
                 // Cálculo del Porcentaje
@@ -447,34 +575,58 @@ else
                 }                
             }).on('blur', function() {
                 // --- Lógica de Justificación (al salir del campo) ---
-                let meta = parseFloat($('#metaProgramada').val()) || 0;
-                let realizado = parseFloat($(this).val()) || 0;
+                let meta = parseFloat(removerFormato($('#metaProgramada').val())) || 0;
+                let realizado = parseFloat(removerFormato($(this).val())) || 0;
                 let porcentaje = 0;
 
                 if (meta > 0 && realizado > 0) {
                     porcentaje = (realizado / meta) * 100;
                 }
 
+                // Verificar si ya existen archivos cargados
+                const tieneEvidenciaExistente = $('#inputEvidencia').attr('data-tiene-archivo-existente') === 'True';
+                const tieneJustificacionExistente = $('#inputJustificacion').attr('data-tiene-archivo-existente') === 'True';
+
                 // Lógica principal de Justificación y Evidencia
                 if (realizado == 0) {
                     // 1. Realizado es CERO -> Justificación OBLIGATORIA
-                    $('#inputEvidencia').prop('required', false).val('');
+                    if (!tieneEvidenciaExistente) {
+                        $('#inputEvidencia').prop('required', false).val('');
+                    } else {
+                        $('#inputEvidencia').prop('required', false);
+                    }
+
                     $('#justificacionDiv').show();
-                    $('#inputJustificacion').prop('required', true);
+
+                    // Solo requerir si NO hay archivo existente
+                    if (!tieneJustificacionExistente) {
+                        $('#inputJustificacion').prop('required', true);
+                    }
 
                 } else if (realizado > 0) {
                     // 2. Realizado es MAYOR a CERO -> Evidencia OBLIGATORIA
-                    $('#inputEvidencia').prop('required', true);
+                    // Solo requerir evidencia si NO hay archivo existente
+                    if (!tieneEvidenciaExistente) {
+                        $('#inputEvidencia').prop('required', true);
+                    } else {
+                        $('#inputEvidencia').prop('required', false);
+                    }
 
-                    // Si el porcentaje es <= 94.99 (incumplimiento) O >= 111 (sobre-cumplimiento extremo)
-                    if (porcentaje <= 94.99 || porcentaje >= 111) {
+                    // Si el porcentaje es <= 69.99 (incumplimiento) O >= 110 (sobre-cumplimiento extremo)
+                    if (porcentaje <= 69.99 || porcentaje >= 110) {
                         // Requerir Justificación
                         $('#justificacionDiv').show();
-                        $('#inputJustificacion').prop('required', true);
+
+                        // Solo requerir si NO hay archivo existente
+                        if (!tieneJustificacionExistente) {
+                            $('#inputJustificacion').prop('required', true);
+                        } else {
+                            $('#inputJustificacion').prop('required', false);
+                        }
                     } else {
                         // No requerir Justificación
                         $('#justificacionDiv').hide();
-                        $('#inputJustificacion').prop('required', false).val(''); // Limpiar si se oculta
+                        $('#inputJustificacion').prop('required', false).val('');
                     }
                 } else {
                     // 3. Campo vacío
@@ -484,74 +636,75 @@ else
                 }
 
                 // Lógica de color de porcentaje
-                if (porcentaje < 95 || porcentaje > 110) {
+                if (porcentaje < 70 || porcentaje >= 110) {
                     $('#totalPorcentaje').css('color', 'red');
                 } else {
                     $('#totalPorcentaje').css('color', 'green');
                 }
-
             });
 
             // --- Lógica de suma y validación de Personas (Mujeres/Hombres) ---
             $('#mujeresAtendidas, #hombresAtendidos').on('input', function() {
-                let mujeres = parseInt($('#mujeresAtendidas').val()) || 0;
-                let hombres = parseInt($('#hombresAtendidos').val()) || 0;
+                let mujeres = parseInt(removerFormato($('#mujeresAtendidas').val())) || 0;
+                let hombres = parseInt(removerFormato($('#hombresAtendidos').val())) || 0;
                 let total = mujeres + hombres;
-                let realizado = parseInt($('#realizadoInput').val()) || 0;
+                let realizado = parseInt(removerFormato($('#realizadoInput').val())) || 0;
 
-                $('#personasAtendidas').val(total);
-
-                if (total > realizado) {
-                    // Mensaje de advertencia y corrección
-                    Swal.fire({
-                        title: "Advertencia",
-                        text: 'La suma de personas (' + total + ') no puede exceder el realizado: ' + realizado,
-                        icon: "warning"
-                    });
-                    $(this).val('0');
-                    // Recalcular
-                    mujeres = parseInt($('#mujeresAtendidas').val()) || 0;
-                    hombres = parseInt($('#hombresAtendidos').val()) || 0;
-                    $('#personasAtendidas').val(mujeres + hombres);
-                }
+                $('#personasAtendidas').val(total).trigger('input');
             });
 
             // --- Lógica de suma y validación de Rangos de edad ---
             $('.rango-input').on('input', function() {
                 let total = 0;
                 $('.rango-input').each(function() {
-                    total += parseInt($(this).val()) || 0;
+                    total += parseInt(removerFormato($(this).val())) || 0;
                 });
 
-                let realizado = parseInt($('#realizadoInput').val()) || 0;
-                $('#totalPersonas').val(total);
+                let realizado = parseInt(removerFormato($('#personasAtendidas').val())) || 0;
+                $('#totalPersonas').val(total).trigger('input');
 
                 if (total > realizado) {
                     // Mensaje de advertencia y corrección
                     Swal.fire({
                         title: "Advertencia",
-                        text: 'El total de personas por edad (' + total + ') no puede exceder el realizado: ' + realizado,
+                        text: 'El total de personas por edad (' + formatearConComas(total) + ') no puede exceder el realizado: ' + formatearConComas(realizado),
                         icon: "warning"
                     });
                     $(this).val('0');
                     // Recalcular
                     total = 0;
                     $('.rango-input').each(function() {
-                        total += parseInt($(this).val()) || 0;
+                        total += parseInt(removerFormato($(this).val())) || 0;
                     });
                     $('#totalPersonas').val(total);
                 }
             });
 
-            if (parseInt($('#realizadoInput').val()) > 0) {
-                $('#realizadoInput').trigger('input').trigger('blur');
-            }
-            if (parseInt($('#mujeresAtendidas').val()) > 0 || parseInt($('#hombresAtendidos').val()) > 0) {
+            // --- Lógica de suma y validación de Rangos de edad ---
+            $('#indigena').on('input', function() {
+                let indigena = parseInt(removerFormato($(this).val())) || 0;
+                let realizado = parseInt(removerFormato($('#personasAtendidas').val())) || 0;
+
+                if (indigena > realizado) {
+                    $(this).val(realizado).trigger('input');
+                    Swal.fire({
+                        title: "Advertencia",
+                        text: 'Máximo permitido: ' + formatearConComas(realizado) + ' personas',
+                        icon: "warning",
+                        timer: 2000,
+                        showConfirmButton: true
+                    });
+                }
+            });
+
+            $('#realizadoInput').trigger('input').trigger('blur');
+
+            if (parseInt(removerFormato($('#mujeresAtendidas').val())) > 0 || parseInt(removerFormato($('#hombresAtendidos').val())) > 0) {
                 $('#mujeresAtendidas').trigger('input');
             }
-            if (parseInt($('.rango-input:first').val()) > 0) {
+            if (parseInt(removerFormato($('.rango-input:first').val())) > 0) {
                 $('.rango-input:first').trigger('input');
             }
-        });
+            });
     </script>
 }

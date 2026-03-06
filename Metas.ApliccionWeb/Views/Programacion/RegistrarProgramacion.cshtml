@@ -190,16 +190,16 @@
                 <label class="fw-light">SERVICIOS</label>
             </div>
             <div class="col-md-2">
-                <input type="number" disabled id="primerServicio" class="input-arena form-control titulo text-center" value="0" min="0">
+                <input type="text" disabled id="primerServicio" class="input-arena form-control titulo text-center" value="0" min="0">
             </div>
             <div class="col-md-2">
-                <input type="number" disabled id="segundoServicio" class="input-arena form-control titulo text-center" value="0" min="0">
+                <input type="text" disabled id="segundoServicio" class="input-arena form-control titulo text-center" value="0" min="0">
             </div>
             <div class="col-md-2">
-                <input type="number" disabled id="tercerServicio" class="input-arena form-control titulo text-center" value="0" min="0">
+                <input type="text" disabled id="tercerServicio" class="input-arena form-control titulo text-center" value="0" min="0">
             </div>
             <div class="col-md-2">
-                <input type="number" disabled id="cuartoServicio" class="input-arena form-control titulo text-center" value="0" min="0">
+                <input type="text" disabled id="cuartoServicio" class="input-arena form-control titulo text-center" value="0" min="0">
             </div>
         </div>
 
@@ -209,16 +209,16 @@
                 <label class="fw-light">PERSONAS</label>
             </div>
             <div class="col-md-2">
-                <input type="number" disabled id="primerPersona" class="input-arena form-control titulo text-center" value="0" min="0">
+                <input type="text" disabled id="primerPersona" class="input-arena form-control titulo text-center formato-miles" value="0" min="0">
             </div>
             <div class="col-md-2">
-                <input type="number" disabled id="segundoPersona" class="input-arena form-control titulo text-center" value="0" min="0">
+                <input type="text" disabled id="segundoPersona" class="input-arena form-control titulo text-center formato-miles" value="0" min="0">
             </div>
             <div class="col-md-2">
-                <input type="number" disabled id="tercerPersona" class="input-arena form-control titulo text-center" value="0" min="0">
+                <input type="text" disabled id="tercerPersona" class="input-arena form-control titulo text-center formato-miles" value="0" min="0">
             </div>
             <div class="col-md-2">
-                <input type="number" disabled id="cuartoPersona" class="input-arena form-control titulo text-center" value="0" min="0">
+                <input type="text" disabled id="cuartoPersona" class="input-arena form-control titulo text-center formato-miles" value="0" min="0">
             </div>
         </div>
 
@@ -351,7 +351,7 @@
                         <label class="mb-0">23. NO. DE BIEN O SERVICIO ENTREGADO</label>
                     </div>
                     <div class="col-md-6">
-                        <input id="inputServicioBase" type="number" class="input-arena form-control titulo text-center" value="0" min="0">
+                        <input id="inputServicioBase" type="text" class="input-arena form-control titulo text-center formato-miles" value="0" min="0">
                     </div>
                 </div>
 
@@ -360,7 +360,7 @@
                         <label class="mb-0">24. NO. DE PERSONAS ATENDIDAS</label>
                     </div>
                     <div class="col-md-6">
-                        <input id="inputPersonasBase" type="number" class="input-arena form-control titulo text-center" value="0" min="0">
+                        <input id="inputPersonasBase" type="text" class="input-arena form-control titulo text-center formato-miles" value="0" min="0">
                     </div>
                 </div>
             </div>
@@ -393,7 +393,7 @@
                         <label class="mb-0">27. NO. DE BIEN O SERVICIO A ENTREGAR</label>
                     </div>
                     <div class="col-md-6">
-                        <input id="inputServicioMeta" disabled type="number" class="input-arena form-control titulo text-center" value="0" min="0">
+                        <input id="inputServicioMeta" disabled type="text" class="input-arena form-control titulo text-center formato-miles" value="0" min="0">
                     </div>
                 </div>
 
@@ -402,7 +402,7 @@
                         <label class="mb-0">28. NO. DE PERSONAS POR ATENDER</label>
                     </div>
                     <div class="col-md-6">
-                        <input id="inputServicioMetas" disabled type="number" class="input-arena form-control titulo text-center" value="0" min="0">
+                        <input id="inputServicioMetas" disabled type="text" class="input-arena form-control titulo text-center formato-miles" value="0" min="0">
                     </div>
                 </div>
             </div>
@@ -477,7 +477,7 @@
                         @foreach (var mes in mesesPrimerSemestre)
                         {
                             <div class="col-2 p-1">
-                                <input type="number" class="input-arena form-control titulo text-center mes-grupo1"
+                                <input type="text" class="input-arena form-control titulo text-center mes-grupo1 formato-miles"
                                        value="0" min="0" data-mes="@mes">
                             </div>
                         }
@@ -494,7 +494,7 @@
                         @foreach (var mes in mesesSegundoSemestre)
                         {
                             <div class="col-2 p-1">
-                                <input type="number" class="input-arena form-control titulo text-center mes-grupo1"
+                                <input type="text" class="input-arena form-control titulo text-center mes-grupo1 formato-miles"
                                        value="0" min="0" data-mes="@mes">
                             </div>
                         }
@@ -514,7 +514,7 @@
                         @foreach (var mes in mesesPrimerSemestre)
                         {
                             <div class="col-2 p-1">
-                                <input type="number" class="input-arena form-control titulo text-center mes-grupo2"
+                                <input type="text" class="input-arena form-control titulo text-center mes-grupo2 formato-miles"
                                        value="0" min="0" disabled data-mes="@mes">
                             </div>
                         }
@@ -531,7 +531,7 @@
                         @foreach (var mes in mesesSegundoSemestre)
                         {
                             <div class="col-2 p-1">
-                                <input type="number" class="input-arena form-control titulo text-center mes-grupo2"
+                                <input type="text" class="input-arena form-control titulo text-center mes-grupo2 formato-miles"
                                        value="0" min="0" disabled data-mes="@mes">
                             </div>
                         }
@@ -549,7 +549,7 @@
                         <label class="mb-0 fw-semibold">Valor de servicios</label>
                     </div>
                     <div class="col-md-4">
-                        <input class="input-arena form-control titulo text-center fw-bold"
+                        <input class="input-arena form-control titulo text-center fw-bold formato-miles"
                                id="valorServicios" value="0" disabled>
                     </div>
                 </div>
@@ -559,7 +559,7 @@
                         <label class="mb-0 fw-semibold">Valor de servicios por municipio</label>
                     </div>
                     <div class="col-md-4">
-                        <input class="input-arena form-control titulo text-center"
+                        <input class="input-arena form-control titulo text-center formato-miles"
                                id="valorServiciosMunicipio" disabled value="0">
                     </div>
                 </div>
@@ -577,7 +577,7 @@
                             </select>
                         </div>
                         <div class="col-md-4">
-                            <input type="number" class="input-arena form-control titulo text-center"
+                            <input type="text" class="input-arena form-control titulo text-center formato-miles"
                                    id="personasAtendidasGrupo1" value="0" min="0" placeholder="Número">
                         </div>
                     </div>
@@ -620,7 +620,7 @@
                         <label class="mb-0 fw-semibold">Valor de personas</label>
                     </div>
                     <div class="col-md-4">
-                        <input class="input-arena form-control titulo text-center fw-bold"
+                        <input class="input-arena form-control titulo text-center fw-bold formato-miles"
                                id="valorPersonas" disabled value="0">
                     </div>
                 </div>
@@ -630,7 +630,7 @@
                         <label class="mb-0 fw-semibold">Valor de personas por municipio</label>
                     </div>
                     <div class="col-md-4">
-                        <input class="input-arena form-control titulo text-center"
+                        <input class="input-arena form-control titulo text-center formato-miles"
                                id="valorPersonasMunicipio" disabled value="0">
                     </div>
                 </div>
@@ -648,7 +648,7 @@
                             </select>
                         </div>
                         <div class="col-md-4">
-                            <input type="number" class="input-arena form-control titulo text-center"
+                            <input type="text" class="input-arena form-control titulo text-center formato-miles"
                                    id="personasAtendidasGrupo2" value="0" min="0" placeholder="Número">
                         </div>
                     </div>
@@ -830,7 +830,9 @@
     </div>
 
     <div class="text-center mb-2">
-        <button class="boton-rojo" id="btnGuardarProgramacion">Guardar</button>
+        <button class="boton-rojo ms-2"  id="btnGuardarProgramacion" style="color: #17a2b8; box-shadow: 0 5px 8px 0 #17a2b8; border: 1px solid #17a2b8 !important;">
+            <i class="fa-solid fa-arrow-right"></i> Enviar a revisión
+        </button>
     </div>
 
 </div>
@@ -954,29 +956,41 @@
         function calcularTotalPersonas(grupo) {
             let total = 0;
             document.querySelectorAll(`#tbody${grupo} tr`).forEach(fila => {
-                total += parseInt(fila.cells[0].textContent) || 0;
+                total += parseInt(fila.cells[0].textContent.replace(/,/g, '')) || 0;
             });
-            document.getElementById(`total${grupo}`).textContent = total;
+            document.getElementById(`total${grupo}`).textContent = total.toLocaleString('en-US');
             return total;
         }
 
         function calcularSumatorias() {
             const selectAcumulable = document.getElementById('selectAcumulable');
+            const selectPersonas = document.getElementById('selectPersonas');
+
+            const esAcumulable = selectAcumulable.value === 'si';
+            const esPersonas = selectPersonas.value === 'Personas';
+
             let sumaGrupo1 = 0;
             let sumaGrupo2 = 0;
 
             document.querySelectorAll('.mes-grupo1').forEach(input => {
-                sumaGrupo1 += parseInt(input.value) || 0;
+                sumaGrupo1 += removerFormatoMiles(input.value);
             });
 
-            if (selectAcumulable.value === 'si') {
+            if (esAcumulable) {
                 document.querySelectorAll('.mes-grupo2').forEach(input => {
-                    sumaGrupo2 += parseInt(input.value) || 0;
+                    sumaGrupo2 += removerFormatoMiles(input.value);
+                });
+            } else if (esPersonas && selectAcumulable.value === 'no') {
+                document.querySelectorAll('.mes-grupo2').forEach(input => {
+                    const valor = removerFormatoMiles(input.value);
+                    if (valor > sumaGrupo2) {
+                        sumaGrupo2 = valor;
+                    }
                 });
             }
 
-            document.getElementById('valorServicios').value = sumaGrupo1;
-            document.getElementById('valorPersonas').value = sumaGrupo2;
+            document.getElementById('valorServicios').value = formatearMiles(sumaGrupo1);
+            document.getElementById('valorPersonas').value = formatearMiles(sumaGrupo2);
 
             actualizarMaximosPersonas(sumaGrupo1, sumaGrupo2);
             actualizarServiciosPorMunicipio();
@@ -985,10 +999,13 @@
         }
 
         function actualizarServiciosPorMunicipio() {
-            let totalPersonasGrupo1 = calcularTotalPersonas('Grupo1');
-            let totalPersonasGrupo2 = calcularTotalPersonas('Grupo2');
-            const totalPersonasMunicipios = totalPersonasGrupo1 + totalPersonasGrupo2;
-            document.getElementById('valorServiciosMunicipio').value = totalPersonasMunicipios;
+            let totalGrupo1 = calcularTotalPersonas('Grupo1');
+            let totalGrupo2 = calcularTotalPersonas('Grupo2');
+
+            document.getElementById('valorServiciosMunicipio').value = formatearMiles(totalGrupo1);
+
+            document.getElementById('valorPersonasMunicipio').value = formatearMiles(totalGrupo2);
+
             actualizarCamposMeta();
         }
 
@@ -999,19 +1016,19 @@
 
         function puedeAgregarPersonas(grupo, cantidad) {
             const maxServicios = grupo === 'Grupo1'
-                ? parseInt(document.getElementById('valorServicios').value) || 0
-                : parseInt(document.getElementById('valorPersonas').value) || 0;
+                ? removerFormatoMiles(document.getElementById('valorServicios').value)
+                : removerFormatoMiles(document.getElementById('valorPersonas').value);
 
             const totalActual = calcularTotalPersonas(grupo);
             return (totalActual + cantidad) <= maxServicios;
         }
 
         function actualizarCamposMeta() {
-            const valorServicios = parseInt(document.getElementById('valorServicios').value) || 0;
-            const valorPersonas = parseInt(document.getElementById('valorPersonas').value) || 0;
+            const valorServicios = removerFormatoMiles(document.getElementById('valorServicios').value);
+            const valorPersonas = removerFormatoMiles(document.getElementById('valorPersonas').value);
 
-            document.getElementById('inputServicioMeta').value = valorServicios;
-            document.getElementById('inputServicioMetas').value = valorPersonas;
+            document.getElementById('inputServicioMeta').value = formatearMiles(valorServicios);
+            document.getElementById('inputServicioMetas').value = formatearMiles(valorPersonas);
 
             let porcentaje = 100;
 
@@ -1031,7 +1048,7 @@
                 trimestres[i].forEach(mes => {
                     const input = document.querySelector(`.mes-grupo1[data-mes="${mes}"]`);
                     if (input) {
-                        suma += parseInt(input.value) || 0;
+                        suma += removerFormatoMiles(input.value);
                     }
                 });
 
@@ -1042,7 +1059,7 @@
                     4: 'cuartoServicio'
                 };
 
-                document.getElementById(campos[i]).value = suma;
+                document.getElementById(campos[i]).value = formatearMiles(suma);
             }
 
             for (let i = 1; i <= 4; i++) {
@@ -1050,7 +1067,7 @@
                 trimestres[i].forEach(mes => {
                     const input = document.querySelector(`.mes-grupo2[data-mes="${mes}"]`);
                     if (input) {
-                        suma += parseInt(input.value) || 0;
+                        suma += removerFormatoMiles(input.value) || 0;
                     }
                 });
 
@@ -1061,7 +1078,7 @@
                     4: 'cuartoPersona'
                 };
 
-                document.getElementById(campos[i]).value = suma;
+                document.getElementById(campos[i]).value = formatearMiles(suma);
             }
         }
 
@@ -1077,7 +1094,7 @@
 
             btnAgregar.addEventListener('click', function() {
                 const estado = selectEstado.value;
-                const personas = parseInt(inputPersonas.value) || 0;
+                const personas = removerFormatoMiles(inputPersonas.value);
 
                 if (!estado) {
                     alert('Por favor, seleccione un municipio');
@@ -1091,12 +1108,12 @@
 
                 if (!puedeAgregarPersonas(grupo, personas)) {
                     const maxServicios = grupo === 'Grupo1'
-                        ? parseInt(document.getElementById('valorServicios').value) || 0
-                        : parseInt(document.getElementById('valorPersonas').value) || 0;
+                        ? removerFormatoMiles(document.getElementById('valorServicios').value)
+                        : removerFormatoMiles(document.getElementById('valorPersonas').value);
 
                     const totalActual = calcularTotalPersonas(grupo);
                     const disponibles = maxServicios - totalActual;
-                    alert(`No se pueden agregar ${personas} personas. Solo hay ${disponibles} disponibles en el ${grupo === 'Grupo1' ? 'Grupo Principal' : 'Grupo Acumulable'}.`);
+                    alert(`No se pueden agregar ${personas.toLocaleString('en-US')} personas. Solo hay ${disponibles} disponibles en el ${grupo === 'Grupo1' ? 'Grupo Principal' : 'Grupo Acumulable'}.`);
                     return;
                 }
 
@@ -1111,7 +1128,7 @@
                 nuevaFila.setAttribute('data-id-municipio', estado);
                 nuevaFila.setAttribute('data-cantidad', personas);
                 nuevaFila.innerHTML = `
-                    <td>${personas}</td>
+                    <td>${formatearMiles(personas)}</td>
                     <td>${datos.municipio}</td>
                     <td>${datos.region}</td>
                     <td>${datos.numeroRegion}</td>
@@ -1192,26 +1209,31 @@
 
         function configurarSelectAcumulable() {
             const selectAcumulable = document.getElementById('selectAcumulable');
+            const selectPersonas = document.getElementById('selectPersonas');
             const inputsGrupo2 = document.querySelectorAll('.mes-grupo2');
             const selectEstadoGrupo2 = document.getElementById('selectEstadoGrupo2');
             const personasAtendidasGrupo2 = document.getElementById('personasAtendidasGrupo2');
             const btnAgregarGrupo2 = document.getElementById('btnAgregarGrupo2');
 
             selectAcumulable.addEventListener('change', function() {
-                const habilitar = this.value === 'si';
+                const esAcumulable = this.value === 'si';
+                const esPersonas = selectPersonas.value === 'Personas';
+                const esInstituciones = selectPersonas.value === 'Instituciones';
+                const habilitarMeses = esAcumulable || (this.value === 'no' && esPersonas);
 
                 inputsGrupo2.forEach(input => {
-                    input.disabled = !habilitar;
-                    if (!habilitar) {
+                    input.disabled = !habilitarMeses;
+                    if (esInstituciones && !esAcumulable) {
                         input.value = 0;
                     }
                 });
 
-                selectEstadoGrupo2.disabled = !habilitar;
-                personasAtendidasGrupo2.disabled = !habilitar;
-                btnAgregarGrupo2.disabled = !habilitar;
+                const habilitarMunicipios = esAcumulable || (this.value === 'no' && esPersonas);
+                selectEstadoGrupo2.disabled = !habilitarMunicipios;
+                personasAtendidasGrupo2.disabled = !habilitarMunicipios;
+                btnAgregarGrupo2.disabled = !habilitarMunicipios;
 
-                if (!habilitar) {
+                if (esInstituciones && !esAcumulable) {
                     selectEstadoGrupo2.value = '';
                     personasAtendidasGrupo2.value = 0;
                 }
@@ -1274,6 +1296,26 @@
                 }
 
                 // ========================================
+                // CONFIRMACIÓN ANTES DE GUARDAR
+                // ========================================
+                const confirmacion = await Swal.fire({
+                    title: '¿Enviar a revisión?',
+                    html: `<p>Está a punto de enviar su registro a revisión.</p>
+                           <p class="text-muted"><small>Una vez enviada, el administrador revisará su información.</small></p>`,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#28a745',
+                    cancelButtonColor: '#dc3545',
+                    confirmButtonText: '<i class="fas fa-check"></i> Sí, enviar',
+                    cancelButtonText: '<i class="fas fa-times"></i> No, revisar datos',
+                    reverseButtons: true
+                });
+
+                if (!confirmacion.isConfirmed) {
+                    return;
+                }
+
+                // ========================================
                 // SOLO SI PASÓ LAS VALIDACIONES, MOSTRAR LOADING
                 // ========================================
                 btnGuardar.disabled = true;
@@ -1306,48 +1348,52 @@
                     intervienenDelegaciones: document.getElementById('selectDelegaciones').value,
                     intervienenDelegacionesManera: document.getElementById('inputDelegaciones').value,
                     selectAcumulable: document.getElementById('selectAcumulable').value,
-                    totalAnos: document.getElementById('valorServicios').value,
-                    totalAnos2: document.getElementById('valorPersonas').value,
+                    totalAnos: removerFormatoMiles(document.getElementById('valorServicios').value),
+                    totalAnos2: removerFormatoMiles(document.getElementById('valorPersonas').value),
                     beneficiarios: document.getElementById('selectPersonas').value
                 };
 
                 const lineaBase = {
                     anoBase: parseInt(document.getElementById('selectAnoBase').value) || 0,
                     porcentajeBase: parseFloat(document.getElementById('inputPorcentajeBase').value) || 0,
-                    servicioBase: parseInt(document.getElementById('inputServicioBase').value) || 0,
-                    personasBase: parseInt(document.getElementById('inputPersonasBase').value) || 0
+                    servicioBase: removerFormatoMiles(document.getElementById('inputServicioBase').value),
+                    personasBase: removerFormatoMiles(document.getElementById('inputPersonasBase').value)
                 };
 
                 const metaAnual = {
                     anoMeta: parseInt(document.getElementById('inputAnoMeta').value) || 0,
                     porcentajeMeta: parseFloat(document.getElementById('inputPorcentajeMeta').value) || 0,
-                    servicioMeta: parseInt(document.getElementById('inputServicioMeta').value) || 0,
-                    personasMeta: parseInt(document.getElementById('inputServicioMetas').value) || 0
+                    servicioMeta: removerFormatoMiles(document.getElementById('inputServicioMeta').value),
+                    personasMeta: removerFormatoMiles(document.getElementById('inputServicioMetas').value)
                 };
 
                 const trimestresServicios = {
-                    primerServicio: parseInt(document.getElementById('primerServicio').value) || 0,
-                    segundoServicio: parseInt(document.getElementById('segundoServicio').value) || 0,
-                    tercerServicio: parseInt(document.getElementById('tercerServicio').value) || 0,
-                    cuartoServicio: parseInt(document.getElementById('cuartoServicio').value) || 0
+                    primerServicio: removerFormatoMiles(document.getElementById('primerServicio').value),
+                    segundoServicio: removerFormatoMiles(document.getElementById('segundoServicio').value),
+                    tercerServicio: removerFormatoMiles(document.getElementById('tercerServicio').value),
+                    cuartoServicio: removerFormatoMiles(document.getElementById('cuartoServicio').value)
                 };
 
                 const trimestresPersonas = {
-                    primerPersona: parseInt(document.getElementById('primerPersona').value) || 0,
-                    segundoPersona: parseInt(document.getElementById('segundoPersona').value) || 0,
-                    tercerPersona: parseInt(document.getElementById('tercerPersona').value) || 0,
-                    cuartoPersona: parseInt(document.getElementById('cuartoPersona').value) || 0
+                    primerPersona: removerFormatoMiles(document.getElementById('primerPersona').value),
+                    segundoPersona: removerFormatoMiles(document.getElementById('segundoPersona').value),
+                    tercerPersona: removerFormatoMiles(document.getElementById('tercerPersona').value),
+                    cuartoPersona: removerFormatoMiles(document.getElementById('cuartoPersona').value)
                 };
 
                 // Recolectar meses
+                const mesesOrden = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'];
+
                 const mesesServicios = [];
-                document.querySelectorAll('.mes-grupo1').forEach(input => {
-                    mesesServicios.push(parseInt(input.value) || 0);
+                mesesOrden.forEach(mes => {
+                    const input = document.querySelector(`.mes-grupo1[data-mes="${mes}"]`);
+                    mesesServicios.push(removerFormatoMiles(input?.value) || 0);
                 });
 
                 const mesesPersonas = [];
-                document.querySelectorAll('.mes-grupo2').forEach(input => {
-                    mesesPersonas.push(parseInt(input.value) || 0);
+                mesesOrden.forEach(mes => {
+                    const input = document.querySelector(`.mes-grupo2[data-mes="${mes}"]`);
+                    mesesPersonas.push(removerFormatoMiles(input?.value) || 0);
                 });
 
                 // Recolectar municipios del Grupo 1 (Servicios)
@@ -1496,20 +1542,39 @@
 
                 // Mostrar error específico con SweetAlert
                 let mensajeError = 'Error al guardar la programación';
+                let detalleError = '';
+
                 if (error.message.includes('HTTP')) {
                     mensajeError = 'Error de conexión con el servidor';
+                    detalleError = `Código de estado: ${error.message}`;
                 } else if (error.message.includes('JSON')) {
                     mensajeError = 'Error en el formato de datos';
+                    detalleError = error.message;
                 } else {
-                    mensajeError = error.message;
+                    mensajeError = error.message || 'Error desconocido';
+                    detalleError = error.stack ? `Detalles técnicos: ${error.stack.split('\n')[0]}` : '';
                 }
+
+                // Mostrar el error completo en consola para debugging
+                console.error('Detalles completos del error:', {
+                    mensaje: error.message,
+                    stack: error.stack,
+                    nombre: error.name
+                });
 
                 await Swal.fire({
                     title: 'Error',
-                    text: `${mensajeError}\n\nPor favor, intente nuevamente.`,
+                    html: `
+                        <div style="text-align: left;">
+                            <p><strong>${mensajeError}</strong></p>
+                            ${detalleError ? `<p style="font-size: 0.9em; color: #666;">${detalleError}</p>` : ''}
+                            <p style="margin-top: 15px;">Por favor, intente nuevamente.</p>
+                        </div>
+                    `,
                     icon: 'error',
                     confirmButtonText: 'Aceptar',
-                    confirmButtonColor: '#d33'
+                    confirmButtonColor: '#d33',
+                    width: '600px'
                 });
             }
         }
@@ -1658,6 +1723,92 @@
 
             return errores;
         }
+
+        // ========================================
+        // FUNCIONES DE FORMATO DE MILES
+        // ========================================
+
+        function formatearMiles(valor) {
+            // Convertir a string y remover cualquier formato existente
+            const numero = valor.toString().replace(/,/g, '');
+
+            // Si está vacío o no es un número válido, retornar vacío
+            if (numero === '' || isNaN(numero)) {
+                return '';
+            }
+
+            // Formatear con separador de miles
+            return parseInt(numero).toLocaleString('en-US');
+        }
+
+        function removerFormatoMiles(valorFormateado) {
+            return parseInt(valorFormateado.replace(/,/g, '')) || 0;
+        }
+
+        function configurarFormatoMiles(nombreClase = 'formato-miles') {
+            const inputs = document.querySelectorAll(`.${nombreClase}`);
+
+            inputs.forEach(input => {
+                // Formatear valor inicial si existe
+                if (input.value && input.value !== '0') {
+                    input.value = formatearMiles(input.value);
+                }
+
+                // Evento al escribir/pegar
+                input.addEventListener('input', function(e) {
+                    const cursorPos = this.selectionStart;
+                    const valorAnterior = this.value;
+                    const longitudAnterior = valorAnterior.length;
+
+                    // Remover formato, validar y reformatear
+                    const valorSinFormato = this.value.replace(/,/g, '');
+
+                    // Solo permitir números
+                    if (valorSinFormato && !/^\d+$/.test(valorSinFormato)) {
+                        this.value = valorAnterior;
+                        return;
+                    }
+
+                    // Aplicar formato
+                    const valorFormateado = formatearMiles(valorSinFormato);
+                    this.value = valorFormateado;
+
+                    // Ajustar posición del cursor
+                    const longitudNueva = valorFormateado.length;
+                    const diferencia = longitudNueva - longitudAnterior;
+                    const nuevaPos = cursorPos + diferencia;
+
+                    this.setSelectionRange(nuevaPos, nuevaPos);
+                });
+
+                // Evento al perder foco - asegurar formato correcto
+                input.addEventListener('blur', function() {
+                    if (this.value === '' || this.value === '0') {
+                        this.value = '0';
+                    } else {
+                        this.value = formatearMiles(this.value);
+                    }
+                });
+
+                // Evento al obtener foco - útil para algunos casos
+                input.addEventListener('focus', function() {
+                    // Opcional: podrías remover el formato al hacer focus
+                    // para facilitar la edición
+                    // this.value = removerFormatoMiles(this.value);
+                });
+            });
+        }
+
+        // ========================================
+        // FUNCIÓN AUXILIAR PARA OBTENER VALOR NUMÉRICO
+        // ========================================
+        function obtenerValorNumerico(idElemento) {
+            const elemento = document.getElementById(idElemento);
+            if (!elemento) return 0;
+
+            return removerFormatoMiles(elemento.value);
+        }
+
         // ========================================
         // INICIALIZACIÓN PRINCIPAL
         // ========================================
@@ -1670,6 +1821,8 @@
             configurarSelectProgramaComponente();
             configurarAgregarPersonas('Grupo1');
             configurarAgregarPersonas('Grupo2');
+
+            configurarFormatoMiles('formato-miles');
 
             document.querySelectorAll('.mes-grupo1, .mes-grupo2').forEach(input => {
                 input.addEventListener('input', calcularSumatorias);

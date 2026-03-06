@@ -1,0 +1,675 @@
+﻿@{
+    ViewData["Title"] = "Tablero de Control";
+    int numeroRegistros = ViewBag.NumeroRegistros ?? 0;
+    int anoFiscal = ViewBag.AnoFiscal ?? DateTime.Now.Year;
+}
+
+<div class="container-fluid mt-4">
+
+    <!-- Encabezado -->
+    <div class="glass-effect rounded-3 p-3 mb-4">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h2 class="fw-bold titulo mb-1">TABLERO DE CONTROL</h2>
+                <p class="mb-0 text-muted" id="infoEncabezado">Ejercicio Fiscal: @anoFiscal - Cargando...</p>
+            </div>
+            <div class="col-md-4 text-end">
+                <a asp-controller="Monitoreo" asp-action="Monitoreo"
+                   class="btn btn-outline-primary">
+                    ← Volver al Monitoreo
+                </a>
+            </div>
+        </div>
+    </div>
+
+    
+    <div id="contenedor-tableros">
+        <!-- Los tableros se generarán aquí automáticamente -->
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let datosTablero = [];
+        let llenadoInterno = {};
+        const anoFiscal = @ViewBag.AnoFiscal;
+        const departamento = @ViewBag.Departamento;
+
+        $(document).ready(async function() {
+            const contenedor = $('#contenedor-tableros');
+
+            // Mostrar indicador de carga
+            contenedor.html(`
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+                        <span class="visually-hidden">Cargando...</span>
+                    </div>
+                    <p class="mt-3 text-muted fw-semibold">Cargando tableros de control...</p>
+                </div>
+            `);
+
+            try {
+                // Cargar datos mediante AJAX
+                const response = await fetch(`/Monitoreo/ObtenerDatosTableroControl?anoFiscal=${anoFiscal}&departamento=${departamento}`);
+
+                if (!response.ok) {
+                    throw new Error('Error al cargar los datos del servidor');
+                }
+
+                const result = await response.json();
+
+                if (!result.success) {
+                    throw new Error(result.mensaje || 'Error desconocido al procesar los datos');
+                }
+
+                datosTablero = result.datos;
+                llenadoInterno = result.llenadoInterno;
+
+                console.log("✅ Datos cargados:", datosTablero.length, "registros");
+                console.log("✅ Llenado interno:", llenadoInterno);
+
+                // Actualizar el contador en el encabezado
+                $('#infoEncabezado').html(`Ejercicio Fiscal: ${anoFiscal} - Total de Actividades: ${datosTablero.length}`);
+
+                contenedor.empty();
+
+                if (datosTablero.length > 0) {
+                    // Generar tableros
+                    datosTablero.forEach((item, index) => {
+                        const numeroTablero = index + 1;
+                        const tableroHTML = crearTablero(numeroTablero, item);
+                        contenedor.append(tableroHTML);
+                    });
+
+                    // Aplicar colores después de generar todos los tableros
+                    setTimeout(aplicarColoresAutomaticos, 100);
+                } else {
+                    contenedor.html(`
+                        <div class="alert alert-info text-center">
+                            <h5><i class="fas fa-info-circle"></i> No hay datos disponibles</h5>
+                            <p>No se encontraron registros para los criterios seleccionados.</p>
+                        </div>
+                    `);
+                }
+
+            } catch (error) {
+                console.error('❌ Error al cargar datos:', error);
+                contenedor.html(`
+                    <div class="alert alert-danger text-center">
+                        <h5><i class="fas fa-exclamation-triangle"></i> Error al cargar los datos</h5>
+                        <p>${error.message}</p>
+                        <button class="btn btn-primary mt-3" onclick="location.reload()">
+                            <i class="fas fa-redo"></i> Reintentar
+                        </button>
+                    </div>
+                `);
+            }
+        });
+
+        // ----------------------------------------------------
+        // 3. Modificar la función crearTablero para aceptar y usar los datos
+        function crearTablero(numeroTablero, data) {
+
+            if (!data || !data.programado || !data.realizado) {
+                console.error("❌ Datos inválidos para tablero:", numeroTablero, data);
+                return '<div class="alert alert-warning">Error: Datos incompletos para este registro</div>';
+            }
+
+            // Calculamos los porcentajes necesarios en el lado del cliente (JS)
+            const porcentajeAnual = (data.realizado.total > 0 && data.programado.total > 0) ?
+                Math.round((data.realizado.total / data.programado.total) * 100) : 0;
+
+            // Los meses en tu data JSON (Ene, Feb, etc.)
+            const mesesAbreviados = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+
+            // Función para calcular el porcentaje de un mes
+            const calcularPorcentajeMes = (mes) => {
+                const prog = (data.programado && data.programado[mes]) || 0;
+                const real = (data.realizado && data.realizado[mes]) || 0;
+                return prog > 0 ? Math.round((real / prog) * 100) : 0;
+            };
+
+            // Función para calcular el porcentaje de un trimestre
+            const calcularPorcentajeTrimestre = (m1, m2, m3) => {
+                const progTotal = (data.programado[m1] || 0) + (data.programado[m2] || 0) + (data.programado[m3] || 0);
+                const realTotal = (data.realizado[m1] || 0) + (data.realizado[m2] || 0) + (data.realizado[m3] || 0);
+                return progTotal > 0 ? Math.round((realTotal / progTotal) * 100) : 0;
+            };
+
+            const trim1Porcentaje = calcularPorcentajeTrimestre('ene', 'feb', 'mar');
+            const trim2Porcentaje = calcularPorcentajeTrimestre('abr', 'may', 'jun');
+            const trim3Porcentaje = calcularPorcentajeTrimestre('jul', 'ago', 'sep');
+            const trim4Porcentaje = calcularPorcentajeTrimestre('oct', 'nov', 'dic');
+
+
+            return `
+            <div class="tablero-individual mb-5 border-bottom pb-4" data-tablero="${numeroTablero}">
+
+                <div class="glass-effect rounded-3 p-3 mb-3 bg-primary bg-opacity-10">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h4 class="fw-bold titulo mb-1">
+                                ${data.componente} / ${data.actividad}
+                            </h4>
+                            <p class="mb-1 text-muted">${data.descripcionActividad}</p>
+                            <small class="text-muted">${data.programaSocial}</small>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <span class="badge bg-info fs-6">ID Proceso ${data.idProceso}</span>
+                            <button class="boton-amarillo m-2"
+                                    onclick="exportarTableroComoImagen(this)"
+                                    style="color: red; box-shadow: 0 4px 6px 0 red; border: 1px solid red !important; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; padding: 6px 13px; font-size: 12.8px;">
+                                <i class="fas fa-file-pdf" style="font-size: 14px;"></i> Exportar a PDF
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-effect rounded-3 p-3 mb-3">
+                    <h5 class="fw-semibold titulo mb-3 border-bottom pb-2 text-center">INFORMACIÓN DEL PROGRAMA</h5>
+                    <div class="row small">
+                        <div class="col-md-6 border-end pe-3">
+                            <div class="mb-2">
+                                <span class="fw-semibold titulo">Componente:</span>
+                                <span>${data.componente}</span>
+                            </div>
+                            <div class="mb-2">
+                                <span class="fw-semibold titulo">Número de Actividad:</span>
+                                <span>${data.actividad}</span>
+                            </div>
+                            <div class="mb-2">
+                                <span class="fw-semibold titulo">Programa Social:</span>
+                                <span>${data.programaSocial}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 ps-3">
+                            <div class="mb-2">
+                                <span class="fw-semibold titulo">Unidad de Medida:</span>
+                                <span>${data.unidadMedida || 'N/A'}</span>
+                            </div>
+                            <div class="mb-2">
+                                <span class="fw-semibold titulo">Descripción:</span>
+                                <span>${data.descripcionActividad}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-effect rounded-3 p-3 mb-3" style="background-color: white">
+                    <h5 class="fw-semibold titulo mb-3 border-bottom pb-2 text-center">CALENDARIZACIÓN ANUAL</h5>
+                    <div class="row">
+
+                        <div class="col-md-6 border-end pe-3">
+                            <h6 class="fw-semibold text-primary mb-2">PROGRAMADO</h6>
+                            <div class="table-responsive">
+                                <table class="table table-sm text-center mb-2">
+                                    <thead class="bg-primary text-white">
+                                        <tr>
+                                            <th>Ene</th><th>Feb</th><th>Mar</th><th>Abr</th><th>May</th><th>Jun</th>
+                                            <th>Jul</th><th>Ago</th><th>Sep</th><th>Oct</th><th>Nov</th><th>Dic</th>
+                                            <th>Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            ${mesesAbreviados.map(mes => `<td>${data.programado[mes] || 0}</td>`).join('')}
+                                            <td class="fw-bold bg-info bg-opacity-10">${data.programado.total}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 ps-3">
+                            <h6 class="fw-semibold text-success mb-2">REALIZADO</h6>
+                            <div class="table-responsive">
+                                <table class="table table-sm text-center mb-2">
+                                    <thead class="bg-success text-white">
+                                        <tr>
+                                            <th>Ene</th><th>Feb</th><th>Mar</th><th>Abr</th><th>May</th><th>Jun</th>
+                                            <th>Jul</th><th>Ago</th><th>Sep</th><th>Oct</th><th>Nov</th><th>Dic</th>
+                                            <th>Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            ${mesesAbreviados.map(mes => `<td>${data.realizado[mes] || 0}</td>`).join('')}
+                                            <td class="fw-bold bg-success bg-opacity-10">${data.realizado.total}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-effect rounded-3 p-3 mb-3" style="background-color: white">
+                    <h5 class="fw-semibold titulo mb-3 border-bottom pb-2 text-center">AVANCE MENSUAL</h5>
+                    <div class="table-responsive">
+                        <table class="table table-sm text-center mb-1">
+                            <thead class="bg-warning text-dark">
+                                <tr>
+                                    <th>Ene</th><th>Feb</th><th>Mar</th><th>Abr</th><th>May</th><th>Jun</th>
+                                    <th>Jul</th><th>Ago</th><th>Sep</th><th>Oct</th><th>Nov</th><th>Dic</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    ${mesesAbreviados.map(mes =>
+                                        `<td><div class="fw-bold porcentaje-mes" data-mes="${mes.toLowerCase()}">${calcularPorcentajeMes(mes)}%</div></td>`
+                                    ).join('')}
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="glass-effect rounded-3 p-3" style="background-color: white">
+                    <div class="row">
+                        <div class="col-md-8 border-end pe-3">
+                            <h5 class="fw-semibold titulo mb-3 border-bottom pb-2 text-center">TRIMESTRAL</h5>
+                            <div class="row text-center">
+                                <div class="col-md-3 mb-2">
+                                    <div class="border rounded p-2">
+                                        <small class="fw-semibold">1ER</small>
+                                        <div class="h6 fw-bold porcentaje-trimestre" data-trimestre="1">${trim1Porcentaje}%</div>
+                                        <div class="progress" style="height: 8px;">
+                                            <div class="progress-bar progress-trimestre-1" style="width: ${Math.min(trim1Porcentaje, 100)}%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    <div class="border rounded p-2">
+                                        <small class="fw-semibold">2DO</small>
+                                        <div class="h6 fw-bold porcentaje-trimestre" data-trimestre="2">${trim2Porcentaje}%</div>
+                                        <div class="progress" style="height: 8px;">
+                                            <div class="progress-bar progress-trimestre-2" style="width: ${Math.min(trim2Porcentaje, 100)}%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    <div class="border rounded p-2">
+                                        <small class="fw-semibold">3ER</small>
+                                        <div class="h6 fw-bold porcentaje-trimestre" data-trimestre="3">${trim3Porcentaje}%</div>
+                                        <div class="progress" style="height: 8px;">
+                                            <div class="progress-bar progress-trimestre-3" style="width: ${Math.min(trim3Porcentaje, 100)}%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    <div class="border rounded p-2">
+                                        <small class="fw-semibold">4TO</small>
+                                        <div class="h6 fw-bold porcentaje-trimestre" data-trimestre="4">${trim4Porcentaje}%</div>
+                                        <div class="progress" style="height: 8px;">
+                                            <div class="progress-bar progress-trimestre-4" style="width: ${Math.min(trim4Porcentaje, 100)}%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 ps-3">
+                            <h5 class="fw-semibold titulo mb-3 border-bottom pb-2 text-center">ANUAL</h5>
+                            <div class="text-center">
+                                <div class="h3 fw-bold porcentaje-anual">${porcentajeAnual}%</div>
+                                <div class="progress mb-2" style="height: 12px;">
+                                    <div class="progress-bar progress-anual" style="width: ${Math.min(porcentajeAnual, 100)}%"></div>
+                                </div>
+                                <div class="row small text-center">
+                                    <div class="col-6">
+                                        <div class="fw-semibold">Prog:</div>
+                                        <div class="text-primary">${data.programado.total}</div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="fw-semibold">Real:</div>
+                                        <div class="text-success">${data.realizado.total}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            `;
+        }
+
+        async function exportarTableroComoImagen(boton) {
+
+            const tablero = $(boton).closest('.tablero-individual');
+
+            if (!tablero.length) {
+                alert('No se encontró el tablero para exportar');
+                return;
+            }
+
+            const numeroTablero = tablero.data('tablero');
+            const componente = tablero.find('h4.fw-bold').first().text().trim();
+            const idProceso = tablero.find('.badge.bg-info').text().trim();
+
+            const botonOriginal = $(boton).html();
+            $(boton).html('<i class="fas fa-spinner fa-spin"></i> Generando PDF...').prop('disabled', true);
+
+            try {
+                // Clonar el tablero para no afectar el original
+                const tableroClonado = tablero.clone();
+
+                // Remover el botón de exportar del clon
+                tableroClonado.find('button[onclick*="exportarTableroComoImagen"]').remove();
+
+                // Remover el cuadro azul completo (el div con bg-primary bg-opacity-10)
+                tableroClonado.find('.bg-primary.bg-opacity-10').remove();
+                tableroClonado.css({
+                    'position': 'absolute',
+                    'left': '-9999px',
+                    'top': '0',
+                    'background': 'white',
+                    'padding': '20px',
+                    'width': '1200px'
+                });
+                $('body').append(tableroClonado);
+
+                const canvas = await html2canvas(tableroClonado[0], {
+                    scale: 1.2,
+                    useCORS: true,
+                    logging: false,
+                    backgroundColor: '#ffffff'
+                });
+
+                tableroClonado.remove();
+
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: 'letter'
+                });
+
+                const pageWidth = pdf.internal.pageSize.getWidth();
+                const pageHeight = pdf.internal.pageSize.getHeight();
+                const margin = 15;
+
+                const fechaActual = new Date().toLocaleDateString('es-MX', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+
+                const anoFiscal = (llenadoInterno && llenadoInterno.Ano) ? llenadoInterno.Ano : new Date().getFullYear();
+                const alturaEncabezado = 42;
+
+                // Fondo BLANCO del encabezado
+                pdf.setFillColor(255, 255, 255);
+                pdf.rect(0, 0, pageWidth, alturaEncabezado, 'F');
+
+                // Borde inferior gris
+                pdf.setDrawColor(200, 200, 200);
+                pdf.setLineWidth(0.5);
+                pdf.line(0, alturaEncabezado, pageWidth, alturaEncabezado);
+
+                // Función helper para cargar imagen con promesa
+                const cargarImagen = (src) => {
+                    return new Promise((resolve, reject) => {
+                        const img = new Image();
+                        img.onload = () => resolve(img);
+                        img.onerror = reject;
+                        img.src = src;
+                    });
+                };
+
+                // Cargar ambos logos
+                try {
+                    const logoIzquierdo = await cargarImagen('/img/png-gob.png');
+                    const anchoLogoIzq = 24.5;
+                    const aspectRatioIzq = logoIzquierdo.width / logoIzquierdo.height;
+                    const altoLogoIzq = anchoLogoIzq / aspectRatioIzq;
+                    const yPosLogoIzq = (alturaEncabezado - altoLogoIzq) / 2;
+
+                    pdf.addImage(logoIzquierdo, 'PNG', 15, yPosLogoIzq, anchoLogoIzq, altoLogoIzq);
+                } catch (error) {
+                    console.warn('No se pudo cargar logo izquierdo:', error);
+                }
+
+                try {
+                    const logoDerecho = await cargarImagen('/img/familias-dif.png');
+                    const anchoLogoDer = 24.5;
+                    const aspectRatioDer = logoDerecho.width / logoDerecho.height;
+                    const altoLogoDer = anchoLogoDer / aspectRatioDer;
+                    const yPosLogoDer = (alturaEncabezado - altoLogoDer) / 2;
+
+                    pdf.addImage(logoDerecho, 'PNG', pageWidth - 40, yPosLogoDer, anchoLogoDer, altoLogoDer);
+                } catch (error) {
+                    console.warn('No se pudo cargar logo derecho:', error);
+                }
+
+                // TEXTOS DEL ENCABEZADO
+                pdf.setTextColor(0, 0, 0);
+
+                pdf.setFontSize(9);
+                pdf.setFont(undefined, 'bold');
+                pdf.text('SISTEMA PARA EL DESARROLLO INTEGRAL DE LA FAMILIA DEL ESTADO DE PUEBLA', pageWidth / 2, 10, { align: 'center' });
+
+                pdf.setFontSize(8);
+                pdf.setFont(undefined, 'normal');
+                pdf.text('UNIDAD DE PLANEACIÓN ADMINISTRACIÓN Y FINANZAS', pageWidth / 2, 15, { align: 'center' });
+                pdf.text('DIRECCIÓN DE PLANEACIÓN Y EVALUACIÓN', pageWidth / 2, 19, { align: 'center' });
+
+                pdf.setFontSize(10);
+                pdf.setFont(undefined, 'bold');
+                pdf.text(`TABLERO DE CONTROL ${anoFiscal}`, pageWidth / 2, 25, { align: 'center' });
+
+                pdf.setFontSize(8);
+                pdf.setFont(undefined, 'italic');
+                pdf.text('Programa de Prestación de Servicios de Asistencia Social.', pageWidth / 2, 30, { align: 'center' });
+
+                pdf.setFontSize(7);
+                pdf.setFont(undefined, 'normal');
+                pdf.setTextColor(100, 100, 100);
+                pdf.text(`${idProceso} | Generado el ${fechaActual}`, pageWidth / 2, 36, { align: 'center' });
+
+                // IMAGEN DEL TABLERO
+                const imgData = canvas.toDataURL('image/png');
+                const imgWidth = pageWidth - (margin * 2);
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+                let yPosition = alturaEncabezado + 8;
+                const maxHeight = pageHeight - 100;
+                let finalImgHeight = imgHeight;
+                let finalImgWidth = imgWidth;
+
+                if (imgHeight > maxHeight) {
+                    finalImgHeight = maxHeight;
+                    finalImgWidth = (canvas.width * finalImgHeight) / canvas.height;
+                }
+
+                pdf.setTextColor(0, 0, 0);
+                pdf.addImage(imgData, 'PNG', margin, yPosition, finalImgWidth, finalImgHeight);
+
+                // SECCIÓN DE FIRMAS
+                const firmasY = pageHeight - 65; // Más espacio para 3 líneas de texto
+                const colWidth = (pageWidth - (margin * 2)) / 2;
+                const firmaY = firmasY + 10;
+
+                pdf.setTextColor(0, 0, 0);
+
+                // Obtener el registro específico de este tablero
+                const idProcesoNum = parseInt(idProceso.replace('ID Proceso ', ''));
+                const dataActual = datosTablero.find(d => d.idProceso === idProcesoNum);
+
+                const nombreReviso = dataActual?.nombreReviso || 'Sin asignar';
+                const nombreValido = dataActual?.nombreValido || 'Sin asignar';
+                const cargoReviso = dataActual?.cargoReviso || 'Sin asignar';
+                const cargoValido = dataActual?.cargoValido || 'Sin asignar';
+
+                // ========== PRIMERA FIRMA - REVISÓ ==========
+                const xCentroReviso = margin + (colWidth / 2);
+
+                // Texto "Revisó" arriba
+                pdf.setFont(undefined, 'bold');
+                pdf.setFontSize(10);
+                pdf.text('Revisó', xCentroReviso, firmaY, { align: 'center' });
+
+                // Espacio para firma (5mm de alto)
+                // Línea de firma
+                pdf.setDrawColor(0, 0, 0);
+                pdf.setLineWidth(0.5);
+                pdf.line(margin + 20, firmaY + 12, margin + colWidth - 20, firmaY + 12);
+
+                // Nombre debajo de la línea
+                pdf.setFont(undefined, 'bold');
+                pdf.setFontSize(9);
+                pdf.text(nombreReviso, xCentroReviso, firmaY + 18, { align: 'center' });
+
+                // Cargo debajo del nombre
+                pdf.setFont(undefined, 'normal');
+                pdf.setFontSize(8);
+                pdf.text(cargoReviso, xCentroReviso, firmaY + 23, { align: 'center' });
+
+                // ========== SEGUNDA FIRMA - AUTORIZÓ ==========
+                const xCentroAutorizo = margin + colWidth + (colWidth / 2);
+
+                // Texto "Autorizó" arriba
+                pdf.setFont(undefined, 'bold');
+                pdf.setFontSize(10);
+                pdf.text('Autorizó', xCentroAutorizo, firmaY, { align: 'center' });
+
+                // Espacio para firma (5mm de alto)
+                // Línea de firma
+                pdf.line(margin + colWidth + 20, firmaY + 12, pageWidth - margin - 20, firmaY + 12);
+
+                // Nombre debajo de la línea
+                pdf.setFont(undefined, 'bold');
+                pdf.setFontSize(9);
+                pdf.text(nombreValido, xCentroAutorizo, firmaY + 18, { align: 'center' });
+
+                // Cargo debajo del nombre
+                pdf.setFont(undefined, 'normal');
+                pdf.setFontSize(8);
+
+                pdf.text(cargoValido, xCentroAutorizo, firmaY + 23, { align: 'center' });
+
+                // Pie de página
+                pdf.setFontSize(7);
+                pdf.setTextColor(128, 128, 128);
+                pdf.text('Este documento es de carácter informativo y representa el avance del programa social',
+                    pageWidth / 2, pageHeight - 10, { align: 'center' });
+
+                // Guardar el PDF
+                const nombreArchivo = `Tablero_${idProceso}_${new Date().getTime()}.pdf`;
+                pdf.save(nombreArchivo);
+
+                $(boton).html(botonOriginal).prop('disabled', false);
+                mostrarNotificacion('PDF generado exitosamente', 'success');
+
+            } catch (error) {
+                console.error('❌ Error completo:', error);
+                console.error('Stack trace:', error.stack);
+                $(boton).html(botonOriginal).prop('disabled', false);
+                alert('Error al generar el PDF: ' + error.message);
+            }
+        }
+
+        // Función auxiliar para mostrar notificaciones
+        function mostrarNotificacion(mensaje, tipo = 'info') {
+            const colores = {
+                'success': '#28a745',
+                'error': '#dc3545',
+                'info': '#17a2b8'
+            };
+
+            const notificacion = $(`
+                <div style="
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: ${colores[tipo]};
+                    color: white;
+                    padding: 15px 25px;
+                    border-radius: 5px;
+                    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+                    z-index: 9999;
+                    font-weight: 500;
+                ">
+                    <i class="fas fa-check-circle"></i> ${mensaje}
+                </div>
+            `);
+
+            $('body').append(notificacion);
+
+            setTimeout(() => {
+                notificacion.fadeOut(400, function() {
+                    $(this).remove();
+                });
+            }, 3000);
+        }
+
+        // Funciones para colores (las mismas que tenías)
+        function getColorClass(porcentaje) {
+            if (porcentaje >= 115) return 'text-primary';
+            if (porcentaje >= 95) return 'text-success';
+            if (porcentaje >= 85) return 'text-warning';
+            if (porcentaje >= 70) return 'text-orange';
+            return 'text-danger';
+        }
+
+        function getProgressColor(porcentaje) {
+            if (porcentaje >= 115) return 'bg-primary';
+            if (porcentaje >= 95) return 'bg-success';
+            if (porcentaje >= 85) return 'bg-warning';
+            if (porcentaje >= 70) return 'bg-orange';
+            return 'bg-danger';
+        }
+
+        function extraerPorcentaje(texto) {
+            return parseInt(texto) || 0;
+        }
+
+        function aplicarColoresAutomaticos() {
+            // Aplicar colores a porcentajes mensuales
+            $('.porcentaje-mes').each(function() {
+                const porcentaje = extraerPorcentaje($(this).text());
+                $(this).addClass(getColorClass(porcentaje));
+            });
+
+            // Aplicar colores a porcentajes trimestrales
+            $('.porcentaje-trimestre').each(function() {
+                const porcentaje = extraerPorcentaje($(this).text());
+                $(this).addClass(getColorClass(porcentaje));
+
+                const trimestre = $(this).data('trimestre');
+                const progressBar = $(this).closest('.tablero-individual').find('.progress-trimestre-' + trimestre);
+                if (progressBar.length) {
+                    progressBar.css('width', Math.min(porcentaje, 100) + '%');
+                    progressBar.addClass(getProgressColor(porcentaje));
+                }
+            });
+
+            // Aplicar color a porcentaje anual
+            $('.porcentaje-anual').each(function() {
+                const porcentaje = extraerPorcentaje($(this).text());
+                $(this).addClass(getColorClass(porcentaje));
+
+                const progressAnual = $(this).closest('.tablero-individual').find('.progress-anual');
+                if (progressAnual.length) {
+                    progressAnual.css('width', Math.min(porcentaje, 100) + '%');
+                    progressAnual.addClass(getProgressColor(porcentaje));
+                }
+            });
+        }
+    </script>
+
+    <style>
+        .text-orange {
+            color: #fd7e14 !important;
+        }
+
+        .bg-orange {
+            background-color: #fd7e14 !important;
+        }
+
+        .tablero-individual {
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid #dee2e6 !important;
+        }
+    </style>
+}
