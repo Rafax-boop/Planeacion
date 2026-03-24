@@ -38,32 +38,17 @@
         <div class="col">
             <div class="col-12" style="margin-left: 6px">
                 <select class="titulo form-select input-arena" id="selectDepartamento">
-                    @if (User.IsInRole("Administrador"))
+
+                    @if (User.IsInRole("Administrador") || Model.ListaDepartamentos.Count > 1)
                     {
                         <option value="">-- Seleccione un departamento --</option>
-                        @foreach (var act in Model.ListaDepartamentos)
-                        {
-                            <option value="@act.Value">@act.Text</option>
-                        }
                     }
-                    else
+
+                    @foreach (var depto in Model.ListaDepartamentos)
                     {
-                        var departamentoUsuarioTexto = User.Claims.FirstOrDefault(c => c.Type == "Departamento")?.Value;
-
-                        var departamentoUsuarioObjeto = Model.ListaDepartamentos
-                        .FirstOrDefault(d => d.Text == departamentoUsuarioTexto);
-
-                        if (departamentoUsuarioObjeto != null)
-                        {
-                            // Si se encuentra, usamos el Value (ID) y el Text (Nombre)
-                            <option value="@departamentoUsuarioObjeto.Value">@departamentoUsuarioObjeto.Text</option>
-                        }
-                        else
-                        {
-                            // Opcional: Manejo si no se encuentra (solo mostrar el texto como fallback)
-                            <option value="">Recargué la página</option>
-                        }
+                        <option value="@depto.Value">@depto.Text</option>
                     }
+
                 </select>
             </div>
         </div>

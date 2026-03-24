@@ -37,30 +37,19 @@
         </div>
         <div class="col">
             <div class="col-12" style="margin-left: 6px">
-                <select class="titulo form-select input-arena" id="selectDepartamento">                    
+                <select class="titulo form-select input-arena" id="selectDepartamento">
                     @if (User.IsInRole("Administrador"))
                     {
                         <option value="">-- Seleccione un departamento --</option>
-                        @foreach (var act in Model.ListaDepartamentos)
-                        {
-                            <option value="@act.Value">@act.Text</option>
-                        }
                     }
-                    else
+                    else if (Model.ListaDepartamentos.Count() > 1)
                     {
-                        var departamentoUsuarioTexto = User.Claims.FirstOrDefault(c => c.Type == "Departamento")?.Value;
+                        <option value="">-- Seleccione un departamento --</option>
+                    }
 
-                        var departamentoUsuarioObjeto = Model.ListaDepartamentos
-                        .FirstOrDefault(d => d.Text == departamentoUsuarioTexto);
-
-                        if (departamentoUsuarioObjeto != null)
-                        {
-                            <option value="@departamentoUsuarioObjeto.Value">@departamentoUsuarioObjeto.Text</option>
-                        }
-                        else
-                        {
-                            <option value="">Recargué la página</option>
-                        }
+                    @foreach (var depto in Model.ListaDepartamentos)
+                    {
+                        <option value="@depto.Value">@depto.Text</option>
                     }
                 </select>
             </div>
