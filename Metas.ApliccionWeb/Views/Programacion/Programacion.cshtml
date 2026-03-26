@@ -1,4 +1,4 @@
-﻿@model Metas.AplicacionWeb.Models.ViewModels.VMDepartamentos
+@model Metas.AplicacionWeb.Models.ViewModels.VMDepartamentos
 @{
     ViewData["Title"] = "Iniciar Programación";
 }
@@ -193,6 +193,7 @@
                             // ========================================
                             var btnEliminar = '';
                             var btnEditar = '';
+                            var btnVer = '';
 
                             // Para ADMINISTRADOR
                             if (esAdmin) {
@@ -200,10 +201,7 @@
                                 btnEliminar = '<button type="button" class="btn btn-danger btn-sm btn-eliminar" data-id="' + item.idProceso + '"><i class="fa-solid fa-trash"></i></button>';
                             }
                             else {
-                                // Para USUARIO NORMAL
-                                if (item.idEstatus == 2) {
-                                    btnEditar = '<button type="button" class="btn btn-primary btn-sm btn-editar" data-id="' + item.idProceso + '"><i class="fa-solid fa-pen-to-square"></i></button>';
-                                }
+                                btnVer = '<button type="button" class="btn btn-primary btn-sm btn-ver" data-id="' + item.idProceso + '" title="Ver formulario"><i class="fa-solid fa-eye me-1"></i>Ver</button>';
                             }
 
                             var badgeEstatus = '';
@@ -236,7 +234,7 @@
                                 '<td class="text-center">' +
                                     '<div class="d-flex flex-column align-items-center gap-2">' +
                                         '<div>' + badgeEstatus + '</div>' +
-                                        '<div>' + btnEditar + '</div>' +
+                                        '<div>' + btnEditar + btnVer + '</div>' +
                                     '</div>' +
                                 '</td>' +
                             '</tr>';
@@ -292,6 +290,12 @@
                 var idProceso = $(this).data('id');
                 var urlEditar = '@Url.Action("RevisarProgramacion", "Programacion")' + '?id=' + idProceso;
                 window.location.href = urlEditar;
+            });
+
+            $(document).on('click', '.btn-ver', function() {
+                var idProceso = $(this).data('id');
+                var urlVer = '@Url.Action("RevisarProgramacion", "Programacion")' + '?id=' + idProceso;
+                window.location.href = urlVer;
             });
 
             // ========================================
