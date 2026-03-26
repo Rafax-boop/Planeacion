@@ -1,28 +1,70 @@
-﻿@{
+@{
     ViewData["Title"] = "Inicio";
 }
-    <div class="align-content-center animacion-home" style="margin-top: 150px;">
-        <div class="text-center">
-            <div class="mb-4">
-                <img src="~/img/puebla-gob-blanco.png" style="width: auto; height:250px" alt="Gobierno de Puebla" />
-            </div>
+<style>
+    /* Estilos responsivos exclusivos para el Home */
+    @@media (max-width: 767.98px) {
+        .home-wrapper-responsive {
+            margin-top: 6vh !important;
+            padding: 10px !important;
+        }
 
-            <h1 class="display-4 fw-bold titulo mb-3">
-                ¡Bienvenido!
-            </h1>
+        .home-glass-card {
+            background: rgba(255, 255, 255, 0.05) !important;
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            border-radius: 25px !important;
+            padding: 40px 15px !important;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1) !important;
+        }
 
-            <p class="lead text-muted mb-4">
-                Control de Seguimiento de Metas
-            </p>
+        .img-logo-responsive {
+            max-height: 110px !important; /* Más pequeño para que respire más la página en celular */
+            margin-bottom: 2rem !important;
+        }
 
-            <div class="glass-effect rounded-3 p-3 d-inline-block">
-                <small class="text-muted">
-                    <i class="fas fa-calendar me-1"></i>
-                    @DateTime.Now.ToString("dddd, dd MMMM yyyy")                    
-                </small>
-            </div>
+        .titulo-bienvenida-responsive {
+            font-size: 2.2rem !important;
+            letter-spacing: -0.5px;
+        }
+
+        .texto-sub-responsive {
+            font-size: 1.15rem !important;
+        }
+        
+        .caja-fecha-responsive {
+            background: rgba(255, 255, 255, 0.15) !important;
+            border-radius: 50px !important;
+            padding: 12px 25px !important;
+            border: 1px solid rgba(255, 255, 255, 0.4) !important;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05) !important;
+        }
+    }
+</style>
+
+<div class="align-content-center animacion-home px-3 home-wrapper-responsive" style="margin-top: clamp(60px, 15vh, 150px);">
+    <div class="text-center home-glass-card">
+        <div class="mb-4">
+            <img src="~/img/puebla-gob-blanco.png" class="img-fluid img-logo-responsive" style="max-height: 250px; object-fit: contain;" alt="Gobierno de Puebla" />
         </div>
-    </div>@* 
+
+        <h1 class="display-4 fw-bold titulo mb-3 text-wrap px-2 titulo-bienvenida-responsive">
+            ¡Bienvenido!
+        </h1>
+
+        <p class="lead text-muted mb-4 px-2 texto-sub-responsive">
+            Control de Seguimiento de Metas
+        </p>
+
+        <div class="glass-effect rounded-3 p-3 d-inline-block mx-2 shadow-sm caja-fecha-responsive">
+            <small class="text-muted fw-medium fs-6 d-flex align-items-center gap-2 justify-content-center">
+                <i class="fas fa-calendar me-2" style="color: #741732;"></i>
+                @DateTime.Now.ToString("dddd, dd MMMM yyyy")                    
+            </small>
+        </div>
+    </div>
+</div>@* 
     @if (TempData["LoginExitoso"] != null)
     {
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

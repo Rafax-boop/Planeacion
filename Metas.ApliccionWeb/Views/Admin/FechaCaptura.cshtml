@@ -1,38 +1,53 @@
-﻿@using Metas.AplicacionWeb.Models.ViewModels
+@using Metas.AplicacionWeb.Models.ViewModels
 @model List<VMFechas>
 @{
     ViewData["Title"] = "Fecha Captura";
 }
 
-<div class="mt-4 shadow border p-4 rounded-4 text-center">
-    <table class="table">
-        <thead>
-            <tr>
-                <th class="fw-semibold" style="color:#741732">Fecha Inicio</th>
-                <th class="fw-semibold" style="color:#741732">Fecha Termino</th>
-                <th class="fw-semibold" style="color:#741732">Mes</th>
-                <th class="fw-semibold" style="color: #741732">Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var fecha in Model)
-            {
+<div class="mt-4 shadow border p-3 p-md-4 rounded-4 text-center glass-effect">
+    <!-- Animación y texto guía de scroll solo visible en dispositivos de pantalla pequeña -->
+    <style>
+        @@keyframes pulseHintH {
+            0% { opacity: 0.6; transform: translateX(0); }
+            50% { opacity: 1; transform: translateX(5px); }
+            100% { opacity: 0.6; transform: translateX(0); }
+        }
+        .anim-pulse-h { animation: pulseHintH 2s infinite ease-in-out; }
+    </style>
+    <div class="d-md-none text-muted small mb-3 fw-semibold anim-pulse-h">
+        <i class="fas fa-arrows-alt-h me-1"></i> Desliza la tabla horizontalmente
+    </div>
+
+    <div class="table-responsive rounded-3">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="bg-light">
                 <tr>
-                    <td class="fw-light">@fecha.FechaInicio</td>
-                    <td class="fw-light">@fecha.FechaFin</td>
-                    <td class="fw-light">@fecha.Mes</td>
-                    <td>
-                        <button class="boton-amarillo fw-light fs-6" style="width: 60px"
-                                data-bs-toggle="modal"
-                                data-bs-target="#ModalFecha"
-                                onclick="cargarDatosFecha('@fecha.IdFechaCaptura', '@fecha.FechaInicio.ToString("yyyy-MM-dd")', '@fecha.FechaFin.ToString("yyyy-MM-dd")')">
-                            Editar
-                        </button>
-                    </td>
+                    <th class="fw-semibold" style="color:#741732; min-width: 120px;">Fecha Inicio</th>
+                    <th class="fw-semibold" style="color:#741732; min-width: 120px;">Fecha Termino</th>
+                    <th class="fw-semibold" style="color:#741732; min-width: 100px;">Mes</th>
+                    <th class="fw-semibold" style="color: #741732; min-width: 100px;">Acciones</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var fecha in Model)
+                {
+                    <tr>
+                        <td class="fw-light">@fecha.FechaInicio</td>
+                        <td class="fw-light">@fecha.FechaFin</td>
+                        <td class="fw-light">@fecha.Mes</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-warning fw-light"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#ModalFecha"
+                                    onclick="cargarDatosFecha('@fecha.IdFechaCaptura', '@fecha.FechaInicio.ToString("yyyy-MM-dd")', '@fecha.FechaFin.ToString("yyyy-MM-dd")')">
+                                <i class="fas fa-edit me-1"></i> Editar
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <div class="modal fade" id="ModalFecha" tabindex="-1" aria-labelledby="miModalLabel"

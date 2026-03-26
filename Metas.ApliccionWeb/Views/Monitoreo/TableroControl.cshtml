@@ -8,13 +8,13 @@
 
     <!-- Encabezado -->
     <div class="glass-effect rounded-3 p-3 mb-4">
-        <div class="row align-items-center">
-            <div class="col-md-8">
+        <div class="row align-items-center text-center text-md-start">
+            <div class="col-md-8 mb-3 mb-md-0">
                 <h2 class="fw-bold titulo mb-1">TABLERO DE CONTROL</h2>
                 <p class="mb-0 text-muted" id="infoEncabezado">Ejercicio Fiscal: @anoFiscal - Cargando...</p>
             </div>
-            <div class="col-md-4 text-end">
-                <a asp-controller="Monitoreo" asp-action="Monitoreo" class="btn btn-outline-primary">
+            <div class="col-md-4 text-md-end">
+                <a asp-controller="Monitoreo" asp-action="Monitoreo" class="btn btn-outline-primary w-100 w-md-auto">
                     ← Volver al Monitoreo
                 </a>
             </div>
@@ -145,17 +145,17 @@
                 <div class="tablero-individual mb-5 border-bottom pb-4" data-tablero="${numeroTablero}">
 
                     <div class="glass-effect rounded-3 p-3 mb-3 bg-primary bg-opacity-10">
-                        <div class="row align-items-center">
-                            <div class="col-md-8">
+                        <div class="row align-items-center text-center text-md-start">
+                            <div class="col-md-8 mb-3 mb-md-0">
                                 <h4 class="fw-bold titulo mb-1">
                                     ${data.componente} / ${data.actividad}
                                 </h4>
                                 <p class="mb-1 text-muted">${data.descripcionActividad}</p>
-                                <small class="text-muted">${data.programaSocial}</small>
+                                <small class="text-muted d-block mt-2">${data.programaSocial}</small>
                             </div>
-                            <div class="col-md-4 text-end">
-                                <span class="badge bg-info fs-6">ID Proceso ${data.idProceso}</span>
-                                <button class="boton-amarillo m-2"
+                            <div class="col-md-4 text-md-end d-flex flex-column align-items-md-end align-items-center">
+                                <span class="badge bg-info fs-6 mb-2">ID Proceso ${data.idProceso}</span>
+                                <button class="boton-amarillo w-100 w-md-auto justify-content-center"
                                         onclick="exportarTableroComoImagen(this)"
                                         style="color: red; box-shadow: 0 4px 6px 0 red; border: 1px solid red !important; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; padding: 6px 13px; font-size: 12.8px;">
                                     <i class="fas fa-file-pdf" style="font-size: 14px;"></i> Exportar a PDF
@@ -167,7 +167,7 @@
                     <div class="glass-effect rounded-3 p-3 mb-3">
                         <h5 class="fw-semibold titulo mb-3 border-bottom pb-2 text-center">INFORMACIÓN DEL PROGRAMA</h5>
                         <div class="row small">
-                            <div class="col-md-6 border-end pe-3">
+                            <div class="col-md-6 border-md-end border-bottom border-md-bottom-0 pb-3 mb-3 pb-md-0 mb-md-0 pe-md-3">
                                 <div class="mb-2">
                                     <span class="fw-semibold titulo">Componente:</span>
                                     <span>${data.componente}</span>
@@ -181,7 +181,7 @@
                                     <span>${data.programaSocial}</span>
                                 </div>
                             </div>
-                            <div class="col-md-6 ps-3">
+                            <div class="col-md-6 ps-md-3">
                                 <div class="mb-2">
                                     <span class="fw-semibold titulo">Unidad de Medida:</span>
                                     <span>${data.unidadMedida || 'N/A'}</span>
@@ -198,10 +198,11 @@
                          <h5 class="fw-semibold titulo mb-3 border-bottom pb-2 text-center">CALENDARIZACIÓN ANUAL</h5>
                          <div class="row">
 
-                             <div class="col-md-6 border-end pe-3">
+                             <div class="col-md-6 border-md-end border-bottom border-md-bottom-0 pb-3 mb-3 pb-md-0 mb-md-0 pe-md-3 text-center text-md-start">
                                  <h6 class="fw-semibold text-primary mb-2">PROGRAMADO</h6>
-                                 <div class="table-responsive">
-                                     <table class="table table-sm text-center mb-2">
+                                 <div class="d-md-none text-muted small mb-1 text-center font-monospace anim-pulse-h"><i class="fas fa-arrows-alt-h me-1"></i> Desliza para ver más</div>
+                                 <div class="table-responsive shadow-sm rounded-2">
+                                     <table class="table table-sm text-center mb-1">
                                          <thead class="bg-primary text-white">
                                              <tr>
                                                  <th>Ene</th><th>Feb</th><th>Mar</th><th>Abr</th><th>May</th><th>Jun</th>
@@ -213,7 +214,9 @@
                                              </tr>
                                          </tbody>
                                      </table>
-                                     <table class="table table-sm text-center mb-2">
+                                 </div>
+                                 <div class="table-responsive shadow-sm rounded-2 mt-2">
+                                     <table class="table table-sm text-center mb-0">
                                          <thead class="bg-primary text-white">
                                              <tr>
                                                  <th>Jul</th><th>Ago</th><th>Sep</th><th>Oct</th><th>Nov</th><th>Dic</th><th class="bg-info">Total</th>
@@ -229,10 +232,11 @@
                                  </div>
                              </div>
 
-                             <div class="col-md-6 ps-3">
+                             <div class="col-md-6 ps-md-3 text-center text-md-start">
                                  <h6 class="fw-semibold text-success mb-2">REALIZADO</h6>
-                                 <div class="table-responsive">
-                                     <table class="table table-sm text-center mb-2">
+                                 <div class="d-md-none text-muted small mb-1 text-center font-monospace anim-pulse-h"><i class="fas fa-arrows-alt-h me-1"></i> Desliza para ver más</div>
+                                 <div class="table-responsive shadow-sm rounded-2">
+                                     <table class="table table-sm text-center mb-1">
                                          <thead class="bg-success text-white">
                                              <tr>
                                                  <th>Ene</th><th>Feb</th><th>Mar</th><th>Abr</th><th>May</th><th>Jun</th>
@@ -244,7 +248,9 @@
                                              </tr>
                                          </tbody>
                                      </table>
-                                     <table class="table table-sm text-center mb-2">
+                                 </div>
+                                 <div class="table-responsive shadow-sm rounded-2 mt-2">
+                                     <table class="table table-sm text-center mb-0">
                                          <thead class="bg-success text-white">
                                              <tr>
                                                  <th>Jul</th><th>Ago</th><th>Sep</th><th>Oct</th><th>Nov</th><th>Dic</th><th class="bg-success">Total</th>
@@ -264,7 +270,8 @@
 
                     <div class="glass-effect rounded-3 p-3 mb-3" style="background-color: white">
                         <h5 class="fw-semibold titulo mb-3 border-bottom pb-2 text-center">AVANCE MENSUAL</h5>
-                        <div class="table-responsive">
+                        <div class="d-md-none text-muted small mb-2 text-center font-monospace anim-pulse-h"><i class="fas fa-arrows-alt-h me-1"></i> Desliza horizontalmente</div>
+                        <div class="table-responsive shadow-sm rounded-2">
                             <table class="table table-sm text-center mb-1">
                                 <thead class="bg-warning text-dark">
                                     <tr>
@@ -284,12 +291,12 @@
                     </div>
 
                     <div class="glass-effect rounded-3 p-3" style="background-color: white">
-                        <div class="row">
-                            <div class="col-md-8 border-end pe-3">
-                                <h5 class="fw-semibold titulo mb-3 border-bottom pb-2 text-center">TRIMESTRAL</h5>
-                                <div class="row text-center">
-                                    <div class="col-md-3 mb-2">
-                                        <div class="border rounded p-2">
+                        <div class="row text-center text-md-start">
+                            <div class="col-md-8 border-md-end border-bottom border-md-bottom-0 pb-3 pb-md-0 pe-md-3 mb-3 mb-md-0">
+                                <h5 class="fw-semibold titulo mb-3 border-bottom pb-2">TRIMESTRAL</h5>
+                                <div class="row align-items-center justify-content-center">
+                                    <div class="col-6 col-md-3 mb-3 mb-md-0">
+                                        <div class="border rounded p-2 shadow-sm">
                                             <small class="fw-semibold">1ER</small>
                                             <div class="h6 fw-bold porcentaje-trimestre" data-trimestre="1">${trim1Porcentaje}%</div>
                                             <div class="progress" style="height: 8px;">
@@ -297,7 +304,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-3 mb-2">
+                                    <div class="col-6 col-md-3 mb-3 mb-md-0">
                                         <div class="border rounded p-2">
                                             <small class="fw-semibold">2DO</small>
                                             <div class="h6 fw-bold porcentaje-trimestre" data-trimestre="2">${trim2Porcentaje}%</div>
@@ -681,6 +688,13 @@
     </script>
 
     <style>
+        @@keyframes pulseHintH {
+            0% { opacity: 0.6; transform: translateX(0); }
+            50% { opacity: 1; transform: translateX(5px); }
+            100% { opacity: 0.6; transform: translateX(0); }
+        }
+        .anim-pulse-h { animation: pulseHintH 2s infinite ease-in-out; }
+
         .text-orange {
             color: #fd7e14 !important;
         }

@@ -1,41 +1,60 @@
-﻿@using Metas.AplicacionWeb.Models.ViewModels
+@using Metas.AplicacionWeb.Models.ViewModels
 @model List<VMUsuario>
 @{
     ViewData["Title"] = "Creación de Usuarios";
 }
 
-<div class="mt-4 shadow border p-4 rounded-4 text-center">
-    <button class="boton-amarillo fw-light fs-6" data-bs-toggle="modal" data-bs-target="#ModalUsuario">Crear usuario</button>
+<div class="mt-4 shadow border p-3 p-md-4 rounded-4 text-center glass-effect">
+    <div class="mb-4">
+        <button class="boton-amarillo fw-light fs-6" data-bs-toggle="modal" data-bs-target="#ModalUsuario">
+            <i class="fas fa-user-plus me-2"></i> Crear usuario
+        </button>
+    </div>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th class="fw-semibold" style="color:#741732">Id Usuario</th>
-                <th class="fw-semibold" style="color:#741732">Usuario</th>
-                <th class="fw-semibold" style="color:#741732">Contraseña</th>
-                <th class="fw-semibold" style="color:#741732">Area</th>
-                <th class="fw-semibold" style="color:#741732">Rol</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody id="tablaUsuarios">
-            @foreach (var usuario in Model)
-            {
+    <!-- Animación y texto guía de scroll solo visible en dispositivos de pantalla pequeña -->
+    <style>
+        @@keyframes pulseHintH {
+            0% { opacity: 0.6; transform: translateX(0); }
+            50% { opacity: 1; transform: translateX(5px); }
+            100% { opacity: 0.6; transform: translateX(0); }
+        }
+        .anim-pulse-h { animation: pulseHintH 2s infinite ease-in-out; }
+    </style>
+    <div class="d-md-none text-muted small mb-3 fw-semibold anim-pulse-h">
+        <i class="fas fa-arrows-alt-h me-1"></i> Desliza la tabla horizontalmente
+    </div>
+
+    <div class="table-responsive rounded-3">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="bg-light">
                 <tr>
-                    <td class="fw-light align-middle">@usuario.IdUsuario</td>
-                    <td class="fw-light align-middle border-start">@usuario.Usuario1</td>
-                    <td class="fw-light align-middle border-start">@usuario.Pass</td>
-                    <td class="fw-light align-middle border-start text-start">@usuario.Area</td>
-                    <td class="fw-light align-middle border-start">@usuario.Definicion</td>
-                    <td class="border-start align-middle">
-                        <button class="boton-rojo fw-light fs-6 ms-3 me-2" onclick="eliminarUsuario(@usuario.IdUsuario, '@usuario.Usuario1')">
-                            Eliminar
-                        </button>
-                    </td>
+                    <th class="fw-semibold" style="color:#741732; min-width: 100px;">Id Usuario</th>
+                    <th class="fw-semibold" style="color:#741732; min-width: 150px;">Usuario</th>
+                    <th class="fw-semibold" style="color:#741732; min-width: 150px;">Contraseña</th>
+                    <th class="fw-semibold" style="color:#741732; min-width: 150px;">Area</th>
+                    <th class="fw-semibold" style="color:#741732; min-width: 120px;">Rol</th>
+                    <th style="min-width: 120px;">Acciones</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody id="tablaUsuarios">
+                @foreach (var usuario in Model)
+                {
+                    <tr>
+                        <td class="fw-light align-middle">@usuario.IdUsuario</td>
+                        <td class="fw-light align-middle border-start">@usuario.Usuario1</td>
+                        <td class="fw-light align-middle border-start">@usuario.Pass</td>
+                        <td class="fw-light align-middle border-start text-start">@usuario.Area</td>
+                        <td class="fw-light align-middle border-start">@usuario.Definicion</td>
+                        <td class="border-start align-middle">
+                            <button class="btn btn-sm btn-outline-danger fw-light" onclick="eliminarUsuario(@usuario.IdUsuario, '@usuario.Usuario1')">
+                                <i class="fas fa-trash-alt me-1"></i> Eliminar
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 
     <div class="modal fade" id="ModalUsuario" tabindex="-1" aria-labelledby="miModalLabel"
          data-bs-backdrop="false" aria-hidden="true">

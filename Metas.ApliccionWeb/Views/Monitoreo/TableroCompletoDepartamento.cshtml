@@ -1,4 +1,4 @@
-﻿@model Metas.AplicacionWeb.Models.ViewModels.VMDepartamentos
+@model Metas.AplicacionWeb.Models.ViewModels.VMDepartamentos
 @{
     ViewData["Title"] = "Tablero Completo por Departamento";
 }
@@ -6,16 +6,16 @@
 <div class="container-fluid mt-4">
 
     @* Encabezado *@
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="titulo fw-semibold pt-2 pb-2 px-4 glass-effect rounded-5 mb-0">
-            <i class="fas fa-table me-2"></i> TABLERO COMPLETO POR DEPARTAMENTO
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 text-center text-md-start gap-3">
+        <h2 class="titulo fw-semibold pt-2 pb-2 px-3 px-md-4 glass-effect rounded-5 mb-0 fs-4 fs-md-2">
+            <i class="fas fa-table me-2"></i> TABLERO COMPLETO
         </h2>
-        <div>
-            <a href="@Url.Action("Monitoreo", "Monitoreo")" class="btn btn-volver me-2">
+        <div class="d-flex flex-wrap justify-content-center justify-content-md-end gap-2 w-100 w-md-auto">
+            <a href="@Url.Action("Monitoreo", "Monitoreo")" class="btn btn-volver flex-grow-1 flex-md-grow-0">
                 <i class="fas fa-arrow-left"></i> Volver
             </a>
-            <button class="btn btn-exportar" id="btnExportarExcel">
-                <i class="fas fa-file-excel"></i> Exportar Excel
+            <button class="btn btn-exportar flex-grow-1 flex-md-grow-0" id="btnExportarExcel">
+                <i class="fas fa-file-excel"></i> Exportar
             </button>
         </div>
     </div>
@@ -75,7 +75,19 @@
     </div>
 
     @* Tabla Principal *@
-    <div class="contenedor-tabla bg-white">
+    <style>
+        @@keyframes pulseHintH {
+            0% { opacity: 0.6; transform: translateX(0); }
+            50% { opacity: 1; transform: translateX(5px); }
+            100% { opacity: 0.6; transform: translateX(0); }
+        }
+        .anim-pulse-h { animation: pulseHintH 2s infinite ease-in-out; }
+    </style>
+    <div class="d-md-none text-muted small mb-2 text-center fw-semibold anim-pulse-h">
+        <i class="fas fa-arrows-alt-h me-1"></i> Desliza horizontalmente la tabla
+    </div>
+    
+    <div class="contenedor-tabla bg-white shadow-sm rounded-3">
         <table class="tabla-tablero" id="tablaTablero">
             <thead>
                 @* ========================================
