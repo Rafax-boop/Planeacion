@@ -37,16 +37,57 @@ namespace Metas.AplicacionWeb.Controllers
         public async Task<IActionResult> Monitoreo()
         {
             var departamentos = await _departamentoService.ObtenerDepartamentos();
+            var areaClaim = User.Claims.FirstOrDefault(c => c.Type == "Departamento")?.Value;
+            bool esAdmin = User.IsInRole("Administrador");
+
+            IEnumerable<SelectListItem> listaDepartamentos;
+
+            if (esAdmin)
+            {
+                listaDepartamentos = departamentos
+                    .Select(d => new SelectListItem
+                    {
+                        Value = d.IdDepartamento.ToString(),
+                        Text = d.Departamento1
+                    })
+                    .OrderBy(item => item.Text);
+            }
+            else
+            {
+                // ¿Coincide exactamente con un departamento?
+                var coincidenciaExacta = departamentos
+                    .Where(d => d.Departamento1 == areaClaim)
+                    .ToList();
+
+                if (coincidenciaExacta.Any())
+                {
+                    // Usuario de departamento específico
+                    listaDepartamentos = coincidenciaExacta
+                        .Select(d => new SelectListItem
+                        {
+                            Value = d.IdDepartamento.ToString(),
+                            Text = d.Departamento1
+                        });
+                }
+                else
+                {
+                    // Usuario de dirección → trae todos sus departamentos
+                    listaDepartamentos = departamentos
+                        .Where(d => d.Area == areaClaim)
+                        .Select(d => new SelectListItem
+                        {
+                            Value = d.IdDepartamento.ToString(),
+                            Text = d.Departamento1
+                        })
+                        .OrderBy(item => item.Text);
+                }
+            }
 
             var modelo = new VMDepartamentos
             {
-                ListaDepartamentos = departamentos.Select(d => new SelectListItem
-                {
-                    Value = d.IdDepartamento.ToString(),
-                    Text = d.Departamento1
-                }).OrderBy(item => item.Text)
-                .ToList()
+                ListaDepartamentos = listaDepartamentos.ToList()
             };
+
             return View(modelo);
         }
 

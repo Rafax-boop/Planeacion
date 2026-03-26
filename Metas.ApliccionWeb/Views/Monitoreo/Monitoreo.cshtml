@@ -18,52 +18,42 @@
                     var anoMaximo = anoActual + 1;
                     var anoMinimo = anoActual - 5;
 
-                    for (int ano = anoMaximo; ano >= anoMinimo; ano--)
-                    {
-                        <option value="@ano">@ano</option>
+                        for (int ano = anoMaximo; ano >= anoMinimo; ano--)
+                        {
+                            <option value="@ano">@ano</option>
+                        }
                     }
-                }
-            </select>
-        </div>
-
-        <!-- Columna Departamentos -->
-        <div class="col-12 col-md-8 col-lg-7">
-            <div class="text-center mb-2">
-                <label class="form-label fs-4 fs-md-3 fw-bold titulo">Departamentos</label>
+                </select>
             </div>
-            <select class="titulo form-select input-arena shadow-sm mx-auto w-100" id="selectDepartamento">
-                @if (User.IsInRole("Administrador"))
-                {
-                    <option value="">-- Seleccione un departamento --</option>
-                    @foreach (var act in Model.ListaDepartamentos)
-                    {
-                        <option value="@act.Value">@act.Text</option>
-                    }
-                }
-                else
-                {
-                    var departamentoUsuarioTexto = User.Claims.FirstOrDefault(c => c.Type == "Departamento")?.Value;
-
-                    var departamentoUsuarioObjeto = Model.ListaDepartamentos
-                    .FirstOrDefault(d => d.Text == departamentoUsuarioTexto);
-
-                    if (departamentoUsuarioObjeto != null)
-                    {
-                        // Si se encuentra, usamos el Value (ID) y el Text (Nombre)
-                        <option value="@departamentoUsuarioObjeto.Value">@departamentoUsuarioObjeto.Text</option>
-                    }
-                    else
-                    {
-                        // Opcional: Manejo si no se encuentra (solo mostrar el texto como fallback)
-                        <option value="">Recargué la página</option>
-                    }
-                }
-            </select>
         </div>
+        <div class="col">
+            <div class="col-12" style="margin-left: 6px">
+                <select class="titulo form-select input-arena" id="selectDepartamento">
 
-        <!-- Botones -->
-        <div class="col-12 mt-4">
-            <div class="d-grid gap-3 d-md-flex justify-content-md-center">
+                    @if (User.IsInRole("Administrador") || Model.ListaDepartamentos.Count > 1)
+                    {
+                        <option value="">-- Seleccione un departamento --</option>
+                    }
+
+                        var departamentoUsuarioObjeto = Model.ListaDepartamentos
+                        .FirstOrDefault(d => d.Text == departamentoUsuarioTexto);
+
+                        if (departamentoUsuarioObjeto != null)
+                        {
+                            // Si se encuentra, usamos el Value (ID) y el Text (Nombre)
+                            <option value="@departamentoUsuarioObjeto.Value">@departamentoUsuarioObjeto.Text</option>
+                        }
+                        else
+                        {
+                            // Opcional: Manejo si no se encuentra (solo mostrar el texto como fallback)
+                            <option value="">Recargué la página</option>
+                        }
+                    }
+                </select>
+            </div>
+        </div>
+        <div>
+            <div class="mt-4 text-center">
                 @if (User.IsInRole("Administrador"))
                 {
                     <button class="boton-amarillo px-4 py-2" type="button" id="btnNuevo">

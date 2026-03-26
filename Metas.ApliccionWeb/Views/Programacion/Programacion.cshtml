@@ -18,53 +18,46 @@
                     var anoMaximo = anoActual + 1;
                     var anoMinimo = anoActual - 5;
 
-                    for (int ano = anoMaximo; ano >= anoMinimo; ano--)
-                    {
-                        <option value="@ano">@ano</option>
+                        for (int ano = anoMaximo; ano >= anoMinimo; ano--)
+                        {
+                            <option value="@ano">@ano</option>
+                        }
                     }
-                }
-            </select>
-        </div>
-
-        <!-- Columna Departamentos -->
-        <div class="col-12 col-md-8 col-lg-7">
-            <div class="text-center mb-2">
-                <label class="form-label fs-4 fs-md-3 fw-bold titulo">Departamentos</label>
+                </select>
             </div>
-            <select class="titulo form-select input-arena shadow-sm mx-auto w-100" id="selectDepartamento">                    
-                @if (User.IsInRole("Administrador"))
-                {
-                    <option value="">-- Seleccione un departamento --</option>
-                    @foreach (var act in Model.ListaDepartamentos)
-                    {
-                        <option value="@act.Value">@act.Text</option>
-                    }
-                }
-                else
-                {
-                    var departamentoUsuarioTexto = User.Claims.FirstOrDefault(c => c.Type == "Departamento")?.Value;
-
-                    var departamentoUsuarioObjeto = Model.ListaDepartamentos
-                    .FirstOrDefault(d => d.Text == departamentoUsuarioTexto);
-
-                    if (departamentoUsuarioObjeto != null)
-                    {
-                        <option value="@departamentoUsuarioObjeto.Value">@departamentoUsuarioObjeto.Text</option>
-                    }
-                    else
-                    {
-                        <option value="">Recargué la página</option>
-                    }
-                }
-            </select>
         </div>
+        <div class="col">
+            <div class="col-12" style="margin-left: 6px">
+                <select class="titulo form-select input-arena" id="selectDepartamento">
+                    @if (User.IsInRole("Administrador"))
+                    {
+                        <option value="">-- Seleccione un departamento --</option>
+                    }
+                    else if (Model.ListaDepartamentos.Count() > 1)
+                    {
+                        <option value="">-- Seleccione un departamento --</option>
+                    }
 
-        <!-- Botones -->
-        <div class="col-12 mt-4 mb-2">
-            <div class="d-grid gap-3 d-md-flex justify-content-md-center">
-                <button class="boton-rojo px-4 py-2 d-inline-flex align-items-center justify-content-center flex-wrap gap-2" type="button" id="btnBuscar">
-                    <i class="fas fa-search"></i> Buscar
-                </button>
+                        var departamentoUsuarioObjeto = Model.ListaDepartamentos
+                        .FirstOrDefault(d => d.Text == departamentoUsuarioTexto);
+
+                        if (departamentoUsuarioObjeto != null)
+                        {
+                            <option value="@departamentoUsuarioObjeto.Value">@departamentoUsuarioObjeto.Text</option>
+                        }
+                        else
+                        {
+                            <option value="">Recargué la página</option>
+                        }
+                    }
+                </select>
+            </div>
+        </div>
+        <div>
+            <div class="mt-4 text-center">
+                <button class="boton-rojo" type="button" id="btnBuscar">Buscar</button>
+            </div>
+            <div class="mt-3 mb-3 text-center">
                 @if (User.IsInRole("Administrador"))
                 {
                     <button class="boton-amarillo text-wrap px-4 py-2 d-inline-flex align-items-center justify-content-center flex-wrap gap-2"
