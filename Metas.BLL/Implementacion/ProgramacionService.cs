@@ -1,4 +1,4 @@
-﻿using Metas.BLL.DTO;
+using Metas.BLL.DTO;
 using Metas.BLL.Interfaces;
 using Metas.DAL.DBContext;
 using Metas.DAL.Interfaces;
@@ -182,8 +182,8 @@ namespace Metas.BLL.Implementacion
                     TotalNoviembre = modelo.MesesServicios[10],
                     TotalDiciembre = modelo.MesesServicios[11],
                     UnidadMedida = modelo.UnidadMedida,
-                    TotalProgramado = modelo.PrimerServicio + modelo.SegundoServicio + modelo.TercerServicio + modelo.CuartoServicio,
-                    TotalPersona = modelo.PrimerPersona + modelo.SegundoPersona + modelo.TercerPersona + modelo.CuartoPersona,
+                    TotalProgramado = modelo.MesesServicios.Sum(),
+                    TotalPersona = modelo.MesesPersonas.Sum(),
                     EneroPersona = modelo.MesesPersonas[0],
                     FebreroPersona = modelo.MesesPersonas[1],
                     MarzoPersona = modelo.MesesPersonas[2],
@@ -827,9 +827,9 @@ namespace Metas.BLL.Implementacion
                         llenadoInterno.NoviembrePersona = modelo.MesesPersonas[10];
                         llenadoInterno.DiciembrePersona = modelo.MesesPersonas[11];
 
-                        // ✅ AGREGAR - Actualizar totales
-                        llenadoInterno.TotalProgramado = modelo.PrimerServicio + modelo.SegundoServicio + modelo.TercerServicio + modelo.CuartoServicio;
-                        llenadoInterno.TotalPersona = modelo.PrimerPersona + modelo.SegundoPersona + modelo.TercerPersona + modelo.CuartoPersona;
+                        // Totales alineados con la calendarizacion mensual (12 meses)
+                        llenadoInterno.TotalProgramado = modelo.MesesServicios.Sum();
+                        llenadoInterno.TotalPersona = modelo.MesesPersonas.Sum();
 
                         await _repositorioLlenadoInterno.Editar(llenadoInterno);
                     }

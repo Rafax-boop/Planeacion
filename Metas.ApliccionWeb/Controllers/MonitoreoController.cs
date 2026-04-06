@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Metas.AplicacionWeb.Models.ViewModels;
 using Metas.BLL.DTO;
 using Metas.BLL.Implementacion;
@@ -437,7 +437,10 @@ namespace Metas.AplicacionWeb.Controllers
                         Oct = x.TotalOctubre,
                         Nov = x.TotalNoviembre,
                         Dic = x.TotalDiciembre,
-                        Total = x.TotalProgramado ?? 0
+                        Total = (x.TotalEnero ?? 0) + (x.TotalFebrero ?? 0) + (x.TotalMarzo ?? 0)
+                            + (x.TotalAbril ?? 0) + (x.TotalMayo ?? 0) + (x.TotalJunio ?? 0)
+                            + (x.TotalJulio ?? 0) + (x.TotalAgosto ?? 0) + (x.TotalSeptiembre ?? 0)
+                            + (x.TotalOctubre ?? 0) + (x.TotalNoviembre ?? 0) + (x.TotalDiciembre ?? 0)
                     },
                     Realizado = new
                     {
