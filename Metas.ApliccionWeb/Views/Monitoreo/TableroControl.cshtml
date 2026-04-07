@@ -196,52 +196,78 @@
                 </div>
 
                 <div class="glass-effect rounded-3 p-3 mb-3" style="background-color: white">
-                    <h5 class="fw-semibold titulo mb-3 border-bottom pb-2 text-center">CALENDARIZACIÓN ANUAL</h5>
-                    <div class="row">
+                         <h5 class="fw-semibold titulo mb-3 border-bottom pb-2 text-center">CALENDARIZACIÓN ANUAL</h5>
+                         <div class="row">
 
-                        <div class="col-md-6 border-end pe-3">
-                            <h6 class="fw-semibold text-primary mb-2">PROGRAMADO</h6>
-                            <div class="table-responsive">
-                                <table class="table table-sm text-center mb-2">
-                                    <thead class="bg-primary text-white">
-                                        <tr>
-                                            <th>Ene</th><th>Feb</th><th>Mar</th><th>Abr</th><th>May</th><th>Jun</th>
-                                            <th>Jul</th><th>Ago</th><th>Sep</th><th>Oct</th><th>Nov</th><th>Dic</th>
-                                            <th>Total</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            ${mesesAbreviados.map(mes => `<td>${data.programado[mes] || 0}</td>`).join('')}
-                                            <td class="fw-bold bg-info bg-opacity-10">${data.programado.total}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                             <div class="col-md-6 border-md-end border-bottom border-md-bottom-0 pb-3 mb-3 pb-md-0 mb-md-0 pe-md-3 text-center text-md-start">
+                                 <h6 class="fw-semibold text-primary mb-2">PROGRAMADO</h6>
+                                 <div class="d-md-none text-muted small mb-1 text-center font-monospace anim-pulse-h"><i class="fas fa-arrows-alt-h me-1"></i> Desliza para ver más</div>
+                                 <div class="table-responsive shadow-sm rounded-2">
+                                     <table class="table table-sm text-center mb-1">
+                                         <thead class="bg-primary text-white">
+                                             <tr>
+                                                 <th>Ene</th><th>Feb</th><th>Mar</th><th>Abr</th><th>May</th><th>Jun</th>
+                                             </tr>
+                                         </thead>
+                                         <tbody>
+                                             <tr>
+                                                 ${['ene', 'feb', 'mar', 'abr', 'may', 'jun'].map(mes => `<td>${data.programado[mes] || 0}</td>`).join('')}
+                                             </tr>
+                                         </tbody>
+                                     </table>
+                                 </div>
+                                 <div class="table-responsive shadow-sm rounded-2 mt-2">
+                                     <table class="table table-sm text-center mb-0">
+                                         <thead class="bg-primary text-white">
+                                             <tr>
+                                                 <th>Jul</th><th>Ago</th><th>Sep</th><th>Oct</th><th>Nov</th><th>Dic</th><th class="bg-info">Total</th>
+                                             </tr>
+                                         </thead>
+                                         <tbody>
+                                             <tr>
+                                                 ${['jul', 'ago', 'sep', 'oct', 'nov', 'dic'].map(mes => `<td>${data.programado[mes] || 0}</td>`).join('')}
+                                                 <td class="fw-bold bg-info bg-opacity-10">${data.programado.total}</td>
+                                             </tr>
+                                         </tbody>
+                                     </table>
+                                 </div>
+                             </div>
 
-                        <div class="col-md-6 ps-3">
-                            <h6 class="fw-semibold text-success mb-2">REALIZADO</h6>
-                            <div class="table-responsive">
-                                <table class="table table-sm text-center mb-2">
-                                    <thead class="bg-success text-white">
-                                        <tr>
-                                            <th>Ene</th><th>Feb</th><th>Mar</th><th>Abr</th><th>May</th><th>Jun</th>
-                                            <th>Jul</th><th>Ago</th><th>Sep</th><th>Oct</th><th>Nov</th><th>Dic</th>
-                                            <th>Total</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            ${mesesAbreviados.map(mes => `<td>${data.realizado[mes] || 0}</td>`).join('')}
-                                            <td class="fw-bold bg-success bg-opacity-10">${data.realizado.total}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                             <div class="col-md-6 ps-md-3 text-center text-md-start">
+                                 <h6 class="fw-semibold text-success mb-2">REALIZADO</h6>
+                                 <div class="d-md-none text-muted small mb-1 text-center font-monospace anim-pulse-h"><i class="fas fa-arrows-alt-h me-1"></i> Desliza para ver más</div>
+                                 <div class="table-responsive shadow-sm rounded-2">
+                                     <table class="table table-sm text-center mb-1">
+                                         <thead class="bg-success text-white">
+                                             <tr>
+                                                 <th>Ene</th><th>Feb</th><th>Mar</th><th>Abr</th><th>May</th><th>Jun</th>
+                                             </tr>
+                                         </thead>
+                                         <tbody>
+                                             <tr>
+                                                 ${['ene', 'feb', 'mar', 'abr', 'may', 'jun'].map(mes => `<td>${data.realizado[mes] || 0}</td>`).join('')}
+                                             </tr>
+                                         </tbody>
+                                     </table>
+                                 </div>
+                                 <div class="table-responsive shadow-sm rounded-2 mt-2">
+                                     <table class="table table-sm text-center mb-0">
+                                         <thead class="bg-success text-white">
+                                             <tr>
+                                                 <th>Jul</th><th>Ago</th><th>Sep</th><th>Oct</th><th>Nov</th><th>Dic</th><th class="bg-success">Total</th>
+                                             </tr>
+                                         </thead>
+                                         <tbody>
+                                             <tr>
+                                                 ${['jul', 'ago', 'sep', 'oct', 'nov', 'dic'].map(mes => `<td>${data.realizado[mes] || 0}</td>`).join('')}
+                                                 <td class="fw-bold bg-success bg-opacity-10">${data.realizado.total}</td>
+                                             </tr>
+                                         </tbody>
+                                     </table>
+                                 </div>
+                             </div>
+                         </div>
+                     </div>
 
                 <div class="glass-effect rounded-3 p-3 mb-3" style="background-color: white">
                     <h5 class="fw-semibold titulo mb-3 border-bottom pb-2 text-center">AVANCE MENSUAL</h5>
