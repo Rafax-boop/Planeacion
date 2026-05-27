@@ -104,15 +104,11 @@ namespace Metas.AplicacionWeb.Controllers
             }
             else
             {
-                // Buscar coincidencia exacta primero (es un departamento)
-                var coincidenciaExacta = departamentos
-                    .Where(d => d.Departamento1 == areaClaim)
-                    .ToList();
-
-                if (coincidenciaExacta.Any())
+                if (User.IsInRole("Departamento"))
                 {
                     // Es un usuario de departamento específico
-                    listaDepartamentos = coincidenciaExacta
+                    listaDepartamentos = departamentos
+                        .Where(d => d.Departamento1 == areaClaim)
                         .Select(d => new SelectListItem
                         {
                             Value = d.IdDepartamento.ToString(),
@@ -121,7 +117,7 @@ namespace Metas.AplicacionWeb.Controllers
                 }
                 else
                 {
-                    // Es un usuario de dirección — filtrar por área
+                    // Es un usuario de dirección/unidad — filtrar por área
                     listaDepartamentos = departamentos
                         .Where(d => d.Area == areaClaim)
                         .Select(d => new SelectListItem
