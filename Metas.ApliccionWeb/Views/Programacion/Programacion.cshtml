@@ -29,7 +29,7 @@
 
                         for (int ano = anoMaximo; ano >= anoMinimo; ano--)
                         {
-                            <option value="@ano">@ano</option>
+                            <option value="@ano" selected="@(ano == anoActual)">@ano</option>
                         }
                     }
                 </select>

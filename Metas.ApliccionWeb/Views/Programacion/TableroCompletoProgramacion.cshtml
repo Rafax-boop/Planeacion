@@ -33,7 +33,7 @@
 
                             for (int ano = anoMaximo; ano >= anoMinimo; ano--)
                             {
-                                <option value="@ano">@ano</option>
+                                <option value="@ano" selected="@(ano == anoActual)">@ano</option>
                             }
                         }
                     </select>
@@ -417,6 +417,80 @@
         }
 
         // ========================================
+        // AJUSTE AUTOMÁTICO DE ANCHO/ALTO (ExcelJS)
+        // ========================================
+        // Mide texto con canvas (igual que "autoajustar" de Excel) en vez de
+        // aproximar por cantidad de caracteres, para que el resultado coincida
+        // con lo que se ve al hacer doble clic en el borde de una columna/fila.
+        function crearMedidorTexto(fontFamily = 'Calibri, "Segoe UI", Arial, sans-serif', fontSize = 11) {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.font = `${fontSize}px ${fontFamily}`;
+            return texto => ctx.measureText(texto === null || texto === undefined ? '' : texto.toString()).width;
+        }
+
+        // Ajusta el ancho de cada columna al contenido más largo que contiene.
+        // columnasFijas permite fijar un ancho para columnas de texto largo,
+        // que en su lugar usan wrapText + alto de fila automático.
+        function autoAjustarColumnas(sheet, { anchoMinimo = 6, anchoMaximo = 40, columnasFijas = {} } = {}) {
+            const medir = crearMedidorTexto();
+            const anchoDigito = medir('0') || 7;
+            sheet.columns.forEach((columna, idx) => {
+                const numCol = idx + 1;
+                if (columnasFijas[numCol]) {
+                    columna.width = columnasFijas[numCol];
+                    return;
+                }
+                let maxPixeles = 0;
+                columna.eachCell({ includeEmpty: false }, celda => {
+                    if (celda.value === null || celda.value === undefined) return;
+                    celda.value.toString().split('\n').forEach(linea => {
+                        const ancho = medir(linea);
+                        if (ancho > maxPixeles) maxPixeles = ancho;
+                    });
+                });
+                const anchoCaracteres = maxPixeles / anchoDigito + 1.5;
+                columna.width = Math.min(Math.max(anchoCaracteres, anchoMinimo), anchoMaximo);
+            });
+        }
+
+        // Calcula el alto de cada fila (desde filaInicio) simulando el mismo
+        // ajuste de línea por palabras que hace Excel con wrapText, según el
+        // ancho en píxeles ya asignado a cada columna.
+        function autoAjustarAltoFilas(sheet, filaInicio, { alturaMinima = 18, alturaPorLinea = 14 } = {}) {
+            const medir = crearMedidorTexto();
+            const anchoDigito = medir('0') || 7;
+            const margenCelda = 6;
+            for (let numFila = filaInicio; numFila <= sheet.rowCount; numFila++) {
+                const fila = sheet.getRow(numFila);
+                let maxLineas = 1;
+                fila.eachCell({ includeEmpty: false }, celda => {
+                    if (!celda.alignment || !celda.alignment.wrapText) return;
+                    if (celda.value === null || celda.value === undefined) return;
+                    const anchoColumnaPx = (sheet.getColumn(celda.col).width || 8) * anchoDigito;
+                    const anchoUtilPx = Math.max(anchoColumnaPx - margenCelda, anchoDigito);
+
+                    celda.value.toString().split('\n').forEach(parrafo => {
+                        const palabras = parrafo.split(' ');
+                        let lineaActual = '';
+                        let lineas = 1;
+                        palabras.forEach(palabra => {
+                            const pruebaLinea = lineaActual ? `${lineaActual} ${palabra}` : palabra;
+                            if (medir(pruebaLinea) > anchoUtilPx && lineaActual) {
+                                lineas++;
+                                lineaActual = palabra;
+                            } else {
+                                lineaActual = pruebaLinea;
+                            }
+                        });
+                        if (lineas > maxLineas) maxLineas = lineas;
+                    });
+                });
+                fila.height = Math.max(alturaMinima, maxLineas * alturaPorLinea);
+            }
+        }
+
+        // ========================================
         // EXPORTAR A EXCEL CON ESTILOS (ExcelJS)
         // ========================================
         async function exportarExcel() {
@@ -626,24 +700,13 @@
                     filaActual++;
                 });
 
-                // ========== AJUSTAR ANCHOS DE COLUMNA ==========
-                const anchos = [
-                    15, 15, 25,  
-                    8, 8, 6, 30, 30, 12,  
-                    25, 30, 25, 25,  
-                    8, 8, 8, 8, 
-                    8, 8, 8, 8,  
-                    12, 25, 15, 25, 12, 
-                    8, 10, 10, 10,  
-                    8, 10, 10, 10,  
-                    12, 8,  
-                    ...Array(24).fill(6),  
-                    12  
-                ];
-
-                anchos.forEach((ancho, index) => {
-                    sheet.getColumn(index + 1).width = ancho;
+                // ========== AJUSTE AUTOMÁTICO DE ANCHO Y ALTO ==========
+                // Columnas de texto largo quedan con ancho fijo y se apoyan en
+                // wrapText + alto de fila automático; el resto se ajusta al contenido.
+                autoAjustarColumnas(sheet, {
+                    columnasFijas: { 3: 25, 7: 30, 8: 30, 10: 25, 11: 30, 12: 25, 13: 25, 23: 25, 25: 25 }
                 });
+                autoAjustarAltoFilas(sheet, 4);
 
                 // ========== CONGELAR PANELES ==========
                 sheet.views = [{ state: 'frozen', xSplit: 3, ySplit: 3 }];
