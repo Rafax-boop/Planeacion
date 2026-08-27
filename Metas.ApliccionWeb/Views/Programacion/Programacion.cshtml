@@ -2,123 +2,130 @@
 @{
     ViewData["Title"] = "Iniciar Programación";
 }
-<div class="mt-4 text-center">
-    <h1 class="titulo fw-semibold">EJERCICIO DE PROGRAMACIÓN</h1>
+
+<div class="titulo-vista-wrap">
+    <h1 class="titulo-vista">Ejercicio de Programación</h1>
+    <span class="subtitulo-vista">- Selecciona un año fiscal y un departamento para ver o iniciar su programación anual.</span>
 </div>
-<div class="mt-5 pb-4 pt-3 rounded-5 glass-effect" style="padding-left: 20px; padding-right: 25px">
-    <div class="row">
-        <div class="col">
-            <div class="mt-2 text-center">
-                <label class="form-label fs-3 fw-bold titulo">Año Fiscal</label>
-            </div>
-        </div>
-        <div class="col">
-            <div class="mt-2 text-center">
-                <label class="form-label fs-3 fw-bold titulo">Departamentos</label>
-            </div>
-        </div>
-    </div>
-    <div class="row g-1">
-        <div class="col">
-            <div class="col-12">
-                <select class="titulo form-select input-arena" id="selectAnoFiscal">
-                    @{
-                        var anoActual = DateTime.Now.Year;
-                        var anoMaximo = anoActual + 1;
-                        var anoMinimo = anoActual - 5;
 
-                        for (int ano = anoMaximo; ano >= anoMinimo; ano--)
-                        {
-                            <option value="@ano" selected="@(ano == anoActual)">@ano</option>
-                        }
-                    }
-                </select>
-            </div>
-        </div>
-        <div class="col">
-            <div class="col-12" style="margin-left: 6px">
-                <select class="titulo form-select input-arena" id="selectDepartamento">
-                    @if (User.IsInRole("Administrador"))
-                    {
-                        <option value="">-- Seleccione un departamento --</option>
-                    }
-                    else if (Model.ListaDepartamentos.Count() > 1)
-                    {
-                        <option value="">-- Seleccione un departamento --</option>
-                    }
+<div class="filtros-container">
+    <div class="filtro-grupo">
+        <label for="selectAnoFiscal">Año Fiscal</label>
+        <select id="selectAnoFiscal" class="select2-simple">
+            @{
+                var anoActual = DateTime.Now.Year;
+                var anoMaximo = anoActual + 1;
+                var anoMinimo = anoActual - 5;
 
-                    @foreach (var depto in Model.ListaDepartamentos)
-                    {
-                        <option value="@depto.Value">@depto.Text</option>
-                    }
-                </select>
-            </div>
-        </div>
-        <div>
-            <div class="mt-4 text-center">
-                <button class="boton-rojo" type="button" id="btnBuscar">Buscar</button>
-            </div>
-            <div class="mt-3 mb-3 text-center">
-                @if (User.IsInRole("Administrador"))
+                for (int ano = anoMaximo; ano >= anoMinimo; ano--)
                 {
-                    <button class="boton-amarillo"
-                            onclick="irATableroProgramacion()"
-                            style="color: #17a2b8; box-shadow: 0 5px 8px 0 #17a2b8; border: 1px solid #17a2b8 !important;">
-                        <i class="fas fa-table"></i> Tablero Completo de Programación
-                    </button>
+                    <option value="@ano" selected="@(ano == anoActual)">@ano</option>
                 }
-            </div>
-        </div>
+            }
+        </select>
+    </div>
+    <div class="filtro-grupo">
+        <label for="selectDepartamento">Departamento</label>
+        <select id="selectDepartamento" class="select2-simple">
+            @if (User.IsInRole("Administrador") || Model.ListaDepartamentos.Count() > 1)
+            {
+                <option value="">-- Seleccione un departamento --</option>
+            }
+
+            @foreach (var depto in Model.ListaDepartamentos)
+            {
+                <option value="@depto.Value">@depto.Text</option>
+            }
+        </select>
+    </div>
+    <div class="filtro-grupo">
+        <label for="selectProgramaFiltro">Programa Presupuestal</label>
+        <select id="selectProgramaFiltro" class="select2-simple">
+            <option value="">Todos</option>
+            <option value="Agenda">Agenda</option>
+            <option value="E046">E046</option>
+            <option value="E047">E047</option>
+        </select>
+    </div>
+    <div class="filtro-grupo">
+        <label for="selectAreaFiltro">Área</label>
+        <select id="selectAreaFiltro" class="select2-simple">
+            <option value="">Todas</option>
+            @foreach (var area in Model.ListaAreas)
+            {
+                <option value="@area.Text">@area.Text</option>
+            }
+        </select>
+    </div>
+    <div class="filtro-grupo" style="flex: 0 0 auto; min-width: auto;">
+        <label>&nbsp;</label>
+        <button class="btn-app-rosa" type="button" id="btnBuscar">
+            <i class="fa-solid fa-magnifying-glass"></i> Buscar
+        </button>
     </div>
 </div>
 
 <!-- Sección que se mostrará después de buscar -->
-<div id="seccionResultados" class="mt-4 pb-4 pt-3 rounded-5 glass-effect" style="padding-left: 20px; padding-right: 25px; display: none;">
-    <h2 class="fw-semibold text-start" id="ano">
-        Ejercicio Fiscal
-    </h2>
-    <h3 class="fw-light" id="tituloDepartamento">
-        Departamento:
-    </h3>
-    <div class="text-center mb-3 ">
-        <button class="boton-rojo" type="button" id="btnIniciarProgramacion" >Iniciar Programación</button>
+<div id="seccionResultados" style="display: none;">
+    <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
+        <div>
+            <h2 class="titulo-vista mb-1" style="font-size: 1.1rem;" id="ano">Ejercicio Fiscal</h2>
+            <p class="subtitulo-vista mb-0" id="tituloDepartamento">Departamento:</p>
+        </div>
+        <div class="d-flex gap-2 flex-wrap">
+            <button class="btn-app-rosa" type="button" id="btnIniciarProgramacion">
+                <i class="fa-solid fa-play"></i> Iniciar Programación
+            </button>
+            @if (User.IsInRole("Administrador"))
+            {
+                <button class="btn-app-azul" type="button" onclick="irATableroProgramacion()">
+                    <i class="fa-solid fa-table"></i> Tablero Completo de Programación
+                </button>
+            }
+        </div>
     </div>
-    <div class="table-responsive">
-        <table class="table table-hover table-borderless align-middle shadow-sm rounded-3 overflow-hidden" id="tablaDatos">
-            <thead class="bg-danger text-white">
+
+    <div class="tabla-datos-wrap">
+        <table class="tabla-datos" id="tablaDatos">
+            <thead>
                 <tr>
-                    <th scope="col" class="text-center px-3 py-3 border-end border-light border-opacity-25">Pp</th>
-                    <th scope="col" class="text-center px-3 py-3 border-end border-light border-opacity-25">Componente</th>
-                    <th scope="col" class="text-center px-3 py-3 border-end border-light border-opacity-25">Actividad</th>
-                    <th scope="col" class="text-center px-3 py-3 border-end border-light border-opacity-25">Descripción de la Actividad</th>
-                    <th scope="col" class="text-center px-3 py-3 border-end border-light border-opacity-25">Programa o servicio de asistencia social</th>
-                    <th scope="col" class="text-center px-3 py-3 border-end border-light border-opacity-25">Área</th>
-                    <th scope="col" class="text-center px-3 py-3 border-end border-light border-opacity-25">Departamento</th>
-                    <th scope="col" class="text-center px-3 py-3">Estatus</th>
+                    <th>Pp</th>
+                    <th>Componente</th>
+                    <th>Actividad</th>
+                    <th>Descripción de la Actividad</th>
+                    <th>Programa o servicio de asistencia social</th>
+                    <th>Área</th>
+                    <th>Departamento</th>
+                    <th class="text-center">Estatus</th>
+                    <th class="text-center">Acciones</th>
                 </tr>
             </thead>
-            <tbody id="tbodyDatos" class="bg-light bg-opacity-50">
+            <tbody id="tbodyDatos">
                 <!-- Los datos se cargarán aquí dinámicamente -->
             </tbody>
         </table>
     </div>
-    
+    <div id="tablaDatos-paginacion" class="tabla-paginacion"></div>
+
     <!-- Mensaje de carga -->
-    <div id="mensajeCarga" class="text-center" style="display: none;">
+    <div id="mensajeCarga" class="text-center mt-3" style="display: none;">
         <div class="spinner-border text-primary" role="status">
             <span class="visually-hidden">Cargando...</span>
         </div>
         <p class="mt-2">Cargando datos...</p>
     </div>
-    
+
     <!-- Mensaje cuando no hay datos -->
-    <div id="mensajeSinDatos" class="alert alert-info text-center" style="display: none;">
-        No se encontraron datos para los criterios seleccionados.
+    <div id="mensajeSinDatos" class="sin-registros mt-3" style="display: none;">
+        <i class="bi bi-clipboard2-x"></i><br>
+        <span>No se encontraron datos para los criterios seleccionados.</span>
     </div>
 </div>
 
 @section Scripts {
     <script>
+    (function () {
+        $('.select2-simple').select2({ width: '100%', language: 'es', minimumResultsForSearch: 8 });
 
         function irATableroProgramacion() {
             var anoFiscal = $('#selectAnoFiscal').val();
@@ -126,6 +133,30 @@
             window.location.href = '@Url.Action("TableroCompletoProgramacion", "Programacion")' +
                                   '?anoFiscal=' + anoFiscal;
         }
+        window.irATableroProgramacion = irATableroProgramacion;
+
+        function filtrarTabla() {
+            var tabla = document.getElementById('tablaDatos');
+            if (!tabla) return;
+
+            var ppFiltro = ($('#selectProgramaFiltro').val() || '').toLowerCase();
+            var areaFiltro = $('#selectAreaFiltro').val() || '';
+
+            var filas = tabla.querySelectorAll('tbody tr');
+            filas.forEach(function (fila) {
+                var ppCelda = fila.cells[0] ? fila.cells[0].textContent.trim().toLowerCase() : '';
+                var areaCelda = fila.cells[5] ? fila.cells[5].textContent.trim() : '';
+
+                var pasaPp = !ppFiltro || ppCelda === ppFiltro;
+                var pasaArea = !areaFiltro || areaCelda === areaFiltro;
+
+                fila.style.display = (pasaPp && pasaArea) ? '' : 'none';
+            });
+
+            TablaPaginada.actualizar('tablaDatos');
+        }
+
+        $('#selectProgramaFiltro, #selectAreaFiltro').on('change', filtrarTabla);
 
         $(document).ready(function() {
 
@@ -139,7 +170,12 @@
 
                 // Validar que se haya seleccionado un departamento
                 if (!departamento) {
-                    alert('Por favor, seleccione un departamento');
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Selecciona un departamento',
+                        text: 'Por favor, selecciona un departamento para continuar.',
+                        confirmButtonText: 'Entendido'
+                    });
                     return;
                 }
 
@@ -191,65 +227,76 @@
                             // ========================================
                             // LÓGICA DE BOTONES SEGÚN ROL Y ESTATUS
                             // ========================================
-                            var btnEliminar = '';
-                            var btnEditar = '';
-                            var btnVer = '';
+                            var acciones = '';
 
                             // Para ADMINISTRADOR
                             if (esAdmin) {
-                                btnEditar = '<button type="button" class="btn btn-primary btn-sm btn-editar me-1" data-id="' + item.idProceso + '"><i class="fa-solid fa-pen-to-square"></i></button>';
-                                btnEliminar = '<button type="button" class="btn btn-danger btn-sm btn-eliminar" data-id="' + item.idProceso + '"><i class="fa-solid fa-trash"></i></button>';
+                                acciones += '<button type="button" class="btn-accion btn-accion-editar btn-editar" data-id="' + item.idProceso + '" title="Editar" data-bs-toggle="tooltip" data-bs-placement="top"><i class="fa-solid fa-pen-to-square"></i></button>';
+                                acciones += '<button type="button" class="btn-accion btn-accion-eliminar btn-eliminar" data-id="' + item.idProceso + '" title="Eliminar" data-bs-toggle="tooltip" data-bs-placement="top"><i class="fa-solid fa-trash"></i></button>';
                             }
                             else {
-                                btnVer = '<button type="button" class="btn btn-primary btn-sm btn-ver" data-id="' + item.idProceso + '" title="Ver formulario"><i class="fa-solid fa-eye me-1"></i>Ver</button>';
+                                acciones = '<button type="button" class="btn-accion btn-accion-ver btn-ver" data-id="' + item.idProceso + '" title="Ver formulario" data-bs-toggle="tooltip" data-bs-placement="top"><i class="fa-solid fa-eye"></i></button>';
                             }
 
-                            var badgeEstatus = '';
+                            var claseBadge = 'badge-estatus-neutral';
+                            var iconoBadge = 'bi-question-circle';
+                            var textoBadge = item.nombreEstatus || 'Sin estatus';
                             switch(item.idEstatus) {
-                                case 1: 
-                                    badgeEstatus = '<span class="badge bg-opacity-15 text-primary border border-primary border-opacity-25 d-inline-flex align-items-center gap-1 px-3 py-2">' +
-                                                  '<i class="bi bi-clock-history"></i> En Revisión</span>';
+                                case 1:
+                                    claseBadge = 'badge-estatus-info';
+                                    iconoBadge = 'bi-clock-history';
+                                    textoBadge = 'En Revisión';
                                     break;
-                                case 2: 
-                                    badgeEstatus = '<span class="badge bg-opacity-15 text-warning border border-warning border-opacity-25 d-inline-flex align-items-center gap-1 px-3 py-2">' +
-                                                  '<i class="bi bi-chat-dots"></i> Con Comentarios</span>';
+                                case 2:
+                                    claseBadge = 'badge-estatus-warning';
+                                    iconoBadge = 'bi-chat-dots';
+                                    textoBadge = 'Con Comentarios';
                                     break;
                                 case 3:
-                                    badgeEstatus = '<span class="badge bg-opacity-15 text-success border border-success border-opacity-25 d-inline-flex align-items-center gap-1 px-3 py-2">' +
-                                                  '<i class="bi bi-check-circle"></i> Validado</span>';
+                                    claseBadge = 'badge-estatus-success';
+                                    iconoBadge = 'bi-check-circle';
+                                    textoBadge = 'Validado';
                                     break;
-                                default:
-                                    badgeEstatus = '<span class="badge bg-secondary">' + item.nombreEstatus + '</span>';
                             }
+                            var badgeEstatus = '<span class="badge-estatus ' + claseBadge + '"><i class="bi ' + iconoBadge + '"></i> ' + textoBadge + '</span>';
 
                             // Construir la fila de la tabla
                             var fila = '<tr>' +
-                                '<td class="text-center">' + item.pp + '<div class="mt-1">' + btnEliminar + '</div></td>' +
-                                '<td class="text-center">' + item.componente + '</td>' +
-                                '<td class="text-center">' + actividadCompleta + '</td>' +
-                                '<td class="text-start">' + item.descripcionActividad + '</td>' +
-                                '<td class="text-start">' + item.programaSocial + '</td>' +
-                                '<td class="text-center">' + item.area + '</td>' +
-                                '<td class="text-center">' + item.departamento + '</td>' +
-                                '<td class="text-center">' +
-                                    '<div class="d-flex flex-column align-items-center gap-2">' +
-                                        '<div>' + badgeEstatus + '</div>' +
-                                        '<div>' + btnEditar + btnVer + '</div>' +
-                                    '</div>' +
-                                '</td>' +
+                                '<td>' + item.pp + '</td>' +
+                                '<td>' + item.componente + '</td>' +
+                                '<td>' + actividadCompleta + '</td>' +
+                                '<td>' + item.descripcionActividad + '</td>' +
+                                '<td>' + item.programaSocial + '</td>' +
+                                '<td>' + item.area + '</td>' +
+                                '<td>' + item.departamento + '</td>' +
+                                '<td class="text-center">' + badgeEstatus + '</td>' +
+                                '<td><div class="acciones-grupo">' + acciones + '</div></td>' +
                             '</tr>';
 
                             $('#tbodyDatos').append(fila);
                         });
                             $('#tablaDatos').show();
+                            TablaPaginada.iniciar('tablaDatos', { pageSize: 8 });
+                            filtrarTabla();
+
+                            // Tooltips de los botones de acciones (se reconstruyen en cada búsqueda)
+                            $('#tbodyDatos [data-bs-toggle="tooltip"]').each(function () {
+                                bootstrap.Tooltip.getOrCreateInstance(this);
+                            });
 
                         } else {
+                            $('#tablaDatos').show();
                             $('#mensajeSinDatos').show();
                         }
                     },
                     error: function(xhr, status, error) {
                         $('#mensajeCarga').hide();
-                        alert('Error al cargar los datos: ' + error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error al cargar los datos',
+                            text: error,
+                            confirmButtonText: 'Entendido'
+                        });
                     }
                 });
             });
@@ -262,25 +309,50 @@
                 var idProceso = $(this).data('id');
 
                 // Confirmación antes de eliminar
-                if (confirm('¿Está seguro de que desea eliminar este registro? Esta acción es irreversible y eliminará datos en 4 tablas.')) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: '¿Eliminar este registro?',
+                    text: 'Esta acción es irreversible y eliminará datos en 4 tablas.',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then(function (resultado) {
+                    if (!resultado.isConfirmed) return;
+
                     $.ajax({
                         url: '@Url.Action("EliminarRegistro", "Programacion")',
                         type: 'POST',
                         data: { id: idProceso },
                         success: function(response) {
                             if (response.success) {
-                                alert(response.mensaje);
-                                // Recargar la tabla
-                                $('#btnBuscar').click();
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Registro eliminado',
+                                    text: response.mensaje,
+                                    confirmButtonText: 'Aceptar'
+                                }).then(function () {
+                                    // Recargar la tabla
+                                    $('#btnBuscar').click();
+                                });
                             } else {
-                                alert('Error: ' + response.mensaje);
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: response.mensaje,
+                                    confirmButtonText: 'Entendido'
+                                });
                             }
                         },
                         error: function(xhr, status, error) {
-                            alert('Error en la comunicación con el servidor al intentar eliminar.');
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error de comunicación',
+                                text: 'No se pudo contactar al servidor al intentar eliminar.',
+                                confirmButtonText: 'Entendido'
+                            });
                         }
                     });
-                }
+                });
             });
 
             // ========================================
@@ -311,6 +383,20 @@
 
                 window.location.href = urlRedireccion;
             });
+
+            // Si se regresa con "atrás" del navegador (sin que el bfcache haya
+            // restaurado la página completa), el filtro conserva el valor pero
+            // la tabla queda vacía porque nunca se disparó el clic de "Buscar".
+            // Se vuelve a ejecutar la búsqueda automáticamente en ese caso.
+            var entradaNavegacion = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+            var esNavegacionAtras = entradaNavegacion
+                ? entradaNavegacion.type === 'back_forward'
+                : (performance.navigation && performance.navigation.type === 2);
+
+            if (esNavegacionAtras && $('#selectDepartamento').val()) {
+                $('#btnBuscar').click();
+            }
         });
+    })();
     </script>
 }

@@ -1,77 +1,99 @@
-﻿@using Metas.AplicacionWeb.Models.ViewModels
+@using Metas.AplicacionWeb.Models.ViewModels
 @model List<VMUsuario>
 @{
     ViewData["Title"] = "Creación de Usuarios";
 }
 
-<div class="mt-4 shadow border p-4 rounded-4 text-center">
-    <button class="boton-amarillo fw-light fs-6" data-bs-toggle="modal" data-bs-target="#ModalUsuario">Crear usuario</button>
+<div class="titulo-vista-wrap">
+    <h1 class="titulo-vista">Creación de Usuarios</h1>
+    <span class="subtitulo-vista">- Administra los usuarios que tienen acceso al sistema.</span>
+</div>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th class="fw-semibold" style="color:#741732">Id Usuario</th>
-                <th class="fw-semibold" style="color:#741732">Usuario</th>
-                <th class="fw-semibold" style="color:#741732">Contraseña</th>
-                <th class="fw-semibold" style="color:#741732">Area</th>
-                <th class="fw-semibold" style="color:#741732">Rol</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody id="tablaUsuarios">
-            @foreach (var usuario in Model)
-            {
+<div class="d-flex justify-content-end mb-3">
+    <button class="btn-app-rosa" type="button" data-bs-toggle="modal" data-bs-target="#ModalUsuario">
+        <i class="fa-solid fa-user-plus"></i> Crear Usuario
+    </button>
+</div>
+
+@if (Model == null || !Model.Any())
+{
+    <div class="sin-registros">
+        <i class="bi bi-clipboard2-x"></i><br>
+        <span>Sin usuarios registrados.</span>
+    </div>
+}
+else
+{
+    <div class="tabla-datos-wrap">
+        <table class="tabla-datos" id="tablaDatos">
+            <thead>
                 <tr>
-                    <td class="fw-light align-middle">@usuario.IdUsuario</td>
-                    <td class="fw-light align-middle border-start">@usuario.Usuario1</td>
-                    <td class="fw-light align-middle border-start">@usuario.Pass</td>
-                    <td class="fw-light align-middle border-start text-start">@usuario.Area</td>
-                    <td class="fw-light align-middle border-start">@usuario.Definicion</td>
-                    <td class="border-start align-middle">
-                        <button class="boton-rojo fw-light fs-6 ms-3 me-2" onclick="eliminarUsuario(@usuario.IdUsuario, '@usuario.Usuario1')">
-                            Eliminar
-                        </button>
-                    </td>
+                    <th>ID</th>
+                    <th>Usuario</th>
+                    <th>Contraseña</th>
+                    <th>Área</th>
+                    <th class="text-center">Rol</th>
+                    <th class="text-center">Acciones</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody id="tablaUsuarios">
+                @foreach (var usuario in Model)
+                {
+                    <tr>
+                        <td>@usuario.IdUsuario</td>
+                        <td>@usuario.Usuario1</td>
+                        <td>@usuario.Pass</td>
+                        <td>@usuario.Area</td>
+                        <td class="text-center">@usuario.Definicion</td>
+                        <td>
+                            <div class="acciones-grupo">
+                                <button type="button" class="btn-accion btn-accion-eliminar" title="Eliminar" data-bs-toggle="tooltip" data-bs-placement="top"
+                                        onclick="eliminarUsuario(@usuario.IdUsuario, '@usuario.Usuario1')">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div id="tablaDatos-paginacion" class="tabla-paginacion"></div>
+}
 
-    <div class="modal fade" id="ModalUsuario" tabindex="-1" aria-labelledby="miModalLabel"
-         data-bs-backdrop="false" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content glass-effect" style="box-shadow: 0 0 40px 2px #c09866 !important">
-                <div class="modal-header">
-                    <h5 class="modal-title titulo fw-semibold" style="margin-left: 140px" id="miModalLabel">Creación de usuario</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form id="formCrearUsuario">
-                    <div class="modal-body">
-                        <label class="form-label titulo fw-semibold">Nombre</label>
-                        <input type="text" class="form-control mb-3 input-arena fw-light" style="color:#c09866" id="txtUsuario" name="Usuario1" required />
-
-                        <label class="form-label titulo fw-semibold">Contraseña</label>
-                        <input type="text" class="form-control mb-3 input-arena fw-light" style="color:#c09866" id="txtPassword" name="Pass" required />
-
-                        <label class="form-label titulo fw-semibold">Tipo</label>
-                        <select class="form-control mb-3 input-arena fw-light" style="color:#c09866" id="selectTipo" name="Definicion" required>
-                            <option value="">Seleccione Tipo de Usuario</option>
-                            <option value="Dirección">Dirección</option>
-                            <option value="Unidad">Unidad</option>
-                            <option value="Departamento">Departamento</option>
-                        </select>
-
-                        <label class="form-label titulo fw-semibold">Area</label>
-                        <select class="form-control mb-3 input-arena fw-light" style="color:#c09866" id="selectArea" name="Area" required>
-                            <option value="">Seleccione Area</option>
-                        </select>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="boton-rojo fs-6 fw-light" data-bs-dismiss="modal">Cerrar</button>
-                        <button type="submit" class="boton-amarillo fs-6 fw-light" id="btnGuardar">Crear Usuario</button>
-                    </div>
-                </form>
+<div class="modal fade" id="ModalUsuario" tabindex="-1" aria-labelledby="miModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="miModalLabel">Creación de usuario</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+            <form id="formCrearUsuario">
+                <div class="modal-body">
+                    <label class="form-label fw-semibold">Nombre</label>
+                    <input type="text" class="form-control mb-3" id="txtUsuario" name="Usuario1" required />
+
+                    <label class="form-label fw-semibold">Contraseña</label>
+                    <input type="text" class="form-control mb-3" id="txtPassword" name="Pass" required />
+
+                    <label class="form-label fw-semibold">Tipo</label>
+                    <select class="form-select mb-3" id="selectTipo" name="Definicion" required>
+                        <option value="">Seleccione Tipo de Usuario</option>
+                        <option value="Dirección">Dirección</option>
+                        <option value="Unidad">Unidad</option>
+                        <option value="Departamento">Departamento</option>
+                    </select>
+
+                    <label class="form-label fw-semibold">Área</label>
+                    <select class="form-select mb-3" id="selectArea" name="Area" required>
+                        <option value="">Seleccione Área</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-app-gris" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn-app-rosa" id="btnGuardar">Crear Usuario</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -79,6 +101,12 @@
 @section Scripts {
     <script>
         $(document).ready(function() {
+            $('[data-bs-toggle="tooltip"]').each(function () {
+                bootstrap.Tooltip.getOrCreateInstance(this);
+            });
+
+            TablaPaginada.iniciar('tablaDatos', { pageSize: 10 });
+
             // Cargar áreas según el tipo
             $("#selectTipo").change(function () {
                 $("#selectArea").empty();
@@ -103,7 +131,8 @@
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Error',
-                                text: 'Error al cargar las áreas'
+                                text: 'Error al cargar las áreas',
+                                confirmButtonText: 'Entendido'
                             });
                         }
                     });
@@ -126,8 +155,7 @@
                             icon: 'success',
                             title: '¡Éxito!',
                             text: response.mensaje,
-                            showConfirmButton: false,
-                            timer: 1500
+                            confirmButtonText: 'Aceptar'
                         }).then(() => {
                             $("#ModalUsuario").modal('hide');
                             $("#formCrearUsuario")[0].reset();
@@ -139,7 +167,8 @@
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
-                            text: error?.mensaje || 'Error al crear usuario'
+                            text: error?.mensaje || 'Error al crear usuario',
+                            confirmButtonText: 'Entendido'
                         });
                     },
                     complete: function() {
@@ -156,8 +185,6 @@
                 text: `¿Desea eliminar al usuario "${nombreUsuario}"?`,
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
                 confirmButtonText: 'Sí, eliminar',
                 cancelButtonText: 'Cancelar'
             }).then((result) => {
@@ -182,8 +209,7 @@
                                 icon: 'success',
                                 title: '¡Eliminado!',
                                 text: response.mensaje,
-                                showConfirmButton: false,
-                                timer: 1500
+                                confirmButtonText: 'Aceptar'
                             }).then(() => {
                                 location.reload();
                             });
@@ -193,7 +219,8 @@
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Error',
-                                text: error?.mensaje || 'Error al eliminar usuario'
+                                text: error?.mensaje || 'Error al eliminar usuario',
+                                confirmButtonText: 'Entendido'
                             });
                         }
                     });

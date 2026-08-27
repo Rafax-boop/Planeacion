@@ -6,15 +6,15 @@
 <div class="container-fluid mt-4">
 
     @* Encabezado *@
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="titulo fw-semibold pt-2 pb-2 px-4 glass-effect rounded-5 mb-0">
-            <i class="fas fa-table me-2"></i> TABLERO COMPLETO POR DEPARTAMENTO
-        </h2>
-        <div>
-            <a href="@Url.Action("Monitoreo", "Monitoreo")" class="btn btn-volver me-2">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div class="titulo-vista-wrap mb-0">
+            <h1 class="titulo-vista"><i class="fas fa-table me-2"></i> Tablero Completo por Departamento</h1>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="@Url.Action("Monitoreo", "Monitoreo")" class="btn-app-gris">
                 <i class="fas fa-arrow-left"></i> Volver
             </a>
-            <button class="btn btn-exportar" id="btnExportarExcel">
+            <button type="button" class="btn-app-verde" id="btnExportarExcel">
                 <i class="fas fa-file-excel"></i> Exportar Excel
             </button>
         </div>
@@ -26,13 +26,13 @@
             <div class="row g-3 align-items-end">
                 <div class="col-md-5">
                     <label class="form-label fw-semibold small">Departamento</label>
-                    <select class="form-select" id="filtroDepartamento" asp-items="Model.ListaDepartamentos">
+                    <select class="form-select select2-simple" id="filtroDepartamento" asp-items="Model.ListaDepartamentos">
                         <option value="0">-- Todos los departamentos --</option>
                     </select>
                 </div>
                 <div class="col-md-3">
                     <label class="form-label fw-semibold small">Año Fiscal</label>
-                    <select class="form-select" id="filtroAno">
+                    <select class="form-select select2-simple" id="filtroAno">
                         @{
                             var anoActual = DateTime.Now.Year;
                             var anoMaximo = anoActual + 1;
@@ -46,7 +46,7 @@
                     </select>
                 </div>
                 <div class="col-md-4">
-                    <button class="btn btn-primary w-100" id="btnFiltrar">
+                    <button type="button" class="btn-app-rosa w-100 justify-content-center" id="btnFiltrar">
                         <i class="fas fa-search me-2"></i> Cargar Datos
                     </button>
                 </div>
@@ -83,9 +83,9 @@
                    ======================================== *@
                 <tr>
                     <th class="header-seccion-info" colspan="8" rowspan="3">INFORMACIÓN GENERAL</th>
-                    <th class="header-seccion-programado" colspan="13" rowspan="3">SERVICIOS PROGRAMADOS</th>
-                    <th class="header-seccion-realizado" colspan="13" rowspan="3">SERVICIOS REALIZADOS</th>
-                    <th class="header-seccion-personas-prog" colspan="13" rowspan="3">PERSONAS PROGRAMADAS</th>
+                    <th class="header-seccion-programado" colspan="17" rowspan="3">SERVICIOS PROGRAMADOS</th>
+                    <th class="header-seccion-realizado" colspan="17" rowspan="3">SERVICIOS REALIZADOS</th>
+                    <th class="header-seccion-personas-prog" colspan="17" rowspan="3">PERSONAS PROGRAMADAS</th>
                     <th class="header-seccion-personas-atend" colspan="144">PERSONAS ATENDIDAS</th>
                 </tr>
 
@@ -138,56 +138,51 @@
                     <th class="header-mes-info col-programa">PROGRAMA</th>
                     <th class="header-mes-info">U.M.</th>
 
-                    <!-- Servicios Programados (13 columnas) -->
-                    <th class="header-mes-programado">ENE</th>
-                    <th class="header-mes-programado">FEB</th>
-                    <th class="header-mes-programado">MAR</th>
-                    <th class="header-mes-programado">ABR</th>
-                    <th class="header-mes-programado">MAY</th>
-                    <th class="header-mes-programado">JUN</th>
-                    <th class="header-mes-programado">JUL</th>
-                    <th class="header-mes-programado">AGO</th>
-                    <th class="header-mes-programado">SEP</th>
-                    <th class="header-mes-programado">OCT</th>
-                    <th class="header-mes-programado">NOV</th>
-                    <th class="header-mes-programado">DIC</th>
+                    <!-- Servicios Programados (17 columnas: 12 meses + 4 trimestrales + total) -->
+                    @{
+                        var mesesCortos = new[] { "ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT", "NOV", "DIC" };
+                        for (int t = 0; t < 4; t++)
+                        {
+                            for (int m = 0; m < 3; m++)
+                            {
+                                <th class="header-mes-programado">@mesesCortos[t * 3 + m]</th>
+                            }
+                            <th class="header-mes-programado header-trim-prog">TRIM@(t + 1)</th>
+                        }
+                    }
                     <th class="header-mes-programado header-total-prog">TOTAL</th>
 
-                    <!-- Servicios Realizados (13 columnas) -->
-                    <th class="header-mes-realizado">ENE</th>
-                    <th class="header-mes-realizado">FEB</th>
-                    <th class="header-mes-realizado">MAR</th>
-                    <th class="header-mes-realizado">ABR</th>
-                    <th class="header-mes-realizado">MAY</th>
-                    <th class="header-mes-realizado">JUN</th>
-                    <th class="header-mes-realizado">JUL</th>
-                    <th class="header-mes-realizado">AGO</th>
-                    <th class="header-mes-realizado">SEP</th>
-                    <th class="header-mes-realizado">OCT</th>
-                    <th class="header-mes-realizado">NOV</th>
-                    <th class="header-mes-realizado">DIC</th>
+                    <!-- Servicios Realizados (17 columnas: 12 meses + 4 trimestrales + total) -->
+                    @{
+                        for (int t = 0; t < 4; t++)
+                        {
+                            for (int m = 0; m < 3; m++)
+                            {
+                                <th class="header-mes-realizado">@mesesCortos[t * 3 + m]</th>
+                            }
+                            <th class="header-mes-realizado header-trim-real">TRIM@(t + 1)</th>
+                        }
+                    }
                     <th class="header-mes-realizado header-total-real">TOTAL</th>
 
-                    <!-- Personas Programadas (13 columnas) -->
-                    <th class="header-mes-personas-prog">ENE</th>
-                    <th class="header-mes-personas-prog">FEB</th>
-                    <th class="header-mes-personas-prog">MAR</th>
-                    <th class="header-mes-personas-prog">ABR</th>
-                    <th class="header-mes-personas-prog">MAY</th>
-                    <th class="header-mes-personas-prog">JUN</th>
-                    <th class="header-mes-personas-prog">JUL</th>
-                    <th class="header-mes-personas-prog">AGO</th>
-                    <th class="header-mes-personas-prog">SEP</th>
-                    <th class="header-mes-personas-prog">OCT</th>
-                    <th class="header-mes-personas-prog">NOV</th>
-                    <th class="header-mes-personas-prog">DIC</th>
+                    <!-- Personas Programadas (17 columnas: 12 meses + 4 trimestrales + total) -->
+                    @{
+                        for (int t = 0; t < 4; t++)
+                        {
+                            for (int m = 0; m < 3; m++)
+                            {
+                                <th class="header-mes-personas-prog">@mesesCortos[t * 3 + m]</th>
+                            }
+                            <th class="header-mes-personas-prog header-trim-pers-prog">TRIM@(t + 1)</th>
+                        }
+                    }
                     <th class="header-mes-personas-prog header-total-pers-prog">TOTAL</th>
 
                 </tr>
             </thead>
             <tbody id="tbodyTablero">
                 <tr>
-                    <td colspan="191" class="text-center py-5 text-muted">
+                    <td colspan="203" class="text-center py-5 text-muted">
                         <i class="fas fa-filter fa-2x mb-3 d-block"></i>
                         Seleccione un año fiscal y presione "Cargar Datos" para ver la información.
                     </td>
@@ -294,7 +289,7 @@
                 console.error('Error:', error);
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="191" class="text-center py-5 text-danger">
+                        <td colspan="203" class="text-center py-5 text-danger">
                             <i class="fas fa-exclamation-triangle fa-2x mb-3 d-block"></i>
                             Error al cargar los datos: ${error.message}
                         </td>
@@ -307,15 +302,34 @@
 
         // ========================================
         // RENDERIZAR TABLA
-        // Estructura: 8 Info + 13 Prog + 13 Real + 13 PersProg + 144 PersAtend = 191 columnas
+        // Estructura: 8 Info + 17 Prog + 17 Real + 17 PersProg + 144 PersAtend = 203 columnas
+        // (Prog/Real/PersProg = 12 meses + 4 subtotales trimestrales + 1 total anual)
         // ========================================
+
+        // Genera las 12 celdas de meses intercalando un subtotal trimestral cada 3 meses,
+        // y agrega la celda de total anual al final.
+        function generarCeldasMensualesConTrimestre(valoresMes, claseCelda, claseTrim, claseTotal, total) {
+            let html = '';
+            for (let t = 0; t < 4; t++) {
+                let sumaTrim = 0;
+                for (let m = 0; m < 3; m++) {
+                    const valor = valoresMes[t * 3 + m] || 0;
+                    sumaTrim += valor;
+                    html += `<td class="${claseCelda}">${valor}</td>`;
+                }
+                html += `<td class="${claseTrim}">${sumaTrim}</td>`;
+            }
+            html += `<td class="${claseTotal}">${total || 0}</td>`;
+            return html;
+        }
+
         function renderizarTabla(datos) {
             const tbody = document.getElementById('tbodyTablero');
 
             if (!datos || datos.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="191" class="text-center py-5 text-muted">
+                        <td colspan="203" class="text-center py-5 text-muted">
                             <i class="fas fa-inbox fa-2x mb-3 d-block"></i>
                             No hay datos para mostrar.
                         </td>
@@ -346,56 +360,23 @@
                     <td class="celda-info">${r.unidadMedida || ''}</td>
                 `;
 
-                // ============ SERVICIOS PROGRAMADOS (13 columnas) ============
-                html += `
-                    <td class="celda-programado">${prog.ene || 0}</td>
-                    <td class="celda-programado">${prog.feb || 0}</td>
-                    <td class="celda-programado">${prog.mar || 0}</td>
-                    <td class="celda-programado">${prog.abr || 0}</td>
-                    <td class="celda-programado">${prog.may || 0}</td>
-                    <td class="celda-programado">${prog.jun || 0}</td>
-                    <td class="celda-programado">${prog.jul || 0}</td>
-                    <td class="celda-programado">${prog.ago || 0}</td>
-                    <td class="celda-programado">${prog.sep || 0}</td>
-                    <td class="celda-programado">${prog.oct || 0}</td>
-                    <td class="celda-programado">${prog.nov || 0}</td>
-                    <td class="celda-programado">${prog.dic || 0}</td>
-                    <td class="celda-total-programado">${prog.total || 0}</td>
-                `;
+                // ============ SERVICIOS PROGRAMADOS (17 columnas) ============
+                html += generarCeldasMensualesConTrimestre(
+                    [prog.ene, prog.feb, prog.mar, prog.abr, prog.may, prog.jun, prog.jul, prog.ago, prog.sep, prog.oct, prog.nov, prog.dic],
+                    'celda-programado', 'celda-trim-programado', 'celda-total-programado', prog.total
+                );
 
-                // ============ SERVICIOS REALIZADOS (13 columnas) ============
-                html += `
-                    <td class="celda-realizado">${real.ene || 0}</td>
-                    <td class="celda-realizado">${real.feb || 0}</td>
-                    <td class="celda-realizado">${real.mar || 0}</td>
-                    <td class="celda-realizado">${real.abr || 0}</td>
-                    <td class="celda-realizado">${real.may || 0}</td>
-                    <td class="celda-realizado">${real.jun || 0}</td>
-                    <td class="celda-realizado">${real.jul || 0}</td>
-                    <td class="celda-realizado">${real.ago || 0}</td>
-                    <td class="celda-realizado">${real.sep || 0}</td>
-                    <td class="celda-realizado">${real.oct || 0}</td>
-                    <td class="celda-realizado">${real.nov || 0}</td>
-                    <td class="celda-realizado">${real.dic || 0}</td>
-                    <td class="celda-total-realizado">${real.total || 0}</td>
-                `;
+                // ============ SERVICIOS REALIZADOS (17 columnas) ============
+                html += generarCeldasMensualesConTrimestre(
+                    [real.ene, real.feb, real.mar, real.abr, real.may, real.jun, real.jul, real.ago, real.sep, real.oct, real.nov, real.dic],
+                    'celda-realizado', 'celda-trim-realizado', 'celda-total-realizado', real.total
+                );
 
-                // ============ PERSONAS PROGRAMADAS (13 columnas) ============
-                html += `
-                    <td class="celda-personas-prog">${persProg.ene || 0}</td>
-                    <td class="celda-personas-prog">${persProg.feb || 0}</td>
-                    <td class="celda-personas-prog">${persProg.mar || 0}</td>
-                    <td class="celda-personas-prog">${persProg.abr || 0}</td>
-                    <td class="celda-personas-prog">${persProg.may || 0}</td>
-                    <td class="celda-personas-prog">${persProg.jun || 0}</td>
-                    <td class="celda-personas-prog">${persProg.jul || 0}</td>
-                    <td class="celda-personas-prog">${persProg.ago || 0}</td>
-                    <td class="celda-personas-prog">${persProg.sep || 0}</td>
-                    <td class="celda-personas-prog">${persProg.oct || 0}</td>
-                    <td class="celda-personas-prog">${persProg.nov || 0}</td>
-                    <td class="celda-personas-prog">${persProg.dic || 0}</td>
-                    <td class="celda-total-personas-prog">${persProg.total || 0}</td>
-                `;
+                // ============ PERSONAS PROGRAMADAS (17 columnas) ============
+                html += generarCeldasMensualesConTrimestre(
+                    [persProg.ene, persProg.feb, persProg.mar, persProg.abr, persProg.may, persProg.jun, persProg.jul, persProg.ago, persProg.sep, persProg.oct, persProg.nov, persProg.dic],
+                    'celda-personas-prog', 'celda-trim-personas-prog', 'celda-total-personas-prog', persProg.total
+                );
 
                 // ============ PERSONAS ATENDIDAS (144 columnas = 12 meses × 12 categorías) ============
                 // Mapeo según respuesta JSON del controlador ObtenerDatosTableroCompletoOptimizado
@@ -557,9 +538,9 @@
                 // ========== COLORES ==========
                 const colores = {
                     info: { header: 'FFC00000', subheader: 'FFA00000', celda: 'FFFFF5F5' },
-                    programado: { header: 'FFFFC107', subheader: 'FFE0A800', celda: 'FFFFFBEB', total: 'FFD49A00' },
-                    realizado: { header: 'FF20C997', subheader: 'FF1AA179', celda: 'FFE6FFF7', total: 'FF148060' },
-                    personasProg: { header: 'FF0DCAF0', subheader: 'FF0BB5D6', celda: 'FFE6FCFF', total: 'FF0891B2' },
+                    programado: { header: 'FFFFC107', subheader: 'FFE0A800', celda: 'FFFFFBEB', total: 'FFD49A00', trimHeader: 'FFB8860B', trim: 'FFFFE6A1' },
+                    realizado: { header: 'FF20C997', subheader: 'FF1AA179', celda: 'FFE6FFF7', total: 'FF148060', trimHeader: 'FF0E6650', trim: 'FFA6EAD9' },
+                    personasProg: { header: 'FF0DCAF0', subheader: 'FF0BB5D6', celda: 'FFE6FCFF', total: 'FF0891B2', trimHeader: 'FF066A80', trim: 'FFA6ECF7' },
                     personasAtend: { header: 'FF6F42C1', subheader: 'FF5A32A3', celda: 'FFF3E8FF', total: 'FF4C1D95' }
                 };
 
@@ -586,44 +567,78 @@
                 });
 
                 // ========== ESTRUCTURA DE COLUMNAS ==========
+                // Info: 1-8 | Programado: 9-25 | Realizado: 26-42 | PersProg: 43-59 | PersAtend: 60-203
+                // Programado/Realizado/PersProg = 17 columnas cada uno (12 meses + 4 subtotales trimestrales + 1 total anual)
                 const mesesNombres = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'];
                 const categoriasPA = ['Hombre', 'Mujer', '0-3', '4-8', '9-12', '13-17', '18-29', '30-59', '60+', 'No Def.', 'Indíg.', 'TOTAL'];
+                const COL_PROG = 9, COL_REAL = 26, COL_PERSPROG = 43, COL_PERSATEND = 60;
 
-                // ========== FILA 1: TÍTULOS PRINCIPALES ==========
+                // Genera las 17 etiquetas de una sección mensual: 12 meses + TRIM1..TRIM4 intercalados + TOTAL
+                function headersMensualesConTrimestre() {
+                    const out = [];
+                    for (let t = 0; t < 4; t++) {
+                        out.push(...mesesNombres.slice(t * 3, t * 3 + 3));
+                        out.push(`TRIM${t + 1}`);
+                    }
+                    out.push('TOTAL');
+                    return out;
+                }
+                // Posición (0-16) dentro de una sección mensual: 'trim' cada 4ta columna, 'total' la última, si no 'mes'
+                function tipoColumnaMensual(pos) {
+                    if (pos === 16) return 'total';
+                    if ((pos + 1) % 4 === 0) return 'trim';
+                    return 'mes';
+                }
+
+                // Escribe una fila de datos de una sección mensual (17 columnas), calculando
+                // el subtotal de cada trimestre y dejando el total anual en la última columna.
+                function escribirDatosMensualTrimestre(filaNum, colInicio, valoresMes, total, colorSet, totalFontColor) {
+                    let offset = 0;
+                    for (let t = 0; t < 4; t++) {
+                        let sumaTrim = 0;
+                        for (let m = 0; m < 3; m++) {
+                            const valor = valoresMes[t * 3 + m] || 0;
+                            sumaTrim += valor;
+                            const celda = sheet.getCell(filaNum, colInicio + offset);
+                            celda.value = valor;
+                            Object.assign(celda, estiloCelda(colorSet.celda));
+                            offset++;
+                        }
+                        const celdaTrim = sheet.getCell(filaNum, colInicio + offset);
+                        celdaTrim.value = sumaTrim;
+                        Object.assign(celdaTrim, estiloCelda(colorSet.trim));
+                        celdaTrim.font = { bold: true, size: 10 };
+                        offset++;
+                    }
+                    const celdaTotal = sheet.getCell(filaNum, colInicio + offset);
+                    celdaTotal.value = total || 0;
+                    Object.assign(celdaTotal, estiloCelda(colorSet.total));
+                    celdaTotal.font = totalFontColor ? { bold: true, size: 10, color: { argb: totalFontColor } } : { bold: true, size: 10 };
+                }
+
+                // "Centrar en la selección": en vez de combinar celdas (mergeCells), se deja el
+                // valor solo en la primera celda del rango y se aplica alignment centerContinuous
+                // a todas las celdas del rango, que es como Excel centra visualmente sin fusionar.
+                function centrarEnSeleccion(filaNum, colInicio, colFin, valor, estilo) {
+                    for (let col = colInicio; col <= colFin; col++) {
+                        const celda = sheet.getCell(filaNum, col);
+                        Object.assign(celda, estilo);
+                        celda.alignment = { ...celda.alignment, horizontal: 'centerContinuous' };
+                    }
+                    sheet.getCell(filaNum, colInicio).value = valor;
+                }
+
+                // ========== FILA 1: TÍTULOS PRINCIPALES (centrado en la selección) ==========
                 const fila1 = sheet.getRow(1);
                 fila1.height = 30;
 
-                // Info General (columnas 1-8)
-                sheet.mergeCells('A1:H1');
-                const celdaInfo = sheet.getCell('A1');
-                celdaInfo.value = 'INFORMACIÓN GENERAL';
-                Object.assign(celdaInfo, estiloHeaderPrincipal(colores.info.header));
+                centrarEnSeleccion(1, 1, 8, 'INFORMACIÓN GENERAL', estiloHeaderPrincipal(colores.info.header));
+                centrarEnSeleccion(1, COL_PROG, COL_REAL - 1, 'SERVICIOS PROGRAMADOS', estiloHeaderPrincipal(colores.programado.header, 'FF000000'));
+                centrarEnSeleccion(1, COL_REAL, COL_PERSPROG - 1, 'SERVICIOS REALIZADOS', estiloHeaderPrincipal(colores.realizado.header));
+                centrarEnSeleccion(1, COL_PERSPROG, COL_PERSATEND - 1, 'PERSONAS PROGRAMADAS', estiloHeaderPrincipal(colores.personasProg.header, 'FF000000'));
+                centrarEnSeleccion(1, COL_PERSATEND, COL_PERSATEND + 143, 'PERSONAS ATENDIDAS', estiloHeaderPrincipal(colores.personasAtend.header));
 
-                // Servicios Programados (columnas 9-21)
-                sheet.mergeCells('I1:U1');
-                const celdaProg = sheet.getCell('I1');
-                celdaProg.value = 'SERVICIOS PROGRAMADOS';
-                Object.assign(celdaProg, estiloHeaderPrincipal(colores.programado.header, 'FF000000'));
-
-                // Servicios Realizados (columnas 22-34)
-                sheet.mergeCells('V1:AH1');
-                const celdaReal = sheet.getCell('V1');
-                celdaReal.value = 'SERVICIOS REALIZADOS';
-                Object.assign(celdaReal, estiloHeaderPrincipal(colores.realizado.header));
-
-                // Personas Programadas (columnas 35-47)
-                sheet.mergeCells('AI1:AU1');
-                const celdaPersProg = sheet.getCell('AI1');
-                celdaPersProg.value = 'PERSONAS PROGRAMADAS';
-                Object.assign(celdaPersProg, estiloHeaderPrincipal(colores.personasProg.header, 'FF000000'));
-
-                // Personas Atendidas (columnas 48-191 = 144 columnas)
-                sheet.mergeCells('AV1:GI1');
-                const celdaPersAtend = sheet.getCell('AV1');
-                celdaPersAtend.value = 'PERSONAS ATENDIDAS';
-                Object.assign(celdaPersAtend, estiloHeaderPrincipal(colores.personasAtend.header));
-
-                // ========== FILA 2: MESES PARA PERSONAS ATENDIDAS ==========
+                // ========== FILA 2: MESES / TRIMESTRES ==========
                 const fila2 = sheet.getRow(2);
                 fila2.height = 25;
 
@@ -633,38 +648,27 @@
                     Object.assign(celda, estiloSubheader(colores.info.subheader));
                 }
 
-                // Prog meses
-                const headersProg = [...mesesNombres, 'TOTAL'];
-                for (let i = 0; i < 13; i++) {
-                    const celda = sheet.getCell(2, 9 + i);
-                    celda.value = headersProg[i];
-                    Object.assign(celda, estiloSubheader(colores.programado.subheader, 'FF000000'));
-                }
+                // Prog / Real / PersProg: 12 meses + 4 TRIM + TOTAL
+                const headersSeccionMensual = headersMensualesConTrimestre();
+                [
+                    { colInicio: COL_PROG, colorSet: colores.programado, textColor: 'FF000000' },
+                    { colInicio: COL_REAL, colorSet: colores.realizado, textColor: 'FFFFFFFF' },
+                    { colInicio: COL_PERSPROG, colorSet: colores.personasProg, textColor: 'FF000000' }
+                ].forEach(({ colInicio, colorSet, textColor }) => {
+                    for (let i = 0; i < 17; i++) {
+                        const celda = sheet.getCell(2, colInicio + i);
+                        celda.value = headersSeccionMensual[i];
+                        const tipo = tipoColumnaMensual(i);
+                        const color = tipo === 'trim' ? colorSet.trimHeader : colorSet.subheader;
+                        Object.assign(celda, estiloSubheader(color, textColor));
+                    }
+                });
 
-                // Real meses
-                for (let i = 0; i < 13; i++) {
-                    const celda = sheet.getCell(2, 22 + i);
-                    celda.value = headersProg[i];
-                    Object.assign(celda, estiloSubheader(colores.realizado.subheader));
-                }
-
-                // PersProg meses
-                for (let i = 0; i < 13; i++) {
-                    const celda = sheet.getCell(2, 35 + i);
-                    celda.value = headersProg[i];
-                    Object.assign(celda, estiloSubheader(colores.personasProg.subheader, 'FF000000'));
-                }
-
-                // PersAtend - Meses con merge (cada mes = 12 columnas)
-                let colPersAtend = 48;
+                // PersAtend - Meses centrados en la selección (cada mes = 12 columnas, sin combinar)
                 for (let m = 0; m < 12; m++) {
-                    const startCol = colPersAtend + (m * 12);
+                    const startCol = COL_PERSATEND + (m * 12);
                     const endCol = startCol + 11;
-                    const startCell = sheet.getCell(2, startCol);
-                    const endCell = sheet.getCell(2, endCol);
-                    sheet.mergeCells(2, startCol, 2, endCol);
-                    startCell.value = mesesNombres[m];
-                    Object.assign(startCell, estiloSubheader(colores.personasAtend.subheader));
+                    centrarEnSeleccion(2, startCol, endCol, mesesNombres[m], estiloSubheader(colores.personasAtend.subheader));
                 }
 
                 // ========== FILA 3: SUBENCABEZADOS ==========
@@ -679,28 +683,24 @@
                     Object.assign(celda, estiloSubheader(colores.info.subheader));
                 }
 
-                // Prog (vacío, ya tiene meses en fila 2)
-                for (let i = 0; i < 13; i++) {
-                    const celda = sheet.getCell(3, 9 + i);
-                    Object.assign(celda, estiloSubheader(colores.programado.subheader, 'FF000000'));
-                }
-
-                // Real
-                for (let i = 0; i < 13; i++) {
-                    const celda = sheet.getCell(3, 22 + i);
-                    Object.assign(celda, estiloSubheader(colores.realizado.subheader));
-                }
-
-                // PersProg
-                for (let i = 0; i < 13; i++) {
-                    const celda = sheet.getCell(3, 35 + i);
-                    Object.assign(celda, estiloSubheader(colores.personasProg.subheader, 'FF000000'));
-                }
+                // Prog / Real / PersProg (vacío, ya tienen meses/trimestres en fila 2)
+                [
+                    { colInicio: COL_PROG, colorSet: colores.programado, textColor: 'FF000000' },
+                    { colInicio: COL_REAL, colorSet: colores.realizado, textColor: 'FFFFFFFF' },
+                    { colInicio: COL_PERSPROG, colorSet: colores.personasProg, textColor: 'FF000000' }
+                ].forEach(({ colInicio, colorSet, textColor }) => {
+                    for (let i = 0; i < 17; i++) {
+                        const celda = sheet.getCell(3, colInicio + i);
+                        const tipo = tipoColumnaMensual(i);
+                        const color = tipo === 'trim' ? colorSet.trimHeader : colorSet.subheader;
+                        Object.assign(celda, estiloSubheader(color, textColor));
+                    }
+                });
 
                 // PersAtend - Categorías para cada mes
                 for (let m = 0; m < 12; m++) {
                     for (let c = 0; c < 12; c++) {
-                        const col = 48 + (m * 12) + c;
+                        const col = COL_PERSATEND + (m * 12) + c;
                         const celda = sheet.getCell(3, col);
                         celda.value = categoriasPA[c];
                         Object.assign(celda, estiloSubheader(colores.personasAtend.subheader));
@@ -727,44 +727,20 @@
                         if (i === 3 || i === 4 || i === 5 || i === 6) celda.alignment = { horizontal: 'left', vertical: 'middle', wrapText: true };
                     }
 
-                    // Programado (13 columnas)
-                    const datosProg = [prog.ene, prog.feb, prog.mar, prog.abr, prog.may, prog.jun, prog.jul, prog.ago, prog.sep, prog.oct, prog.nov, prog.dic, prog.total];
-                    for (let i = 0; i < 13; i++) {
-                        const celda = sheet.getCell(filaActual, 9 + i);
-                        celda.value = datosProg[i] || 0;
-                        if (i === 12) {
-                            Object.assign(celda, estiloCelda(colores.programado.total));
-                            celda.font = { bold: true, size: 10 };
-                        } else {
-                            Object.assign(celda, estiloCelda(colores.programado.celda));
-                        }
-                    }
+                    // Programado (17 columnas: 12 meses + 4 subtotales trimestrales + total anual)
+                    escribirDatosMensualTrimestre(filaActual, COL_PROG,
+                        [prog.ene, prog.feb, prog.mar, prog.abr, prog.may, prog.jun, prog.jul, prog.ago, prog.sep, prog.oct, prog.nov, prog.dic],
+                        prog.total, colores.programado, null);
 
-                    // Realizado (13 columnas)
-                    const datosReal = [real.ene, real.feb, real.mar, real.abr, real.may, real.jun, real.jul, real.ago, real.sep, real.oct, real.nov, real.dic, real.total];
-                    for (let i = 0; i < 13; i++) {
-                        const celda = sheet.getCell(filaActual, 22 + i);
-                        celda.value = datosReal[i] || 0;
-                        if (i === 12) {
-                            Object.assign(celda, estiloCelda(colores.realizado.total));
-                            celda.font = { bold: true, size: 10, color: { argb: 'FFFFFFFF' } };
-                        } else {
-                            Object.assign(celda, estiloCelda(colores.realizado.celda));
-                        }
-                    }
+                    // Realizado (17 columnas)
+                    escribirDatosMensualTrimestre(filaActual, COL_REAL,
+                        [real.ene, real.feb, real.mar, real.abr, real.may, real.jun, real.jul, real.ago, real.sep, real.oct, real.nov, real.dic],
+                        real.total, colores.realizado, 'FFFFFFFF');
 
-                    // Personas Programadas (13 columnas)
-                    const datosPersProg = [persProg.ene, persProg.feb, persProg.mar, persProg.abr, persProg.may, persProg.jun, persProg.jul, persProg.ago, persProg.sep, persProg.oct, persProg.nov, persProg.dic, persProg.total];
-                    for (let i = 0; i < 13; i++) {
-                        const celda = sheet.getCell(filaActual, 35 + i);
-                        celda.value = datosPersProg[i] || 0;
-                        if (i === 12) {
-                            Object.assign(celda, estiloCelda(colores.personasProg.total));
-                            celda.font = { bold: true, size: 10 };
-                        } else {
-                            Object.assign(celda, estiloCelda(colores.personasProg.celda));
-                        }
-                    }
+                    // Personas Programadas (17 columnas)
+                    escribirDatosMensualTrimestre(filaActual, COL_PERSPROG,
+                        [persProg.ene, persProg.feb, persProg.mar, persProg.abr, persProg.may, persProg.jun, persProg.jul, persProg.ago, persProg.sep, persProg.oct, persProg.nov, persProg.dic],
+                        persProg.total, colores.personasProg, null);
 
                     // Personas Atendidas (144 columnas = 12 meses × 12 categorías)
                     for (let mes = 1; mes <= 12; mes++) {
@@ -780,7 +756,7 @@
                         ];
 
                         for (let c = 0; c < 12; c++) {
-                            const col = 48 + ((mes - 1) * 12) + c;
+                            const col = COL_PERSATEND + ((mes - 1) * 12) + c;
                             const celda = sheet.getCell(filaActual, col);
                             celda.value = datosMes[c];
                             if (c === 11) {
@@ -825,23 +801,30 @@
         // INICIALIZACIÓN
         // ========================================
         document.addEventListener('DOMContentLoaded', function() {
+            $('.select2-simple').select2({ width: '100%', language: 'es', minimumResultsForSearch: 8 });
+
             document.getElementById('btnFiltrar').addEventListener('click', cargarDatosTablero);
             document.getElementById('btnExportarExcel').addEventListener('click', exportarExcel);
 
-            document.getElementById('filtroDepartamento').addEventListener('change', function() {
+            $('#filtroDepartamento').on('change', function() {
                 cargarDatosTablero();
             });
 
             @if (ViewBag.AnoFiscalSeleccionado != null)
             {
                     <text>
-                    document.getElementById('filtroAno').value = '@ViewBag.AnoFiscalSeleccionado';
+                    $('#filtroAno').val('@ViewBag.AnoFiscalSeleccionado').trigger('change.select2');
                     </text>
             }
             @if (ViewBag.DepartamentoSeleccionado != null)
             {
                     <text>
-                    document.getElementById('filtroDepartamento').value = '@ViewBag.DepartamentoSeleccionado';
+                    $('#filtroDepartamento').val('@ViewBag.DepartamentoSeleccionado').trigger('change.select2');
+                    </text>
+            }
+            @if (ViewBag.AnoFiscalSeleccionado != null || ViewBag.DepartamentoSeleccionado != null)
+            {
+                    <text>
                     cargarDatosTablero();
                     </text>
             }

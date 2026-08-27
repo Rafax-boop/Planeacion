@@ -1,41 +1,38 @@
-﻿@{
+@{
     ViewData["Title"] = "Inicio";
 }
-    <div class="align-content-center animacion-home" style="margin-top: 150px;">
-        <div class="text-center">
-            <div class="mb-4">
-                <img src="~/img/puebla-gob-blanco.png" style="width: auto; height:250px" alt="Gobierno de Puebla" />
-            </div>
 
-            <h1 class="display-4 fw-bold titulo mb-3">
-                ¡Bienvenido!
-            </h1>
+@section Styles {
+    <link rel="stylesheet" href="~/css/estilos-home.css" asp-append-version="true" />
+}
 
-            <p class="lead text-muted mb-4">
-                Control de Seguimiento de Metas
-            </p>
+<div class="home-hero">
+    <div class="home-orb home-orb-1"></div>
+    <div class="home-orb home-orb-2"></div>
+    <div class="home-orb home-orb-3"></div>
+    <div class="home-orb home-orb-4"></div>
+    <div class="home-orb home-orb-5"></div>
 
-            <div class="glass-effect rounded-3 p-3 d-inline-block">
-                <small class="text-muted">
-                    <i class="fas fa-calendar me-1"></i>
-                    @DateTime.Now.ToString("dddd, dd MMMM yyyy")                    
-                </small>
-            </div>
+    <div class="home-heart-wrap home-fade" style="animation-delay:0s;">
+        <div class="home-heart-glow-outer"></div>
+        <div class="home-heart-glow-inner"></div>
+        <img src="~/img/corazon.png" alt="Control de Seguimiento de Metas" class="home-heart" />
+    </div>
+
+    <h1 class="home-title home-fade" style="animation-delay:.15s;">Control de Seguimiento de Metas</h1>
+
+    <div class="home-greeting-block home-fade" style="animation-delay:.28s;">
+        <p class="home-greeting">
+            <span id="home-greeting-text">Buenos días</span>,
+            <strong>@User.Identity.Name</strong>
+        </p>
+        <div class="home-clock">
+            <span id="home-clock-hh">--</span><span class="colon">:</span><span id="home-clock-mm">--</span><span class="seconds">:<span id="home-clock-ss">--</span></span>
         </div>
-    </div>@* 
-    @if (TempData["LoginExitoso"] != null)
-    {
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                Swal.fire({
-                    icon: 'success',
-                    title: '¡Bienvenido @TempData["NombreUsuario"]!',
-                    text: 'Ha iniciado sesión correctamente',
-                    confirmButtonColor: '#741732',
-                    timer: 2500,
-                    showConfirmButton: false
-                });
-            });
-        </script>
-    } *@
+        <p class="home-date" id="home-date-text"></p>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/home.js" asp-append-version="true"></script>
+}

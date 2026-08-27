@@ -1,39 +1,91 @@
-﻿/* Estilos para el SweetAlert personalizado */
-.loading-pulse {
-    animation: pulse 1.5s ease-in-out infinite both;
+/* === SweetAlert2 — tema rosa/gris del sistema ===
+   Calca la pareja primaria/secundaria de .btn-app-rosa / .btn-app-gris:
+   confirmar = gradiente rosa, cancelar = borde gris. Sin colores sueltos. */
+
+.swal2-popup {
+    border-radius: var(--radius-card) !important;
+    font-family: inherit !important;
 }
 
-@keyframes pulse {
-    0% {
-        transform: scale(0.9);
-        opacity: 0.7;
-    }
-
-    50% {
-        transform: scale(1.1);
-        opacity: 1;
-    }
-
-    100% {
-        transform: scale(0.9);
-        opacity: 0.7;
-    }
-}
-
-.glass-alert {
-    background: rgba(255, 255, 255, 0.95) !important;
-    backdrop-filter: blur(20px) saturate(180%) !important;
-    border: 1px solid rgba(192, 152, 102, 0.3) !important;
-    border-radius: 15px !important;
-    box-shadow: 0 8px 32px rgba(33, 37, 41, 0.2) !important;
-}
-
-/* Personalización adicional de SweetAlert */
 .swal2-title {
-    color: #741732 !important;
-    font-weight: 600 !important;
+    color: var(--text-primary) !important;
+    font-size: 1.2rem !important;
+    font-weight: 400 !important;
 }
 
 .swal2-html-container {
-    color: #6c757d !important;
+    color: var(--text-secondary) !important;
+    font-size: 0.9rem !important;
+}
+
+.swal2-styled.swal2-confirm {
+    background: var(--gradiente) !important;
+    border: none !important;
+    border-radius: var(--radius-btn) !important;
+    padding: 10px 22px !important;
+    font-weight: 600 !important;
+    font-size: 0.875rem !important;
+    box-shadow: none !important;
+    transition: filter 0.15s ease, transform 0.05s ease !important;
+}
+
+.swal2-styled.swal2-confirm:hover {
+    filter: brightness(1.05);
+    box-shadow: none !important;
+}
+
+.swal2-styled.swal2-confirm:active {
+    transform: translateY(1px);
+}
+
+.swal2-styled.swal2-confirm:focus {
+    box-shadow: 0 0 0 3px rgba(219, 39, 119, 0.25) !important;
+}
+
+.swal2-styled.swal2-cancel,
+.swal2-styled.swal2-deny {
+    background: var(--surface) !important;
+    color: var(--text-secondary) !important;
+    border: 1.5px solid var(--border) !important;
+    border-radius: var(--radius-btn) !important;
+    padding: 10px 22px !important;
+    font-weight: 600 !important;
+    font-size: 0.875rem !important;
+    box-shadow: none !important;
+    transition: all 0.15s ease !important;
+}
+
+.swal2-styled.swal2-cancel:hover,
+.swal2-styled.swal2-deny:hover {
+    border-color: var(--primary-light) !important;
+    color: var(--primary) !important;
+    background: var(--gradiente-suave) !important;
+}
+
+.swal2-styled.swal2-cancel:focus,
+.swal2-styled.swal2-deny:focus {
+    box-shadow: 0 0 0 3px rgba(219, 39, 119, 0.12) !important;
+}
+
+.swal2-icon.swal2-warning {
+    border-color: var(--warning) !important;
+    color: var(--warning) !important;
+}
+
+.swal2-icon.swal2-error {
+    border-color: var(--error) !important;
+    color: var(--error) !important;
+}
+
+.swal2-icon.swal2-success [class^='swal2-success-line'] {
+    background-color: var(--success) !important;
+}
+
+.swal2-icon.swal2-success .swal2-success-ring {
+    border-color: rgba(22, 163, 74, 0.3) !important;
+}
+
+.swal2-icon.swal2-question {
+    border-color: var(--primary) !important;
+    color: var(--primary) !important;
 }

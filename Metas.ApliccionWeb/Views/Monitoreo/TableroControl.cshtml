@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewData["Title"] = "Tablero de Control";
     int numeroRegistros = ViewBag.NumeroRegistros ?? 0;
     int anoFiscal = ViewBag.AnoFiscal ?? DateTime.Now.Year;
@@ -6,21 +6,15 @@
 
 <div class="container-fluid mt-4">
 
-    <!-- Encabezado -->
-    <div class="glass-effect rounded-3 p-3 mb-4">
-        <div class="row align-items-center">
-            <div class="col-md-8">
-                <h2 class="fw-bold titulo mb-1">TABLERO DE CONTROL</h2>
-                <p class="mb-0 text-muted" id="infoEncabezado">Ejercicio Fiscal: @anoFiscal - Cargando...</p>
-            </div>
-            <div class="col-md-4 text-end">
-                <a asp-controller="Monitoreo" asp-action="Monitoreo" class="btn btn-outline-primary">
-                    ← Volver al Monitoreo
-                </a>
-            </div>
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div class="titulo-vista-wrap mb-0">
+            <h1 class="titulo-vista"><i class="fa-solid fa-gauge-high me-2"></i>Tablero de Control</h1>
+            <span class="subtitulo-vista" id="infoEncabezado">- Ejercicio Fiscal: @anoFiscal · Cargando...</span>
         </div>
+        <a asp-controller="Monitoreo" asp-action="Monitoreo" class="btn-app-gris">
+            <i class="fa-solid fa-arrow-left"></i> Volver al Monitoreo
+        </a>
     </div>
-
 
     <div id="contenedor-tableros">
         <!-- Los tableros se generarán aquí automáticamente -->
@@ -34,13 +28,15 @@
         const anoFiscal = @ViewBag.AnoFiscal;
         const departamento = @ViewBag.Departamento;
 
+        const MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+        const MESES_LABEL = { ene: 'Ene', feb: 'Feb', mar: 'Mar', abr: 'Abr', may: 'May', jun: 'Jun', jul: 'Jul', ago: 'Ago', sep: 'Sep', oct: 'Oct', nov: 'Nov', dic: 'Dic' };
+
         $(document).ready(async function () {
             const contenedor = $('#contenedor-tableros');
 
-            // Mostrar indicador de carga
             contenedor.html(`
                     <div class="text-center py-5">
-                        <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+                        <div class="spinner-border tablero-spinner" role="status" style="width: 3rem; height: 3rem;">
                             <span class="visually-hidden">Cargando...</span>
                         </div>
                         <p class="mt-3 text-muted fw-semibold">Cargando tableros de control...</p>
@@ -48,7 +44,6 @@
                 `);
 
             try {
-                // Cargar datos mediante AJAX
                 const response = await fetch(`/Monitoreo/ObtenerDatosTableroControl?anoFiscal=${anoFiscal}&departamento=${departamento}`);
 
                 if (!response.ok) {
@@ -64,284 +59,196 @@
                 datosTablero = result.datos;
                 llenadoInterno = result.llenadoInterno;
 
-                console.log("✅ Datos cargados:", datosTablero.length, "registros");
-                console.log("✅ Llenado interno:", llenadoInterno);
-
-                // Actualizar el contador en el encabezado
-                $('#infoEncabezado').html(`Ejercicio Fiscal: ${anoFiscal} - Total de Actividades: ${datosTablero.length}`);
+                $('#infoEncabezado').text(`- Ejercicio Fiscal: ${anoFiscal} · Total de Actividades: ${datosTablero.length}`);
 
                 contenedor.empty();
 
                 if (datosTablero.length > 0) {
-                    // Generar tableros
                     datosTablero.forEach((item, index) => {
                         const numeroTablero = index + 1;
                         const tableroHTML = crearTablero(numeroTablero, item);
                         contenedor.append(tableroHTML);
                     });
-
-                    // Aplicar colores después de generar todos los tableros
-                    setTimeout(aplicarColoresAutomaticos, 100);
                 } else {
                     contenedor.html(`
-                            <div class="alert alert-info text-center">
-                                <h5><i class="fas fa-info-circle"></i> No hay datos disponibles</h5>
-                                <p>No se encontraron registros para los criterios seleccionados.</p>
+                            <div class="sin-registros">
+                                <i class="fa-solid fa-circle-info"></i><br>
+                                <span>No se encontraron registros para los criterios seleccionados.</span>
                             </div>
                         `);
                 }
 
             } catch (error) {
-                console.error('❌ Error al cargar datos:', error);
+                console.error('Error al cargar datos:', error);
                 contenedor.html(`
-                        <div class="alert alert-danger text-center">
-                            <h5><i class="fas fa-exclamation-triangle"></i> Error al cargar los datos</h5>
-                            <p>${error.message}</p>
-                            <button class="btn btn-primary mt-3" onclick="location.reload()">
-                                <i class="fas fa-redo"></i> Reintentar
+                        <div class="sin-registros">
+                            <i class="fa-solid fa-triangle-exclamation text-tablero-error"></i><br>
+                            <span>${error.message}</span><br>
+                            <button class="btn-app-gris mt-3" onclick="location.reload()">
+                                <i class="fa-solid fa-rotate-right"></i> Reintentar
                             </button>
                         </div>
                     `);
             }
         });
 
-        // ----------------------------------------------------
-        // 3. Modificar la función crearTablero para aceptar y usar los datos
+        // Clasificación semántica de un porcentaje de avance: cada nivel se mapea
+        // a un sufijo compartido por badge-estatus-X, tablero-progress-bar-X y
+        // text-tablero-X, para no duplicar los cortes (115/95/85/70) en dos sitios.
+        function nivelPorcentaje(porcentaje) {
+            if (porcentaje >= 115) return 'info';
+            if (porcentaje >= 95) return 'success';
+            if (porcentaje >= 85) return 'warning';
+            if (porcentaje >= 70) return 'alerta';
+            return 'error';
+        }
+
         function crearTablero(numeroTablero, data) {
 
             if (!data || !data.programado || !data.realizado) {
-                console.error("❌ Datos inválidos para tablero:", numeroTablero, data);
-                return '<div class="alert alert-warning">Error: Datos incompletos para este registro</div>';
+                console.error("Datos inválidos para tablero:", numeroTablero, data);
+                return '<div class="sin-registros">Datos incompletos para este registro</div>';
             }
 
-            // Calculamos los porcentajes necesarios en el lado del cliente (JS)
             const porcentajeAnual = (data.realizado.total > 0 && data.programado.total > 0) ?
                 Math.round((data.realizado.total / data.programado.total) * 100) : 0;
 
-            // Los meses en tu data JSON (Ene, Feb, etc.)
-            const mesesAbreviados = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
-
-            // Función para calcular el porcentaje de un mes
             const calcularPorcentajeMes = (mes) => {
                 const prog = (data.programado && data.programado[mes]) || 0;
                 const real = (data.realizado && data.realizado[mes]) || 0;
                 return prog > 0 ? Math.round((real / prog) * 100) : 0;
             };
 
-            // Función para calcular el porcentaje de un trimestre
             const calcularPorcentajeTrimestre = (m1, m2, m3) => {
                 const progTotal = (data.programado[m1] || 0) + (data.programado[m2] || 0) + (data.programado[m3] || 0);
                 const realTotal = (data.realizado[m1] || 0) + (data.realizado[m2] || 0) + (data.realizado[m3] || 0);
                 return progTotal > 0 ? Math.round((realTotal / progTotal) * 100) : 0;
             };
 
-            const trim1Porcentaje = calcularPorcentajeTrimestre('ene', 'feb', 'mar');
-            const trim2Porcentaje = calcularPorcentajeTrimestre('abr', 'may', 'jun');
-            const trim3Porcentaje = calcularPorcentajeTrimestre('jul', 'ago', 'sep');
-            const trim4Porcentaje = calcularPorcentajeTrimestre('oct', 'nov', 'dic');
+            const trimestres = [
+                { label: '1er Trimestre', pct: calcularPorcentajeTrimestre('ene', 'feb', 'mar') },
+                { label: '2do Trimestre', pct: calcularPorcentajeTrimestre('abr', 'may', 'jun') },
+                { label: '3er Trimestre', pct: calcularPorcentajeTrimestre('jul', 'ago', 'sep') },
+                { label: '4to Trimestre', pct: calcularPorcentajeTrimestre('oct', 'nov', 'dic') }
+            ];
 
+            const nivelAnual = nivelPorcentaje(porcentajeAnual);
 
             return `
-                <div class="tablero-individual mb-5 border-bottom pb-4" data-tablero="${numeroTablero}">
+                <div class="ficha-seccion tablero-card" data-tablero="${numeroTablero}">
 
-                    <div class="glass-effect rounded-3 p-3 mb-3 bg-primary bg-opacity-10">
-                        <div class="row align-items-center">
+                    <div class="tablero-card-header">
+                        <div>
+                            <h4 class="tablero-card-titulo">${data.componente} / ${data.actividad}</h4>
+                            <p class="tablero-card-desc">${data.descripcionActividad}</p>
+                            ${data.programaSocial ? `<span class="tablero-card-meta">${data.programaSocial}</span>` : ''}
+                        </div>
+                        <div class="tablero-card-acciones">
+                            <span class="badge-estatus badge-estatus-neutral">ID Proceso ${data.idProceso}</span>
+                            <button class="btn-app-gris btn-tablero-pdf" onclick="exportarTableroComoImagen(this)">
+                                <i class="fa-solid fa-file-pdf"></i> Exportar PDF
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="modal-seccion">
+                        <h6 class="modal-seccion-titulo">Información del Programa</h6>
+                        <div class="tablero-info-grid">
+                            <div>
+                                <span class="tablero-info-label">Componente</span>
+                                <span class="tablero-info-valor">${data.componente}</span>
+                            </div>
+                            <div>
+                                <span class="tablero-info-label">Número de Actividad</span>
+                                <span class="tablero-info-valor">${data.actividad}</span>
+                            </div>
+                            <div>
+                                <span class="tablero-info-label">Programa Social</span>
+                                <span class="tablero-info-valor">${data.programaSocial || 'N/A'}</span>
+                            </div>
+                            <div>
+                                <span class="tablero-info-label">Unidad de Medida</span>
+                                <span class="tablero-info-valor">${data.unidadMedida || 'N/A'}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-seccion">
+                        <h6 class="modal-seccion-titulo">Calendarización Anual</h6>
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <div class="tablero-subtitulo tablero-subtitulo-rosa">Programado</div>
+                                <div class="modal-meses-grid">
+                                    ${MESES.map(mes => `
+                                        <div class="modal-mes-col">
+                                            <div class="ficha-mes-header">${MESES_LABEL[mes]}</div>
+                                            <div class="tablero-valor">${data.programado[mes] || 0}</div>
+                                        </div>`).join('')}
+                                </div>
+                                <div class="tablero-total">Total: <strong>${data.programado.total}</strong></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="tablero-subtitulo tablero-subtitulo-verde">Realizado</div>
+                                <div class="modal-meses-grid">
+                                    ${MESES.map(mes => `
+                                        <div class="modal-mes-col">
+                                            <div class="ficha-mes-header ficha-mes-header-verde">${MESES_LABEL[mes]}</div>
+                                            <div class="tablero-valor">${data.realizado[mes] || 0}</div>
+                                        </div>`).join('')}
+                                </div>
+                                <div class="tablero-total">Total: <strong>${data.realizado.total}</strong></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-seccion">
+                        <h6 class="modal-seccion-titulo">Avance Mensual</h6>
+                        <div class="tablero-avance-grid">
+                            ${MESES.map(mes => {
+                                const pct = calcularPorcentajeMes(mes);
+                                const nivel = nivelPorcentaje(pct);
+                                return `
+                                    <div class="modal-mes-col">
+                                        <div class="ficha-mes-header">${MESES_LABEL[mes]}</div>
+                                        <span class="badge-estatus badge-estatus-${nivel}">${pct}%</span>
+                                    </div>`;
+                            }).join('')}
+                        </div>
+                    </div>
+
+                    <div class="modal-seccion">
+                        <h6 class="modal-seccion-titulo">Desempeño Trimestral y Anual</h6>
+                        <div class="row g-3">
                             <div class="col-md-8">
-                                <h4 class="fw-bold titulo mb-1">
-                                    ${data.componente} / ${data.actividad}
-                                </h4>
-                                <p class="mb-1 text-muted">${data.descripcionActividad}</p>
-                                <small class="text-muted">${data.programaSocial}</small>
-                            </div>
-                            <div class="col-md-4 text-end">
-                                <span class="badge bg-info fs-6">ID Proceso ${data.idProceso}</span>
-                                <button class="boton-amarillo m-2"
-                                        onclick="exportarTableroComoImagen(this)"
-                                        style="color: red; box-shadow: 0 4px 6px 0 red; border: 1px solid red !important; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; padding: 6px 13px; font-size: 12.8px;">
-                                    <i class="fas fa-file-pdf" style="font-size: 14px;"></i> Exportar a PDF
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="glass-effect rounded-3 p-3 mb-3">
-                        <h5 class="fw-semibold titulo mb-3 border-bottom pb-2 text-center">INFORMACIÓN DEL PROGRAMA</h5>
-                        <div class="row small">
-                            <div class="col-md-6 border-end pe-3">
-                                <div class="mb-2">
-                                    <span class="fw-semibold titulo">Componente:</span>
-                                    <span>${data.componente}</span>
-                                </div>
-                                <div class="mb-2">
-                                    <span class="fw-semibold titulo">Número de Actividad:</span>
-                                    <span>${data.actividad}</span>
-                                </div>
-                                <div class="mb-2">
-                                    <span class="fw-semibold titulo">Programa Social:</span>
-                                    <span>${data.programaSocial}</span>
+                                <div class="tablero-trimestres">
+                                    ${trimestres.map(t => {
+                                        const nivel = nivelPorcentaje(t.pct);
+                                        return `
+                                            <div class="tablero-trimestre-card">
+                                                <span class="tablero-trimestre-label">${t.label}</span>
+                                                <div class="tablero-trimestre-pct text-tablero-${nivel}">${t.pct}%</div>
+                                                <div class="tablero-progress">
+                                                    <div class="tablero-progress-bar tablero-progress-bar-${nivel}" style="width: ${Math.min(t.pct, 100)}%"></div>
+                                                </div>
+                                            </div>`;
+                                    }).join('')}
                                 </div>
                             </div>
-                            <div class="col-md-6 ps-3">
-                                <div class="mb-2">
-                                    <span class="fw-semibold titulo">Unidad de Medida:</span>
-                                    <span>${data.unidadMedida || 'N/A'}</span>
-                                </div>
-                                <div class="mb-2">
-                                    <span class="fw-semibold titulo">Descripción:</span>
-                                    <span>${data.descripcionActividad}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                     <div class="glass-effect rounded-3 p-3 mb-3" style="background-color: white">
-                         <h5 class="fw-semibold titulo mb-3 border-bottom pb-2 text-center">CALENDARIZACIÓN ANUAL</h5>
-                         <div class="row">
-
-                             <div class="col-md-6 border-end pe-3">
-                                 <h6 class="fw-semibold text-primary mb-2">PROGRAMADO</h6>
-                                 <div class="table-responsive">
-                                     <table class="table table-sm text-center mb-2">
-                                         <thead class="bg-primary text-white">
-                                             <tr>
-                                                 <th>Ene</th><th>Feb</th><th>Mar</th><th>Abr</th><th>May</th><th>Jun</th>
-                                             </tr>
-                                         </thead>
-                                         <tbody>
-                                             <tr>
-                                                 ${['ene', 'feb', 'mar', 'abr', 'may', 'jun'].map(mes => `<td>${data.programado[mes] || 0}</td>`).join('')}
-                                             </tr>
-                                         </tbody>
-                                     </table>
-                                     <table class="table table-sm text-center mb-2">
-                                         <thead class="bg-primary text-white">
-                                             <tr>
-                                                 <th>Jul</th><th>Ago</th><th>Sep</th><th>Oct</th><th>Nov</th><th>Dic</th><th class="bg-info">Total</th>
-                                             </tr>
-                                         </thead>
-                                         <tbody>
-                                             <tr>
-                                                 ${['jul', 'ago', 'sep', 'oct', 'nov', 'dic'].map(mes => `<td>${data.programado[mes] || 0}</td>`).join('')}
-                                                 <td class="fw-bold bg-info bg-opacity-10">${data.programado.total}</td>
-                                             </tr>
-                                         </tbody>
-                                     </table>
-                                 </div>
-                             </div>
-
-                             <div class="col-md-6 ps-3">
-                                 <h6 class="fw-semibold text-success mb-2">REALIZADO</h6>
-                                 <div class="table-responsive">
-                                     <table class="table table-sm text-center mb-2">
-                                         <thead class="bg-success text-white">
-                                             <tr>
-                                                 <th>Ene</th><th>Feb</th><th>Mar</th><th>Abr</th><th>May</th><th>Jun</th>
-                                             </tr>
-                                         </thead>
-                                         <tbody>
-                                             <tr>
-                                                 ${['ene', 'feb', 'mar', 'abr', 'may', 'jun'].map(mes => `<td>${data.realizado[mes] || 0}</td>`).join('')}
-                                             </tr>
-                                         </tbody>
-                                     </table>
-                                     <table class="table table-sm text-center mb-2">
-                                         <thead class="bg-success text-white">
-                                             <tr>
-                                                 <th>Jul</th><th>Ago</th><th>Sep</th><th>Oct</th><th>Nov</th><th>Dic</th><th class="bg-success">Total</th>
-                                             </tr>
-                                         </thead>
-                                         <tbody>
-                                             <tr>
-                                                 ${['jul', 'ago', 'sep', 'oct', 'nov', 'dic'].map(mes => `<td>${data.realizado[mes] || 0}</td>`).join('')}
-                                                 <td class="fw-bold bg-success bg-opacity-10">${data.realizado.total}</td>
-                                             </tr>
-                                         </tbody>
-                                     </table>
-                                 </div>
-                             </div>
-                         </div>
-                     </div>
-
-                    <div class="glass-effect rounded-3 p-3 mb-3" style="background-color: white">
-                        <h5 class="fw-semibold titulo mb-3 border-bottom pb-2 text-center">AVANCE MENSUAL</h5>
-                        <div class="table-responsive">
-                            <table class="table table-sm text-center mb-1">
-                                <thead class="bg-warning text-dark">
-                                    <tr>
-                                        <th>Ene</th><th>Feb</th><th>Mar</th><th>Abr</th><th>May</th><th>Jun</th>
-                                        <th>Jul</th><th>Ago</th><th>Sep</th><th>Oct</th><th>Nov</th><th>Dic</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        ${mesesAbreviados.map(mes =>
-                `<td><div class="fw-bold porcentaje-mes" data-mes="${mes.toLowerCase()}">${calcularPorcentajeMes(mes)}%</div></td>`
-            ).join('')}
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div class="glass-effect rounded-3 p-3" style="background-color: white">
-                        <div class="row">
-                            <div class="col-md-8 border-end pe-3">
-                                <h5 class="fw-semibold titulo mb-3 border-bottom pb-2 text-center">TRIMESTRAL</h5>
-                                <div class="row text-center">
-                                    <div class="col-md-3 mb-2">
-                                        <div class="border rounded p-2">
-                                            <small class="fw-semibold">1ER</small>
-                                            <div class="h6 fw-bold porcentaje-trimestre" data-trimestre="1">${trim1Porcentaje}%</div>
-                                            <div class="progress" style="height: 8px;">
-                                                <div class="progress-bar progress-trimestre-1" style="width: ${Math.min(trim1Porcentaje, 100)}%"></div>
-                                            </div>
-                                        </div>
+                            <div class="col-md-4">
+                                <div class="tablero-anual">
+                                    <span class="tablero-trimestre-label">Avance Anual</span>
+                                    <div class="tablero-anual-pct text-tablero-${nivelAnual}">${porcentajeAnual}%</div>
+                                    <div class="tablero-progress">
+                                        <div class="tablero-progress-bar tablero-progress-bar-${nivelAnual}" style="width: ${Math.min(porcentajeAnual, 100)}%"></div>
                                     </div>
-                                    <div class="col-md-3 mb-2">
-                                        <div class="border rounded p-2">
-                                            <small class="fw-semibold">2DO</small>
-                                            <div class="h6 fw-bold porcentaje-trimestre" data-trimestre="2">${trim2Porcentaje}%</div>
-                                            <div class="progress" style="height: 8px;">
-                                                <div class="progress-bar progress-trimestre-2" style="width: ${Math.min(trim2Porcentaje, 100)}%"></div>
-                                            </div>
+                                    <div class="tablero-anual-stats">
+                                        <div>
+                                            <span class="tablero-anual-stat-label">Programado</span>
+                                            <span class="tablero-anual-stat-valor text-tablero-primary">${data.programado.total}</span>
                                         </div>
-                                    </div>
-                                    <div class="col-md-3 mb-2">
-                                        <div class="border rounded p-2">
-                                            <small class="fw-semibold">3ER</small>
-                                            <div class="h6 fw-bold porcentaje-trimestre" data-trimestre="3">${trim3Porcentaje}%</div>
-                                            <div class="progress" style="height: 8px;">
-                                                <div class="progress-bar progress-trimestre-3" style="width: ${Math.min(trim3Porcentaje, 100)}%"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3 mb-2">
-                                        <div class="border rounded p-2">
-                                            <small class="fw-semibold">4TO</small>
-                                            <div class="h6 fw-bold porcentaje-trimestre" data-trimestre="4">${trim4Porcentaje}%</div>
-                                            <div class="progress" style="height: 8px;">
-                                                <div class="progress-bar progress-trimestre-4" style="width: ${Math.min(trim4Porcentaje, 100)}%"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-4 ps-3">
-                                <h5 class="fw-semibold titulo mb-3 border-bottom pb-2 text-center">ANUAL</h5>
-                                <div class="text-center">
-                                    <div class="h3 fw-bold porcentaje-anual">${porcentajeAnual}%</div>
-                                    <div class="progress mb-2" style="height: 12px;">
-                                        <div class="progress-bar progress-anual" style="width: ${Math.min(porcentajeAnual, 100)}%"></div>
-                                    </div>
-                                    <div class="row small text-center">
-                                        <div class="col-6">
-                                            <div class="fw-semibold">Prog:</div>
-                                            <div class="text-primary">${data.programado.total}</div>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="fw-semibold">Real:</div>
-                                            <div class="text-success">${data.realizado.total}</div>
+                                        <div>
+                                            <span class="tablero-anual-stat-label">Realizado</span>
+                                            <span class="tablero-anual-stat-valor text-tablero-success">${data.realizado.total}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -354,29 +261,26 @@
 
         async function exportarTableroComoImagen(boton) {
 
-            const tablero = $(boton).closest('.tablero-individual');
+            const tablero = $(boton).closest('.tablero-card');
 
             if (!tablero.length) {
-                alert('No se encontró el tablero para exportar');
+                Swal.fire({ icon: 'error', title: 'Error', text: 'No se encontró el tablero para exportar', confirmButtonText: 'Entendido' });
                 return;
             }
 
             const numeroTablero = tablero.data('tablero');
-            const componente = tablero.find('h4.fw-bold').first().text().trim();
-            const idProceso = tablero.find('.badge.bg-info').text().trim();
+            const componente = tablero.find('.tablero-card-titulo').first().text().trim();
+            const idProceso = tablero.find('.badge-estatus-neutral').first().text().trim();
 
             const botonOriginal = $(boton).html();
-            $(boton).html('<i class="fas fa-spinner fa-spin"></i> Generando PDF...').prop('disabled', true);
+            $(boton).html('<i class="fa-solid fa-spinner fa-spin"></i> Generando PDF...').prop('disabled', true);
 
             try {
                 // Clonar el tablero para no afectar el original
                 const tableroClonado = tablero.clone();
 
-                // Remover el botón de exportar del clon
-                tableroClonado.find('button[onclick*="exportarTableroComoImagen"]').remove();
-
-                // Remover el cuadro azul completo (el div con bg-primary bg-opacity-10)
-                tableroClonado.find('.bg-primary.bg-opacity-10').remove();
+                // Remover el botón de exportar y el badge de ID del clon
+                tableroClonado.find('.tablero-card-acciones').remove();
                 tableroClonado.css({
                     'position': 'absolute',
                     'left': '-9999px',
@@ -581,118 +485,20 @@
                 pdf.save(nombreArchivo);
 
                 $(boton).html(botonOriginal).prop('disabled', false);
-                mostrarNotificacion('PDF generado exitosamente', 'success');
+                Swal.fire({ icon: 'success', title: 'PDF generado exitosamente', confirmButtonText: 'Aceptar' });
 
             } catch (error) {
-                console.error('❌ Error completo:', error);
+                console.error('Error completo:', error);
                 console.error('Stack trace:', error.stack);
                 $(boton).html(botonOriginal).prop('disabled', false);
-                alert('Error al generar el PDF: ' + error.message);
+                Swal.fire({ icon: 'error', title: 'Error al generar el PDF', text: error.message, confirmButtonText: 'Entendido' });
             }
-        }
-
-        // Función auxiliar para mostrar notificaciones
-        function mostrarNotificacion(mensaje, tipo = 'info') {
-            const colores = {
-                'success': '#28a745',
-                'error': '#dc3545',
-                'info': '#17a2b8'
-            };
-
-            const notificacion = $(`
-                    <div style="
-                        position: fixed;
-                        top: 20px;
-                        right: 20px;
-                        background: ${colores[tipo]};
-                        color: white;
-                        padding: 15px 25px;
-                        border-radius: 5px;
-                        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-                        z-index: 9999;
-                        font-weight: 500;
-                    ">
-                        <i class="fas fa-check-circle"></i> ${mensaje}
-                    </div>
-                `);
-
-            $('body').append(notificacion);
-
-            setTimeout(() => {
-                notificacion.fadeOut(400, function () {
-                    $(this).remove();
-                });
-            }, 3000);
-        }
-
-        // Funciones para colores (las mismas que tenías)
-        function getColorClass(porcentaje) {
-            if (porcentaje >= 115) return 'text-primary';
-            if (porcentaje >= 95) return 'text-success';
-            if (porcentaje >= 85) return 'text-warning';
-            if (porcentaje >= 70) return 'text-orange';
-            return 'text-danger';
-        }
-
-        function getProgressColor(porcentaje) {
-            if (porcentaje >= 115) return 'bg-primary';
-            if (porcentaje >= 95) return 'bg-success';
-            if (porcentaje >= 85) return 'bg-warning';
-            if (porcentaje >= 70) return 'bg-orange';
-            return 'bg-danger';
-        }
-
-        function extraerPorcentaje(texto) {
-            return parseInt(texto) || 0;
-        }
-
-        function aplicarColoresAutomaticos() {
-            // Aplicar colores a porcentajes mensuales
-            $('.porcentaje-mes').each(function () {
-                const porcentaje = extraerPorcentaje($(this).text());
-                $(this).addClass(getColorClass(porcentaje));
-            });
-
-            // Aplicar colores a porcentajes trimestrales
-            $('.porcentaje-trimestre').each(function () {
-                const porcentaje = extraerPorcentaje($(this).text());
-                $(this).addClass(getColorClass(porcentaje));
-
-                const trimestre = $(this).data('trimestre');
-                const progressBar = $(this).closest('.tablero-individual').find('.progress-trimestre-' + trimestre);
-                if (progressBar.length) {
-                    progressBar.css('width', Math.min(porcentaje, 100) + '%');
-                    progressBar.addClass(getProgressColor(porcentaje));
-                }
-            });
-
-            // Aplicar color a porcentaje anual
-            $('.porcentaje-anual').each(function () {
-                const porcentaje = extraerPorcentaje($(this).text());
-                $(this).addClass(getColorClass(porcentaje));
-
-                const progressAnual = $(this).closest('.tablero-individual').find('.progress-anual');
-                if (progressAnual.length) {
-                    progressAnual.css('width', Math.min(porcentaje, 100) + '%');
-                    progressAnual.addClass(getProgressColor(porcentaje));
-                }
-            });
         }
     </script>
 
     <style>
-        .text-orange {
-            color: #fd7e14 !important;
-        }
-
-        .bg-orange {
-            background-color: #fd7e14 !important;
-        }
-
-        .tablero-individual {
-            margin-bottom: 2rem;
-            padding-bottom: 2rem;
-            border-bottom: 2px solid #dee2e6 !important;
+        .tablero-spinner {
+            color: var(--primary) !important;
         }
     </style>
 }

@@ -79,9 +79,18 @@ namespace Metas.AplicacionWeb.Controllers
                 }
             }
 
+            var listaAreas = departamentos
+                .Where(d => !string.IsNullOrWhiteSpace(d.Area))
+                .Select(d => d.Area)
+                .Distinct()
+                .OrderBy(a => a)
+                .Select(a => new SelectListItem { Value = a, Text = a })
+                .ToList();
+
             var modelo = new VMDepartamentos
             {
-                ListaDepartamentos = listaDepartamentos.ToList()
+                ListaDepartamentos = listaDepartamentos.ToList(),
+                ListaAreas = listaAreas
             };
 
             return View(modelo);
@@ -114,6 +123,8 @@ namespace Metas.AplicacionWeb.Controllers
                     Componente = x.Componente,
                     Actividad = x.Actividad,
                     DescripcionActividad = x.DescripcionActividad,
+                    Area = x.Area,
+                    Departamento = x.Departamento,
                     ProgramaSocial = x.ProgramaSocial,
                     Enero = x.Enero,
                     Febrero = x.Febrero,

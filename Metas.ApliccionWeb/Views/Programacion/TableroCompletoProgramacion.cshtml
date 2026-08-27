@@ -5,15 +5,15 @@
 <div class="container-fluid mt-4">
 
     @* Encabezado *@
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="titulo fw-semibold pt-2 pb-2 px-4 glass-effect rounded-5 mb-0">
-            <i class="fas fa-table me-2"></i> TABLERO COMPLETO DE PROGRAMACIÓN
-        </h2>
-        <div>
-            <a href="@Url.Action("Programacion", "Programacion")" class="btn btn-volver me-2">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div class="titulo-vista-wrap mb-0">
+            <h1 class="titulo-vista"><i class="fas fa-table me-2"></i> Tablero Completo de Programación</h1>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="@Url.Action("Programacion", "Programacion")" class="btn-app-gris">
                 <i class="fas fa-arrow-left"></i> Volver
             </a>
-            <button class="btn btn-exportar" id="btnExportarExcel">
+            <button type="button" class="btn-app-verde" id="btnExportarExcel">
                 <i class="fas fa-file-excel"></i> Exportar Excel
             </button>
         </div>
@@ -39,7 +39,7 @@
                     </select>
                 </div>
                 <div class="col-md-6">
-                    <button class="btn btn-primary w-100" id="btnFiltrar">
+                    <button type="button" class="btn-app-rosa w-100 justify-content-center" id="btnFiltrar">
                         <i class="fas fa-search me-2"></i> Cargar Datos
                     </button>
                 </div>

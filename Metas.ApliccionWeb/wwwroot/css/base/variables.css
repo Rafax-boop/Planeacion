@@ -1,0 +1,30 @@
+/* === Tokens de marca — Control de Seguimiento de Metas ===
+   Mismos valores que wwwroot/css/estilos-login.css; se centralizan aquí
+   para reutilizarse en sidebar, tablas, botones y modales. */
+
+:root {
+    --primary: #db2777;
+    --primary-dark: #be185d;
+    --primary-light: #fc90b4;
+    --rosa-onda: #fc6c9c;
+    --gradiente: linear-gradient(135deg, #fc90b4 0%, #fc6c9c 45%, #db2777 100%);
+    --gradiente-suave: linear-gradient(135deg, #fde7ef 0%, #fbcfe0 100%);
+
+    --navy: #0f172a;
+    --navy-soft: #1c2942;
+
+    --text-primary: #0f172a;
+    --text-secondary: #64748b;
+    --bg: #f8fafc;
+    --surface: #ffffff;
+    --border: #e2e8f0;
+
+    --success: #16a34a;
+    --error: #dc2626;
+    --warning: #d97706;
+    --info: #0369a1;
+
+    --radius-card: 16px;
+    --radius-input: 10px;
+    --radius-btn: 10px;
+}

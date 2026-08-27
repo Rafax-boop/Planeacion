@@ -1,0 +1,361 @@
+/* === Ficha técnica de actividades (RevisarProgramacion / RegistrarProgramacion) ===
+   Reemplaza la paleta vieja (input-arena/titulo/glass-effect/boton-rojo) sin
+   tocar los "ganchos" funcionales del JS: btn-comentario(-sin/-con),
+   mes-grupo1/2, formato-miles, accion-item, fecha-inicio, data-campo, ids. */
+
+/* Campos de texto — mismo tratamiento que los selects (variables.css ya
+   estiliza <select> por elemento). Se define con !important en :focus
+   porque Login.css todavía trae ".input-arena:focus { ... !important }"
+   y esta clase puede seguir presente en el HTML de formularios viejos. */
+input.form-control,
+textarea.form-control {
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-size: 0.875rem;
+    font-family: inherit;
+    color: var(--text-primary);
+    background: var(--bg);
+    outline: none;
+    transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+input.form-control:hover,
+textarea.form-control:hover {
+    border-color: var(--primary-light);
+    background: var(--surface);
+}
+
+input.form-control:focus,
+textarea.form-control:focus {
+    border-color: var(--primary) !important;
+    background: var(--surface);
+    box-shadow: 0 0 0 4px rgba(219, 39, 119, 0.08) !important;
+    outline: none !important;
+}
+
+input.form-control:disabled,
+textarea.form-control:disabled {
+    background: var(--bg);
+    color: var(--text-secondary);
+    cursor: not-allowed;
+    opacity: 0.75;
+}
+
+input.form-control::placeholder,
+textarea.form-control::placeholder {
+    color: var(--text-secondary);
+    font-weight: 400;
+}
+
+/* === Título de la ficha === */
+.ficha-titulo-wrap {
+    margin-bottom: 20px;
+}
+
+/* === Tarjeta de sección === */
+.ficha-seccion {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04), 0 8px 24px rgba(15, 23, 42, 0.04);
+    padding: 24px 28px;
+    margin-bottom: 24px;
+}
+
+.ficha-seccion-titulo {
+    margin: 0 0 20px;
+    padding-bottom: 14px;
+    border-bottom: 2px solid var(--border);
+    text-align: center;
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--primary);
+}
+
+.ficha-seccion-subtitulo {
+    margin: 4px 0 16px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-secondary);
+}
+
+/* === Bloque "Datos del solicitante" === */
+.ficha-solicitante {
+    display: flex;
+    align-items: stretch;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04), 0 8px 24px rgba(15, 23, 42, 0.04);
+    margin-bottom: 24px;
+    overflow: hidden;
+}
+
+.ficha-solicitante-tab {
+    flex: 0 0 190px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+    background: var(--gradiente-suave);
+}
+
+.ficha-solicitante-tab h2 {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+}
+
+.ficha-solicitante-body {
+    flex: 1;
+    min-width: 0;
+    padding: 4px 24px;
+}
+
+/* === Campo individual: label + control + botón de comentario === */
+.campo-ficha {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.campo-ficha:last-child {
+    border-bottom: none;
+}
+
+.campo-ficha-label {
+    flex: 0 0 300px;
+    padding-top: 10px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    letter-spacing: 0.01em;
+}
+
+.campo-ficha-label-corta {
+    flex: 0 0 auto;
+    width: auto;
+    min-width: 220px;
+}
+
+.campo-ficha-control {
+    flex: 1;
+    min-width: 0;
+}
+
+.campo-ficha-control-fila {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+/* === Botón circular de comentario por campo ===
+   Nombres de clase fijos (btn-comentario / -sin / -con): el JS reemplaza el
+   className completo al alternar estado, así que no se pueden renombrar. */
+.btn-comentario {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 0.8rem;
+    padding: 0;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+
+.btn-comentario:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.1);
+    border-color: var(--primary-light);
+    color: var(--primary);
+    background: var(--gradiente-suave);
+}
+
+.btn-comentario-con {
+    border-color: rgba(22, 163, 74, 0.35);
+    background: rgba(22, 163, 74, 0.12);
+    color: var(--success);
+}
+
+.btn-comentario-con:hover {
+    background: rgba(22, 163, 74, 0.2);
+    border-color: rgba(22, 163, 74, 0.5);
+    color: var(--success);
+}
+
+/* === Cabeceras de mes/trimestre (reemplaza "glass-effect rounded") === */
+.ficha-mes-header {
+    padding: 6px 4px;
+    text-align: center;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    color: var(--primary-dark);
+    background: var(--gradiente-suave);
+    border-radius: 8px;
+}
+
+/* Variante verde, para distinguir un segundo grupo de meses (ej. "Personas
+   Programadas" vs "Meta Programada") sin inventar un componente nuevo. */
+.ficha-mes-header-verde {
+    color: #15803d;
+    background: rgba(22, 163, 74, 0.12);
+}
+
+/* === Campos de solo lectura (contexto, no editables) ===
+   ":disabled" ya tiene su propio estilo; "readonly" necesita el suyo. */
+input.form-control:read-only {
+    background: var(--bg);
+    color: var(--text-secondary);
+    cursor: default;
+}
+
+.ficha-trimestre-header {
+    text-align: center;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-secondary);
+    padding-bottom: 6px;
+    border-bottom: 2px solid var(--border);
+}
+
+/* === Aviso de programación validada === */
+.aviso-validado {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 24px;
+    background: rgba(22, 163, 74, 0.08);
+    border: 1px solid rgba(22, 163, 74, 0.25);
+    border-radius: var(--radius-card);
+    margin-bottom: 32px;
+}
+
+.aviso-validado i {
+    font-size: 1.8rem;
+    flex-shrink: 0;
+    color: var(--success);
+}
+
+.aviso-validado h4 {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--success);
+}
+
+.aviso-validado p {
+    margin: 4px 0 0;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+/* === Bloque de "acción necesaria" === */
+.ficha-accion-item {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+    background: var(--bg);
+}
+
+.ficha-accion-item:last-child {
+    margin-bottom: 0;
+}
+
+.ficha-accion-titulo {
+    margin: 0 0 16px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--primary);
+}
+
+/* === Tabla ligera dentro de la ficha (municipios agregados) === */
+.tabla-modal-wrap {
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.tabla-modal {
+    width: 100%;
+    margin: 0;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+
+.tabla-modal thead th {
+    background: var(--bg);
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 12px 14px;
+    border-bottom: 2px solid var(--border);
+    text-align: left;
+    white-space: nowrap;
+}
+
+.tabla-modal tbody td {
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-primary);
+    vertical-align: middle;
+}
+
+.tabla-modal tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.tabla-modal tbody tr:hover {
+    background: rgba(219, 39, 119, 0.04);
+}
+
+.tabla-modal .fila-total td {
+    padding: 12px 14px;
+    font-weight: 700;
+    color: var(--primary);
+    background: var(--gradiente-suave);
+    border-top: 2px solid var(--border);
+    border-bottom: none;
+}
+
+/* === Firmas === */
+.ficha-firma {
+    text-align: center;
+    padding: 8px 20px;
+}
+
+.ficha-firma-label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}

@@ -221,6 +221,22 @@
     background-color: #0891b2 !important;
 }
 
+/* Encabezados de subtotal TRIMESTRAL (cada 3 meses) */
+.header-trim-prog {
+    background-color: #b8860b !important;
+    color: white !important;
+}
+
+.header-trim-real {
+    background-color: #0e6650 !important;
+    color: white !important;
+}
+
+.header-trim-pers-prog {
+    background-color: #066a80 !important;
+    color: white !important;
+}
+
 /* Celdas vacías en fila 4 para personas atendidas */
 .header-detalle-vacio {
     display: none;
@@ -253,6 +269,25 @@
     font-size: 10px;
     min-width: 30px;
     padding: 4px 2px !important;
+}
+
+/* Celdas de subtotal TRIMESTRAL (cada 3 meses) */
+.celda-trim-programado {
+    background-color: #ffe6a1 !important;
+    color: #000 !important;
+    font-weight: bold;
+}
+
+.celda-trim-realizado {
+    background-color: #a6ead9 !important;
+    color: #000 !important;
+    font-weight: bold;
+}
+
+.celda-trim-personas-prog {
+    background-color: #a6ecf7 !important;
+    color: #000 !important;
+    font-weight: bold;
 }
 
 /* ========================================
@@ -433,7 +468,7 @@
 /* ========================================
    MENSAJE VACÍO
    ======================================== */
-#tbodyTablero tr td[colspan="191"] {
+#tbodyTablero tr td[colspan="203"] {
     text-align: center;
     padding: 40px !important;
 }

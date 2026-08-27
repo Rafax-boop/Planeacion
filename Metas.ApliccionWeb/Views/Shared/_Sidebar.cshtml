@@ -1,0 +1,71 @@
+@{
+    string controladorActual = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+    string accionActual = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+
+    string EsActivo(string controlador, string accion = null)
+    {
+        if (!string.Equals(controladorActual, controlador, StringComparison.OrdinalIgnoreCase)) return "";
+        if (accion != null && !string.Equals(accionActual, accion, StringComparison.OrdinalIgnoreCase)) return "";
+        return "active";
+    }
+}
+<aside class="sidebar">
+    <a class="sidebar-logo" asp-area="" asp-controller="Home" asp-action="Index">
+        <span class="sidebar-logo-icon">
+            <img src="~/img/corazon.png" alt="Control de Seguimiento de Metas" />
+        </span>
+        <span class="sidebar-logo-text sidebar-expand-text">
+            <strong>Control de</strong>
+            <span>Seguimiento de Metas</span>
+        </span>
+    </a>
+
+    <div class="sidebar-divider"></div>
+
+    <nav class="sidebar-nav">
+        <a class="sidebar-nav-item @EsActivo("Programacion")" asp-area="" asp-controller="Programacion" asp-action="Programacion" title="Ejercicio de Programación">
+            <i class="fa-solid fa-calendar-check icon"></i>
+            <span class="label sidebar-expand-text">Ejercicio de Programación</span>
+        </a>
+        <div class="sidebar-nav-item-wrap">
+            <a class="sidebar-nav-item @EsActivo("Monitoreo")" asp-area="" asp-controller="Monitoreo" asp-action="Monitoreo" title="Monitoreo y Seguimiento de Metas">
+                <i class="fa-solid fa-chart-line icon"></i>
+                <span class="label sidebar-expand-text">Monitoreo y Seguimiento de Metas</span>
+            </a>
+            @if (User.IsInRole("Administrador"))
+            {
+                <div class="sidebar-flyout">
+                    <a class="sidebar-flyout-item" asp-area="" asp-controller="Monitoreo" asp-action="TableroCompletoDepartamento" asp-route-departamento="0">
+                        <i class="fa-solid fa-table icon"></i>
+                        Tablero Completo por Departamento
+                    </a>
+                </div>
+            }
+        </div>
+
+        @if (User.IsInRole("Administrador"))
+        {
+            <a class="sidebar-nav-item @EsActivo("Admin", "Usuarios")" asp-area="" asp-controller="Admin" asp-action="Usuarios" title="Creación de Usuarios">
+                <i class="fa-solid fa-user-plus icon"></i>
+                <span class="label sidebar-expand-text">Creación de Usuarios</span>
+            </a>
+            <a class="sidebar-nav-item @EsActivo("Admin", "FechaCaptura")" asp-area="" asp-controller="Admin" asp-action="FechaCaptura" title="Fecha de Captura">
+                <i class="fa-solid fa-calendar-day icon"></i>
+                <span class="label sidebar-expand-text">Fecha de Captura</span>
+            </a>
+            <a class="sidebar-nav-item @EsActivo("Admin", "FechaProgramacion")" asp-area="" asp-controller="Admin" asp-action="FechaProgramacion" title="Fecha de Captura Programación">
+                <i class="fa-solid fa-calendar-week icon"></i>
+                <span class="label sidebar-expand-text">Fecha de Captura Programación</span>
+            </a>
+        }
+    </nav>
+
+    <div class="sidebar-footer">
+        <div class="sidebar-divider"></div>
+        <a class="sidebar-nav-item sidebar-logout" href="@Url.Action("CerrarSesion", "Acceso")" title="Cerrar sesión">
+            <i class="fa-solid fa-right-from-bracket icon"></i>
+            <span class="label sidebar-expand-text">Cerrar sesión</span>
+        </a>
+        <div class="sidebar-caption sidebar-expand-text">Puebla · Control de Seguimiento de Metas</div>
+    </div>
+</aside>

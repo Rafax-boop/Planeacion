@@ -1,13 +1,24 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Metas</title>
+    <title>@ViewData["Title"] - Control de Seguimiento de Metas</title>
+    <link rel="icon" type="image/png" href="~/img/corazon.png" asp-append-version="true" />
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Metas.ApliccionWeb.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/base/variables.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/layout/sidebar.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/layout/loading.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/layout/footer.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/estilos-tablas.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/SweetAlert.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/estilos-ficha.css" asp-append-version="true" />
     <link href="~/css/Login.css" rel="stylesheet" />
     <link href="~/css/Navbar.css" rel="stylesheet" />
     <link href="~/css/Programacion.css" rel="stylesheet" />
@@ -16,91 +27,42 @@
     <link href="~/css/Inicio.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script> 
+    <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light glass-effect" style="box-shadow: 0 8px 32px 0 rgb(33, 37, 41, .3);
-    background: rgb(33, 37, 41, .1) !important; border: none !important;">
-        <div class="container-fluid">
-                <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#navbarCentrado" aria-controls="navbarCentrado"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>            
-            <div class="collapse navbar-collapse justify-content-center" id="navbarCentrado">
-                <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
-                    <li class="nav-item li-nav mx-2">
-                        <a class="nav-link active fw-semibold" aria-current="page"
-                           asp-controller="Home" asp-action="Index">INICIO</a>
-                    </li>
-                    <div class="vr d-none d-lg-block"></div>
-                    <li class="nav-item li-nav mx-1">
-                        <a class="nav-link fw-semibold" asp-controller="Programacion" asp-action="Programacion">Ejercicio de Programacion</a>
-                    </li>
-                    <div class="vr d-none d-lg-block"></div>
-                    <li class="nav-item li-nav mx-1">
-                        <a class="nav-link fw-semibold" asp-controller="Monitoreo" asp-action="Monitoreo">Monitoreo y Seguimiento de Metas</a>
-                    </li>
-                    <div class="vr d-none d-lg-block"></div>
-                    @if (User.IsInRole("Administrador")) {
-                        <li class="nav-item li-nav mx-1">
-                            <a class="nav-link fw-semibold" asp-controller="Admin" asp-action="Usuarios">Creacion de Usuarios</a>
-                        </li>
-                        <div class="vr d-none d-lg-block"></div>
-                        <li class="nav-item li-nav mx-1">
-                            <a class="nav-link fw-semibold" asp-controller="Admin" asp-action="FechaCaptura">Fecha de Captura</a>
-                        </li>
-                        <div class="vr d-none d-lg-block"></div>
-                        <li class="nav-item li-nav mx-1">
-                            <a class="nav-link fw-semibold" asp-controller="Admin" asp-action="FechaProgramacion">Fecha de Captura Programación</a>
-                        </li>
-                        <div class="vr d-none d-lg-block"></div>
-                    }                    
-                </ul>
-            </div>
-            <div class="d-none d-lg-flex order-lg-3">
-                <li class="nav-item dropdown list-unstyled">
-                    <a class="nav-link dropdown-toggle p-1" href="#" id="navbarDropdown"
-                       role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="~/img/user-avatar.png" alt="Usuario"
-                             style="height: 38px; width: 38px; object-fit: cover;">
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end glass-effect" aria-labelledby="navbarDropdown">
-                        <li class="dropdown-item-text px-3 py-2 text-center">
-                            <small class="text-muted">Conectado como:</small>
-                            <div class="fw-semibold text-dark">@User.Identity.Name</div>
-                        </li>
-                        <li>
-                            <a class="dropdown-item btn-cerrar" href="@Url.Action("CerrarSesion", "Acceso")">
-                                <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-            </div>
-        </div>
-    </nav>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+    <div id="progress-bar-top" class="progress-bar-top"></div>
+    <div id="loading-overlay" class="loading-overlay">
+        <img src="~/img/corazon.png" alt="" class="loading-overlay-heart" />
+        <span class="loading-overlay-text">Procesando…</span>
     </div>
 
-    <footer class="border-top footer text-muted text-center py-3">
-        <div class="container">
-            <div class="d-flex justify-content-center align-items-center gap-4 mb-2">
-                <img style="height: 40px; width: auto;" src="~/img/familias-dif.png" alt="Logo 1" />
-                <img style="height: 40px; width: auto;" src="~/img/pensargrande.png" alt="Logo 3" />
-            </div>
+    <div class="app-shell">
+        @await Html.PartialAsync("_Sidebar")
+
+        <div class="app-content">
+            <main id="pjax-content" role="main">
+                @RenderBody()
+            </main>
+
+            <footer class="app-footer">
+                <img src="~/img/familias-dif.png" alt="Familias Sistema Estatal DIF" class="app-footer-logo" />
+                <span class="app-footer-copy"><span class="app-footer-copy-symbol">&copy;</span> @DateTime.Now.Year - Desarrollado por el Departamento de Soporte Técnico.</span>
+                <img src="~/img/pensargrande.png" alt="Pensar en Grande" class="app-footer-logo" />
+            </footer>
         </div>
-    </footer>
+    </div>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/i18n/es.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/loading.js" asp-append-version="true"></script>
+    <script src="~/js/tabla-paginada.js" asp-append-version="true"></script>
+    <script src="~/js/sidebar.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
