@@ -27,24 +27,16 @@
             <i class="fa-solid fa-calendar-check icon"></i>
             <span class="label sidebar-expand-text">Ejercicio de Programación</span>
         </a>
-        <div class="sidebar-nav-item-wrap">
-            <a class="sidebar-nav-item @EsActivo("Monitoreo")" asp-area="" asp-controller="Monitoreo" asp-action="Monitoreo" title="Monitoreo y Seguimiento de Metas">
-                <i class="fa-solid fa-chart-line icon"></i>
-                <span class="label sidebar-expand-text">Monitoreo y Seguimiento de Metas</span>
-            </a>
-            @if (User.IsInRole("Administrador"))
-            {
-                <div class="sidebar-flyout">
-                    <a class="sidebar-flyout-item" asp-area="" asp-controller="Monitoreo" asp-action="TableroCompletoDepartamento" asp-route-departamento="0">
-                        <i class="fa-solid fa-table icon"></i>
-                        Tablero Completo por Departamento
-                    </a>
-                </div>
-            }
-        </div>
-
+        <a class="sidebar-nav-item @EsActivo("Monitoreo", "Monitoreo")" asp-area="" asp-controller="Monitoreo" asp-action="Monitoreo" title="Monitoreo y Seguimiento de Metas">
+            <i class="fa-solid fa-chart-line icon"></i>
+            <span class="label sidebar-expand-text">Monitoreo y Seguimiento de Metas</span>
+        </a>
         @if (User.IsInRole("Administrador"))
         {
+            <a class="sidebar-nav-item @EsActivo("Monitoreo", "TableroCompletoDepartamento")" asp-area="" asp-controller="Monitoreo" asp-action="TableroCompletoDepartamento" asp-route-departamento="0" title="Tablero Completo por Departamento">
+                <i class="fa-solid fa-table icon"></i>
+                <span class="label sidebar-expand-text">Tablero Completo por Departamento</span>
+            </a>
             <a class="sidebar-nav-item @EsActivo("Admin", "Usuarios")" asp-area="" asp-controller="Admin" asp-action="Usuarios" title="Creación de Usuarios">
                 <i class="fa-solid fa-user-plus icon"></i>
                 <span class="label sidebar-expand-text">Creación de Usuarios</span>
