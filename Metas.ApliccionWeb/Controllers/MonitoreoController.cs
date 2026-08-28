@@ -54,15 +54,11 @@ namespace Metas.AplicacionWeb.Controllers
             }
             else
             {
-                // ¿Coincide exactamente con un departamento?
-                var coincidenciaExacta = departamentos
-                    .Where(d => d.Departamento1 == areaClaim)
-                    .ToList();
-
-                if (coincidenciaExacta.Any())
+                if (User.IsInRole("Departamento"))
                 {
                     // Usuario de departamento específico
-                    listaDepartamentos = coincidenciaExacta
+                    listaDepartamentos = departamentos
+                        .Where(d => d.Departamento1 == areaClaim)
                         .Select(d => new SelectListItem
                         {
                             Value = d.IdDepartamento.ToString(),
@@ -71,7 +67,7 @@ namespace Metas.AplicacionWeb.Controllers
                 }
                 else
                 {
-                    // Usuario de dirección → trae todos sus departamentos
+                    // Usuario de dirección/unidad → trae todos sus departamentos
                     listaDepartamentos = departamentos
                         .Where(d => d.Area == areaClaim)
                         .Select(d => new SelectListItem
@@ -83,9 +79,18 @@ namespace Metas.AplicacionWeb.Controllers
                 }
             }
 
+            var listaAreas = departamentos
+                .Where(d => !string.IsNullOrWhiteSpace(d.Area))
+                .Select(d => d.Area)
+                .Distinct()
+                .OrderBy(a => a)
+                .Select(a => new SelectListItem { Value = a, Text = a })
+                .ToList();
+
             var modelo = new VMDepartamentos
             {
-                ListaDepartamentos = listaDepartamentos.ToList()
+                ListaDepartamentos = listaDepartamentos.ToList(),
+                ListaAreas = listaAreas
             };
 
             return View(modelo);
@@ -118,6 +123,8 @@ namespace Metas.AplicacionWeb.Controllers
                     Componente = x.Componente,
                     Actividad = x.Actividad,
                     DescripcionActividad = x.DescripcionActividad,
+                    Area = x.Area,
+                    Departamento = x.Departamento,
                     ProgramaSocial = x.ProgramaSocial,
                     Enero = x.Enero,
                     Febrero = x.Febrero,

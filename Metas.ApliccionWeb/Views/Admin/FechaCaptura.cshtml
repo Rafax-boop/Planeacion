@@ -4,73 +4,73 @@
     ViewData["Title"] = "Fecha Captura";
 }
 
-<div class="mt-4 shadow border p-3 p-md-4 rounded-4 text-center glass-effect">
-    <!-- Animación y texto guía de scroll solo visible en dispositivos de pantalla pequeña -->
-    <style>
-        @@keyframes pulseHintH {
-            0% { opacity: 0.6; transform: translateX(0); }
-            50% { opacity: 1; transform: translateX(5px); }
-            100% { opacity: 0.6; transform: translateX(0); }
-        }
-        .anim-pulse-h { animation: pulseHintH 2s infinite ease-in-out; }
-    </style>
-    <div class="d-md-none text-muted small mb-3 fw-semibold anim-pulse-h">
-        <i class="fas fa-arrows-alt-h me-1"></i> Desliza la tabla horizontalmente
-    </div>
+<div class="titulo-vista-wrap">
+    <h1 class="titulo-vista">Fecha de Captura</h1>
+    <span class="subtitulo-vista">- Administra el periodo de captura habilitado para cada mes.</span>
+</div>
 
-    <div class="table-responsive rounded-3">
-        <table class="table table-hover align-middle mb-0">
-            <thead class="bg-light">
+@if (Model == null || !Model.Any())
+{
+    <div class="sin-registros">
+        <i class="bi bi-clipboard2-x"></i><br>
+        <span>Sin fechas registradas.</span>
+    </div>
+}
+else
+{
+    <div class="tabla-datos-wrap">
+        <table class="tabla-datos" id="tablaDatos">
+            <thead>
                 <tr>
-                    <th class="fw-semibold" style="color:#741732; min-width: 120px;">Fecha Inicio</th>
-                    <th class="fw-semibold" style="color:#741732; min-width: 120px;">Fecha Termino</th>
-                    <th class="fw-semibold" style="color:#741732; min-width: 100px;">Mes</th>
-                    <th class="fw-semibold" style="color: #741732; min-width: 100px;">Acciones</th>
+                    <th>Fecha Inicio</th>
+                    <th>Fecha Término</th>
+                    <th>Mes</th>
+                    <th class="text-center">Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var fecha in Model)
                 {
                     <tr>
-                        <td class="fw-light">@fecha.FechaInicio</td>
-                        <td class="fw-light">@fecha.FechaFin</td>
-                        <td class="fw-light">@fecha.Mes</td>
+                        <td>@fecha.FechaInicio</td>
+                        <td>@fecha.FechaFin</td>
+                        <td>@fecha.Mes</td>
                         <td>
-                            <button class="btn btn-sm btn-outline-warning fw-light"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#ModalFecha"
-                                    onclick="cargarDatosFecha('@fecha.IdFechaCaptura', '@fecha.FechaInicio.ToString("yyyy-MM-dd")', '@fecha.FechaFin.ToString("yyyy-MM-dd")')">
-                                <i class="fas fa-edit me-1"></i> Editar
-                            </button>
+                            <div class="acciones-grupo">
+                                <button type="button" class="btn-accion btn-accion-editar" title="Editar" data-bs-toggle="tooltip" data-bs-placement="top"
+                                        onclick="cargarDatosFecha('@fecha.IdFechaCaptura', '@fecha.FechaInicio.ToString("yyyy-MM-dd")', '@fecha.FechaFin.ToString("yyyy-MM-dd")')">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </button>
+                            </div>
                         </td>
                     </tr>
                 }
             </tbody>
         </table>
     </div>
-</div>
+    <div id="tablaDatos-paginacion" class="tabla-paginacion"></div>
+}
 
-<div class="modal fade" id="ModalFecha" tabindex="-1" aria-labelledby="miModalLabel"
-     data-bs-backdrop="false" aria-hidden="true">
+<div class="modal fade" id="ModalFecha" tabindex="-1" aria-labelledby="miModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content glass-effect" style="box-shadow: 0 0 40px 2px #c09866 !important">
+        <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title titulo fw-semibold" style="margin-left: 170px" id="miModalLabel">EDITAR FECHAS</h5>
+                <h5 class="modal-title" id="miModalLabel">Editar Fechas</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="formEditar">
                 <div class="modal-body">
                     <input type="hidden" id="txtIdFechaCaptura" name="IdFechaCaptura" />
 
-                    <label class="form-label titulo fw-semibold">Fecha Inicio</label>
-                    <input type="date" class="form-control mb-3 input-arena fw-light" style="color:#c09866" id="txtFechaInicio" name="FechaInicio" required />
+                    <label class="form-label fw-semibold">Fecha Inicio</label>
+                    <input type="date" class="form-control mb-3" id="txtFechaInicio" name="FechaInicio" required />
 
-                    <label class="form-label titulo fw-semibold">Fecha Termino</label>
-                    <input type="date" class="form-control input-arena fw-light" style="color:#c09866" id="txtFechaFin" name="FechaFin" required />
+                    <label class="form-label fw-semibold">Fecha Término</label>
+                    <input type="date" class="form-control" id="txtFechaFin" name="FechaFin" required />
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="boton-rojo fs-6 fw-light" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="submit" class="boton-amarillo fs-6 fw-light" id="btnEditar">Editar</button>
+                    <button type="button" class="btn-app-gris" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn-app-rosa" id="btnEditar">Editar</button>
                 </div>
             </form>
         </div>
@@ -83,7 +83,18 @@
             document.getElementById('txtIdFechaCaptura').value = id;
             document.getElementById('txtFechaInicio').value = fechaInicio;
             document.getElementById('txtFechaFin').value = fechaFin;
+
+            var modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('ModalFecha'));
+            modal.show();
         }
+
+        $(document).ready(function () {
+            $('[data-bs-toggle="tooltip"]').each(function () {
+                bootstrap.Tooltip.getOrCreateInstance(this);
+            });
+
+            TablaPaginada.iniciar('tablaDatos', { pageSize: 10 });
+        });
 
         // Limpiar el formulario cuando se cierra el modal
         document.getElementById('ModalFecha').addEventListener('hidden.bs.modal', function () {
@@ -105,8 +116,7 @@
                         icon: 'success',
                         title: '¡Éxito!',
                         text: response.mensaje,
-                        showConfirmButton: false,
-                        timer: 1500
+                        confirmButtonText: 'Aceptar'
                     }).then(() => {
                         $("#ModalFecha").modal('hide');
                         $("#formEditar")[0].reset();
@@ -118,7 +128,8 @@
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
-                        text: error?.mensaje || 'Error al editar fechas'
+                        text: error?.mensaje || 'Error al editar fechas',
+                        confirmButtonText: 'Entendido'
                     });
                 },
                 complete: function() {

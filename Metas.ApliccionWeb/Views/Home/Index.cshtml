@@ -1,83 +1,38 @@
 @{
     ViewData["Title"] = "Inicio";
 }
-<style>
-    /* Estilos responsivos exclusivos para el Home */
-    @@media (max-width: 767.98px) {
-        .home-wrapper-responsive {
-            margin-top: 6vh !important;
-            padding: 10px !important;
-        }
 
-        .home-glass-card {
-            background: rgba(255, 255, 255, 0.05) !important;
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.2) !important;
-            border-radius: 25px !important;
-            padding: 40px 15px !important;
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1) !important;
-        }
+@section Styles {
+    <link rel="stylesheet" href="~/css/estilos-home.css" asp-append-version="true" />
+}
 
-        .img-logo-responsive {
-            max-height: 110px !important; /* Más pequeño para que respire más la página en celular */
-            margin-bottom: 2rem !important;
-        }
+<div class="home-hero">
+    <div class="home-orb home-orb-1"></div>
+    <div class="home-orb home-orb-2"></div>
+    <div class="home-orb home-orb-3"></div>
+    <div class="home-orb home-orb-4"></div>
+    <div class="home-orb home-orb-5"></div>
 
-        .titulo-bienvenida-responsive {
-            font-size: 2.2rem !important;
-            letter-spacing: -0.5px;
-        }
-
-        .texto-sub-responsive {
-            font-size: 1.15rem !important;
-        }
-        
-        .caja-fecha-responsive {
-            background: rgba(255, 255, 255, 0.15) !important;
-            border-radius: 50px !important;
-            padding: 12px 25px !important;
-            border: 1px solid rgba(255, 255, 255, 0.4) !important;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05) !important;
-        }
-    }
-</style>
-
-<div class="align-content-center animacion-home px-3 home-wrapper-responsive" style="margin-top: clamp(60px, 15vh, 150px);">
-    <div class="text-center home-glass-card">
-        <div class="mb-4">
-            <img src="~/img/puebla-gob-blanco.png" class="img-fluid img-logo-responsive" style="max-height: 250px; object-fit: contain;" alt="Gobierno de Puebla" />
-        </div>
-
-        <h1 class="display-4 fw-bold titulo mb-3 text-wrap px-2 titulo-bienvenida-responsive">
-            ¡Bienvenido!
-        </h1>
-
-        <p class="lead text-muted mb-4 px-2 texto-sub-responsive">
-            Control de Seguimiento de Metas
-        </p>
-
-        <div class="glass-effect rounded-3 p-3 d-inline-block mx-2 shadow-sm caja-fecha-responsive">
-            <small class="text-muted fw-medium fs-6 d-flex align-items-center gap-2 justify-content-center">
-                <i class="fas fa-calendar me-2" style="color: #741732;"></i>
-                @DateTime.Now.ToString("dddd, dd MMMM yyyy")                    
-            </small>
-        </div>
+    <div class="home-heart-wrap home-fade" style="animation-delay:0s;">
+        <div class="home-heart-glow-outer"></div>
+        <div class="home-heart-glow-inner"></div>
+        <img src="~/img/corazon.png" alt="Control de Seguimiento de Metas" class="home-heart" />
     </div>
-</div>@* 
-    @if (TempData["LoginExitoso"] != null)
-    {
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                Swal.fire({
-                    icon: 'success',
-                    title: '¡Bienvenido @TempData["NombreUsuario"]!',
-                    text: 'Ha iniciado sesión correctamente',
-                    confirmButtonColor: '#741732',
-                    timer: 2500,
-                    showConfirmButton: false
-                });
-            });
-        </script>
-    } *@
+
+    <h1 class="home-title home-fade" style="animation-delay:.15s;">Control de Seguimiento de Metas</h1>
+
+    <div class="home-greeting-block home-fade" style="animation-delay:.28s;">
+        <p class="home-greeting">
+            <span id="home-greeting-text">Buenos días</span>,
+            <strong>@User.Identity.Name</strong>
+        </p>
+        <div class="home-clock">
+            <span id="home-clock-hh">--</span><span class="colon">:</span><span id="home-clock-mm">--</span><span class="seconds">:<span id="home-clock-ss">--</span></span>
+        </div>
+        <p class="home-date" id="home-date-text"></p>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/home.js" asp-append-version="true"></script>
+}

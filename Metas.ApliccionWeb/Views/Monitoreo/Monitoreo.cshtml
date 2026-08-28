@@ -2,144 +2,135 @@
 @{
     ViewData["Title"] = "Monitoreo";
 }
-<div class="mt-4 text-center">
-    <h1 class="titulo fw-semibold">MONITOREO Y SEGUIMIENTO DE METAS</h1>
+
+<div class="titulo-vista-wrap">
+    <h1 class="titulo-vista">Monitoreo y Seguimiento de Metas</h1>
+    <span class="subtitulo-vista">- Selecciona un año fiscal y un departamento para dar seguimiento mensual a sus actividades.</span>
 </div>
-<div class="mt-4 mt-md-5 p-3 p-md-4 rounded-5 glass-effect">
-    <div class="row g-3 g-md-4 justify-content-center">
-        <!-- Columna Año Fiscal -->
-        <div class="col-12 col-md-4 col-lg-3">
-            <div class="text-center mb-2">
-                <label class="form-label fs-4 fs-md-3 fw-bold titulo">Año Fiscal</label>
-            </div>
-            <select class="titulo form-select input-arena shadow-sm mx-auto w-100" id="selectAnoFiscal">
-                @{
-                    var anoActual = DateTime.Now.Year;
-                    var anoMaximo = anoActual + 1;
-                    var anoMinimo = anoActual - 5;
 
-                        for (int ano = anoMaximo; ano >= anoMinimo; ano--)
-                        {
-                            <option value="@ano">@ano</option>
-                        }
-                    }
-                </select>
-            </div>
-        </div>
-        <div class="col">
-            <div class="col-12" style="margin-left: 6px">
-                <select class="titulo form-select input-arena" id="selectDepartamento">
+<div class="filtros-container">
+    <div class="filtro-grupo">
+        <label for="selectAnoFiscal">Año Fiscal</label>
+        <select id="selectAnoFiscal" class="select2-simple">
+            @{
+                var anoActual = DateTime.Now.Year;
+                var anoMaximo = anoActual + 1;
+                var anoMinimo = anoActual - 5;
 
-                    @if (User.IsInRole("Administrador") || Model.ListaDepartamentos.Count > 1)
-                    {
-                        <option value="">-- Seleccione un departamento --</option>
-                    }
-
-                        var departamentoUsuarioObjeto = Model.ListaDepartamentos
-                        .FirstOrDefault(d => d.Text == departamentoUsuarioTexto);
-
-                        if (departamentoUsuarioObjeto != null)
-                        {
-                            // Si se encuentra, usamos el Value (ID) y el Text (Nombre)
-                            <option value="@departamentoUsuarioObjeto.Value">@departamentoUsuarioObjeto.Text</option>
-                        }
-                        else
-                        {
-                            // Opcional: Manejo si no se encuentra (solo mostrar el texto como fallback)
-                            <option value="">Recargué la página</option>
-                        }
-                    }
-                </select>
-            </div>
-        </div>
-        <div>
-            <div class="mt-4 text-center">
-                @if (User.IsInRole("Administrador"))
+                for (int ano = anoMaximo; ano >= anoMinimo; ano--)
                 {
-                    <button class="boton-amarillo px-4 py-2" type="button" id="btnNuevo">
-                        <i class="fas fa-plus me-1"></i> Agregar Nuevo
-                    </button>
+                    <option value="@ano" selected="@(ano == anoActual)">@ano</option>
                 }
-                <button class="boton-rojo px-4 py-2" type="button" id="btnBuscar">
-                    <i class="fas fa-search me-1"></i> Buscar
-                </button>
-            </div>
+            }
+        </select>
+    </div>
+    <div class="filtro-grupo">
+        <label for="selectDepartamento">Departamento</label>
+        <select id="selectDepartamento" class="select2-simple">
+            @if (User.IsInRole("Administrador") || Model.ListaDepartamentos.Count > 1)
+            {
+                <option value="">-- Seleccione un departamento --</option>
+            }
+
+            @foreach (var depto in Model.ListaDepartamentos)
+            {
+                <option value="@depto.Value">@depto.Text</option>
+            }
+        </select>
+    </div>
+    <div class="filtro-grupo">
+        <label for="selectProgramaFiltro">Programa Presupuestal</label>
+        <select id="selectProgramaFiltro" class="select2-simple">
+            <option value="">Todos</option>
+            <option value="Agenda">Agenda</option>
+            <option value="E046">E046</option>
+            <option value="E047">E047</option>
+        </select>
+    </div>
+    <div class="filtro-grupo">
+        <label for="selectAreaFiltro">Área</label>
+        <select id="selectAreaFiltro" class="select2-simple">
+            <option value="">Todas</option>
+            @foreach (var area in Model.ListaAreas)
+            {
+                <option value="@area.Text">@area.Text</option>
+            }
+        </select>
+    </div>
+    @if (User.IsInRole("Administrador"))
+    {
+        <div class="filtro-grupo" style="flex: 0 0 auto; min-width: auto;">
+            <label>&nbsp;</label>
+            <button class="btn-app-gris" type="button" id="btnNuevo">
+                <i class="fa-solid fa-plus"></i> Agregar Nuevo
+            </button>
         </div>
+    }
+    <div class="filtro-grupo" style="flex: 0 0 auto; min-width: auto;">
+        <label>&nbsp;</label>
+        <button class="btn-app-rosa" type="button" id="btnBuscar">
+            <i class="fa-solid fa-magnifying-glass"></i> Buscar
+        </button>
     </div>
 </div>
 
-<div id="seccionResultados" class="mt-4 pb-4 pt-3 rounded-5 glass-effect" style="padding-left: 20px; padding-right: 25px; display: none;">
-    <h2 class="fw-semibold text-start" id="ano">
-        Ejercicio Fiscal
-    </h2>
-    <h3 class="fw-light" id="tituloDepartamento">
-        Departamento:
-    </h3>
-
-    <div class="mt-4 mb-3">
-        <div class="d-grid gap-3 d-md-flex justify-content-md-center">
+<div id="seccionResultados" style="display: none;">
+    <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
+        <div>
+            <h2 class="titulo-vista mb-1" style="font-size: 1.1rem;" id="ano">Ejercicio Fiscal</h2>
+            <p class="subtitulo-vista mb-0" id="tituloDepartamento">Departamento:</p>
+        </div>
+        <div class="d-flex gap-2 flex-wrap">
             @if (User.IsInRole("Administrador"))
             {
-                <button class="boton-amarillo text-wrap px-4 py-2 d-inline-flex align-items-center justify-content-center flex-wrap gap-2"
-                        onclick="irATableroCompleto()"
-                        style="color: #17a2b8; box-shadow: 0 5px 8px 0 #17a2b8; border: 1px solid #17a2b8 !important;"
-                        id="btnTableroCompleto">
-                    <i class="fas fa-table"></i> Tablero Completo por Departamento
-                </button>            
+                <button class="btn-app-azul" type="button" onclick="irATableroCompleto()">
+                    <i class="fa-solid fa-table"></i> Tablero Completo por Departamento
+                </button>
             }
-
-            <button class="boton-amarillo text-wrap px-4 py-2 d-inline-flex align-items-center justify-content-center flex-wrap gap-2"
-                    onclick="irATablero()"
-                    style="color: forestgreen; box-shadow: 0 5px 8px 0 forestgreen; border: 1px solid forestgreen !important; text-decoration: none;">
-                <i class="fas fa-chart-line"></i> Tablero
+            <button class="btn-app-verde" type="button" onclick="irATablero()">
+                <i class="fa-solid fa-gauge"></i> Tablero
             </button>
         </div>
     </div>
 
-    <!-- Animación y texto guía de scroll solo visible en dispositivos de pantalla pequeña -->
-    <style>
-        @@keyframes pulseHintH {
-            0% { opacity: 0.6; transform: translateX(0); }
-            50% { opacity: 1; transform: translateX(5px); }
-            100% { opacity: 0.6; transform: translateX(0); }
-        }
-        .anim-pulse-h { animation: pulseHintH 2s infinite ease-in-out; }
-    </style>
-    <div class="d-md-none text-muted small mb-3 text-center fw-semibold anim-pulse-h">
-        <i class="fas fa-arrows-alt-h me-1"></i> Desliza la tabla horizontalmente para ver más datos
+    <div class="tabla-scroll">
+        <div class="tabla-datos-wrap">
+            <table class="tabla-datos" id="tablaDatos">
+                <thead>
+                    <tr>
+                        <th>Pp</th>
+                        <th>Componente</th>
+                        <th>Actividad</th>
+                        <th>Descripción de la Actividad</th>
+                        <th>Programa o servicio de asistencia social</th>
+                        <th>Ene</th>
+                        <th>Feb</th>
+                        <th>Mar</th>
+                        <th>Abr</th>
+                        <th>May</th>
+                        <th>Jun</th>
+                        <th>Jul</th>
+                        <th>Ago</th>
+                        <th>Sep</th>
+                        <th>Oct</th>
+                        <th>Nov</th>
+                        <th>Dic</th>
+                        @if (User.IsInRole("Administrador"))
+                        {
+                            <th class="text-center">Acciones</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody id="tbodyDatos">
+                    <!-- Los datos se cargarán aquí dinámicamente -->
+                </tbody>
+            </table>
+        </div>
     </div>
-
-    <div class="table-responsive shadow-sm rounded-3">
-        <table class="table table-hover table-borderless align-middle shadow-sm rounded-3 overflow-hidden" id="tablaDatos">
-            <thead class="bg-danger text-white">
-                <tr>
-                    <th scope="col" class="text-center px-3 py-3 border-end border-light border-opacity-25">Pp</th>
-                    <th scope="col" class="text-center px-3 py-3 border-end border-light border-opacity-25">Componente</th>
-                    <th scope="col" class="text-center px-3 py-3 border-end border-light border-opacity-25">Actividad</th>
-                    <th scope="col" class="text-center px-3 py-3 border-end border-light border-opacity-25">Descripción de la Actividad</th>
-                    <th scope="col" class="text-center px-3 py-3 border-end border-light border-opacity-25">Programa o servicio de asistencia social</th>
-                    <th scope="col" class="text-center px-3 py-3 border-end border-light border-opacity-25">Ene</th>
-                    <th scope="col" class="text-center px-3 py-3 border-end border-light border-opacity-25">Feb</th>
-                    <th scope="col" class="text-center px-3 py-3 border-end border-light border-opacity-25">Mar</th>
-                    <th scope="col" class="text-center px-3 py-3 border-end border-light border-opacity-25">Abr</th>
-                    <th scope="col" class="text-center px-3 py-3 border-end border-light border-opacity-25">May</th>
-                    <th scope="col" class="text-center px-3 py-3 border-end border-light border-opacity-25">Jun</th>
-                    <th scope="col" class="text-center px-3 py-3 border-end border-light border-opacity-25">Jul</th>
-                    <th scope="col" class="text-center px-3 py-3 border-end border-light border-opacity-25">Ago</th>
-                    <th scope="col" class="text-center px-3 py-3 border-end border-light border-opacity-25">Sep</th>
-                    <th scope="col" class="text-center px-3 py-3 border-end border-light border-opacity-25">Oct</th>
-                    <th scope="col" class="text-center px-3 py-3 border-end border-light border-opacity-25">Nov</th>
-                    <th scope="col" class="text-center px-3 py-3">Dic</th>
-                </tr>
-            </thead>
-            <tbody id="tbodyDatos" class="bg-light bg-opacity-50">
-                <!-- Los datos se cargarán aquí dinámicamente -->
-            </tbody>
-        </table>
-    </div>
+    <div id="tablaDatos-paginacion" class="tabla-paginacion"></div>
 
     <!-- Mensaje de carga -->
-    <div id="mensajeCarga" class="text-center" style="display: none;">
+    <div id="mensajeCarga" class="text-center mt-3" style="display: none;">
         <div class="spinner-border text-primary" role="status">
             <span class="visually-hidden">Cargando...</span>
         </div>
@@ -147,25 +138,15 @@
     </div>
 
     <!-- Mensaje cuando no hay datos -->
-    <div id="mensajeSinDatos" class="alert alert-info text-center" style="display: none;">
-        No se encontraron datos para los criterios seleccionados.
+    <div id="mensajeSinDatos" class="sin-registros mt-3" style="display: none;">
+        <i class="bi bi-clipboard2-x"></i><br>
+        <span>No se encontraron datos para los criterios seleccionados.</span>
     </div>
-</div>    <!-- Mensaje de carga -->
-<div id="mensajeCarga" class="text-center" style="display: none;">
-    <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Cargando...</span>
-    </div>
-    <p class="mt-2">Cargando datos...</p>
-</div>
-
-<!-- Mensaje cuando no hay datos -->
-<div id="mensajeSinDatos" class="alert alert-info text-center" style="display: none;">
-    No se encontraron datos para los criterios seleccionados.
 </div>
 
 <div class="modal fade" id="modalModificarActividad" tabindex="-1" aria-labelledby="modalModificarActividadLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
+    <div class="modal-dialog modal-dialog-900 modal-dialog-scrollable">
+        <div class="modal-content modal-fijo">
             <div class="modal-header">
                 <h5 class="modal-title" id="modalModificarActividadLabel">Modificar Actividad</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -176,130 +157,106 @@
                     <input type="hidden" id="IdProcesoModal" name="IdProceso" />
                     <input type="hidden" id="modoFormulario" value="editar" /> <!-- Nuevo campo para identificar el modo -->
                     <!-- CAMPOS EXTRAS SOLO PARA AGREGAR NUEVO -->
-                    <div id="camposNuevoRegistro" style="display: none;">
-                        <div class="row mb-3">
+                    <div id="camposNuevoRegistro" class="modal-seccion" style="display: none;">
+                        <h6 class="modal-seccion-titulo">Contexto</h6>
+                        <div class="row g-3">
                             <div class="col-md-4">
-                                <label for="AnoFiscalModal" class="form-label">Año Fiscal</label>
+                                <label for="AnoFiscalModal" class="form-label small text-muted mb-1">Año Fiscal</label>
                                 <input type="number" class="form-control" id="AnoFiscalModal" name="AnoFiscal" readonly>
                             </div>
                             <div class="col-md-4">
-                                <label for="AreaModal" class="form-label">Área</label>
+                                <label for="AreaModal" class="form-label small text-muted mb-1">Área</label>
                                 <input type="text" class="form-control" id="AreaModal" name="Area" readonly>
                             </div>
                             <div class="col-md-4">
-                                <label for="DepartamentoModal" class="form-label">Departamento</label>
+                                <label for="DepartamentoModal" class="form-label small text-muted mb-1">Departamento</label>
                                 <input type="text" class="form-control" id="DepartamentoModal" name="Departamento" readonly>
                                 <input type="hidden" id="IdDepartamentoModal" name="IdDepartamento">
                             </div>
                         </div>
-                        <hr class="my-4">
                     </div>
 
-                    <div class="row mb-3">
-                        <div class="col-md-4">
-                            <label for="selectProgramaPresupuestario" class="form-label">Programa Presupuestario</label>
-                            <select class="form-select" id="selectProgramaPresupuestario" name="PP">
-                                <option value="3">Agenda</option>
-                                <option value="1">E046</option>
-                                <option value="2">E047</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="ComponenteModal" class="form-label">Componente</label>
-                            <input type="number" class="form-control" id="ComponenteModal" name="Componente">
-                        </div>
-                        <div class="col-md-4">
-                            <label for="ActividadModal" class="form-label">Actividad</label>
-                            <input type="number" class="form-control" id="ActividadModal" name="Actividad">
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="DescripcionActividadModal" class="form-label">Descripción de la actividad</label>
-                        <textarea class="form-control" id="DescripcionActividadModal" name="DescripcionActividad" rows="3"></textarea>
-                    </div>
-
-                    <div class="row mb-4">
-                        <div class="col-md">
-                            <label for="selectUnidadMedida" class="form-label">Unidad de Medida</label>
-                            <select class="form-select" id="selectUnidadMedida" name="UnidadMedida">
-                            </select>
+                    <div class="modal-seccion">
+                        <h6 class="modal-seccion-titulo">Identificación</h6>
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label for="selectProgramaPresupuestario" class="form-label small text-muted mb-1">Programa Presupuestario</label>
+                                <select class="form-select select2-simple" id="selectProgramaPresupuestario" name="PP">
+                                    <option value="3">Agenda</option>
+                                    <option value="1">E046</option>
+                                    <option value="2">E047</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="ComponenteModal" class="form-label small text-muted mb-1">Componente</label>
+                                <input type="number" class="form-control" id="ComponenteModal" name="Componente">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="ActividadModal" class="form-label small text-muted mb-1">Actividad</label>
+                                <input type="number" class="form-control" id="ActividadModal" name="Actividad">
+                            </div>
                         </div>
                     </div>
 
-                    <div class="mb-4">
-                        <label for="ProgramaSocialModal" class="form-label">Programa o servicio de asistencia social</label>
-                        <input type="text" class="form-control" id="ProgramaSocialModal" name="ProgramaSocial" maxlength="255">
+                    <div class="modal-seccion">
+                        <h6 class="modal-seccion-titulo">Descripción</h6>
+                        <div class="mb-3">
+                            <label for="DescripcionActividadModal" class="form-label small text-muted mb-1">Descripción de la actividad</label>
+                            <textarea class="form-control" id="DescripcionActividadModal" name="DescripcionActividad" rows="3"></textarea>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-5">
+                                <label for="selectUnidadMedida" class="form-label small text-muted mb-1">Unidad de Medida</label>
+                                <select class="form-select select2-simple" id="selectUnidadMedida" name="UnidadMedida">
+                                </select>
+                            </div>
+                            <div class="col-md-7">
+                                <label for="ProgramaSocialModal" class="form-label small text-muted mb-1">Programa o servicio de asistencia social</label>
+                                <input type="text" class="form-control" id="ProgramaSocialModal" name="ProgramaSocial" maxlength="255">
+                            </div>
+                        </div>
                     </div>
 
-                    <h5 class="mt-4 mb-2">Meta Programada</h5>
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-sm text-center">
-                            <thead class="bg-info text-white">
-                                <tr><th>Enero</th><th>Febrero</th><th>Marzo</th><th>Abril</th><th>Mayo</th><th>Junio</th></tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><input type="number" class="form-control form-control-sm meta-prog" name="TotalEnero" id="TotalEnero" value="0"></td>
-                                    <td><input type="number" class="form-control form-control-sm meta-prog" name="TotalFebrero" id="TotalFebrero" value="0"></td>
-                                    <td><input type="number" class="form-control form-control-sm meta-prog" name="TotalMarzo" id="TotalMarzo" value="0"></td>
-                                    <td><input type="number" class="form-control form-control-sm meta-prog" name="TotalAbril" id="TotalAbril" value="0"></td>
-                                    <td><input type="number" class="form-control form-control-sm meta-prog" name="TotalMayo" id="TotalMayo" value="0"></td>
-                                    <td><input type="number" class="form-control form-control-sm meta-prog" name="TotalJunio" id="TotalJunio" value="0"></td>
-                                </tr>
-                            </tbody>
-                            <thead class="bg-info text-white">
-                                <tr><th>Julio</th><th>Agosto</th><th>Septiembre</th><th>Octubre</th><th>Noviembre</th><th>Diciembre</th></tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><input type="number" class="form-control form-control-sm meta-prog" name="TotalJulio" id="TotalJulio" value="0"></td>
-                                    <td><input type="number" class="form-control form-control-sm meta-prog" name="TotalAgosto" id="TotalAgosto" value="0"></td>
-                                    <td><input type="number" class="form-control form-control-sm meta-prog" name="TotalSeptiembre" id="TotalSeptiembre" value="0"></td>
-                                    <td><input type="number" class="form-control form-control-sm meta-prog" name="TotalOctubre" id="TotalOctubre" value="0"></td>
-                                    <td><input type="number" class="form-control form-control-sm meta-prog" name="TotalNoviembre" id="TotalNoviembre" value="0"></td>
-                                    <td><input type="number" class="form-control form-control-sm meta-prog" name="TotalDiciembre" id="TotalDiciembre" value="0"></td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div class="modal-seccion">
+                        <h6 class="modal-seccion-titulo">Meta Programada</h6>
+                        <div class="modal-meses-grid">
+                            <div class="modal-mes-col"><div class="ficha-mes-header">Ene</div><input type="number" class="form-control form-control-sm meta-prog" name="TotalEnero" id="TotalEnero" value="0"></div>
+                            <div class="modal-mes-col"><div class="ficha-mes-header">Feb</div><input type="number" class="form-control form-control-sm meta-prog" name="TotalFebrero" id="TotalFebrero" value="0"></div>
+                            <div class="modal-mes-col"><div class="ficha-mes-header">Mar</div><input type="number" class="form-control form-control-sm meta-prog" name="TotalMarzo" id="TotalMarzo" value="0"></div>
+                            <div class="modal-mes-col"><div class="ficha-mes-header">Abr</div><input type="number" class="form-control form-control-sm meta-prog" name="TotalAbril" id="TotalAbril" value="0"></div>
+                            <div class="modal-mes-col"><div class="ficha-mes-header">May</div><input type="number" class="form-control form-control-sm meta-prog" name="TotalMayo" id="TotalMayo" value="0"></div>
+                            <div class="modal-mes-col"><div class="ficha-mes-header">Jun</div><input type="number" class="form-control form-control-sm meta-prog" name="TotalJunio" id="TotalJunio" value="0"></div>
+                            <div class="modal-mes-col"><div class="ficha-mes-header">Jul</div><input type="number" class="form-control form-control-sm meta-prog" name="TotalJulio" id="TotalJulio" value="0"></div>
+                            <div class="modal-mes-col"><div class="ficha-mes-header">Ago</div><input type="number" class="form-control form-control-sm meta-prog" name="TotalAgosto" id="TotalAgosto" value="0"></div>
+                            <div class="modal-mes-col"><div class="ficha-mes-header">Sep</div><input type="number" class="form-control form-control-sm meta-prog" name="TotalSeptiembre" id="TotalSeptiembre" value="0"></div>
+                            <div class="modal-mes-col"><div class="ficha-mes-header">Oct</div><input type="number" class="form-control form-control-sm meta-prog" name="TotalOctubre" id="TotalOctubre" value="0"></div>
+                            <div class="modal-mes-col"><div class="ficha-mes-header">Nov</div><input type="number" class="form-control form-control-sm meta-prog" name="TotalNoviembre" id="TotalNoviembre" value="0"></div>
+                            <div class="modal-mes-col"><div class="ficha-mes-header">Dic</div><input type="number" class="form-control form-control-sm meta-prog" name="TotalDiciembre" id="TotalDiciembre" value="0"></div>
+                        </div>
                     </div>
 
-                    <h5 class="mt-4 mb-2">Personas Programadas</h5>
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-sm text-center">
-                            <thead class="bg-success text-white">
-                                <tr><th>Enero</th><th>Febrero</th><th>Marzo</th><th>Abril</th><th>Mayo</th><th>Junio</th></tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><input type="number" class="form-control form-control-sm personas-prog" name="EneroPersona" id="TotalEneroPersonas" value="0"></td>
-                                    <td><input type="number" class="form-control form-control-sm personas-prog" name="FebreroPersona" id="TotalFebreroPersonas" value="0"></td>
-                                    <td><input type="number" class="form-control form-control-sm personas-prog" name="MarzoPersona" id="TotalMarzoPersonas" value="0"></td>
-                                    <td><input type="number" class="form-control form-control-sm personas-prog" name="AbrilPersona" id="TotalAbrilPersonas" value="0"></td>
-                                    <td><input type="number" class="form-control form-control-sm personas-prog" name="MayoPersona" id="TotalMayoPersonas" value="0"></td>
-                                    <td><input type="number" class="form-control form-control-sm personas-prog" name="JunioPersona" id="TotalJunioPersonas" value="0"></td>
-                                </tr>
-                            </tbody>
-                            <thead class="bg-success text-white">
-                                <tr><th>Julio</th><th>Agosto</th><th>Septiembre</th><th>Octubre</th><th>Noviembre</th><th>Diciembre</th></tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><input type="number" class="form-control form-control-sm personas-prog" name="JulioPersona" id="TotalJulioPersonas" value="0"></td>
-                                    <td><input type="number" class="form-control form-control-sm personas-prog" name="AgostoPersona" id="TotalAgostoPersonas" value="0"></td>
-                                    <td><input type="number" class="form-control form-control-sm personas-prog" name="SeptiembrePersona" id="TotalSeptiembrePersonas" value="0"></td>
-                                    <td><input type="number" class="form-control form-control-sm personas-prog" name="OctubrePersona" id="TotalOctubrePersonas" value="0"></td>
-                                    <td><input type="number" class="form-control form-control-sm personas-prog" name="NoviembrePersona" id="TotalNoviembrePersonas" value="0"></td>
-                                    <td><input type="number" class="form-control form-control-sm personas-prog" name="DiciembrePersona" id="TotalDiciembrePersonas" value="0"></td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div class="modal-seccion">
+                        <h6 class="modal-seccion-titulo">Personas Programadas</h6>
+                        <div class="modal-meses-grid">
+                            <div class="modal-mes-col"><div class="ficha-mes-header ficha-mes-header-verde">Ene</div><input type="number" class="form-control form-control-sm personas-prog" name="EneroPersona" id="TotalEneroPersonas" value="0"></div>
+                            <div class="modal-mes-col"><div class="ficha-mes-header ficha-mes-header-verde">Feb</div><input type="number" class="form-control form-control-sm personas-prog" name="FebreroPersona" id="TotalFebreroPersonas" value="0"></div>
+                            <div class="modal-mes-col"><div class="ficha-mes-header ficha-mes-header-verde">Mar</div><input type="number" class="form-control form-control-sm personas-prog" name="MarzoPersona" id="TotalMarzoPersonas" value="0"></div>
+                            <div class="modal-mes-col"><div class="ficha-mes-header ficha-mes-header-verde">Abr</div><input type="number" class="form-control form-control-sm personas-prog" name="AbrilPersona" id="TotalAbrilPersonas" value="0"></div>
+                            <div class="modal-mes-col"><div class="ficha-mes-header ficha-mes-header-verde">May</div><input type="number" class="form-control form-control-sm personas-prog" name="MayoPersona" id="TotalMayoPersonas" value="0"></div>
+                            <div class="modal-mes-col"><div class="ficha-mes-header ficha-mes-header-verde">Jun</div><input type="number" class="form-control form-control-sm personas-prog" name="JunioPersona" id="TotalJunioPersonas" value="0"></div>
+                            <div class="modal-mes-col"><div class="ficha-mes-header ficha-mes-header-verde">Jul</div><input type="number" class="form-control form-control-sm personas-prog" name="JulioPersona" id="TotalJulioPersonas" value="0"></div>
+                            <div class="modal-mes-col"><div class="ficha-mes-header ficha-mes-header-verde">Ago</div><input type="number" class="form-control form-control-sm personas-prog" name="AgostoPersona" id="TotalAgostoPersonas" value="0"></div>
+                            <div class="modal-mes-col"><div class="ficha-mes-header ficha-mes-header-verde">Sep</div><input type="number" class="form-control form-control-sm personas-prog" name="SeptiembrePersona" id="TotalSeptiembrePersonas" value="0"></div>
+                            <div class="modal-mes-col"><div class="ficha-mes-header ficha-mes-header-verde">Oct</div><input type="number" class="form-control form-control-sm personas-prog" name="OctubrePersona" id="TotalOctubrePersonas" value="0"></div>
+                            <div class="modal-mes-col"><div class="ficha-mes-header ficha-mes-header-verde">Nov</div><input type="number" class="form-control form-control-sm personas-prog" name="NoviembrePersona" id="TotalNoviembrePersonas" value="0"></div>
+                            <div class="modal-mes-col"><div class="ficha-mes-header ficha-mes-header-verde">Dic</div><input type="number" class="form-control form-control-sm personas-prog" name="DiciembrePersona" id="TotalDiciembrePersonas" value="0"></div>
+                        </div>
                     </div>
 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="submit" class="btn btn-primary" id="btnGuardarModal">Guardar y continuar</button>
+                    <button type="button" class="btn-app-gris" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn-app-rosa" id="btnGuardarModal">Guardar y continuar</button>
                 </div>
             </form>
         </div>
@@ -310,12 +267,19 @@
     <script>
         const esAdmin = @(User.IsInRole("Administrador").ToString().ToLower())
 
+        $('.select2-simple').select2({ width: '100%', language: 'es', minimumResultsForSearch: 8 });
+
         function irATablero() {
             var anoFiscal = $('#selectAnoFiscal').val();
             var departamento = $('#selectDepartamento').val();
 
             if (!anoFiscal || !departamento) {
-                alert('Por favor, seleccione año fiscal y departamento primero');
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Faltan datos',
+                    text: 'Por favor, selecciona año fiscal y departamento primero.',
+                    confirmButtonText: 'Entendido'
+                });
                 return;
             }
 
@@ -330,7 +294,12 @@
             var departamento = $('#selectDepartamento').val();
 
             if (!anoFiscal || !departamento) {
-                alert('Por favor, seleccione año fiscal y departamento primero');
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Faltan datos',
+                    text: 'Por favor, selecciona año fiscal y departamento primero.',
+                    confirmButtonText: 'Entendido'
+                });
                 return;
             }
 
@@ -343,7 +312,15 @@
             const idProceso = $(element).data('idproceso');
             const mesNumero = $(element).data('mes');
 
-            if (confirm(`¿Está seguro de habilitar la fecha de captura?`)) {
+            Swal.fire({
+                icon: 'warning',
+                title: '¿Habilitar la fecha de captura?',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, habilitar',
+                cancelButtonText: 'Cancelar'
+            }).then(function (resultado) {
+                if (!resultado.isConfirmed) return;
+
                 $.ajax({
                     url: '@Url.Action("HabilitarCaptura", "Monitoreo")',
                     type: 'POST',
@@ -353,54 +330,88 @@
                     },
                     success: function(response) {
                         if (response.success) {
-                            alert('Captura habilitada correctamente. La página se recargará.');
-                            $('#btnBuscar').click();
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Captura habilitada',
+                                text: 'La página se recargará.',
+                                confirmButtonText: 'Aceptar'
+                            }).then(function () {
+                                $('#btnBuscar').click();
+                            });
                         } else {
-                            alert('Error al habilitar la captura: ' + response.message);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error al habilitar la captura',
+                                text: response.message,
+                                confirmButtonText: 'Entendido'
+                            });
                         }
                     },
                     error: function(xhr, status, error) {
-                        alert('Error de comunicación con el servidor.');
-                        console.error('AJAX Error:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error de comunicación',
+                            text: 'No se pudo contactar al servidor.',
+                            confirmButtonText: 'Entendido'
+                        });
                     }
                 });
-            }
+            });
         }
 
         function eliminarCapturaMes(elemento) {
-                const idProceso = $(elemento).data('idproceso');
-                const mes = $(elemento).data('mes');
+            const idProceso = $(elemento).data('idproceso');
+            const mes = $(elemento).data('mes');
 
-                const nombresMeses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-                                      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+            const nombresMeses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                                  'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
-                if (confirm(`¿Está seguro de que desea eliminar la captura de ${nombresMeses[mes]}?\n\nEsta acción:\n- Eliminará todos los registros externos del mes\n- Marcará el mes como no capturado\n\nEsta acción no se puede deshacer.`)) {
+            Swal.fire({
+                icon: 'warning',
+                title: '¿Eliminar la captura de ' + nombresMeses[mes] + '?',
+                html: 'Esta acción:<br>- Eliminará todos los registros externos del mes<br>- Marcará el mes como no capturado<br><br>Esta acción no se puede deshacer.',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then(function (resultado) {
+                if (!resultado.isConfirmed) return;
 
-                    $(elemento).removeClass('fa-trash').addClass('fa-spinner fa-spin');
+                $(elemento).removeClass('fa-trash').addClass('fa-spinner fa-spin');
 
-                    $.ajax({
-                        url: '@Url.Action("EliminarCapturaMes", "Monitoreo")',
-                        type: 'POST',
-                        data: {
-                            idProceso: idProceso,
-                            mes: mes
-                        },
-                        success: function(response) {
-                            if (response.success) {
-                                alert(response.mensaje);
+                $.ajax({
+                    url: '@Url.Action("EliminarCapturaMes", "Monitoreo")',
+                    type: 'POST',
+                    data: {
+                        idProceso: idProceso,
+                        mes: mes
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Captura eliminada',
+                                text: response.mensaje,
+                                confirmButtonText: 'Aceptar'
+                            }).then(function () {
                                 $('#btnBuscar').click();
-                            } else {
-                                alert('Error: ' + response.mensaje);
-                                $(elemento).removeClass('fa-spinner fa-spin').addClass('fa-trash');
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            alert('Error al eliminar la captura del mes');
+                            });
+                        } else {
+                            Swal.fire({ icon: 'error', title: 'Error', text: response.mensaje, confirmButtonText: 'Entendido' });
                             $(elemento).removeClass('fa-spinner fa-spin').addClass('fa-trash');
                         }
-                    });
-                }
-            }
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'No se pudo eliminar la captura del mes.',
+                            confirmButtonText: 'Entendido'
+                        });
+                        $(elemento).removeClass('fa-spinner fa-spin').addClass('fa-trash');
+                    }
+                });
+            });
+        }
 
         function obtenerFechaHabilitacion(item, mesNumero) {
             // Las propiedades vienen en camelCase desde el JSON
@@ -414,6 +425,32 @@
             return item[nombrePropiedad];
         }
 
+        function filtrarTabla() {
+            var tabla = document.getElementById('tablaDatos');
+            if (!tabla) return;
+
+            var ppFiltro = ($('#selectProgramaFiltro').val() || '').toLowerCase();
+            var areaFiltro = $('#selectAreaFiltro').val() || '';
+
+            var filas = tabla.querySelectorAll('tbody tr');
+            filas.forEach(function (fila) {
+                var pasaPp = !ppFiltro || fila.getAttribute('data-pp') === ppFiltro;
+                var pasaArea = !areaFiltro || fila.getAttribute('data-area') === areaFiltro;
+
+                fila.style.display = (pasaPp && pasaArea) ? '' : 'none';
+            });
+
+            TablaPaginada.actualizar('tablaDatos');
+        }
+
+        $('#selectProgramaFiltro, #selectAreaFiltro').on('change', filtrarTabla);
+
+        function inicializarTooltips() {
+            $('#tbodyDatos [data-bs-toggle="tooltip"]').each(function () {
+                bootstrap.Tooltip.getOrCreateInstance(this);
+            });
+        }
+
         $(document).ready(function() {
             $('#btnBuscar').click(function() {
                 var anoFiscal = $('#selectAnoFiscal').val();
@@ -421,7 +458,12 @@
                 var departamentoTexto = $('#selectDepartamento option:selected').text();
 
                 if (!departamento) {
-                    alert('Por favor, seleccione un departamento');
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Selecciona un departamento',
+                        text: 'Por favor, selecciona un departamento para continuar.',
+                        confirmButtonText: 'Entendido'
+                    });
                     return;
                 }
 
@@ -459,23 +501,23 @@
                                     let iconoHTML = '';
                                     let claseIcono = '';
                                     let titulo = '';
-                                    let color = '';
 
                                     const botonEliminarMes = esAdmin ?
                                         `<i
                                             class="fa-solid fa-trash"
                                             title="Eliminar Captura del Mes"
+                                            data-bs-toggle="tooltip"
+                                            data-bs-placement="top"
                                             data-idproceso="${idProceso}"
                                             data-mes="${mesNumero}"
                                             onclick="eliminarCapturaMes(this)"
                                             style="cursor: pointer; color: #dc3545;"></i>` : '';
 
                                     if (valor === 1 || valor === true) {
-                                        color = 'text-success';
                                         claseIcono = 'fa-circle-check';
                                         titulo = 'Completado';
                                         const url = '@Url.Action("ActualizacionMeses", "Monitoreo")' + '?idProceso=' + idProceso + '&mes=' + mesNumero + '&modo=visualizar';
-                                        iconoHTML = `<a href="${url}"><i class="fa-solid ${claseIcono} ${color}" title="${titulo}"></i></a>`;
+                                        iconoHTML = `<a href="${url}" title="${titulo}" data-bs-toggle="tooltip" data-bs-placement="top" class="icono-mes icono-mes-completado"><i class="fa-solid ${claseIcono}"></i></a>`;
                                         if (esAdmin) {
                                             iconoHTML += `<br>${botonEliminarMes}`;
                                         }
@@ -509,7 +551,6 @@
                                         }
 
                                         if (enPeriodoCaptura || estaHabilitadoManualmente) {
-                                            color = 'text-primary clickable-icon';
                                             claseIcono = 'fa-circle-xmark';
 
                                             if (estaHabilitadoManualmente && !enPeriodoCaptura) {
@@ -519,10 +560,9 @@
                                             }
 
                                             const url = '@Url.Action("ActualizacionMeses", "Monitoreo")' + '?idProceso=' + idProceso + '&mes=' + mesNumero;
-                                            iconoHTML = `<a href="${url}"><i class="fa-solid ${claseIcono} ${color}" title="${titulo}" style="cursor: pointer;"></i></a>`;
+                                            iconoHTML = `<a href="${url}" title="${titulo}" data-bs-toggle="tooltip" data-bs-placement="top" class="icono-mes icono-mes-pendiente"><i class="fa-solid ${claseIcono}"></i></a>`;
 
                                         } else {
-                                            color = 'text-danger';
                                             claseIcono = 'fa-circle-xmark';
                                             titulo = 'Pendiente - Fuera de periodo';
 
@@ -530,31 +570,31 @@
                                                 const botonAdmin = `<i
                                                     class="fa-sharp fa-solid fa-check-to-slot"
                                                     title="Habilitar Captura (Admin)"
+                                                    data-bs-toggle="tooltip"
+                                                    data-bs-placement="top"
                                                     data-idproceso="${idProceso}"
                                                     data-mes="${mesNumero}"
                                                     onclick="habilitarCaptura(this)"
                                                     style="cursor: pointer; color: #C04116;"></i>`;
 
-                                                iconoHTML = `<i class="fa-solid ${claseIcono} ${color}" title="${titulo}"></i><br>${botonAdmin}<br>${botonEliminarMes}`;
+                                                iconoHTML = `<span class="icono-mes icono-mes-vencido" title="${titulo}" data-bs-toggle="tooltip" data-bs-placement="top"><i class="fa-solid ${claseIcono}"></i></span><br>${botonAdmin}<br>${botonEliminarMes}`;
                                             } else {
-                                                iconoHTML = `<i class="fa-solid ${claseIcono} ${color}" title="${titulo}"></i>`;
+                                                iconoHTML = `<span class="icono-mes icono-mes-vencido" title="${titulo}" data-bs-toggle="tooltip" data-bs-placement="top"><i class="fa-solid ${claseIcono}"></i></span>`;
                                             }
                                         }
                                     }
                                     return iconoHTML;
                                 }
 
-                                var btnEliminar = '';
-                                var btnEditar = '';
-
-                                // Para ADMINISTRADOR
+                                var celdaAcciones = '';
                                 if (esAdmin) {
-                                    btnEditar = '<button type="button" class="btn btn-primary btn-sm btn-editar me-1" data-id="' + item.idProceso + '"><i class="fa-solid fa-pen-to-square"></i></button>';
-                                    btnEliminar = '<button type="button" class="btn btn-danger btn-sm btn-eliminar" data-id="' + item.idProceso + '"><i class="fa-solid fa-trash"></i></button>';
+                                    var acciones = '<button type="button" class="btn-accion btn-accion-editar btn-editar" data-id="' + item.idProceso + '" title="Editar" data-bs-toggle="tooltip" data-bs-placement="top"><i class="fa-solid fa-pen-to-square"></i></button>' +
+                                        '<button type="button" class="btn-accion btn-accion-eliminar btn-eliminar" data-id="' + item.idProceso + '" title="Eliminar" data-bs-toggle="tooltip" data-bs-placement="top"><i class="fa-solid fa-trash"></i></button>';
+                                    celdaAcciones = '<td><div class="acciones-grupo">' + acciones + '</div></td>';
                                 }
 
-                                var fila = '<tr>' +
-                                    '<td>' + item.pp + '<div class="mt-1">' + btnEditar + btnEliminar + '</div></td>' +
+                                var fila = '<tr data-pp="' + (item.pp || '').toLowerCase() + '" data-area="' + (item.area || '') + '">' +
+                                    '<td>' + item.pp + '</td>' +
                                     '<td>' + item.componente + '</td>' +
                                     '<td>' + actividadCompleta + '</td>' +
                                     '<td>' + item.descripcionActividad + '</td>' +
@@ -571,25 +611,35 @@
                                     '<td class="text-center">' + generarIcono(item.octubre, 10, item.fechasCaptura, item.idProceso, item) + '</td>' +
                                     '<td class="text-center">' + generarIcono(item.noviembre, 11, item.fechasCaptura, item.idProceso, item) + '</td>' +
                                     '<td class="text-center">' + generarIcono(item.diciembre, 12, item.fechasCaptura, item.idProceso, item) + '</td>' +
+                                    celdaAcciones +
                                 '</tr>';
                                 $('#tbodyDatos').append(fila);
                             });
 
                             $('#tablaDatos').show();
+                            TablaPaginada.iniciar('tablaDatos', { pageSize: 8 });
+                            filtrarTabla();
+                            inicializarTooltips();
                         } else {
+                            $('#tablaDatos').show();
                             $('#mensajeSinDatos').show();
                         }
                     },
                     error: function(xhr, status, error) {
                         $('#mensajeCarga').hide();
-                        alert('Error al cargar los datos: ' + error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error al cargar los datos',
+                            text: error,
+                            confirmButtonText: 'Entendido'
+                        });
                     }
                 });
             });
 
             function limpiarFormularioModal() {
                 $('#IdProcesoModal').val('');
-                $('#selectProgramaPresupuestario').val('Agenda');
+                $('#selectProgramaPresupuestario').val('Agenda').trigger('change');
                 $('#ComponenteModal').val('');
                 $('#ActividadModal').val('');
                 $('#DescripcionActividadModal').val('');
@@ -603,25 +653,44 @@
             $('#tbodyDatos').on('click', '.btn-eliminar', function() {
                 var idProceso = $(this).data('id');
 
-                if (confirm('¿Está seguro de que desea eliminar este registro? Esta acción es irreversible y eliminará datos en 4 tablas.')) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: '¿Eliminar este registro?',
+                    text: 'Esta acción es irreversible y eliminará datos en 4 tablas.',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then(function (resultado) {
+                    if (!resultado.isConfirmed) return;
+
                     $.ajax({
                         url: '@Url.Action("EliminarRegistro", "Programacion")',
                         type: 'POST',
                         data: { id: idProceso },
                         success: function(response) {
                             if (response.success) {
-                                alert(response.mensaje);
-                                // Recargar la tabla
-                                $('#btnBuscar').click();
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Registro eliminado',
+                                    text: response.mensaje,
+                                    confirmButtonText: 'Aceptar'
+                                }).then(function () {
+                                    $('#btnBuscar').click();
+                                });
                             } else {
-                                alert('Error: ' + response.mensaje);
+                                Swal.fire({ icon: 'error', title: 'Error', text: response.mensaje, confirmButtonText: 'Entendido' });
                             }
                         },
                         error: function(xhr, status, error) {
-                            alert('Error en la comunicación con el servidor al intentar eliminar.');
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error de comunicación',
+                                text: 'No se pudo contactar al servidor al intentar eliminar.',
+                                confirmButtonText: 'Entendido'
+                            });
                         }
                     });
-                }
+                });
             });
 
             $('#btnNuevo').click(function() {
@@ -630,7 +699,12 @@
                 var departamentoTexto = $('#selectDepartamento option:selected').text();
 
                 if (!departamento) {
-                    alert('Por favor, seleccione un departamento antes de agregar un nuevo registro');
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Selecciona un departamento',
+                        text: 'Por favor, selecciona un departamento antes de agregar un nuevo registro.',
+                        confirmButtonText: 'Entendido'
+                    });
                     return;
                 }
 
@@ -683,11 +757,11 @@
                             var modal = new bootstrap.Modal(document.getElementById('modalModificarActividad'));
                             modal.show();
                         } else {
-                            alert('Error: No se encontraron datos para el ID proporcionado.');
+                            Swal.fire({ icon: 'error', title: 'Error', text: 'No se encontraron datos para el ID proporcionado.', confirmButtonText: 'Entendido' });
                         }
                     },
                     error: function() {
-                        alert('Ocurrió un error al cargar los datos del registro.');
+                        Swal.fire({ icon: 'error', title: 'Error', text: 'Ocurrió un error al cargar los datos del registro.', confirmButtonText: 'Entendido' });
                     }
                 });
             });
@@ -730,6 +804,7 @@
                                 );
                             });
                         }
+                        selectMedida.trigger('change');
                     },
                     error: function() {
                         console.error('Error al cargar las unidades de medida');
@@ -756,11 +831,11 @@
 
                 // Campos principales
                 $('#IdProcesoModal').val(data.idProceso);
-                $('#selectProgramaPresupuestario').val(data.pp);
+                $('#selectProgramaPresupuestario').val(data.pp).trigger('change');
                 $('#ComponenteModal').val(data.componente);
                 $('#ActividadModal').val(data.actividad);
                 $('#DescripcionActividadModal').val(data.descripcionActividad);
-                selectMedida.val(unidadMedidaActual);
+                selectMedida.val(unidadMedidaActual).trigger('change');
                 $('#ProgramaSocialModal').val(data.programaSocial);
 
                 const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
@@ -785,10 +860,6 @@
                 const modo = $('#modoFormulario').val();
                 const formData = $(this).serialize();
 
-                // DEBUG: Ver qué datos se están enviando
-                // console.log('Modo:', modo);
-                // console.log('Datos del formulario:', formData);
-
                 let urlDestino;
                 if (modo === 'nuevo') {
                     urlDestino = '@Url.Action("GuardarNuevo", "Monitoreo")';
@@ -802,20 +873,46 @@
                     data: formData,
                     success: function(response) {
                         if (response.success) {
-                            alert(response.message);
-                            var modal = bootstrap.Modal.getInstance(document.getElementById('modalModificarActividad'));
-                            modal.hide();
-                            $('#btnBuscar').click();
+                            Swal.fire({
+                                icon: 'success',
+                                title: '¡Listo!',
+                                text: response.message,
+                                confirmButtonText: 'Aceptar'
+                            }).then(function () {
+                                var modal = bootstrap.Modal.getInstance(document.getElementById('modalModificarActividad'));
+                                modal.hide();
+                                $('#btnBuscar').click();
+                            });
                         } else {
-                            alert('Error al guardar: ' + response.message);
+                            Swal.fire({ icon: 'error', title: 'Error al guardar', text: response.message, confirmButtonText: 'Entendido' });
                         }
                     },
                     error: function(xhr, status, error) {
                         console.error('Error AJAX:', xhr.responseText);
-                        alert('Error de conexión al intentar guardar.');
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error de conexión',
+                            text: 'No se pudo guardar la información.',
+                            confirmButtonText: 'Entendido'
+                        });
                     }
                 });
             });
+        });
+
+        // Si se regresa con "atrás" del navegador (sin que el bfcache haya
+        // restaurado la página completa), el filtro conserva el valor pero
+        // la tabla queda vacía porque nunca se disparó el clic de "Buscar".
+        // Se vuelve a ejecutar la búsqueda automáticamente en ese caso.
+        $(document).ready(function () {
+            var entradaNavegacion = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+            var esNavegacionAtras = entradaNavegacion
+                ? entradaNavegacion.type === 'back_forward'
+                : (performance.navigation && performance.navigation.type === 2);
+
+            if (esNavegacionAtras && $('#selectDepartamento').val()) {
+                $('#btnBuscar').click();
+            }
         });
     </script>
 }

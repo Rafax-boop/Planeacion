@@ -1,87 +1,87 @@
-﻿@model Metas.AplicacionWeb.Models.ViewModels.VMUsuarioLogin
+@model Metas.AplicacionWeb.Models.ViewModels.VMUsuarioLogin
 @{
     Layout = null;
     ViewData["Title"] = "Acceso";
 }
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Metas</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <title>@ViewData["Title"] - Control de Seguimiento de Metas</title>
+    <link rel="icon" type="image/png" href="~/img/corazon.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    <link href="~/css/Login.css" rel="stylesheet" />
-    <link href="~/css/SweetAlert.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="~/css/estilos-login.css" />
 </head>
 <body>
-    <!-- Section: Design Block -->
-    <section class="text-center text-lg-start">
-        <!-- Jumbotron -->
-        <div class="login-container">
-            <div class="container-fluid">
-                <div class="row g-0 align-items-center justify-content-center">
-                    <div class="col-lg-5 col-xl-4 mb-5 mb-lg-0">
-                        <div class="card cascading-right glass-effect">
-                            <div class="card-body p-4 p-md-5 shadow-5 text-center">
-                                <h1 class="fw-bold mb-1 titulo">INICIO DE SESION</h1>
-                                <h2 class="h5 text-muted mb-3">PUEBLA - Gobierno del Estado</h2>
-                                <div class="small text-muted mb-4">2024 - 2030</div>
+    <div class="login-page">
 
-                                <!-- FORMULARIO CON EFECTO OUTLINE -->
-                                <form asp-controller="Acceso" asp-action="Login" method="post" id="loginForm">
-                                    <!-- Usuario input -->
-                                    <div class="form-floating mb-4">
-                                        <input type="text" class="form-control titulo input-arena" id="floatingUsuario" placeholder=" " style="border: 1px solid rgb(192, 152, 102, 0.2)" asp-for="Usuario"/>
-                                        <label style="color: #c09866" for="floatingUsuario">Usuario</label>
-                                    </div>
+        <section class="login-panel-brand">
+            <div class="orb orb-1"></div>
+            <div class="orb orb-2"></div>
+            <div class="orb orb-3"></div>
+            <div class="orb orb-4"></div>
+            <div class="orb orb-5"></div>
 
-                                    <!-- Contraseña input -->
-                                    <div class="form-floating mb-4">
-                                        <input type="password" class="form-control titulo input-arena" id="floatingPassword" placeholder=" " style="border: 1px solid rgb(192, 152, 102, 0.2)" asp-for="Password"/>
-                                        <label style="color: #c09866" for="floatingPassword">Contraseña</label>
-                                    </div>
+            <div class="brand-center">
+                <img src="~/img/corazon.png" alt="Control de Seguimiento de Metas" class="brand-heart" />
+                <h1 class="brand-title">
+                    <span class="brand-title-strong">Control de Seguimiento</span>
+                    <span class="brand-title-soft">de Metas</span>
+                </h1>
+            </div>
 
-                                    <!-- Submit button -->
-                                    <button type="submit" class="btn-Ingresar" id="btnIngresar">
-                                        INGRESAR
-                                    </button>
-                                </form>
-                            </div>
+            <div class="brand-footer">
+                <img src="~/img/familias-dif.png" alt="Familias Sistema Estatal DIF" class="brand-logo" />
+                <img src="~/img/pensargrande.png" alt="Pensar en Grande" class="brand-logo" />
+            </div>
+        </section>
+
+        <section class="login-panel-form">
+            <div class="login-card-wrap">
+                <div class="login-card">
+                    <img src="~/img/corazon.png" alt="Control de Seguimiento de Metas" class="brand-heart-mobile" />
+
+                    <div class="login-icon">
+                        <i class="fa-solid fa-lock"></i>
+                    </div>
+                    <h2>Iniciar sesión</h2>
+                    <p class="login-subtitle">Ingresa tus credenciales para acceder al sistema</p>
+
+                    <form asp-controller="Acceso" asp-action="Login" method="post" novalidate>
+                        <div class="field">
+                            <input asp-for="Usuario" type="text" placeholder=" " autocomplete="username" autofocus />
+                            <label asp-for="Usuario">Usuario</label>
                         </div>
-                    </div>
 
-                    <div class="col-lg-5 col-xl-4 mb-5 mb-lg-0 img-logo">
-                        <img src="~/img/Gobierno.jpg" class="w-100 rounded-4 shadow-4" alt="Gobierno del estado de Puebla" />
-                    </div>
+                        <div class="field field-password">
+                            <input asp-for="Password" type="password" placeholder=" " autocomplete="current-password" />
+                            <label asp-for="Password">Contraseña</label>
+                            <button type="button" class="toggle-password" data-target="Password" aria-label="Mostrar contraseña">
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                        </div>
+
+                        @if (ViewData["Mensaje"] != null)
+                        {
+                            <p class="login-error">@ViewData["Mensaje"]</p>
+                        }
+
+                        <button type="submit" class="btn-login">Entrar</button>
+                    </form>
                 </div>
-            </div>
-        </div>
-    </section>
 
-    <footer class="border-top footer text-muted text-center py-3">
-        <div class="container">
-            <div class="d-flex justify-content-center align-items-center gap-4 mb-2">
-                <img style="height: 40px; width: auto;" src="~/img/familias-dif.png" alt="Logo 1" />
-                <img style="height: 40px; width: auto;" src="~/img/pensargrande.png" alt="Logo 3" />
+                <p class="login-caption">Gobierno del Estado de Puebla · Control de Seguimiento de Metas</p>
             </div>
-        </div>
-    </footer>
-    <script>
-        @if (ViewData["Mensaje"] != null)
-        {
-                <text>
-                    window.mensajeError = '@Html.Raw(ViewData["Mensaje"])';
-                </text>
-        }
-        else
-        {
-                <text>
-                    window.mensajeError = '';
-                </text>
-        }
-    </script>
-    <script src="~/js/Login.js"></script>
+        </section>
+
+    </div>
+
+    <script src="~/js/login.js"></script>
 </body>
 </html>

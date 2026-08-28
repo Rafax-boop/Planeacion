@@ -7,387 +7,319 @@
 
 @if (User.IsInRole("Administrador") && !esSoloVista)
 {
-    <div class="container-gris mt-4">
-        <div class="row">
-            <div class="col-12">
-                <div class="row g-3 text-center mt-1 mx-2 pb-3 border-bottom">
-                    <h3 class="fw-semibold text-center m-2 titulo">Información no requisitada</h3>
-                </div>
-            </div>
+    <div class="container-fluid mt-4">
+        <div class="d-flex justify-content-end mb-3">
+            <a asp-controller="Monitoreo" asp-action="Monitoreo" class="btn-app-gris" onclick="if (window.history.length > 1) { event.preventDefault(); window.history.back(); }">
+                <i class="fa-solid fa-arrow-left"></i> Volver
+            </a>
+        </div>
+        <div class="sin-registros">
+            <i class="fa-solid fa-circle-info"></i><br>
+            <span>Información no requisitada.</span>
         </div>
     </div>
 }
 else
 {
-    <form method="post" action="@Url.Action("GuardarActualizacion", "Monitoreo")" enctype="multipart/form-data">
+    <div class="container-fluid mt-4">
+        <form method="post" action="@Url.Action("GuardarActualizacion", "Monitoreo")" enctype="multipart/form-data">
 
-        <input type="hidden" name="IdProceso" value="@Model.IdProceso" /> 
-        <input type="hidden" name="Mes" value="@Model.MesNum" />
-        <input type="hidden" name="RutaEvidenciaExistente" value="@Model.RutaEvidencia" />
-        <input type="hidden" name="RutaJustificacionExistente" value="@Model.RutaJustificacion" />
-        <div class="glass-effect rounded-5 mt-4">
-            @* Encabezado *@
-            <div class="">
-                <h1 class="fw-semibold text-center p-1 titulo">
-                    @Model.Mes
-                </h1>
-            </div>    
-        </div>
-        <div class="text-center mb-4 mt-3">
-            <small class="text-muted">
-                <i class="fas fa-calendar titulo me-1"></i>
-                @Model.FechaFin
-            </small>
-        </div>
-        @* Fin Encabezado *@    
+            <input type="hidden" name="IdProceso" value="@Model.IdProceso" />
+            <input type="hidden" name="Mes" value="@Model.MesNum" />
+            <input type="hidden" name="RutaEvidenciaExistente" value="@Model.RutaEvidencia" />
+            <input type="hidden" name="RutaJustificacionExistente" value="@Model.RutaJustificacion" />
 
-        @* Primera tabla (ReadOnly - Sin cambios de name) *@
-        <div class="container-gris mt-4">
-            <div class="row">
-                <div class="col-12">
-                    <div class="row g-3 text-center mt-1 mx-2 pb-3 border-bottom">
-                        <div class="col-12 col-md-4 col-lg-2 border-md-end border-bottom border-lg-bottom-0 pb-2 pb-md-0">
-                            <label for="metaProgramada" class="form-label fw-semibold titulo">Meta Programada</label>
-                            <input type="text" class="form-control fw-light input-arena titulo formato-miles" style="background-color:#f7f2ed;" id="metaProgramada" value="@Model.Total" readonly>
-                        </div>
-                        <div class="col-12 col-md-4 col-lg-2 border-md-end border-bottom border-lg-bottom-0 pb-2 pb-md-0">
-                            <label for="input2" class="form-label fw-semibold titulo">Personas Programadas</label>
-                            <input type="text" class="form-control fw-light input-arena titulo formato-miles" style="background-color:#f7f2ed;" value="@Model.TotalPersonas" readonly id="input2">
-                        </div>
-                        <div class="col-12 col-md-4 col-lg-2 border-lg-end border-bottom border-lg-bottom-0 pb-2 pb-md-0">
-                            <label for="input3" class="form-label fw-semibold titulo">Pp</label>
-                            <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" readonly id="input3" value="@Model.pp">
-                        </div>
-                        <div class="col-12 col-md-4 col-lg-2 border-md-end border-bottom border-lg-bottom-0 pb-2 pb-md-0">
-                            <label for="input4" class="form-label fw-semibold titulo">Componente</label>
-                            <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" readonly id="input4" value="@Model.Componente">
-                        </div>
-                        <div class="col-12 col-md-4 col-lg-2 border-md-end border-bottom border-lg-bottom-0 pb-2 pb-md-0">
-                            <label for="input5" class="form-label fw-semibold titulo">Actividad</label>
-                            <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" readonly id="input5" value="@Model.Actividad">
-                        </div>
-                        <div class="col-12 col-md-4 col-lg-2">
-                            <label for="input6" class="form-label fw-semibold titulo">Unidad de Medida</label>
-                            <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" readonly id="input6" value="@Model.UnidadMedida">
-                        </div>
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 ficha-titulo-wrap">
+                <div class="titulo-vista-wrap mb-0">
+                    <h1 class="titulo-vista">@Model.Mes</h1>
+                    <span class="subtitulo-vista"><i class="fa-solid fa-calendar me-1"></i>@Model.FechaFin?.ToString("dd/MM/yyyy")</span>
+                </div>
+                <a asp-controller="Monitoreo" asp-action="Monitoreo" class="btn-app-gris" onclick="if (window.history.length > 1) { event.preventDefault(); window.history.back(); }">
+                    <i class="fa-solid fa-arrow-left"></i> Volver
+                </a>
+            </div>
+
+            @* Contexto de la actividad (solo lectura) *@
+            <div class="ficha-seccion">
+                <h5 class="ficha-seccion-titulo">Contexto de la Actividad</h5>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label for="metaProgramada" class="form-label small text-muted mb-1">Meta Programada</label>
+                        <input type="text" class="form-control formato-miles" id="metaProgramada" value="@Model.Total" readonly>
                     </div>
-
-                    <div class="row g-3 text-center mt-1 mx-2 border-bottom pb-3">
-                        <div class="col-12 col-md-4 border-md-end border-bottom border-md-bottom-0 pb-2 pb-md-0">
-                            <label for="input1" class="form-label fw-semibold titulo"> Programa o servicio de asistencia social </label>
-                            <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed" readonly id="input1" value="@Model.ProgramaSocial">
-                        </div>
-                        <div class="col-12 col-md-4 border-md-end border-bottom border-md-bottom-0 pb-2 pb-md-0">
-                            <label for="input2" class="form-label fw-semibold titulo">Área</label>
-                            <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed" readonly id="input2" value="@Model.Area">
-                        </div>
-                        <div class="col-12 col-md-4">
-                            <label for="input3" class="form-label fw-semibold titulo">Departamento</label>
-                            <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed" readonly id="input3" value="@Model.Departamento">
-                        </div>
+                    <div class="col-md-4">
+                        <label class="form-label small text-muted mb-1">Personas Programadas</label>
+                        <input type="text" class="form-control formato-miles" value="@Model.TotalPersonas" readonly>
                     </div>
+                    <div class="col-md-4">
+                        <label class="form-label small text-muted mb-1">Programa Presupuestario</label>
+                        <input type="text" class="form-control" readonly value="@Model.pp">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small text-muted mb-1">Componente</label>
+                        <input type="text" class="form-control" readonly value="@Model.Componente">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small text-muted mb-1">Actividad</label>
+                        <input type="text" class="form-control" readonly value="@Model.Actividad">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small text-muted mb-1">Unidad de Medida</label>
+                        <input type="text" class="form-control" readonly value="@Model.UnidadMedida">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small text-muted mb-1">Programa o servicio de asistencia social</label>
+                        <input type="text" class="form-control" readonly value="@Model.ProgramaSocial">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small text-muted mb-1">Área</label>
+                        <input type="text" class="form-control" readonly value="@Model.Area">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small text-muted mb-1">Departamento</label>
+                        <input type="text" class="form-control" readonly value="@Model.Departamento">
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <label class="form-label small text-muted mb-1">Descripción de la Actividad</label>
+                    <input type="text" class="form-control" readonly value="@Model.DescripcionActividad">
+                </div>
+            </div>
 
-                    <div class="text-center mt-3 mx-3 mb-4">
-                        <div class="">
-                            <label for="input1" class="form-label fw-semibold titulo">Descripción de la Actividad</label>
-                            <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" readonly id="input1" value="@Model.DescripcionActividad">
-                        </div>                
+            @* Metas *@
+            <div class="ficha-seccion">
+                <h5 class="ficha-seccion-titulo">Metas</h5>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="realizadoInput" class="form-label small text-muted mb-1">Realizado</label>
+                        <input type="text" class="form-control formato-miles" id="realizadoInput" name="Realizado" value="@Model.Realizado" @(esSoloVista ? "disabled" : "")>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="totalPorcentaje" class="form-label small text-muted mb-1">Total de porcentaje</label>
+                        <input type="text" class="form-control" readonly id="totalPorcentaje" value="0%">
                     </div>
                 </div>
             </div>
-        </div>
-        @* Fin Primera tabla *@
 
-        @* tabla Secundaria - CAMPOS DE CAPTURA *@
-        <div class="container-gris mt-4">
-            @* metas *@
-            <div class="glass-effect rounded-5 m-3">
-                <h3 class="fw-semibold text-center m-2 titulo">
-                    METAS
-                </h3>
-            </div>
-            <div class="row">
-                <div class="col-12">
-                    <div class="row g-3 mt-1 mx-2 pb-3 border-bottom">
-                        <div class="col-12 col-md-6 border-md-end border-bottom border-md-bottom-0 pb-2 pb-md-0">
-                            <label for="realizadoInput" class="form-label fw-semibold titulo">Realizado</label>
-                            <input type="text" class="form-control fw-light input-arena titulo formato-miles" id="realizadoInput" name="Realizado" value="@Model.Realizado" @(esSoloVista ? "disabled" : "")>
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <label for="totalPorcentaje" class="form-label fw-semibold titulo">Total de porcentaje:</label>
-                            <input type="text" class="form-control fw-light input-arena titulo" style="background-color:#f7f2ed;" readonly id="totalPorcentaje" value="0%">
-                        </div>            
-                    </div>            
-                </div>
-            </div>
-        
-            @* personas *@
-            <div class="glass-effect rounded-5 m-3">
-                <h4 class="fw-semibold text-center m-2 titulo">
-                    PERSONAS
-                </h4>
-            </div>
-            <div class="row">
-                <div class="col-12">
-                    <div class="row g-3 mt-1 mx-2 pb-3 border-bottom">
-                        <div class="col-12 col-md-4 border-md-end border-bottom border-md-bottom-0 pb-2 pb-md-0">
-                            <label for="mujeresAtendidas" class="form-label fw-semibold titulo">Mujeres Atendidas</label>
-                            <input type="text" class="form-control fw-light input-arena titulo personas-input formato-miles" disabled id="mujeresAtendidas" name="MujeresAtendidas" value="@Model.MujeresAtendidas" @(esSoloVista ? "disabled" : "")>
-                        </div>
-                        <div class="col-12 col-md-4 border-md-end border-bottom border-md-bottom-0 pb-2 pb-md-0">
-                            <label for="hombresAtendidos" class="form-label fw-semibold titulo">Hombres Atendidos</label>
-                            <input type="text" class="form-control fw-light input-arena titulo personas-input formato-miles" disabled id="hombresAtendidos" name="HombresAtendidos" value="@Model.HombresAtendidos" @(esSoloVista ? "disabled" : "")>
-                        </div>
-                        <div class="col-12 col-md-4">
-                            <label for="personasAtendidas" class="form-label fw-semibold titulo">Personas Atendidas</label>
-                            <input type="text" class="form-control fw-light input-arena titulo formato-miles" style="background-color:#f7f2ed;" readonly id="personasAtendidas" value="0">
-                        </div>
+            @* Personas *@
+            <div class="ficha-seccion">
+                <h5 class="ficha-seccion-titulo">Personas</h5>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label for="mujeresAtendidas" class="form-label small text-muted mb-1">Mujeres Atendidas</label>
+                        <input type="text" class="form-control formato-miles personas-input" disabled id="mujeresAtendidas" name="MujeresAtendidas" value="@Model.MujeresAtendidas" @(esSoloVista ? "disabled" : "")>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="hombresAtendidos" class="form-label small text-muted mb-1">Hombres Atendidos</label>
+                        <input type="text" class="form-control formato-miles personas-input" disabled id="hombresAtendidos" name="HombresAtendidos" value="@Model.HombresAtendidos" @(esSoloVista ? "disabled" : "")>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="personasAtendidas" class="form-label small text-muted mb-1">Personas Atendidas</label>
+                        <input type="text" class="form-control formato-miles" readonly id="personasAtendidas" value="0">
                     </div>
                 </div>
             </div>
-        
+
             @* Rango de edad *@
-            <div class="glass-effect rounded-5 m-3">
-                <h4 class="fw-semibold text-center m-2 titulo">
-                    RANGO DE EDAD
-                </h4>
-            </div>
-            <div class="row">
-                <div class="col-12">
-                    <div class="row g-3 mt-1 mx-2 pb-3">
-                        <div class="col-12 col-md-6 col-lg-3">
-                            <label for="rango0a3" class="form-label fw-semibold titulo">0 - 3 AÑOS</label>
-                            <input type="text" class="form-control fw-light input-arena titulo rango-input formato-miles" disabled id="rango0a3" name="Rango0a3" value="@Model.Rango0a3" @(esSoloVista ? "disabled" : "")>
-                        </div>
-                        <div class="col-12 col-md-6 col-lg-3">
-                            <label for="rango4a8" class="form-label fw-semibold titulo">4 - 8 AÑOS</label>
-                            <input type="text" class="form-control fw-light input-arena titulo rango-input formato-miles" disabled id="rango4a8" name="Rango4a8" value="@Model.Rango4a8" @(esSoloVista ? "disabled" : "")>
-                        </div>
-                        <div class="col-12 col-md-6 col-lg-3">
-                            <label for="rango9a12" class="form-label fw-semibold titulo">9 - 12 AÑOS</label>
-                            <input type="text" class="form-control fw-light input-arena titulo rango-input formato-miles" disabled id="rango9a12" name="Rango9a12" value="@Model.Rango9a12" @(esSoloVista ? "disabled" : "")>
-                        </div>
-                        <div class="col-12 col-md-6 col-lg-3">
-                            <label for="rango13a17" class="form-label fw-semibold titulo">13 - 17 AÑOS</label>
-                            <input type="text" class="form-control fw-light input-arena titulo rango-input formato-miles" disabled id="rango13a17" name="Rango13a17" value="@Model.Rango13a17" @(esSoloVista ? "disabled" : "")>
-                        </div>
+            <div class="ficha-seccion">
+                <h5 class="ficha-seccion-titulo">Rango de Edad</h5>
+                <div class="row g-3">
+                    <div class="col-6 col-md-3">
+                        <label for="rango0a3" class="form-label small text-muted mb-1">0 - 3 años</label>
+                        <input type="text" class="form-control formato-miles rango-input" disabled id="rango0a3" name="Rango0a3" value="@Model.Rango0a3" @(esSoloVista ? "disabled" : "")>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <label for="rango4a8" class="form-label small text-muted mb-1">4 - 8 años</label>
+                        <input type="text" class="form-control formato-miles rango-input" disabled id="rango4a8" name="Rango4a8" value="@Model.Rango4a8" @(esSoloVista ? "disabled" : "")>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <label for="rango9a12" class="form-label small text-muted mb-1">9 - 12 años</label>
+                        <input type="text" class="form-control formato-miles rango-input" disabled id="rango9a12" name="Rango9a12" value="@Model.Rango9a12" @(esSoloVista ? "disabled" : "")>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <label for="rango13a17" class="form-label small text-muted mb-1">13 - 17 años</label>
+                        <input type="text" class="form-control formato-miles rango-input" disabled id="rango13a17" name="Rango13a17" value="@Model.Rango13a17" @(esSoloVista ? "disabled" : "")>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <label for="rango18a29" class="form-label small text-muted mb-1">18 - 29 años</label>
+                        <input type="text" class="form-control formato-miles rango-input" disabled id="rango18a29" name="Rango18a29" value="@Model.Rango18a29" @(esSoloVista ? "disabled" : "")>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <label for="rango30a59" class="form-label small text-muted mb-1">30 - 59 años</label>
+                        <input type="text" class="form-control formato-miles rango-input" disabled id="rango30a59" name="Rango30a59" value="@Model.Rango30a59" @(esSoloVista ? "disabled" : "")>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <label for="rango60adelante" class="form-label small text-muted mb-1">60 años en adelante</label>
+                        <input type="text" class="form-control formato-miles rango-input" disabled id="rango60adelante" name="Rango60adelante" value="@Model.Rango60adelante" @(esSoloVista ? "disabled" : "")>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <label for="rangoNoEspecifica" class="form-label small text-muted mb-1">No se especifica</label>
+                        <input type="text" class="form-control formato-miles rango-input" disabled id="rangoNoEspecifica" name="RangoNoEspecifica" value="@Model.RangoNoEspecifica" @(esSoloVista ? "disabled" : "")>
                     </div>
                 </div>
-                <div class="col-12">
-                    <div class="row g-3 mt-1 mx-2 pb-3 border-bottom">
-                        <div class="col-12 col-md-6 col-lg-3">
-                            <label for="rango18a29" class="form-label fw-semibold titulo">18 - 29 AÑOS</label>
-                            <input type="text" class="form-control fw-light input-arena titulo rango-input formato-miles" disabled id="rango18a29" name="Rango18a29" value="@Model.Rango18a29" @(esSoloVista ? "disabled" : "")>
-                        </div>
-                        <div class="col-12 col-md-6 col-lg-3">
-                            <label for="rango30a59" class="form-label fw-semibold titulo">30 - 59 AÑOS</label>
-                            <input type="text" class="form-control fw-light input-arena titulo rango-input formato-miles" disabled id="rango30a59" name="Rango30a59" value="@Model.Rango30a59" @(esSoloVista ? "disabled" : "")>
-                        </div>
-                        <div class="col-12 col-md-6 col-lg-3">
-                            <label for="rango60adelante" class="form-label fw-semibold titulo">DE 60 AÑOS EN ADELANTE</label>
-                            <input type="text" class="form-control fw-light input-arena titulo rango-input formato-miles" disabled id="rango60adelante" name="Rango60adelante" value="@Model.Rango60adelante" @(esSoloVista ? "disabled" : "")>
-                        </div>
-                        <div class="col-12 col-md-6 col-lg-3">
-                            <label for="rangoNoEspecifica" class="form-label fw-semibold titulo">NO SE ESPECIFICA</label>
-                            <input type="text" class="form-control fw-light input-arena titulo rango-input formato-miles" disabled id="rangoNoEspecifica" name="RangoNoEspecifica" value="@Model.RangoNoEspecifica" @(esSoloVista ? "disabled" : "")>
-                        </div>
-                    </div>
-                </div>
-            
-                <div class="col-12">
-                    <div class="row g-3 mt-1 mx-2 pb-3 border-bottom text-center">          
-                        <div class="col-12">
-                            <label for="totalPersonas" class="form-label fw-semibold titulo">TOTAL</label>
-                            <input type="text" class="form-control fw-light input-arena titulo formato-miles" style="background-color:#c09866;" disabled id="totalPersonas" value="0" @(esSoloVista ? "disabled" : "")>
-                        </div>
-                    </div>
+                <div class="mt-3 col-md-4 mx-auto">
+                    <label for="totalPersonas" class="form-label small text-muted mb-1 text-center d-block">Total</label>
+                    <input type="text" class="form-control formato-miles text-center fw-bold" disabled id="totalPersonas" value="0" @(esSoloVista ? "disabled" : "")>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-12">
-                    <div class="row g-3 mt-1 mx-2 pb-3 border-bottom">
-                        @* tipo de poblacion *@
-                        <div class="col-12 col-md-4 border-md-end border-bottom border-md-bottom-0 pb-3 pb-md-0 mb-3 mb-md-0">
-                            <div class="glass-effect rounded-5 mb-4">
-                                <h5 class="fw-semibold text-center m-2 titulo">
-                                    TIPO DE POBLACIÓN
-                                </h5>
-                            </div>
-                            <label for="indigena" class="form-label fw-semibold titulo">Indígena</label>
-                            <input type="text" class="form-control fw-light input-arena titulo formato-miles" id="indigena" name="Indigena" value="@Model.Indigena" @(esSoloVista ? "disabled" : "")>
-                        </div>
 
-                        @* evidencia *@
-                        <div class="col-12 col-md-4 border-md-end border-bottom border-md-bottom-0 pb-3 pb-md-0 mb-3 mb-md-0">
-                            <div class="glass-effect rounded-5 mb-4">
-                                <h5 class="fw-semibold text-center m-2 titulo">
-                                    EVIDENCIA
-                                </h5>
-                            </div>
+            @* Tipo de población / evidencia / justificación *@
+            <div class="ficha-seccion">
+                <div class="row g-4">
+                    <div class="col-md-4 border-end">
+                        <div class="ficha-seccion-subtitulo">Tipo de Población</div>
+                        <label for="indigena" class="form-label small text-muted mb-1">Indígena</label>
+                        <input type="text" class="form-control formato-miles" id="indigena" name="Indigena" value="@Model.Indigena" @(esSoloVista ? "disabled" : "")>
+                    </div>
+
+                    <div class="col-md-4 border-end">
+                        <div class="ficha-seccion-subtitulo">Evidencia</div>
+                        @if (!esSoloVista)
+                        {
+                            @if (!string.IsNullOrEmpty(Model.RutaEvidencia))
+                            {
+                                <div class="mb-3">
+                                    <label class="form-label small text-muted mb-1 d-block">Evidencia actual</label>
+                                    <a target="_blank" href="@Model.RutaEvidencia" class="btn-app-verde btn-tablero-pdf">
+                                        <i class="fa-solid fa-download"></i> Ver evidencia actual
+                                    </a>
+                                    <p class="text-muted small mt-2 mb-0">
+                                        <i class="fa-solid fa-circle-info me-1"></i>
+                                        Si subes un nuevo archivo, reemplazará el actual
+                                    </p>
+                                </div>
+                            }
+
+                            <label for="inputEvidencia" class="form-label small text-muted mb-1">
+                                @(!string.IsNullOrEmpty(Model.RutaEvidencia) ? "Reemplazar evidencia (opcional)" : "Subir evidencia")
+                            </label>
+                            <p class="text-muted small mb-2">Favor de llenar el Formato de Evidencia y subirlo.</p>
+                            <a target="_blank" href="@Url.Content("~/FormatoEvidencia/EVIDENCIA.xlsx")" download="Evidencia.xlsx" class="btn-app-verde btn-tablero-pdf mb-2">
+                                <i class="fa-solid fa-file-arrow-down"></i> Descargar formato
+                            </a>
+                            <input type="file"
+                                   class="form-control"
+                                   id="inputEvidencia"
+                                   name="InputEvidencia"
+                                   data-tiene-archivo-existente="@(!string.IsNullOrEmpty(Model.RutaEvidencia))">
+                        }
+                        else
+                        {
+                            @if (!string.IsNullOrEmpty(Model.RutaEvidencia))
+                            {
+                                <label class="form-label small text-muted mb-1 d-block">Evidencia subida</label>
+                                <a target="_blank" href="@Model.RutaEvidencia" class="btn-app-verde btn-tablero-pdf">
+                                    <i class="fa-solid fa-download"></i> Ver evidencia
+                                </a>
+                            }
+                            else
+                            {
+                                <span class="badge-estatus badge-estatus-error">No se ha cargado ninguna evidencia</span>
+                            }
+                        }
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="ficha-seccion-subtitulo">Justificación</div>
+                        <div id="justificacionDiv" style="display:none;">
                             @if (!esSoloVista)
                             {
-                                @* Mostrar archivo existente si hay uno *@
-                                @if (!string.IsNullOrEmpty(Model.RutaEvidencia))
+                                @if (!string.IsNullOrEmpty(Model.RutaJustificacion))
                                 {
                                     <div class="mb-3">
-                                        <label class="form-label fw-semibold titulo">Evidencia actual:</label>
-                                        <br />
-                                        <a target="_blank" href="@Model.RutaEvidencia" class="btn btn-success btn-sm w-100 text-truncate">
-                                            <i class="fas fa-download me-2"></i>
-                                            Ver evidencia actual
+                                        <label class="form-label small text-muted mb-1 d-block">Justificación actual</label>
+                                        <a target="_blank" href="@Model.RutaJustificacion" class="btn-app-verde btn-tablero-pdf">
+                                            <i class="fa-solid fa-download"></i> Ver justificación actual
                                         </a>
-                                        <p class="text-muted small mt-2">
-                                            <i class="fas fa-info-circle me-1"></i>
+                                        <p class="text-muted small mt-2 mb-0">
+                                            <i class="fa-solid fa-circle-info me-1"></i>
                                             Si subes un nuevo archivo, reemplazará el actual
                                         </p>
                                     </div>
                                 }
 
-                                @* Input para subir/reemplazar archivo *@
-                                <label for="inputEvidencia" class="form-label fw-semibold titulo">
-                                    @(!string.IsNullOrEmpty(Model.RutaEvidencia) ? "Reemplazar evidencia (opcional):" : "Subir evidencia:")
+                                <label for="inputJustificacion" class="form-label small text-muted mb-1">
+                                    @(!string.IsNullOrEmpty(Model.RutaJustificacion) ? "Reemplazar justificación (opcional)" : "Subir justificación")
                                 </label>
-                                <label for="inputEvidencia" class="form-label fw-semibold titulo">Favor de llenar el Formato de Evidencia y subirlo.</label>
-                                <a target="_blank" href="@Url.Content("~/FormatoEvidencia/EVIDENCIA.xlsx")" download="Evidencia.xlsx" class="btn btn-success mb-2 w-100 text-truncate">Descargar formato</a>
+                                <p class="text-muted small mb-2">Favor de descargar el Formato de Justificación y subirlo en PDF debidamente requisitado y firmado.</p>
+                                <a target="_blank" href="@Url.Content("~/FormatoEvidencia/JUSTIFICACION.xlsx")" download="JUSTIFICACION.xlsx" class="btn-app-verde btn-tablero-pdf mb-2">
+                                    <i class="fa-solid fa-file-arrow-down"></i> Descargar formato
+                                </a>
                                 <input type="file"
-                                       class="form-control fw-light input-arena titulo"
-                                       id="inputEvidencia"
-                                       name="InputEvidencia"
-                                       data-tiene-archivo-existente="@(!string.IsNullOrEmpty(Model.RutaEvidencia))">
+                                       class="form-control"
+                                       id="inputJustificacion"
+                                       name="InputJustificacion"
+                                       accept=".pdf"
+                                       data-tiene-archivo-existente="@(!string.IsNullOrEmpty(Model.RutaJustificacion))">
                             }
                             else
                             {
-                                @if (!string.IsNullOrEmpty(Model.RutaEvidencia))
+                                @if (!string.IsNullOrEmpty(Model.RutaJustificacion))
                                 {
-                                    <label class="form-label fw-semibold titulo">Evidencia subida:</label>
-                                    <br />
-                                    <a target="_blank" href="@Model.RutaEvidencia" class="btn btn-success w-100 text-truncate">
-                                        <i class="fas fa-download me-2"></i>
-                                        Ver evidencia
+                                    <label class="form-label small text-muted mb-1 d-block">Justificación subida</label>
+                                    <a target="_blank" href="@Model.RutaJustificacion" class="btn-app-verde btn-tablero-pdf">
+                                        <i class="fa-solid fa-download"></i> Ver justificación
                                     </a>
                                 }
                                 else
                                 {
-                                    <p class="text-danger fw-semibold">No se ha cargado ninguna evidencia.</p>
+                                    <span class="badge-estatus badge-estatus-error">No se ha cargado ninguna justificación</span>
                                 }
                             }
                         </div>
+                    </div>
+                </div>
+            </div>
 
-                        @* justificacion *@
-                        <div class="col-12 col-md-4">
-                            <div class="glass-effect rounded-5 mb-4">
-                                <h5 class="fw-semibold text-center m-2 titulo">
-                                    JUSTIFICACIÓN
-                                </h5>
-                            </div>
-                            <div id="justificacionDiv" style="display:none;">
-                                @if (!esSoloVista)
-                                {
-                                    @* Mostrar archivo existente si hay uno *@
-                                    @if (!string.IsNullOrEmpty(Model.RutaJustificacion))
-                                    {
-                                        <div class="mb-3">
-                                            <label class="form-label fw-semibold titulo">Justificación actual:</label>
-                                            <br />
-                                            <a target="_blank" href="@Model.RutaJustificacion" class="btn btn-success btn-sm w-100 text-truncate">
-                                                <i class="fas fa-download me-2"></i>
-                                                Ver justificación actual
-                                            </a>
-                                            <p class="text-muted small mt-2">
-                                                <i class="fas fa-info-circle me-1"></i>
-                                                Si subes un nuevo archivo, reemplazará el actual
-                                            </p>
-                                        </div>
-                                    }
-
-                                    @* Input para subir/reemplazar archivo *@
-                                    <label for="inputJustificacion" class="form-label fw-semibold titulo">
-                                        @(!string.IsNullOrEmpty(Model.RutaJustificacion) ? "Reemplazar justificación (opcional):" : "Subir justificación:")
-                                    </label>
-                                    <label for="inputJustificacion" class="form-label fw-semibold titulo">Favor de descargar el Formato de Justificación y subirlo en PDF debidamente requisitado y firmado.</label>
-                                    <a target="_blank" href="@Url.Content("~/FormatoEvidencia/JUSTIFICACION.xlsx")" download="JUSTIFICACION.xlsx" class="btn btn-success mb-2 w-100 text-truncate">Descargar formato</a>
-                                    <input type="file"
-                                           class="form-control fw-light input-arena titulo"
-                                           id="inputJustificacion"
-                                           name="InputJustificacion"
-                                           accept=".pdf"
-                                           data-tiene-archivo-existente="@(!string.IsNullOrEmpty(Model.RutaJustificacion))">
-                                }
-                                else
-                                {
-                                    @if (!string.IsNullOrEmpty(Model.RutaJustificacion))
-                                    {
-                                        <label class="form-label fw-semibold titulo">Justificación subida:</label>
-                                        <br />
-                                        <a target="_blank" href="@Model.RutaJustificacion" class="btn btn-success w-100 text-truncate">
-                                            <i class="fas fa-download me-2"></i>
-                                            Ver justificación
-                                        </a>
-                                    }
-                                    else
-                                    {
-                                        <p class="text-danger fw-semibold">No se ha cargado ninguna justificación.</p>
-                                    }
-                                }
-                            </div>
+            @* Realizó y autorizó *@
+            <div class="ficha-seccion">
+                <div class="row g-4">
+                    <div class="col-md-6 border-end">
+                        <div class="ficha-firma">
+                            <label class="ficha-firma-label">Realizó</label>
+                            <input type="text" class="form-control text-center mb-2" placeholder="Nombre de quien realiza" id="nombreRealiza" name="NombreRealizo" value="@Model.NombreRealizo" @(esSoloVista ? "disabled" : "")>
+                            <input type="text" class="form-control text-center" placeholder="Puesto de quien realiza" id="cargoRealiza" name="PuestoRealizo" value="@Model.PuestoRealizo" @(esSoloVista ? "disabled" : "")>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="ficha-firma">
+                            <label class="ficha-firma-label">Autorizó</label>
+                            <input type="text" class="form-control text-center mb-2" placeholder="Nombre de quien autoriza" id="nombreAutorizo" name="NombreAutorizo" value="@Model.NombreAutorizo" @(esSoloVista ? "disabled" : "")>
+                            <input type="text" class="form-control text-center" placeholder="Puesto de quien autoriza" id="cargoAutorizo" name="PuestoAutorizo" value="@Model.PuestoAutorizo" @(esSoloVista ? "disabled" : "")>
                         </div>
                     </div>
                 </div>
             </div>
 
-            @* realizo y autorizo *@
-            <div class="row">
-                <div class="col-12">
-                    <div class="row g-3 mt-1 mx-2 pb-3 border-bottom">
-                        <div class="col-12 col-md-6 border-md-end border-bottom border-md-bottom-0 pb-3 pb-md-0 mb-3 mb-md-0">
-                            <div class="glass-effect rounded-5 mb-4">
-                                <h5 class="fw-semibold text-center m-2 titulo">
-                                    Realizó
-                                </h5>
-                            </div>
-                            <input type="text" class="form-control fw-light input-arena titulo mb-2" placeholder="Nombre de quien realiza" id="nombreRealiza" name="NombreRealizo" value="@Model.NombreRealizo" @(esSoloVista ? "disabled" : "")>
-                            <input type="text" class="form-control fw-light input-arena titulo" placeholder="Puesto de quien realiza" id="cargoRealiza" name="PuestoRealizo" value="@Model.PuestoRealizo" @(esSoloVista ? "disabled" : "")>
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <div class="glass-effect rounded-5 mb-4">
-                                <h5 class="fw-semibold text-center m-2 titulo">
-                                    Autorizó
-                                </h5>
-                            </div>
-                            <input type="text" class="form-control fw-light input-arena titulo mb-2" placeholder="Nombre de quien autoriza" id="nombreAutorizo" name="NombreAutorizo" value="@Model.NombreAutorizo" @(esSoloVista ? "disabled" : "")>
-                            <input type="text" class="form-control fw-light input-arena titulo" placeholder="Puesto de quien autoriza" id="cargoAutorizo" name="PuestoAutorizo" value="@Model.PuestoAutorizo" @(esSoloVista ? "disabled" : "")>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            @* botones *@
-            <div class="text-center m-4 d-flex flex-column flex-md-row justify-content-center gap-3">
+            @* Botones *@
+            <div class="text-center mb-5">
                 @if (!esSoloVista)
                 {
-                    <button type="button" class="boton-rojo w-100 w-md-auto mx-md-2 fw-light" id="btnGuardarBorrador">
-                        Guardar
+                    <button type="button" class="btn-app-gris mx-2" id="btnGuardarBorrador">
+                        <i class="fa-solid fa-floppy-disk"></i> Guardar
                     </button>
-                    <button type="button" class="boton-amarillo w-100 w-md-auto mx-md-2 fw-light" id="btnEnviarFinal">
-                        Enviar
+                    <button type="button" class="btn-app-rosa mx-2" id="btnEnviarFinal">
+                        <i class="fa-solid fa-paper-plane"></i> Enviar
                     </button>
                 }
                 else
                 {
-                    <p class="alert alert-info">Esta información está completa y se muestra en modo solo lectura.</p>
+                    <div class="aviso-validado">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <div>
+                            <h4>Información completa</h4>
+                            <p>Esta información está completa y se muestra en modo solo lectura.</p>
+                        </div>
+                    </div>
                 }
             </div>
-        </div>
-        @* Fin tabla secundaria *@
 
-    </form>
+        </form>
+    </div>
 }
 @section Scripts {
     <script>
         $(document).ready(function () {
-            // Inicializar colores de inputs deshabilitados
-            $('input:disabled').css('background-color', '#f7f2ed');
-
             const formElement = $('form')[0];
             // URL única que apunta a la acción del controlador
             const urlAccion = '@Url.Action("GuardarActualizacion", "Monitoreo")';
@@ -473,7 +405,7 @@ else
                 // Si es envío final, forzamos la validación del navegador
                 if (!esBorrador && !formElement.checkValidity()) {
                     formElement.reportValidity(); // Muestra los mensajes de error de HTML5
-                    return; 
+                    return;
                 }
 
                 prepararFormularioParaEnvio();
@@ -533,7 +465,7 @@ else
             // Botón "Guardar" (Borrador)
             $('#btnGuardarBorrador').click(function(e) {
                 e.preventDefault();
-                enviarFormulario(true); 
+                enviarFormulario(true);
             });
 
             // Botón "Enviar" (Final)
@@ -567,12 +499,12 @@ else
                 // Habilitar/Deshabilitar campos Personas/Rangos
                 if(!esSoloVista){
                     if (realizado > 0) {
-                        $('.personas-input, .rango-input').prop('disabled', false).css('background-color', '');
+                        $('.personas-input, .rango-input').prop('disabled', false);
                     } else {
-                        $('.personas-input, .rango-input').prop('disabled', true).val('0').css('background-color', '#f7f2ed');
+                        $('.personas-input, .rango-input').prop('disabled', true).val('0');
                         $('#personasAtendidas, #totalPersonas').val('0');
                     }
-                }                
+                }
             }).on('blur', function() {
                 // --- Lógica de Justificación (al salir del campo) ---
                 let meta = parseFloat(removerFormato($('#metaProgramada').val())) || 0;
@@ -637,9 +569,9 @@ else
 
                 // Lógica de color de porcentaje
                 if (porcentaje < 70 || porcentaje >= 110) {
-                    $('#totalPorcentaje').css('color', 'red');
+                    $('#totalPorcentaje').removeClass('text-tablero-success').addClass('text-tablero-error');
                 } else {
-                    $('#totalPorcentaje').css('color', 'green');
+                    $('#totalPorcentaje').removeClass('text-tablero-error').addClass('text-tablero-success');
                 }
             });
 

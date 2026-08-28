@@ -301,6 +301,21 @@ namespace Metas.BLL.Implementacion
                 registroDb.NoviembrePersona = modelo.NoviembrePersona;
                 registroDb.DiciembrePersona = modelo.DiciembrePersona;
 
+                // Recalcular totales antes de guardar
+                registroDb.TotalProgramado = (registroDb.TotalEnero ?? 0) + (registroDb.TotalFebrero ?? 0) +
+                                            (registroDb.TotalMarzo ?? 0) + (registroDb.TotalAbril ?? 0) +
+                                            (registroDb.TotalMayo ?? 0) + (registroDb.TotalJunio ?? 0) +
+                                            (registroDb.TotalJulio ?? 0) + (registroDb.TotalAgosto ?? 0) +
+                                            (registroDb.TotalSeptiembre ?? 0) + (registroDb.TotalOctubre ?? 0) +
+                                            (registroDb.TotalNoviembre ?? 0) + (registroDb.TotalDiciembre ?? 0);
+
+                registroDb.TotalPersona = (registroDb.EneroPersona ?? 0) + (registroDb.FebreroPersona ?? 0) +
+                                          (registroDb.MarzoPersona ?? 0) + (registroDb.AbrilPersona ?? 0) +
+                                          (registroDb.MayoPersona ?? 0) + (registroDb.JunioPersona ?? 0) +
+                                          (registroDb.JulioPersona ?? 0) + (registroDb.AgostoPersona ?? 0) +
+                                          (registroDb.SeptiembrePersona ?? 0) + (registroDb.OctubrePersona ?? 0) +
+                                          (registroDb.NoviembrePersona ?? 0) + (registroDb.DiciembrePersona ?? 0);
+
                 // 3. Editar (esto hace Update y SaveChangesAsync)
                 bool resultado = await _llenadoInternoRepository.Editar(registroDb);
 

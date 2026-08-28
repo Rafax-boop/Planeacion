@@ -828,7 +828,7 @@ namespace Metas.BLL.Implementacion
                         llenadoInterno.NoviembrePersona = modelo.MesesPersonas[10];
                         llenadoInterno.DiciembrePersona = modelo.MesesPersonas[11];
 
-                        // Totales alineados con la calendarización mensual
+                        // Totales alineados con la calendarización mensual (12 meses)
                         llenadoInterno.TotalProgramado = modelo.MesesServicios.Sum();
                         llenadoInterno.TotalPersona = modelo.MesesPersonas.Sum();
 

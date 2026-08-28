@@ -4,58 +4,56 @@
     ViewData["Title"] = "Registrar Programación";
 }
 
-<div class="container-fluid mt-5">
-    <h1 class="text-center mb-4 titulo fw-semibold pt-2 glass-effect rounded-5 pb-2">FICHA TÉCNICA DE ACTIVIDADES</h1>
+<div class="container-fluid mt-4">
+    <div class="titulo-vista-wrap ficha-titulo-wrap">
+        <h1 class="titulo-vista">Ficha Técnica de Actividades</h1>
+    </div>
 
     @* Datos del solicitante *@
-    <div class="d-flex border mb-4 rounded-4 shadow">
-        <div class="w-25 p-3 rounded-start-4 align-content-center glass-effect">
-            <h5 class="fw-semibold titulo text-center">
-                Datos del solicitante
-            </h5>
+    <div class="ficha-solicitante">
+        <div class="ficha-solicitante-tab">
+            <h2>Datos del solicitante</h2>
         </div>
 
-        <div class="w-75">
-            <div class="d-flex border-bottom p-2">
-                <div class="w-50 my-2">1. FECHA DE ELABORACIÓN:</div>
-                <div class="w-50 fw-semibold text-center my-2">@DateTime.Now.ToString("dd/MM/yyyy")</div>
+        <div class="ficha-solicitante-body">
+            <div class="campo-ficha">
+                <div class="campo-ficha-label campo-ficha-label-corta">1. FECHA DE ELABORACIÓN</div>
+                <div class="campo-ficha-control fw-semibold">@DateTime.Now.ToString("dd/MM/yyyy")</div>
             </div>
 
-            <div class="d-flex p-2 row">
-                <label class="col-md-4 align-content-center">2. NOMBRE DEL ÁREA OPERATIVA <br /> RESPONSABLE (AOR):</label>
-                <div class="col-8 row">
-                    <div class="col-md-6">
-                        <h5 class="fw-light">
-                           Area:   
-                        </h5>
-                        <textarea disabled class="form-control input-arena titulo fw-semibold" rows="2" id="inputArea">@Model.AreaNombre</textarea>
+            <div class="campo-ficha">
+                <div class="campo-ficha-label campo-ficha-label-corta">2. NOMBRE DEL ÁREA OPERATIVA RESPONSABLE (AOR)</div>
+                <div class="campo-ficha-control">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label small text-muted mb-1">Área</label>
+                            <textarea disabled class="form-control fw-semibold" rows="2" id="inputArea">@Model.AreaNombre</textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-muted mb-1">Departamento</label>
+                            <textarea disabled class="form-control fw-semibold" rows="2" id="inputDepartamento">@Model.DepartamentoNombre</textarea>
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <h5 class="fw-light">
-                            Departamento:
-                        </h5>
-                        <textarea disabled class="form-control input-arena titulo fw-semibold" rows="2" id="inputDepartamento">@Model.DepartamentoNombre</textarea>
-                    </div>                   
                 </div>
             </div>
 
-            <div class="d-flex p-2">
-                <div class="w-50 align-content-center">3. CORREO ELECTRÓNICO:</div>
-                <div class="w-50 my-2 mx-2">
-                    <input type="email" class="input-arena form-control titulo"  placeholder="ejemplo@correo.com" id="inputCorreo" value="@Model.CorreoContacto">
+            <div class="campo-ficha" style="border-bottom:none;">
+                <div class="campo-ficha-label campo-ficha-label-corta">3. CORREO ELECTRÓNICO</div>
+                <div class="campo-ficha-control">
+                    <input type="email" class="form-control" placeholder="ejemplo@correo.com" id="inputCorreo" value="@Model.CorreoContacto">
                 </div>
             </div>
         </div>
     </div>
 
     @* Datos de la solicitud *@
-    <div class="p-3 mb-4 rounded-4 shadow">
-        <h5 class="mb-2 text-center border-bottom pb-3 fw-semibold titulo pt-2 glass-effect rounded-5">DATOS DE LA SOLICITUD</h5>
+    <div class="ficha-seccion">
+        <h5 class="ficha-seccion-titulo">Datos de la solicitud</h5>
 
-        <div class="row my-3 border-bottom pb-3">
-            <label class="col-md-6 align-content-center">4. PROGRAMA PRESUPUESTARIO / AGENDA INSTITUCIONAL:</label>
-            <div class="col-md-6 align-content-center">
-                <select class="input-arena form-control titulo" required id="selectPrograma" name="selectPrograma">
+        <div class="campo-ficha">
+            <div class="campo-ficha-label">4. PROGRAMA PRESUPUESTARIO / AGENDA INSTITUCIONAL</div>
+            <div class="campo-ficha-control">
+                <select class="form-control select2-simple" required id="selectPrograma" name="selectPrograma">
                     <option value="">Seleccione Programa</option>
                     @foreach (var act in Model.ListaProgramas)
                     {
@@ -65,10 +63,10 @@
             </div>
         </div>
 
-        <div class="row mb-3 border-bottom pb-3">
-            <label class="align-content-center col-md-6">5. NÚMERO DE COMPONENTE:</label>
-            <div class="col-md-6 align-content-center">
-                <select class="input-arena form-control titulo" id="selectComponente" name="selectComponente" disabled>
+        <div class="campo-ficha">
+            <div class="campo-ficha-label">5. NÚMERO DE COMPONENTE</div>
+            <div class="campo-ficha-control">
+                <select class="form-control select2-simple" id="selectComponente" name="selectComponente" disabled>
                     <option value="">-- Selecciona componente --</option>
                     @foreach (var componente in Model.ListaComponentes)
                     {
@@ -80,44 +78,45 @@
             </div>
         </div>
 
-        <div class="row pb-1 border-bottom mb-3 pb-3">
-            <label class="align-content-center col-md-6">6. NÚMERO DE ACTIVIDAD:</label>
-            <div class="col-md-6 align-content-center">
-                <input type="number" required class="input-arena form-control titulo" id="inputActividad">
+        <div class="campo-ficha">
+            <div class="campo-ficha-label">6. NÚMERO DE ACTIVIDAD</div>
+            <div class="campo-ficha-control">
+                <input type="number" required class="form-control" id="inputActividad">
             </div>
-        </div>   
+        </div>
+
         @* Justificacion *@
-        <div class="border-bottom mb-3 pb-3">
-            <label>7. JUSTIFICACIÓN</label>
-            <textarea required class="input-arena form-control" rows="2" id="inputJustificacion"></textarea>
+        <div class="campo-ficha">
+            <div class="campo-ficha-label">7. JUSTIFICACIÓN</div>
+            <div class="campo-ficha-control">
+                <textarea required class="form-control" rows="2" id="inputJustificacion"></textarea>
+            </div>
         </div>
 
         @* Documentacion soporte de la justificacion *@
-        <div class="mb-3 pb-3 border-bottom">
-            <label>8. DOCUMENTACIÓN SOPORTE DE LA JUSTIFICACIÓN</label>
-            <textarea required class="input-arena form-control" rows="2" id="inputDocumentacion"></textarea>
+        <div class="campo-ficha">
+            <div class="campo-ficha-label">8. DOCUMENTACIÓN SOPORTE DE LA JUSTIFICACIÓN</div>
+            <div class="campo-ficha-control">
+                <textarea required class="form-control" rows="2" id="inputDocumentacion"></textarea>
+            </div>
         </div>
 
         @* Origen de recursos *@
-        <div class="d-flex align-items-center py-2 pb-4">
-            <div class="w-50 pe-3 mt-2 align-items-center">
-                <label>9. ORIGEN DE RECURSOS</label>
-            </div>
-
-            <div class="w-50 mt-2">
-                <div class="row g-2">
+        <div class="campo-ficha" style="border-bottom:none;">
+            <div class="campo-ficha-label">9. ORIGEN DE RECURSOS</div>
+            <div class="campo-ficha-control">
+                <div class="row g-3">
                     <div class="col-6">
-                        <h5 class="fw-light">Recurso Federal</h5>
-                        <select required class="input-arena form-control titulo" id="selectFederal">
+                        <label class="form-label small text-muted mb-1">Recurso Federal</label>
+                        <select required class="form-control select2-simple" id="selectFederal">
                             <option value="">Seleccione</option>
                             <option value="Si">Sí</option>
                             <option value="No">No</option>
                         </select>
                     </div>
-
                     <div class="col-6">
-                        <h5 class="fw-light">Recurso Estatal</h5>
-                        <select required class="input-arena form-control titulo" id="selectEstatal">
+                        <label class="form-label small text-muted mb-1">Recurso Estatal</label>
+                        <select required class="form-control select2-simple" id="selectEstatal">
                             <option value="">Seleccione</option>
                             <option value="Si">Sí</option>
                             <option value="No">No</option>
@@ -126,62 +125,50 @@
                 </div>
             </div>
         </div>
-    </div>    
-
-    <hr>
+    </div>
 
     @* Datos generales *@
-    <h2 class="text-center my-4 titulo fw-semibold pt-2 pb-2 glass-effect rounded-5 ">DATOS GENERALES</h2>
-    
-    <div class="border p-3 mb-4 mt-4 rounded-4 shadow">
-        <div class="row border-bottom">
-            <label class="col-md-4 align-content-center">10. PROGRAMA SOCIAL, SERVICIO Y/O PROYECTO</label>
-            <div class="col-md-8 mb-3">
-                <textarea required id="inputPrograma" class="input-arena form-control" rows="2" placeholder=""></textarea>
+    <div class="titulo-vista-wrap ficha-titulo-wrap">
+        <h2 class="titulo-vista" style="font-size:1.1rem;">Datos Generales</h2>
+    </div>
+
+    <div class="ficha-seccion">
+        <div class="campo-ficha">
+            <div class="campo-ficha-label">10. PROGRAMA SOCIAL, SERVICIO Y/O PROYECTO</div>
+            <div class="campo-ficha-control">
+                <textarea required id="inputPrograma" class="form-control" rows="2"></textarea>
             </div>
         </div>
-        <div class="row border-bottom">
-            <label class="col-md-4 align-content-center">11. DESCRIPCIÓN DE LA ACTIVIDAD</label>
-            <div class="col-md-8 my-3">
-                <textarea required id="inputDescripcion" class="input-arena form-control" rows="2" placeholder=""></textarea>
+        <div class="campo-ficha">
+            <div class="campo-ficha-label">11. DESCRIPCIÓN DE LA ACTIVIDAD</div>
+            <div class="campo-ficha-control">
+                <textarea required id="inputDescripcion" class="form-control" rows="2"></textarea>
             </div>
         </div>
-        <div class="row border-bottom">
-            <label class="col-md-4 align-content-center">12. NOMBRE DEL INDICADOR</label>
-            <div class="col-md-8 my-3">
-                <textarea required id="inputIndicador" class="input-arena form-control" rows="2" placeholder=""></textarea>
+        <div class="campo-ficha">
+            <div class="campo-ficha-label">12. NOMBRE DEL INDICADOR</div>
+            <div class="campo-ficha-control">
+                <textarea required id="inputIndicador" class="form-control" rows="2"></textarea>
             </div>
         </div>
-        <div class="row border-bottom">
-            <label class="col-md-4 align-content-center">13. DEFINICIÓN DEL INDICADOR</label>
-            <div class="col-md-8 my-3">
-                <textarea required id="inputDefinicion" class="input-arena form-control" rows="2" placeholder=""></textarea>
+        <div class="campo-ficha">
+            <div class="campo-ficha-label">13. DEFINICIÓN DEL INDICADOR</div>
+            <div class="campo-ficha-control">
+                <textarea required id="inputDefinicion" class="form-control" rows="2"></textarea>
             </div>
         </div>
 
         @* Calendarización *@
-
-        <div class="row border-bottom py-3 mb-3">
-            <label class="col-md-4 align-content-center">14. CALENDARIZACIÓN</label>
+        <div class="campo-ficha">
+            <div class="campo-ficha-label">14. CALENDARIZACIÓN</div>
         </div>
 
-        <div class="row">
-            @* Encabezados de trimestres *@
-            <div class="col-md-3 mb-3">
-                <div class="text-center fw-semibold text-muted">TRIMESTRES</div>
-            </div>
-            <div class="col-md-2 mb-3">
-                <div class="text-center titulo fw-semibold border-bottom pb-1">1ER TRIMESTRE</div>
-            </div>
-            <div class="col-md-2 mb-3">
-                <div class="text-center titulo fw-semibold border-bottom pb-1">2DO. TRIMESTRE</div>
-            </div>
-            <div class="col-md-2 mb-3">
-                <div class="text-center titulo fw-semibold border-bottom pb-1">3ER. TRIMESTRE</div>
-            </div>
-            <div class="col-md-2 mb-3">
-                <div class="text-center titulo fw-semibold border-bottom pb-1">4TO. TRIMESTRE</div>
-            </div>
+        <div class="row mb-2">
+            <div class="col-md-3"></div>
+            <div class="col-md-2"><div class="ficha-trimestre-header">1ER TRIMESTRE</div></div>
+            <div class="col-md-2"><div class="ficha-trimestre-header">2DO. TRIMESTRE</div></div>
+            <div class="col-md-2"><div class="ficha-trimestre-header">3ER. TRIMESTRE</div></div>
+            <div class="col-md-2"><div class="ficha-trimestre-header">4TO. TRIMESTRE</div></div>
         </div>
 
         @* Fila para SERVICIOS *@
@@ -190,16 +177,16 @@
                 <label class="fw-light">SERVICIOS</label>
             </div>
             <div class="col-md-2">
-                <input type="text" disabled id="primerServicio" class="input-arena form-control titulo text-center" value="0" min="0">
+                <input type="text" disabled id="primerServicio" class="form-control text-center" value="0" min="0">
             </div>
             <div class="col-md-2">
-                <input type="text" disabled id="segundoServicio" class="input-arena form-control titulo text-center" value="0" min="0">
+                <input type="text" disabled id="segundoServicio" class="form-control text-center" value="0" min="0">
             </div>
             <div class="col-md-2">
-                <input type="text" disabled id="tercerServicio" class="input-arena form-control titulo text-center" value="0" min="0">
+                <input type="text" disabled id="tercerServicio" class="form-control text-center" value="0" min="0">
             </div>
             <div class="col-md-2">
-                <input type="text" disabled id="cuartoServicio" class="input-arena form-control titulo text-center" value="0" min="0">
+                <input type="text" disabled id="cuartoServicio" class="form-control text-center" value="0" min="0">
             </div>
         </div>
 
@@ -209,23 +196,23 @@
                 <label class="fw-light">PERSONAS</label>
             </div>
             <div class="col-md-2">
-                <input type="text" disabled id="primerPersona" class="input-arena form-control titulo text-center formato-miles" value="0" min="0">
+                <input type="text" disabled id="primerPersona" class="form-control text-center formato-miles" value="0" min="0">
             </div>
             <div class="col-md-2">
-                <input type="text" disabled id="segundoPersona" class="input-arena form-control titulo text-center formato-miles" value="0" min="0">
+                <input type="text" disabled id="segundoPersona" class="form-control text-center formato-miles" value="0" min="0">
             </div>
             <div class="col-md-2">
-                <input type="text" disabled id="tercerPersona" class="input-arena form-control titulo text-center formato-miles" value="0" min="0">
+                <input type="text" disabled id="tercerPersona" class="form-control text-center formato-miles" value="0" min="0">
             </div>
             <div class="col-md-2">
-                <input type="text" disabled id="cuartoPersona" class="input-arena form-control titulo text-center formato-miles" value="0" min="0">
+                <input type="text" disabled id="cuartoPersona" class="form-control text-center formato-miles" value="0" min="0">
             </div>
         </div>
 
-        <div class="row border-bottom border-top">
-            <label class="col-md-4 align-content-center">15. UNIDAD DE MEDIDA</label>
-            <div class="col-md-8 my-3">
-                <select required class="input-arena mt-2 form-control titulo" id="selectMedida">
+        <div class="campo-ficha">
+            <div class="campo-ficha-label">15. UNIDAD DE MEDIDA</div>
+            <div class="campo-ficha-control">
+                <select required class="form-control select2-simple" id="selectMedida">
                     <option value="">Seleccione opción</option>
                     @foreach (var act in Model.ListaMedidas)
                     {
@@ -235,58 +222,61 @@
             </div>
         </div>
 
-        <div class="row border-bottom">
-            <label class="col-md-4 align-content-center">16. MEDIOS DE VERIFICACIÓN</label>
-            <div class="col-md-8 my-3">
-                <textarea required id="inputMedios" class="input-arena form-control" rows="2" placeholder=""></textarea>
+        <div class="campo-ficha">
+            <div class="campo-ficha-label">16. MEDIOS DE VERIFICACIÓN</div>
+            <div class="campo-ficha-control">
+                <textarea required id="inputMedios" class="form-control" rows="2"></textarea>
             </div>
         </div>
 
-        <div class="row border-bottom">
-            <label class="col-md-4 align-content-center">17. SERIE DE INFORMACIÓN DISPONIBLE</label>
-            <div class="col-md-4 my-3">
-                <select required class="titulo form-select input-arena" id="selectDesde">
-                    <option value="">Seleccione Desde</option>
-                    @{
-                        var anoActual = DateTime.Now.Year;
-                        var anoMinimo = anoActual - 5;
+        <div class="campo-ficha">
+            <div class="campo-ficha-label">17. SERIE DE INFORMACIÓN DISPONIBLE</div>
+            <div class="campo-ficha-control">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label small text-muted mb-1">Desde</label>
+                        <select required class="form-control select2-simple" id="selectDesde">
+                            <option value="">Seleccione Desde</option>
+                            @{
+                                var anoActual = DateTime.Now.Year;
+                                var anoMinimo = anoActual - 5;
 
-                        for (int ano = anoActual; ano >= anoMinimo; ano--)
-                        {
-                            <option value="@ano">@ano</option>
-                        }
-                    }
-                </select>
-            </div>
-
-            <div class="col-md-4 my-3">
-                <select class="titulo form-select input-arena" id="selectHasta">
-                    <option value="">Seleccione Hasta</option>
-                    @{
-                        for (int ano = anoActual; ano >= anoMinimo; ano--)
-                        {
-                            <option value="@ano">@ano</option>
-                        }
-                    }
-                </select>
+                                for (int ano = anoActual; ano >= anoMinimo; ano--)
+                                {
+                                    <option value="@ano">@ano</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small text-muted mb-1">Hasta</label>
+                        <select class="form-control select2-simple" id="selectHasta">
+                            <option value="">Seleccione Hasta</option>
+                            @{
+                                for (int ano = anoActual; ano >= anoMinimo; ano--)
+                                {
+                                    <option value="@ano">@ano</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="row border-bottom mb-2">
-            <label class="col-md-4 align-content-center">18. FUENTES DE INFORMACIÓN</label>
-            <div class="col-md-8 my-3">
-                <textarea required id="inputFuentes" class="input-arena form-control" rows="2" placeholder=""></textarea>
+        <div class="campo-ficha">
+            <div class="campo-ficha-label">18. FUENTES DE INFORMACIÓN</div>
+            <div class="campo-ficha-control">
+                <textarea required id="inputFuentes" class="form-control" rows="2"></textarea>
             </div>
         </div>
 
         <div class="row">
-            <div class="col-md-6 border-end my-3">
-                <div class="row align-items-center h-100">
-                    <div class="col-md-6">
-                        <label class="mb-0 d-flex align-items-center h-100">19. INTERVIENEN DELEGACIONES REGIONALES</label>
-                    </div>
-                    <div class="col-md-6">
-                        <select id="selectDelegaciones" class="input-arena form-control titulo">
+            <div class="col-md-6 border-end">
+                <div class="campo-ficha" style="border-bottom:none;">
+                    <div class="campo-ficha-label campo-ficha-label-corta">19. INTERVIENEN DELEGACIONES REGIONALES</div>
+                    <div class="campo-ficha-control">
+                        <select id="selectDelegaciones" class="form-control select2-simple">
                             <option value="">Seleccione</option>
                             <option value="Si">Sí</option>
                             <option value="No">No</option>
@@ -296,36 +286,29 @@
             </div>
 
             <div class="col-md-6">
-                <div class="row align-items-center h-100">
-                    <div class="col-md-6">
-                        <label class="mb-0 d-flex align-items-center h-100">20. ¿DE QUÉ MANERA?</label>
-                    </div>
-                    <div class="col-md-6">
-                        <textarea id="inputDelegaciones" class="input-arena form-control" rows="2" placeholder=""></textarea>
+                <div class="campo-ficha" style="border-bottom:none;">
+                    <div class="campo-ficha-label campo-ficha-label-corta">20. ¿DE QUÉ MANERA?</div>
+                    <div class="campo-ficha-control">
+                        <textarea id="inputDelegaciones" class="form-control" rows="2"></textarea>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    
 
     @* Determinación de Metas *@
-    <div class="border p-3 mb-4 rounded-4 shadow">
-        <h5 class="pt-2 glass-effect rounded-5 text-center border-bottom pb-2 fw-semibold titulo">DETERMINACIÓN DE METAS</h5>
+    <div class="ficha-seccion">
+        <h5 class="ficha-seccion-titulo">Determinación de Metas</h5>
 
         <div class="row">
             <div class="col-md-6 border-end">
-                <div class="text-center fw-light py-2 border-bottom" style="background-color: #F4F4F4">
-                    LÍNEA BASE
-                </div>
+                <div class="ficha-seccion-subtitulo">Línea Base</div>
 
-                <div class="row align-items-center border-bottom py-2">
-                    <div class="col-md-6">
-                        <label class="mb-0">21. AÑO</label>
-                    </div>
-                    <div class="col-md-6">
-                        <select class="input-arena form-control titulo" id="selectAnoBase">
+                <div class="campo-ficha">
+                    <div class="campo-ficha-label campo-ficha-label-corta">21. AÑO</div>
+                    <div class="campo-ficha-control">
+                        <select class="form-control select2-simple" id="selectAnoBase">
                             <option value="">Seleccione Año</option>
                             @{
                                 for (int ano = anoActual; ano >= anoMinimo; ano--)
@@ -337,72 +320,56 @@
                     </div>
                 </div>
 
-                <div class="row align-items-center border-bottom py-2">
-                    <div class="col-md-6">
-                        <label class="mb-0">22. PORCENTAJE DE CUMPLIMIENTO</label>
-                    </div>
-                    <div class="col-md-6">
-                        <input id="inputPorcentajeBase" type="number" class="input-arena form-control titulo text-center" value="0" min="0" max="100">
+                <div class="campo-ficha">
+                    <div class="campo-ficha-label campo-ficha-label-corta">22. PORCENTAJE DE CUMPLIMIENTO</div>
+                    <div class="campo-ficha-control">
+                        <input id="inputPorcentajeBase" type="number" class="form-control text-center" value="0" min="0" max="100">
                     </div>
                 </div>
 
-                <div class="row align-items-center border-bottom py-2">
-                    <div class="col-md-6">
-                        <label class="mb-0">23. NO. DE BIEN O SERVICIO ENTREGADO</label>
-                    </div>
-                    <div class="col-md-6">
-                        <input id="inputServicioBase" type="text" class="input-arena form-control titulo text-center formato-miles" value="0" min="0">
+                <div class="campo-ficha">
+                    <div class="campo-ficha-label campo-ficha-label-corta">23. NO. DE BIEN O SERVICIO ENTREGADO</div>
+                    <div class="campo-ficha-control">
+                        <input id="inputServicioBase" type="text" class="form-control text-center formato-miles" value="0" min="0">
                     </div>
                 </div>
 
-                <div class="row align-items-center py-2">
-                    <div class="col-md-6">
-                        <label class="mb-0">24. NO. DE PERSONAS ATENDIDAS</label>
-                    </div>
-                    <div class="col-md-6">
-                        <input id="inputPersonasBase" type="text" class="input-arena form-control titulo text-center formato-miles" value="0" min="0">
+                <div class="campo-ficha" style="border-bottom:none;">
+                    <div class="campo-ficha-label campo-ficha-label-corta">24. NO. DE PERSONAS ATENDIDAS</div>
+                    <div class="campo-ficha-control">
+                        <input id="inputPersonasBase" type="text" class="form-control text-center formato-miles" value="0" min="0">
                     </div>
                 </div>
             </div>
 
             <div class="col-md-6">
-                <div class="text-center fw-light py-2 border-bottom" style="background-color: #F4F4F4">
-                    META Y PERIODO DE CUMPLIMIENTO
-                </div>
+                <div class="ficha-seccion-subtitulo">Meta y Periodo de Cumplimiento</div>
 
-                <div class="row align-items-center border-bottom py-2">
-                    <div class="col-md-6">
-                        <label class="mb-0">25. AÑO</label>
-                    </div>
-                    <div class="col-md-6">
-                        <input id="inputAnoMeta" type="text" class="input-arena form-control titulo text-center fw-semibold" value="@Model.AnoFiscal" disabled readonly>
+                <div class="campo-ficha">
+                    <div class="campo-ficha-label campo-ficha-label-corta">25. AÑO</div>
+                    <div class="campo-ficha-control">
+                        <input id="inputAnoMeta" type="text" class="form-control text-center fw-semibold" value="@Model.AnoFiscal" disabled readonly>
                     </div>
                 </div>
 
-                <div class="row align-items-center border-bottom py-2">
-                    <div class="col-md-6">
-                        <label class="mb-0">26. PORCENTAJE DE CUMPLIMIENTO</label>
-                    </div>
-                    <div class="col-md-6">
-                        <input id="inputPorcentajeMeta" disabled type="number" class="input-arena form-control titulo text-center" value="0" min="0" max="100">
+                <div class="campo-ficha">
+                    <div class="campo-ficha-label campo-ficha-label-corta">26. PORCENTAJE DE CUMPLIMIENTO</div>
+                    <div class="campo-ficha-control">
+                        <input id="inputPorcentajeMeta" disabled type="number" class="form-control text-center" value="0" min="0" max="100">
                     </div>
                 </div>
 
-                <div class="row align-items-center border-bottom py-2">
-                    <div class="col-md-6">
-                        <label class="mb-0">27. NO. DE BIEN O SERVICIO A ENTREGAR</label>
-                    </div>
-                    <div class="col-md-6">
-                        <input id="inputServicioMeta" disabled type="text" class="input-arena form-control titulo text-center formato-miles" value="0" min="0">
+                <div class="campo-ficha">
+                    <div class="campo-ficha-label campo-ficha-label-corta">27. NO. DE BIEN O SERVICIO A ENTREGAR</div>
+                    <div class="campo-ficha-control">
+                        <input id="inputServicioMeta" disabled type="text" class="form-control text-center formato-miles" value="0" min="0">
                     </div>
                 </div>
 
-                <div class="row align-items-center py-2">
-                    <div class="col-md-6">
-                        <label class="mb-0">28. NO. DE PERSONAS POR ATENDER</label>
-                    </div>
-                    <div class="col-md-6">
-                        <input id="inputServicioMetas" disabled type="text" class="input-arena form-control titulo text-center formato-miles" value="0" min="0">
+                <div class="campo-ficha" style="border-bottom:none;">
+                    <div class="campo-ficha-label campo-ficha-label-corta">28. NO. DE PERSONAS POR ATENDER</div>
+                    <div class="campo-ficha-control">
+                        <input id="inputServicioMetas" disabled type="text" class="form-control text-center formato-miles" value="0" min="0">
                     </div>
                 </div>
             </div>
@@ -410,91 +377,77 @@
     </div>
 
     @* Meta Anual *@
-    <div class="border p-3 mb-4 rounded-4 shadow" id="metaAnualForm">
-        <h5 class="mb-2 text-center border-bottom pb-3 fw-semibold titulo pt-2 glass-effect rounded-5">META ANUAL</h5>
+    <div class="ficha-seccion" id="metaAnualForm">
+        <h5 class="ficha-seccion-titulo">Meta Anual</h5>
 
         @* Sección Bien/Servicio y Personas *@
-        <div class="border-bottom pb-3">
-            <div class="row">
-                <!-- Primera columna - Bien o Servicio -->
-                <div class="col-md-6 border-end align-content-center">
-                    <div class="row align-items-center py-2 ">
-                        <div class="col-md-12">
-                            <label class="mb-0 align-content-center">29. BIEN O SERVICIO</label>
-                        </div>
+        <div class="row border-bottom pb-3 mb-3">
+            <div class="col-md-6 border-end">
+                <div class="campo-ficha" style="border-bottom:none; padding-top:0;">
+                    <div class="campo-ficha-label campo-ficha-label-corta">29. BIEN O SERVICIO</div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="campo-ficha" style="padding-top:0;">
+                    <div class="campo-ficha-label campo-ficha-label-corta">30. PERSONAS</div>
+                    <div class="campo-ficha-control">
+                        <select class="form-control select2-simple" id="selectPersonas">
+                            <option value="">Seleccione Personas / Instituciones</option>
+                            <option value="Personas">Personas</option>
+                            <option value="Instituciones">Instituciones</option>
+                        </select>
                     </div>
                 </div>
-
-                <!-- Segunda columna - Personas y Acumulable -->
-                <div class="col-md-6">
-                    <div class="row align-items-center py-2">
-                        <div class="col-md-4">
-                            <label class="mb-0">30. PERSONAS</label>
-                        </div>
-                        <div class="col-md-8">
-                            <select class="input-arena form-control titulo" id="selectPersonas">
-                                <option value="">Seleccione Personas / Instituciones</option>
-                                <option value="Personas">Personas</option>
-                                <option value="Instituciones">Instituciones</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="row align-items-center py-2">
-                        <div class="col-md-4">
-                            <label class="mb-0">Acumulable</label>
-                        </div>
-                        <div class="col-md-8">
-                            <select class="input-arena form-control titulo" id="selectAcumulable">
-                                <option value="">Seleccione opción</option>
-                                <option value="no">No</option>
-                                <option value="si">Sí</option>
-                            </select>
-                        </div>
+                <div class="campo-ficha" style="border-bottom:none;">
+                    <div class="campo-ficha-label campo-ficha-label-corta">Acumulable</div>
+                    <div class="campo-ficha-control">
+                        <select class="form-control select2-simple" id="selectAcumulable">
+                            <option value="">Seleccione opción</option>
+                            <option value="no">No</option>
+                            <option value="si">Sí</option>
+                        </select>
                     </div>
                 </div>
             </div>
         </div>
 
         @* Sección Meses *@
-        <div class="mt-4">
-
+        <div>
             @{
                 var mesesPrimerSemestre = new[] { "ENE", "FEB", "MAR", "ABR", "MAY", "JUN" };
                 var mesesSegundoSemestre = new[] { "JUL", "AGO", "SEP", "OCT", "NOV", "DIC" };
             }
 
-            <div class="row mt-3">              
+            <div class="row">
                 <div class="col-md-6 border-end">
-                    @* Primera fila - Primer semestre *@
-                    <div class="row text-center ">
+                    <div class="row text-center g-1">
                         @foreach (var mes in mesesPrimerSemestre)
                         {
-                            <div class="col-2 p-1 glass-effect rounded">@mes</div>
+                            <div class="col-2"><div class="ficha-mes-header">@mes</div></div>
                         }
                     </div>
-                    <div class="row text-center">
+                    <div class="row text-center mt-2">
                         @foreach (var mes in mesesPrimerSemestre)
                         {
                             <div class="col-2 p-1">
-                                <input type="text" class="input-arena form-control titulo text-center mes-grupo1 formato-miles"
+                                <input type="text" class="form-control text-center mes-grupo1 formato-miles"
                                        value="0" min="0" data-mes="@mes">
                             </div>
                         }
                     </div>
 
-                    @* Segunda fila - Segundo semestre *@
+                    <div class="row text-center mt-3 g-1">
+                        @foreach (var mes in mesesSegundoSemestre)
+                        {
+                            <div class="col-2"><div class="ficha-mes-header">@mes</div></div>
+                        }
+                    </div>
                     <div class="row text-center mt-2">
                         @foreach (var mes in mesesSegundoSemestre)
                         {
-                            <div class="col-2 p-1 glass-effect rounded">@mes</div>
-                        }
-                    </div>
-                    <div class="row text-center">
-                        @foreach (var mes in mesesSegundoSemestre)
-                        {
                             <div class="col-2 p-1">
-                                <input type="text" class="input-arena form-control titulo text-center mes-grupo1 formato-miles"
+                                <input type="text" class="form-control text-center mes-grupo1 formato-miles"
                                        value="0" min="0" data-mes="@mes">
                             </div>
                         }
@@ -503,35 +456,33 @@
 
                 @* Grupo 2 - Derecha *@
                 <div class="col-md-6">
-                    @* Primera fila - Primer semestre *@
-                    <div class="row text-center">
+                    <div class="row text-center g-1">
                         @foreach (var mes in mesesPrimerSemestre)
                         {
-                            <div class="col-2 p-1 glass-effect rounded">@mes</div>
+                            <div class="col-2"><div class="ficha-mes-header">@mes</div></div>
                         }
                     </div>
-                    <div class="row text-center">
+                    <div class="row text-center mt-2">
                         @foreach (var mes in mesesPrimerSemestre)
                         {
                             <div class="col-2 p-1">
-                                <input type="text" class="input-arena form-control titulo text-center mes-grupo2 formato-miles"
+                                <input type="text" class="form-control text-center mes-grupo2 formato-miles"
                                        value="0" min="0" disabled data-mes="@mes">
                             </div>
                         }
                     </div>
 
-                    @* Segunda fila - Segundo semestre *@
+                    <div class="row text-center mt-3 g-1">
+                        @foreach (var mes in mesesSegundoSemestre)
+                        {
+                            <div class="col-2"><div class="ficha-mes-header">@mes</div></div>
+                        }
+                    </div>
                     <div class="row text-center mt-2">
                         @foreach (var mes in mesesSegundoSemestre)
                         {
-                            <div class="col-2 p-1 glass-effect rounded">@mes</div>
-                        }
-                    </div>
-                    <div class="row text-center">
-                        @foreach (var mes in mesesSegundoSemestre)
-                        {
                             <div class="col-2 p-1">
-                                <input type="text" class="input-arena form-control titulo text-center mes-grupo2 formato-miles"
+                                <input type="text" class="form-control text-center mes-grupo2 formato-miles"
                                        value="0" min="0" disabled data-mes="@mes">
                             </div>
                         }
@@ -543,32 +494,27 @@
         @* Sección Valores y Resultados *@
         <div class="row mt-4 border-top pt-3">
             <div class="col-md-6 border-end pe-3">
-                @* Valor de servicios *@
-                <div class="row align-items-center border-bottom py-2">
-                    <div class="col-md-8">
-                        <label class="mb-0 fw-semibold">Valor de servicios</label>
-                    </div>
-                    <div class="col-md-4">
-                        <input class="input-arena form-control titulo text-center fw-bold formato-miles"
+                <div class="campo-ficha">
+                    <div class="campo-ficha-label campo-ficha-label-corta">Valor de servicios</div>
+                    <div class="campo-ficha-control">
+                        <input class="form-control text-center fw-bold formato-miles"
                                id="valorServicios" value="0" disabled>
                     </div>
                 </div>
 
-                <div class="row align-items-center border-bottom py-2">
-                    <div class="col-md-8">
-                        <label class="mb-0 fw-semibold">Valor de servicios por municipio</label>
-                    </div>
-                    <div class="col-md-4">
-                        <input class="input-arena form-control titulo text-center formato-miles"
+                <div class="campo-ficha">
+                    <div class="campo-ficha-label campo-ficha-label-corta">Valor de servicios por municipio</div>
+                    <div class="campo-ficha-control">
+                        <input class="form-control text-center formato-miles"
                                id="valorServiciosMunicipio" disabled value="0">
                     </div>
                 </div>
 
                 @* Sección Grupo 1 - Personas atendidas *@
                 <div class="mt-4">
-                    <div class="row align-items-center py-3">
+                    <div class="row align-items-center g-2">
                         <div class="col-md-8">
-                            <select class="input-arena form-control titulo" id="selectEstadoGrupo1">
+                            <select class="form-control select2-simple" id="selectEstadoGrupo1">
                                 <option value="">Seleccione un municipio</option>
                                 @foreach (var act in Model.ListaMunicipios)
                                 {
@@ -577,20 +523,22 @@
                             </select>
                         </div>
                         <div class="col-md-4">
-                            <input type="text" class="input-arena form-control titulo text-center formato-miles"
+                            <input type="text" class="form-control text-center formato-miles"
                                    id="personasAtendidasGrupo1" value="0" min="0" placeholder="Número">
                         </div>
                     </div>
 
-                    <div class="text-center mt-2">
-                        <button class="titulo boton-rojo fs-6" id="btnAgregarGrupo1" type="button">Agregar</button>
+                    <div class="text-center mt-3">
+                        <button class="btn-app-gris" id="btnAgregarGrupo1" type="button">
+                            <i class="fas fa-plus"></i> Agregar
+                        </button>
                     </div>
 
                     @* Tabla Grupo 1 *@
                     <div class="mt-3" id="tablaGrupo1" style="display: none;">
-                        <div class="table-responsive">
-                            <table class="table table-bordered table-sm">
-                                <thead class="bg-light">
+                        <div class="tabla-modal-wrap">
+                            <table class="tabla-modal">
+                                <thead>
                                     <tr>
                                         <th>Personas Atendidas</th>
                                         <th>Municipio</th>
@@ -603,7 +551,7 @@
                                 <tbody id="tbodyGrupo1">
                                 </tbody>
                                 <tfoot>
-                                    <tr class="fw-bold" style="background-color: #e9ecef;">
+                                    <tr class="fila-total">
                                         <td id="totalGrupo1">0</td>
                                         <td colspan="5" class="text-end">Total Grupo Principal</td>
                                     </tr>
@@ -615,31 +563,27 @@
             </div>
 
             <div class="col-md-6 ps-3">
-                <div class="row align-items-center border-bottom py-2">
-                    <div class="col-md-8">
-                        <label class="mb-0 fw-semibold">Valor de personas</label>
-                    </div>
-                    <div class="col-md-4">
-                        <input class="input-arena form-control titulo text-center fw-bold formato-miles"
+                <div class="campo-ficha">
+                    <div class="campo-ficha-label campo-ficha-label-corta">Valor de personas</div>
+                    <div class="campo-ficha-control">
+                        <input class="form-control text-center fw-bold formato-miles"
                                id="valorPersonas" disabled value="0">
                     </div>
                 </div>
 
-                <div class="row align-items-center border-bottom py-2">
-                    <div class="col-md-8">
-                        <label class="mb-0 fw-semibold">Valor de personas por municipio</label>
-                    </div>
-                    <div class="col-md-4">
-                        <input class="input-arena form-control titulo text-center formato-miles"
+                <div class="campo-ficha">
+                    <div class="campo-ficha-label campo-ficha-label-corta">Valor de personas por municipio</div>
+                    <div class="campo-ficha-control">
+                        <input class="form-control text-center formato-miles"
                                id="valorPersonasMunicipio" disabled value="0">
                     </div>
                 </div>
 
                 @* Sección Grupo 2 *@
                 <div class="mt-4">
-                    <div class="row align-items-center py-3">
+                    <div class="row align-items-center g-2">
                         <div class="col-md-8">
-                            <select class="input-arena form-control titulo" id="selectEstadoGrupo2">
+                            <select class="form-control select2-simple" id="selectEstadoGrupo2">
                                 <option value="">Seleccione un municipio</option>
                                 @foreach (var act in Model.ListaMunicipios)
                                 {
@@ -648,20 +592,22 @@
                             </select>
                         </div>
                         <div class="col-md-4">
-                            <input type="text" class="input-arena form-control titulo text-center formato-miles"
+                            <input type="text" class="form-control text-center formato-miles"
                                    id="personasAtendidasGrupo2" value="0" min="0" placeholder="Número">
                         </div>
                     </div>
 
-                    <div class="text-center mt-2">
-                        <button class="titulo boton-rojo fs-6" id="btnAgregarGrupo2" type="button">Agregar</button>
+                    <div class="text-center mt-3">
+                        <button class="btn-app-gris" id="btnAgregarGrupo2" type="button">
+                            <i class="fas fa-plus"></i> Agregar
+                        </button>
                     </div>
 
                     @* Tabla Grupo 2  *@
                     <div class="mt-3" id="tablaGrupo2" style="display: none;">
-                        <div class="table-responsive">
-                            <table class="table table-bordered table-sm">
-                                <thead class="bg-light">
+                        <div class="tabla-modal-wrap">
+                            <table class="tabla-modal">
+                                <thead>
                                     <tr>
                                         <th>Personas Atendidas</th>
                                         <th>Municipio</th>
@@ -674,7 +620,7 @@
                                 <tbody id="tbodyGrupo2">
                                 </tbody>
                                 <tfoot>
-                                    <tr class="fw-bold" style="background-color: #e9ecef;">
+                                    <tr class="fila-total">
                                         <td id="totalGrupo2">0</td>
                                         <td colspan="5" class="text-end">Total Grupo Acumulable</td>
                                     </tr>
@@ -685,37 +631,29 @@
                 </div>
             </div>
         </div>
-    </div> 
+    </div>
 
     @* Acciones necesarias para realizar la actividad principal *@
-    <div class="border p-3 mb-4 rounded-4 shadow" id="accionesContainer">
-        <div class="mb-2 text-center pb-1">
-            <h5 class="pt-2 glass-effect rounded-5 mb-2 text-center border-bottom pb-3 fw-semibold titulo">
-                ACCIONES NECESARIAS PARA REALIZAR LA ACTIVIDAD PRINCIPAL
-            </h5>
-        </div>
+    <div class="ficha-seccion" id="accionesContainer">
+        <h5 class="ficha-seccion-titulo">Acciones Necesarias para Realizar la Actividad Principal</h5>
 
         <!-- Contenedor de acciones - 3 por defecto -->
         <div id="accionesList">
             <!-- Acción 1 -->
-            <div class="border rounded p-3 mb-3 accion-item" data-numero="1">
-                <div class="row align-items-center mb-3">
-                    <div class="col-md-12">
-                        <h6 class="fw-semibold mb-0 titulo">1. ACCIÓN</h6>
-                    </div>
-                </div>
+            <div class="ficha-accion-item accion-item" data-numero="1">
+                <h6 class="ficha-accion-titulo">1. Acción</h6>
 
                 <div class="row mb-3">
                     <div class="col-md-12">
                         <label class="form-label fw-semibold small">DESCRIPCIÓN DE LA ACCIÓN</label>
-                        <textarea class="form-control titulo input-arena" rows="3" placeholder="Describa la acción necesaria..."></textarea>
+                        <textarea class="form-control" rows="3" placeholder="Describa la acción necesaria..."></textarea>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-md-4">
                         <label class="form-label fw-semibold small">FRECUENCIA DE REALIZACIÓN</label>
-                        <select class="form-control titulo input-arena">
+                        <select class="form-control select2-simple">
                             <option value="">Seleccione la frecuencia</option>
                             <option value="mensual">MENSUAL</option>
                             <option value="trimestral">TRIMESTRAL</option>
@@ -724,30 +662,26 @@
                     </div>
                     <div class="col-md-8">
                         <label class="form-label fw-semibold small">FECHA INICIO</label>
-                        <input type="date" class="form-control titulo input-arena fecha-inicio">
+                        <input type="date" class="form-control fecha-inicio">
                     </div>
                 </div>
             </div>
 
             <!-- Acción 2 -->
-            <div class="border rounded p-3 mb-3 accion-item" data-numero="2">
-                <div class="row align-items-center mb-3">
-                    <div class="col-md-12">
-                        <h6 class="fw-semibold mb-0 titulo">2. ACCIÓN</h6>
-                    </div>
-                </div>
+            <div class="ficha-accion-item accion-item" data-numero="2">
+                <h6 class="ficha-accion-titulo">2. Acción</h6>
 
                 <div class="row mb-3">
                     <div class="col-md-12">
                         <label class="form-label fw-semibold small">DESCRIPCIÓN DE LA ACCIÓN</label>
-                        <textarea class="form-control titulo input-arena" rows="3" placeholder="Describa la acción necesaria..."></textarea>
+                        <textarea class="form-control" rows="3" placeholder="Describa la acción necesaria..."></textarea>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-md-4">
                         <label class="form-label fw-semibold small">FRECUENCIA DE REALIZACIÓN</label>
-                        <select class="form-control titulo input-arena">
+                        <select class="form-control select2-simple">
                             <option value="">Seleccione la frecuencia</option>
                             <option value="mensual">MENSUAL</option>
                             <option value="trimestral">TRIMESTRAL</option>
@@ -756,30 +690,26 @@
                     </div>
                     <div class="col-md-8">
                         <label class="form-label fw-semibold small">FECHA INICIO</label>
-                        <input type="date" class="form-control titulo input-arena fecha-inicio">
+                        <input type="date" class="form-control fecha-inicio">
                     </div>
                 </div>
             </div>
 
             <!-- Acción 3 -->
-            <div class="border rounded p-3 mb-3 accion-item" data-numero="3">
-                <div class="row align-items-center mb-3">
-                    <div class="col-md-12">
-                        <h6 class="fw-semibold mb-0 titulo">3. ACCIÓN</h6>
-                    </div>
-                </div>
+            <div class="ficha-accion-item accion-item" data-numero="3">
+                <h6 class="ficha-accion-titulo">3. Acción</h6>
 
                 <div class="row mb-3">
                     <div class="col-md-12">
                         <label class="form-label fw-semibold small">DESCRIPCIÓN DE LA ACCIÓN</label>
-                        <textarea class="form-control titulo input-arena" rows="3" placeholder="Describa la acción necesaria..."></textarea>
+                        <textarea class="form-control" rows="3" placeholder="Describa la acción necesaria..."></textarea>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-md-4">
                         <label class="form-label fw-semibold small">FRECUENCIA DE REALIZACIÓN</label>
-                        <select class="form-control titulo input-arena">
+                        <select class="form-control select2-simple">
                             <option value="">Seleccione la frecuencia</option>
                             <option value="mensual">MENSUAL</option>
                             <option value="trimestral">TRIMESTRAL</option>
@@ -788,49 +718,53 @@
                     </div>
                     <div class="col-md-8">
                         <label class="form-label fw-semibold small">FECHA INICIO</label>
-                        <input type="date" class="form-control titulo input-arena fecha-inicio">
+                        <input type="date" class="form-control fecha-inicio">
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Botones de control -->
-        <div class="row mt-3">
-            <div class="col-md-12 text-center">
-                <button class="boton-rojo me-2" id="btnAgregarAccion" style="width: 50px; height: 50px;">
-                    <i class="fas fa-plus"></i>
-                </button>
-                <button class="boton-amarillo" id="btnEliminarAccion" style="width: 50px; height: 50px;">
-                    <i class="fas fa-minus"></i>
-                </button>
+        <div class="d-flex justify-content-center gap-2 mt-3">
+            <button type="button" class="btn-accion" id="btnAgregarAccion" title="Agregar acción" data-bs-toggle="tooltip" data-bs-placement="top">
+                <i class="fas fa-plus"></i>
+            </button>
+            <button type="button" class="btn-accion" id="btnEliminarAccion" title="Quitar última acción" data-bs-toggle="tooltip" data-bs-placement="top">
+                <i class="fas fa-minus"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="ficha-seccion">
+        <div class="row">
+            <div class="col-md-4 border-end">
+                <div class="ficha-firma">
+                    <label class="ficha-firma-label">Elaboró</label>
+                    <input type="text" id="inputElaboro" class="form-control text-center mb-2" placeholder="Nombre" />
+                    <input type="text" id="inputElaboroCargo" class="form-control text-center" placeholder="Cargo" />
+                </div>
+            </div>
+
+            <div class="col-md-4 border-end">
+                <div class="ficha-firma">
+                    <label class="ficha-firma-label">Revisó</label>
+                    <input type="text" id="inputReviso" class="form-control text-center mb-2" placeholder="Nombre" />
+                    <input type="text" id="inputRevisoCargo" class="form-control text-center" placeholder="Cargo" />
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="ficha-firma">
+                    <label class="ficha-firma-label">Autorizó</label>
+                    <input type="text" id="inputAutorizo" class="form-control text-center mb-2" placeholder="Nombre" />
+                    <input type="text" id="inputAutorizoCargo" class="form-control text-center" placeholder="Cargo" />
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="p-3 mb-4 rounded-4 shadow">
-        <div class="row p-3">            
-            <div class="col-md-4 text-center border-end">
-                <label class="fw-semibold d-block mb-2">Elaboró</label>
-                <input type="text" id="inputElaboro" class="form-control text-center mb-2 input-arena" placeholder="Nombre" />
-                <input type="text" id="inputElaboroCargo" class="form-control text-center input-arena" placeholder="Cargo" />
-            </div>
-
-            <div class="col-md-4 text-center border-end">
-                <label class="fw-semibold d-block mb-2">Revisó</label>
-                <input type="text" id="inputReviso" class="form-control text-center mb-2 input-arena" placeholder="Nombre" />
-                <input type="text" id="inputRevisoCargo" class="form-control text-center  input-arena" placeholder="Cargo" />
-            </div>
-
-            <div class="col-md-4 text-center">
-                <label class="fw-semibold d-block mb-2">Autorizó</label>
-                <input type="text" id="inputAutorizo" class="form-control text-center mb-2 input-arena" placeholder="Nombre" />
-                <input type="text" id="inputAutorizoCargo" class="form-control text-center input-arena" placeholder="Cargo" />
-            </div>
-        </div>
-    </div>
-
-    <div class="text-center mb-2">
-        <button class="boton-rojo ms-2"  id="btnGuardarProgramacion" style="color: #17a2b8; box-shadow: 0 5px 8px 0 #17a2b8; border: 1px solid #17a2b8 !important;">
+    <div class="text-center mb-5">
+        <button class="btn-app-rosa" id="btnGuardarProgramacion">
             <i class="fa-solid fa-arrow-right"></i> Enviar a revisión
         </button>
     </div>
@@ -869,7 +803,12 @@
 
             } catch (error) {
                 console.error('Error al cargar municipios:', error);
-                alert('Error al cargar los municipios. Por favor, recargue la página.');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error al cargar los municipios',
+                    text: 'Por favor, recargue la página.',
+                    confirmButtonText: 'Entendido'
+                });
             }
         }
 
@@ -878,24 +817,20 @@
         // ========================================
         function getAccionTemplate(numero) {
             return `
-                <div class="border rounded p-3 mb-3 accion-item" data-numero="${numero}">
-                    <div class="row align-items-center mb-3">
-                        <div class="col-md-12">
-                            <h6 class="fw-semibold mb-0 titulo">${numero}. ACCIÓN</h6>
-                        </div>
-                    </div>
+                <div class="ficha-accion-item accion-item" data-numero="${numero}">
+                    <h6 class="ficha-accion-titulo">${numero}. Acción</h6>
 
                     <div class="row mb-3">
                         <div class="col-md-12">
                             <label class="form-label fw-semibold small">DESCRIPCIÓN DE LA ACCIÓN</label>
-                            <textarea class="form-control titulo input-arena" rows="3" placeholder="Describa la acción necesaria..."></textarea>
+                            <textarea class="form-control" rows="3" placeholder="Describa la acción necesaria..."></textarea>
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-md-4">
                             <label class="form-label fw-semibold small">FRECUENCIA DE REALIZACIÓN</label>
-                            <select class="form-control titulo input-arena">
+                            <select class="form-control select2-simple">
                                 <option value="">Seleccione la frecuencia</option>
                                 <option value="mensual">MENSUAL</option>
                                 <option value="trimestral">TRIMESTRAL</option>
@@ -904,7 +839,7 @@
                         </div>
                         <div class="col-md-8">
                             <label class="form-label fw-semibold small">FECHA INICIO</label>
-                            <input type="date" class="form-control titulo input-arena fecha-inicio">
+                            <input type="date" class="form-control fecha-inicio">
                         </div>
                     </div>
                 </div>
@@ -915,7 +850,7 @@
             document.querySelectorAll('.accion-item').forEach((accion, index) => {
                 const numero = index + 1;
                 accion.setAttribute('data-numero', numero);
-                accion.querySelector('h6').textContent = `${numero}. ACCIÓN`;
+                accion.querySelector('h6').textContent = `${numero}. Acción`;
             });
         }
 
@@ -933,6 +868,8 @@
                 if (contadorAcciones < MAX_ACCIONES) {
                     contadorAcciones++;
                     accionesList.insertAdjacentHTML('beforeend', getAccionTemplate(contadorAcciones));
+                    $(accionesList).find('.accion-item:last-child select.select2-simple:not(.select2-hidden-accessible)')
+                        .select2({ width: '100%', language: 'es', minimumResultsForSearch: 8 });
                     actualizarNumeros();
                     actualizarBotones(btnAgregar, btnEliminar);
                 }
@@ -1097,12 +1034,12 @@
                 const personas = removerFormatoMiles(inputPersonas.value);
 
                 if (!estado) {
-                    alert('Por favor, seleccione un municipio');
+                    Swal.fire({ icon: 'warning', title: 'Selecciona un municipio', confirmButtonText: 'Entendido' });
                     return;
                 }
 
                 if (personas <= 0) {
-                    alert('Por favor, ingrese un número válido de personas');
+                    Swal.fire({ icon: 'warning', title: 'Ingresa un número válido de personas', confirmButtonText: 'Entendido' });
                     return;
                 }
 
@@ -1113,14 +1050,19 @@
 
                     const totalActual = calcularTotalPersonas(grupo);
                     const disponibles = maxServicios - totalActual;
-                    alert(`No se pueden agregar ${personas.toLocaleString('en-US')} personas. Solo hay ${disponibles} disponibles en el ${grupo === 'Grupo1' ? 'Grupo Principal' : 'Grupo Acumulable'}.`);
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'No se pueden agregar esas personas',
+                        text: `Solo hay ${disponibles} disponibles en el ${grupo === 'Grupo1' ? 'Grupo Principal' : 'Grupo Acumulable'}.`,
+                        confirmButtonText: 'Entendido'
+                    });
                     return;
                 }
 
                 const datos = datosEstados[estado];
 
                 if (!datos) {
-                    alert('Error: No se encontraron datos para el municipio seleccionado');
+                    Swal.fire({ icon: 'error', title: 'Error', text: 'No se encontraron datos para el municipio seleccionado.', confirmButtonText: 'Entendido' });
                     return;
                 }
 
@@ -1133,7 +1075,7 @@
                     <td>${datos.region}</td>
                     <td>${datos.numeroRegion}</td>
                     <td>${datos.clave}</td>
-                    <td><button class="btn btn-sm btn-outline-danger btn-eliminar">Eliminar</button></td>
+                    <td class="text-center"><button type="button" class="btn-accion btn-accion-eliminar btn-eliminar" title="Eliminar" data-bs-toggle="tooltip" data-bs-placement="top"><i class="fas fa-trash"></i></button></td>
                 `;
 
                 tbody.appendChild(nuevaFila);
@@ -1154,7 +1096,7 @@
                 calcularTotalPersonas(grupo);
                 actualizarServiciosPorMunicipio();
                 inputPersonas.value = '0';
-                selectEstado.value = '';
+                $(selectEstado).val('').trigger('change');
             });
         }
 
@@ -1188,14 +1130,14 @@
             const selectAcumulable = document.getElementById('selectAcumulable');
             const inputsGrupo2 = document.querySelectorAll('.mes-grupo2');
 
-            selectAcumulable.disabled = true;
+            $(selectAcumulable).prop('disabled', true);
 
             selectPersonas.addEventListener('change', function() {
                 if (this.value === 'Personas' || this.value === 'Instituciones') {
-                    selectAcumulable.disabled = false;
+                    $(selectAcumulable).prop('disabled', false);
                 } else {
-                    selectAcumulable.disabled = true;
-                    selectAcumulable.value = '';
+                    $(selectAcumulable).prop('disabled', true);
+                    $(selectAcumulable).val('').trigger('change');
 
                     inputsGrupo2.forEach(input => {
                         input.disabled = true;
@@ -1229,12 +1171,12 @@
                 });
 
                 const habilitarMunicipios = esAcumulable || (this.value === 'no' && esPersonas);
-                selectEstadoGrupo2.disabled = !habilitarMunicipios;
+                $(selectEstadoGrupo2).prop('disabled', !habilitarMunicipios);
                 personasAtendidasGrupo2.disabled = !habilitarMunicipios;
                 btnAgregarGrupo2.disabled = !habilitarMunicipios;
 
                 if (esInstituciones && !esAcumulable) {
-                    selectEstadoGrupo2.value = '';
+                    $(selectEstadoGrupo2).val('').trigger('change');
                     personasAtendidasGrupo2.value = 0;
                 }
 
@@ -1514,8 +1456,8 @@
                 if (resultado.success) {
                     // Mostrar mensaje de éxito con SweetAlert
                     btnGuardar.innerHTML = '<i class="fas fa-check"></i> ¡Guardado!';
-                    btnGuardar.classList.remove('boton-rojo');
-                    btnGuardar.classList.add('btn-success');
+                    btnGuardar.classList.remove('btn-app-rosa');
+                    btnGuardar.classList.add('btn-app-verde');
 
                     await Swal.fire({
                         title: '¡Éxito!',
@@ -1537,8 +1479,8 @@
                 // Restaurar botón en caso de error
                 btnGuardar.disabled = false;
                 btnGuardar.innerHTML = textoOriginal;
-                btnGuardar.classList.remove('btn-success');
-                btnGuardar.classList.add('boton-rojo');
+                btnGuardar.classList.remove('btn-app-verde');
+                btnGuardar.classList.add('btn-app-rosa');
 
                 // Mostrar error específico con SweetAlert
                 let mensajeError = 'Error al guardar la programación';
@@ -1610,7 +1552,16 @@
 
                         // Enfocar el campo después de un pequeño delay
                         setTimeout(() => {
-                            if (campo.tagName === 'SELECT' || campo.tagName === 'INPUT' || campo.tagName === 'TEXTAREA') {
+                            if (campo.tagName === 'SELECT' && $(campo).hasClass('select2-hidden-accessible')) {
+                                // Los <select> con select2 quedan ocultos; se resalta y abre el widget visible
+                                const $widget = $(campo).next('.select2-container').find('.select2-selection');
+                                $widget.css({ 'border-color': '#dc3545', 'background-color': '#fff5f5' });
+                                $(campo).select2('open');
+
+                                setTimeout(() => {
+                                    $widget.css({ 'border-color': '', 'background-color': '' });
+                                }, 3000);
+                            } else if (campo.tagName === 'SELECT' || campo.tagName === 'INPUT' || campo.tagName === 'TEXTAREA') {
                                 campo.focus();
 
                                 // Resaltar visualmente el campo
@@ -1813,6 +1764,8 @@
         // INICIALIZACIÓN PRINCIPAL
         // ========================================
         document.addEventListener('DOMContentLoaded', async function() {
+            $('.select2-simple').select2({ width: '100%', language: 'es', minimumResultsForSearch: 8 });
+
             await cargarMunicipios();
             configurarAcciones();
             configurarSelectDelegaciones();

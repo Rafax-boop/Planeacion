@@ -1,0 +1,973 @@
+/* === Select nativo — componente único para toda la app ===
+   Aplica a cualquier <select> del sistema (filtros, formularios, modales).
+   Los <select> convertidos por select2 quedan ocultos y no se ven afectados. */
+select,
+select.form-select,
+select.form-control {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 100%;
+    padding: 12px 40px 12px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    font-family: inherit;
+    color: var(--text-primary);
+    background-color: var(--bg);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23db2777' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    background-size: 12px 8px;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+select:hover,
+select.form-select:hover,
+select.form-control:hover {
+    border-color: var(--primary-light);
+    background-color: var(--surface);
+}
+
+select:focus,
+select.form-select:focus,
+select.form-control:focus {
+    border-color: var(--primary);
+    background-color: var(--surface);
+    box-shadow: 0 0 0 4px rgba(219, 39, 119, 0.08);
+}
+
+select:disabled,
+select.form-select:disabled,
+select.form-control:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+select::-ms-expand {
+    display: none;
+}
+
+/* === Estado vacío === */
+.sin-registros {
+    text-align: center;
+    padding: 1.5rem;
+    background-color: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-secondary);
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.sin-registros i {
+    font-size: 2rem;
+    color: var(--primary);
+}
+
+/* === Título de vista: en línea con su subtítulo, separados por un guion === */
+.titulo-vista-wrap {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0 0 16px;
+}
+
+.titulo-vista {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+    color: var(--primary);
+}
+
+.subtitulo-vista {
+    margin: 0;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+/* === Filtros/buscadores ===
+   Tarjeta blanca, flex-wrap, cada filtro como columna label(mayúsculas)+input. */
+.filtros-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 20px;
+    padding: 24px 28px;
+    margin-bottom: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04), 0 8px 24px rgba(15, 23, 42, 0.04);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.filtros-container:hover {
+    border-color: var(--primary-light);
+}
+
+.filtro-grupo {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+    min-width: 180px;
+}
+
+.filtro-grupo label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-secondary);
+}
+
+.filtro-grupo input,
+.filtro-grupo select,
+.filtro-grupo textarea {
+    padding: 12px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    font-family: inherit;
+    color: var(--text-primary);
+    background: var(--bg);
+    outline: none;
+    transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.filtro-grupo select {
+    padding-right: 40px;
+}
+
+.filtro-grupo input::placeholder,
+.filtro-grupo select::placeholder,
+.filtro-grupo textarea::placeholder {
+    color: var(--text-secondary);
+    font-weight: 400;
+}
+
+.filtro-grupo input:hover,
+.filtro-grupo select:hover,
+.filtro-grupo textarea:hover {
+    border-color: var(--primary-light);
+    background: var(--surface);
+}
+
+.filtro-grupo input:focus,
+.filtro-grupo select:focus,
+.filtro-grupo textarea:focus {
+    border-color: var(--primary);
+    background: var(--surface);
+    box-shadow: 0 0 0 4px rgba(219, 39, 119, 0.08);
+}
+
+/* Los ":hover"/":focus" de arriba usan la propiedad abreviada "background",
+   que resetea "background-image" (la flecha). Se restaura aquí, después,
+   para que gane por orden de aparición sin subir la especificidad. */
+.filtro-grupo select,
+.filtro-grupo select:hover,
+.filtro-grupo select:focus {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23db2777' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    background-size: 12px 8px;
+}
+
+/* === Select2 — estilo rosa (mismo componente para toda la app) === */
+.select2-container {
+    width: 100% !important;
+}
+
+.select2-container--default .select2-selection--single {
+    height: 44px;
+    display: flex;
+    align-items: center;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-input);
+    background: var(--bg);
+    transition: all 0.3s ease;
+}
+
+.select2-container--default .select2-selection--single:hover {
+    border-color: var(--primary-light);
+    background: var(--surface);
+}
+
+.select2-container--default.select2-container--open .select2-selection--single {
+    border-color: var(--primary);
+    background: var(--surface);
+    box-shadow: 0 0 0 3px rgba(219, 39, 119, 0.12);
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: var(--text-primary);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 0 42px 0 14px;
+    line-height: 41px;
+    width: 100%;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__placeholder {
+    color: var(--text-secondary);
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow b {
+    border-color: var(--primary) transparent transparent transparent;
+    border-width: 5px 4px 0 4px;
+}
+
+.select2-container--default.select2-container--open .select2-selection--single .select2-selection__arrow b {
+    border-color: transparent transparent var(--primary) transparent;
+    border-width: 0 4px 5px 4px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__clear {
+    color: var(--text-secondary);
+    font-size: 18px;
+    font-weight: 300;
+    margin-right: 4px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__clear:hover {
+    color: var(--error);
+}
+
+.select2-dropdown {
+    border: 1px solid var(--primary-light);
+    border-radius: 12px;
+    box-shadow: 0 18px 40px rgba(219, 39, 119, 0.18);
+    padding: 8px;
+    overflow: hidden;
+}
+
+.select2-dropdown--above {
+    margin-bottom: 4px;
+}
+
+.select2-container--default .select2-results > .select2-results__options {
+    max-height: 240px;
+    overflow-y: auto;
+}
+
+.select2-container--default .select2-results__option {
+    padding: 10px 12px;
+    margin: 2px 0;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    transition: all 0.15s ease;
+}
+
+.select2-container--default .select2-results__option--highlighted {
+    background: var(--gradiente-suave) !important;
+    color: var(--primary-dark) !important;
+}
+
+.select2-container--default .select2-results__option[aria-selected="true"] {
+    background: var(--gradiente-suave);
+    color: var(--primary-dark);
+}
+
+.select2-container--default .select2-results__option[aria-selected="true"].select2-results__option--highlighted {
+    background: var(--gradiente-suave) !important;
+    color: var(--primary-dark) !important;
+}
+
+.select2-container--default .select2-search--dropdown .select2-search__field {
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-input);
+    padding: 8px 12px;
+    font-size: 13px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.select2-container--default .select2-search--dropdown .select2-search__field:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(219, 39, 119, 0.12);
+}
+
+/* === Componente: tabla de datos con paginación === */
+.tabla-datos-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-bottom: none;
+    border-radius: 16px 16px 0 0;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04), 0 8px 24px rgba(15, 23, 42, 0.04);
+}
+
+.tabla-datos {
+    width: 100%;
+    margin: 0;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+}
+
+.tabla-datos thead th {
+    background: var(--primary-light);
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 13px 16px;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.tabla-datos tbody td {
+    padding: 12px 16px;
+    border-top: 1px solid var(--border);
+    color: var(--text-primary);
+    vertical-align: middle;
+}
+
+.tabla-datos tbody tr:nth-child(even) {
+    background: var(--bg);
+}
+
+.tabla-datos tbody tr:hover,
+.tabla-datos tbody tr:nth-child(even):hover {
+    background: var(--gradiente-suave);
+}
+
+.tabla-paginacion-oculta {
+    display: none !important;
+}
+
+/* === Paginación === */
+.tabla-paginacion {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px 20px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 0 0 16px 16px;
+}
+
+.tabla-paginacion-info {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.tabla-paginacion-btns {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.tabla-paginacion-nums {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.tabla-paginacion-ellipsis {
+    padding: 0 4px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    user-select: none;
+}
+
+.tabla-paginacion-btn {
+    padding: 8px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.tabla-paginacion-num {
+    padding: 8px 12px;
+}
+
+.tabla-paginacion-btn:hover:not(:disabled) {
+    border-color: var(--primary-light);
+    color: var(--primary);
+    background: var(--gradiente-suave);
+}
+
+.tabla-paginacion-btn.activo {
+    border-color: var(--primary-light);
+    background: var(--gradiente-suave);
+    color: var(--primary);
+}
+
+.tabla-paginacion-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* === Botones de acción principal (arriba de la tabla / formularios) ===
+   Rosa y gris son las acciones primaria/secundaria genéricas; azul y verde
+   se reservan para accesos a tableros/reportes (mismo trazo, sin sombra
+   pesada ni glow al hover — solo brightness + un pequeño translateY). */
+.btn-app-rosa,
+.btn-app-gris,
+.btn-app-azul,
+.btn-app-verde {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.btn-app-rosa {
+    border: none;
+    background: var(--gradiente);
+    color: #ffffff;
+}
+
+.btn-app-rosa:hover {
+    filter: brightness(1.05);
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.btn-app-gris {
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    color: var(--text-secondary);
+}
+
+.btn-app-gris:hover {
+    border-color: var(--primary-light);
+    color: var(--primary);
+    background: var(--gradiente-suave);
+    text-decoration: none;
+}
+
+.btn-app-azul {
+    border: none;
+    background: var(--info);
+    color: #ffffff;
+}
+
+.btn-app-azul:hover {
+    filter: brightness(1.1);
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.btn-app-verde {
+    border: none;
+    background: var(--success);
+    color: #ffffff;
+}
+
+.btn-app-verde:hover {
+    filter: brightness(1.1);
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.btn-app-rosa:active,
+.btn-app-gris:active,
+.btn-app-azul:active,
+.btn-app-verde:active {
+    transform: translateY(1px);
+}
+
+/* === Botones de acción por fila === */
+.acciones-grupo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+}
+
+.btn-accion {
+    width: 34px;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 0.8rem;
+    text-decoration: none;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+
+.btn-accion:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.1);
+    text-decoration: none;
+}
+
+.btn-accion-ver:hover {
+    border-color: var(--primary-light);
+    color: var(--primary);
+    background: var(--gradiente-suave);
+}
+
+.btn-accion-editar:hover {
+    border-color: #bfdbfe;
+    color: #2563eb;
+    background: #eff6ff;
+}
+
+.btn-accion-eliminar:hover {
+    border-color: #fca5a5;
+    color: #dc2626;
+    background: #fef2f2;
+}
+
+/* === Modal — cabecera de marca, para cualquier .modal-header del sitio === */
+.modal-content {
+    border-radius: var(--radius-card);
+    border: none;
+}
+
+.modal-header {
+    background: var(--gradiente);
+    color: #ffffff;
+    border-bottom: none;
+    border-radius: var(--radius-card) var(--radius-card) 0 0;
+}
+
+.modal-header .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+    opacity: 0.85;
+}
+
+.modal-header .btn-close:hover {
+    opacity: 1;
+}
+
+.modal-footer {
+    border-top: none;
+}
+
+/* === Modal grande de formulario: ancho fijo 900px, alto fijo, scroll interno ===
+   Se usa junto con la clase de Bootstrap "modal-dialog-scrollable" (scroll
+   solo en .modal-body, header/footer quedan fijos). */
+.modal-dialog-900 {
+    max-width: 900px;
+}
+
+.modal-fijo {
+    height: min(900px, calc(100vh - 3.5rem)) !important;
+    max-height: min(900px, calc(100vh - 3.5rem)) !important;
+    border-radius: var(--radius-card);
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+}
+
+.modal-fijo .modal-header,
+.modal-fijo .modal-footer {
+    flex: 0 0 auto !important;
+}
+
+/* El <form> que envuelve modal-body/modal-footer en los modales de edición
+   rompe el flex de .modal-fijo: sin esto, el form crece a su alto natural
+   (según el contenido) y modal-body nunca queda realmente acotado, así que
+   su overflow-y:auto no llega a activarse nunca. */
+.modal-fijo > form {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+}
+
+.modal-fijo .modal-body {
+    padding: 24px 28px;
+    flex: 1 1 auto !important;
+    overflow-y: auto !important;
+    min-height: 0 !important;
+}
+
+/* Select2 se abre insertando el dropdown al final de <body>: sin esto queda
+   por debajo del modal (z-index 1055 en BS5) y parece "roto" o inaccesible. */
+.select2-container--open {
+    z-index: 2000;
+}
+
+/* Secciones dentro de un modal: agrupan campos relacionados con un título
+   pequeño y una línea divisoria, sin el peso visual de una tarjeta aparte
+   (el modal ya es la tarjeta). */
+.modal-seccion {
+    padding: 18px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.modal-seccion:first-child {
+    padding-top: 0;
+}
+
+.modal-seccion:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.modal-seccion-titulo {
+    margin: 0 0 14px;
+    text-align: center;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--primary);
+}
+
+/* Grid compacto de 12 meses (2 filas de 6) — reemplaza dos tablas Bootstrap
+   sueltas con thead azul/verde sólido por una cuadrícula ligera. */
+.modal-meses-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px 8px;
+}
+
+.modal-mes-col {
+    text-align: center;
+}
+
+/* === Badges de estatus === */
+.badge-estatus {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.badge-estatus-info {
+    color: var(--info);
+    background: rgba(3, 105, 161, 0.1);
+    border: 1px solid rgba(3, 105, 161, 0.25);
+}
+
+.badge-estatus-warning {
+    color: var(--warning);
+    background: rgba(217, 119, 6, 0.1);
+    border: 1px solid rgba(217, 119, 6, 0.25);
+}
+
+.badge-estatus-success {
+    color: var(--success);
+    background: rgba(22, 163, 74, 0.1);
+    border: 1px solid rgba(22, 163, 74, 0.25);
+}
+
+.badge-estatus-neutral {
+    color: var(--text-secondary);
+    background: var(--bg);
+    border: 1px solid var(--border);
+}
+
+.badge-estatus-alerta {
+    color: #c2410c;
+    background: rgba(234, 88, 12, 0.1);
+    border: 1px solid rgba(234, 88, 12, 0.25);
+}
+
+.badge-estatus-error {
+    color: var(--error);
+    background: rgba(220, 38, 38, 0.1);
+    border: 1px solid rgba(220, 38, 38, 0.25);
+}
+
+/* === Tablero de Control: tarjeta por actividad (encabezado + secciones
+   internas reutilizando .modal-seccion/.modal-seccion-titulo) === */
+.tablero-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding-bottom: 18px;
+    margin-bottom: 18px;
+    border-bottom: 1px solid var(--border);
+}
+
+.tablero-card-titulo {
+    margin: 0 0 4px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+}
+
+.tablero-card-desc {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.tablero-card-meta {
+    display: block;
+    margin-top: 4px;
+    font-size: 0.78rem;
+    font-style: italic;
+    color: var(--text-secondary);
+}
+
+.tablero-card-acciones {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.btn-tablero-pdf {
+    padding: 7px 16px;
+    font-size: 0.78rem;
+}
+
+.tablero-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px 24px;
+}
+
+.tablero-info-label {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+}
+
+.tablero-info-valor {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.tablero-subtitulo {
+    text-align: center;
+    margin-bottom: 12px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.tablero-subtitulo-rosa {
+    color: var(--primary);
+}
+
+.tablero-subtitulo-verde {
+    color: #15803d;
+}
+
+.tablero-valor {
+    text-align: center;
+    padding: 8px 4px 0;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.tablero-total {
+    margin-top: 12px;
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.tablero-total strong {
+    color: var(--text-primary);
+}
+
+.tablero-avance-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px 8px;
+}
+
+.tablero-avance-grid .badge-estatus {
+    width: 100%;
+    justify-content: center;
+    margin-top: 6px;
+}
+
+.tablero-trimestres {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    height: 100%;
+}
+
+.tablero-trimestre-card {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 10px;
+    text-align: center;
+    background: var(--bg);
+}
+
+.tablero-trimestre-label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-secondary);
+}
+
+.tablero-trimestre-pct {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.tablero-progress {
+    width: 100%;
+    height: 7px;
+    border-radius: 20px;
+    background: var(--border);
+    overflow: hidden;
+}
+
+.tablero-progress-bar {
+    height: 100%;
+    border-radius: 20px;
+    transition: width 0.4s ease;
+}
+
+.tablero-progress-bar-info { background: var(--info); }
+.tablero-progress-bar-success { background: var(--success); }
+.tablero-progress-bar-warning { background: var(--warning); }
+.tablero-progress-bar-alerta { background: #ea580c; }
+.tablero-progress-bar-error { background: var(--error); }
+
+.tablero-anual {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    background: var(--bg);
+    text-align: center;
+}
+
+.tablero-anual-pct {
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.tablero-anual-stats {
+    display: flex;
+    justify-content: center;
+    gap: 28px;
+    margin-top: 12px;
+}
+
+.tablero-anual-stat-label {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-secondary);
+    margin-bottom: 2px;
+}
+
+.tablero-anual-stat-valor {
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.text-tablero-primary { color: var(--primary) !important; }
+.text-tablero-info { color: var(--info) !important; }
+.text-tablero-success { color: var(--success) !important; }
+.text-tablero-warning { color: var(--warning) !important; }
+.text-tablero-alerta { color: #ea580c !important; }
+.text-tablero-error { color: var(--error) !important; }
+
+/* === Íconos de estatus mensual (Monitoreo) — palomita/tache con affordance
+   de botón: chip circular con fondo tenue del color del estatus, que se
+   oscurece y se eleva ligeramente al pasar el mouse. */
+.icono-mes {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.icono-mes:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.14);
+    text-decoration: none;
+}
+
+.icono-mes-completado {
+    background: rgba(22, 163, 74, 0.14);
+    color: var(--success);
+}
+
+.icono-mes-completado:hover {
+    background: rgba(22, 163, 74, 0.26);
+    color: var(--success);
+}
+
+.icono-mes-pendiente {
+    background: rgba(3, 105, 161, 0.12);
+    color: var(--info);
+}
+
+.icono-mes-pendiente:hover {
+    background: rgba(3, 105, 161, 0.24);
+    color: var(--info);
+}
+
+/* Fuera de periodo: no es un enlace (no hace nada al hacer clic), así que
+   conserva la misma forma de chip para verse consistente en la cuadrícula,
+   pero sin el efecto de hover que sugeriría que es clicable. */
+.icono-mes-vencido {
+    background: rgba(220, 38, 38, 0.1);
+    color: var(--error);
+}
