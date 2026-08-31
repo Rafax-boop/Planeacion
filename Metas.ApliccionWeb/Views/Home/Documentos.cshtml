@@ -1,0 +1,301 @@
+@model Metas.AplicacionWeb.Models.ViewModels.VMDocumentosDepartamento
+
+@{
+    ViewData["Title"] = "Documentos del Departamento";
+}
+
+<div class="container-fluid mt-4">
+    <form method="post" action="@Url.Action("GuardarDocumentos", "Home")" enctype="multipart/form-data" id="formDocumentos">
+
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 ficha-titulo-wrap">
+            <div class="titulo-vista-wrap mb-0">
+                <h1 class="titulo-vista">Documentos del Departamento</h1>
+                <span class="subtitulo-vista"><i class="fa-solid fa-folder-open me-1"></i>Reglas, lineamientos y documentos institucionales</span>
+            </div>
+        </div>
+
+        <div class="ficha-seccion">
+            <h5 class="ficha-seccion-titulo">Departamento</h5>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label for="selectDepartamento" class="form-label small text-muted mb-1">Seleccione el departamento</label>
+                    <select id="selectDepartamento" class="form-select select2-simple">
+                        @if (Model.EsAdministrador || Model.ListaDepartamentos.Count > 1)
+                        {
+                            <option value="">-- Seleccione un departamento --</option>
+                        }
+                        @foreach (var depto in Model.ListaDepartamentos)
+                        {
+                            <option value="@depto.Value" selected="@(depto.Value == Model.DepartamentoSeleccionado.ToString())">@depto.Text</option>
+                        }
+                    </select>
+                    <input type="hidden" id="hiddenIdDepartamento" value="@Model.DepartamentoSeleccionado" />
+                </div>
+            </div>
+        </div>
+
+        <div class="ficha-seccion">
+            <h5 class="ficha-seccion-titulo">
+                Documentos
+                <small class="text-danger fw-normal">
+                    <i class="fa-solid fa-asterisk me-1"></i>Los documentos de Reglas y Lineamientos de Operación son obligatorios.
+                </small>
+            </h5>
+
+            @{
+                (string Tipo, string Nombre, bool Obligatorio, string Ruta, string IFormFileName)[] docs =
+                {
+                    ("reglas", "Reglas de Operación", true, Model.ReglasOperacion, "InputReglasOperacion"),
+                    ("lineamientos", "Lineamientos de Operación", true, Model.LineamientosOperacion, "InputLineamientosOperacion"),
+                    ("arbol", "Árbol de Problemas y Objetivos", false, Model.ArbolProblemasObjetivos, "InputArbolProblemasObjetivos"),
+                    ("metodologia", "Metodología de Padrón de Beneficiarios", false, Model.MetodologiaPadron, "InputMetodologiaPadron"),
+                    ("diagnostico", "Diagnóstico", false, Model.Diagnostico, "InputDiagnostico")
+                };
+            }
+
+            @for (int i = 0; i < docs.Length; i++)
+            {
+                var doc = docs[i];
+                string idFile = "input" + doc.Tipo;
+                string inputName = doc.IFormFileName;
+                bool existe = !string.IsNullOrEmpty(doc.Ruta);
+                string nombreArchivo = existe ? System.IO.Path.GetFileName(doc.Ruta) : "";
+
+                <div class="row g-3 align-items-end mb-4" data-documento="@doc.Tipo" data-obligatorio="@doc.Obligatorio.ToString().ToLower()">
+                    <div class="col-md-4">
+                        <label class="form-label small text-muted mb-1">
+                            @doc.Nombre
+                            @if (doc.Obligatorio)
+                            {
+                                <span class="text-danger">*</span>
+                            }
+                        </label>
+                        <div>
+                            @if (existe)
+                            {
+                                <a target="_blank" href="@doc.Ruta" class="btn-app-verde btn-tablero-pdf">
+                                    <i class="fa-solid fa-download"></i> @nombreArchivo
+                                </a>
+                                <button type="button" class="btn btn-outline-danger btn-sm ms-2 btn-eliminar-documento" data-departamento="@Model.DepartamentoSeleccionado" data-tipo="@doc.Tipo">
+                                    <i class="fa-solid fa-trash"></i> Eliminar
+                                </button>
+                            }
+                            else
+                            {
+                                <span class="badge-estatus badge-estatus-error" data-badge="@doc.Tipo">No se ha cargado este documento</span>
+                            }
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <label for="@idFile" class="form-label small text-muted mb-1">
+                            @(existe ? "Reemplazar documento (opcional)" : "Subir documento")
+                        </label>
+                        <input type="file"
+                               class="form-control"
+                               id="@idFile"
+                               name="@inputName"
+                               accept=".pdf,.xlsx"
+                               data-tiene-archivo-existente="@existe.ToString().ToLower()">
+                    </div>
+                    <div class="col-md-3">
+                        <span class="text-muted small">
+                            @if (doc.Obligatorio)
+                            {
+                                <text><i class="fa-solid fa-circle-info me-1"></i>PDF o XLSX - max 50 MB</text>
+                            }
+                        </span>
+                    </div>
+                </div>
+            }
+
+            <hr />
+
+            <div class="row g-3">
+                <div class="col-12">
+                    <label for="justificacion" class="form-label small text-muted mb-1">
+                        <i class="fa-solid fa-pen-to-square me-1"></i>Justificación
+                        <span class="text-danger">(requerida si no se han cargado los documentos obligatorios)</span>
+                    </label>
+                    <textarea id="justificacion" name="Justificacion" class="form-control" rows="4"
+                              placeholder="Si los documentos de Reglas y Lineamientos de Operación no se han cargado, explique el motivo...">@Model.Justificacion</textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-end gap-2 mt-3 mb-4">
+            <button type="submit" id="btnGuardar" class="btn-app-verde">
+                <i class="fa-solid fa-floppy-disk me-1"></i> Guardar documentos
+            </button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            // Enlazar select2 al selector de departamento cuando hay opciones
+            if ($('#selectDepartamento').find('option').length > 1) {
+                $('#selectDepartamento').select2({
+                    language: 'es',
+                    placeholder: '-- Seleccione un departamento --',
+                    allowClear: true
+                });
+            }
+
+            const currentId = @Model.DepartamentoSeleccionado;
+            if (currentId > 0 && $('#selectDepartamento').length && !$('#selectDepartamento').is(':disabled')) {
+                $('#selectDepartamento').val(String(currentId)).trigger('change.select2');
+            }
+
+            // Cambio de departamento: redirigir para cargar sus documentos
+            $('#selectDepartamento').on('change', function () {
+                const id = $(this).val();
+                if (id) {
+                    window.location.href = '@Url.Action("Documentos", "Home")' + '?idDepartamento=' + id;
+                }
+            });
+
+            function obtenerIdDepartamento() {
+                const val = $('#selectDepartamento').val();
+                return val ? val : $('#hiddenIdDepartamento').val();
+            }
+
+            // Validar nuevos archivos antes de enviar
+            const tiposPermitidos = ['.pdf', '.xlsx'];
+            const tamanoMaximo = 50 * 1024 * 1024;
+
+            function validarArchivo(input, nombreDoc) {
+                if (!input.files || input.files.length === 0) return true;
+                const archivo = input.files[0];
+                const ext = archivo.name.substring(archivo.name.lastIndexOf('.')).toLowerCase();
+                if (tiposPermitidos.indexOf(ext) === -1) {
+                    Swal.fire('Error', `El documento "${nombreDoc}" solo puede ser PDF o XLSX.`, 'error');
+                    input.value = '';
+                    return false;
+                }
+                if (archivo.size > tamanoMaximo) {
+                    Swal.fire('Error', `El documento "${nombreDoc}" no puede superar los 50 MB.`, 'error');
+                    input.value = '';
+                    return false;
+                }
+                return true;
+            }
+
+            $('input[type="file"]').on('change', function () {
+                const nombreDoc = $(this).closest('.row').find('label').first().text().trim();
+                validarArchivo(this, nombreDoc);
+            });
+
+            // Validación obligatorios + justificación al enviar
+            $('#formDocumentos').on('submit', function (e) {
+                const id = obtenerIdDepartamento();
+                if (!id) {
+                    e.preventDefault();
+                    Swal.fire('Error', 'Debe seleccionar un departamento.', 'error');
+                    return;
+                }
+
+                let faltaReglas = true;
+                let faltaLineamientos = true;
+
+                $('input[type="file"]').each(function () {
+                    const tipo = $(this).closest('.row').data('documento');
+                    const tieneExistente = $(this).data('tiene-archivo-existente') === true;
+                    const tieneNuevo = this.files && this.files.length > 0;
+
+                    if (!validarArchivo(this, tipo)) {
+                        tieneNuevo = false;
+                    }
+
+                    const cargado = tieneExistente || tieneNuevo;
+                    if (tipo === 'reglas' && cargado) faltaReglas = false;
+                    if (tipo === 'lineamientos' && cargado) faltaLineamientos = false;
+                });
+
+                const justificacion = $('#justificacion').val().trim();
+
+                if ((faltaReglas || faltaLineamientos) && !justificacion) {
+                    e.preventDefault();
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Documentos obligatorios faltantes',
+                        text: 'Los documentos de Reglas de Operación y Lineamientos de Operación son obligatorios. Cárguelos o proporcione una justificación.',
+                        confirmButtonText: 'Entendido'
+                    });
+                    return;
+                }
+
+                // Enviar vía AJAX
+                e.preventDefault();
+                const formData = new FormData(this);
+                formData.append('IdDepartamento', id);
+
+                Swal.fire({
+                    title: "Procesando...",
+                    text: "Por favor, espere.",
+                    icon: "info",
+                    showConfirmButton: false,
+                    allowOutsideClick: false,
+                    allowEscapeKey: false
+                });
+
+                $.ajax({
+                    url: '@Url.Action("GuardarDocumentos", "Home")',
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        Swal.close();
+                        if (response.success) {
+                            Swal.fire('Éxito', response.mensaje, 'success').then(() => {
+                                window.location.reload();
+                            });
+                        } else {
+                            Swal.fire('Error', response.mensaje || 'Ocurrió un error al guardar', 'error');
+                        }
+                    },
+                    error: function () {
+                        Swal.close();
+                        Swal.fire('Error de Conexión', 'No se pudo comunicar con el servidor.', 'error');
+                    }
+                });
+            });
+
+            // Eliminar documento
+            $('.btn-eliminar-documento').on('click', function () {
+                const departamento = $(this).data('departamento') || obtenerIdDepartamento();
+                const tipo = $(this).data('tipo');
+
+                Swal.fire({
+                    title: '¿Eliminar documento?',
+                    text: 'Se eliminará el archivo cargado.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (!result.isConfirmed) return;
+
+                    $.ajax({
+                        url: '@Url.Action("EliminarDocumento", "Home")',
+                        type: 'POST',
+                        data: { idDepartamento: departamento, tipoDocumento: tipo },
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire('Éxito', response.mensaje, 'success').then(() => {
+                                    window.location.reload();
+                                });
+                            } else {
+                                Swal.fire('Error', response.mensaje || 'No se pudo eliminar', 'error');
+                            }
+                        },
+                        error: function () {
+                            Swal.fire('Error de Conexión', 'No se pudo comunicar con el servidor.', 'error');
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+}
