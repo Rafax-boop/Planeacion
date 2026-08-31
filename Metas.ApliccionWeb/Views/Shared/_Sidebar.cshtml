@@ -31,6 +31,10 @@
             <i class="fa-solid fa-chart-line icon"></i>
             <span class="label sidebar-expand-text">Monitoreo y Seguimiento de Metas</span>
         </a>
+        <a class="sidebar-nav-item @EsActivo("Home", "Documentos")" asp-area="" asp-controller="Home" asp-action="Documentos" title="Documentos del Departamento">
+            <i class="fa-solid fa-folder-open icon"></i>
+            <span class="label sidebar-expand-text">DOCUMENTOS</span>
+        </a>
         @if (User.IsInRole("Administrador"))
         {
             <a class="sidebar-nav-item @EsActivo("Monitoreo", "TableroCompletoDepartamento")" asp-area="" asp-controller="Monitoreo" asp-action="TableroCompletoDepartamento" asp-route-departamento="0" title="Tablero Completo por Departamento">

@@ -58,6 +58,18 @@ app.UseStaticFiles(new StaticFileOptions
     RequestPath = "/Justificacion"
 });
 
+// Crear carpeta Documentos si no existe
+var documentosPath = Path.Combine(env.WebRootPath, "Documentos");
+
+if (!Directory.Exists(documentosPath))
+    Directory.CreateDirectory(documentosPath);
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(documentosPath),
+    RequestPath = "/Documentos"
+});
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {

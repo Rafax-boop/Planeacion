@@ -1,4 +1,5 @@
-﻿using Metas.Entity;
+﻿using Metas.BLL.DTO;
+using Metas.Entity;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Web;
 using System.Collections.Generic;
@@ -15,5 +16,9 @@ namespace Metas.BLL.Interfaces
         Task<List<PpCompuesto>> ObtenerComponentes();
         Task<List<UnidadMedidum>> ObtenerMedidas();
         Task<List<Municipio>> ObtenerMunicipios();
+        Task<Departamento> ObtenerDepartamento(int idDepartamento);
+        Task<bool> GuardarDocumentos(DepartamentoDocumentosDTO modelo);
+        Task<bool> GuardarJustificacion(int idDepartamento, string justificacion);
+        Task<string> EliminarDocumento(int idDepartamento, string tipoDocumento);
     }
 }

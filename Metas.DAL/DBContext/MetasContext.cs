@@ -102,6 +102,11 @@ public partial class MetasContext : DbContext
                 .HasColumnName("Departamento");
             entity.Property(e => e.Unidad).HasMaxLength(50);
             entity.Property(e => e.UnidadRepresentante).HasMaxLength(200);
+            entity.Property(e => e.ReglasOperacion).HasMaxLength(500);
+            entity.Property(e => e.LineamientosOperacion).HasMaxLength(500);
+            entity.Property(e => e.ArbolProblemasObjetivos).HasMaxLength(500);
+            entity.Property(e => e.MetodologiaPadron).HasMaxLength(500);
+            entity.Property(e => e.Diagnostico).HasMaxLength(500);
         });
 
         modelBuilder.Entity<Estatus>(entity =>
