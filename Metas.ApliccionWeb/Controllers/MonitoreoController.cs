@@ -548,6 +548,28 @@ namespace Metas.AplicacionWeb.Controllers
             return Json(datosEdicion);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> ObtenerDatosJustificacion(int idProceso)
+        {
+            var registro = await _programacionService.ObtenerporId(idProceso);
+            if (registro == null)
+            {
+                return NotFound();
+            }
+
+            return Json(new
+            {
+                pp = registro.Pp,
+                componente = registro.Componente,
+                actividad = registro.Actividad,
+                descripcionActividad = registro.DescripcionActividad,
+                nombreRealizo = registro.NombreRealizo,
+                cargoRealizo = registro.CargoRealizo,
+                nombreValido = registro.NombreValido,
+                cargoValido = registro.CargoValido
+            });
+        }
+
         [HttpPost]
         public async Task<IActionResult> GuardarEdicion(VMDatosEdicionActividad modelo)
         {
