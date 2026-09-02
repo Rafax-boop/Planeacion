@@ -11,7 +11,7 @@ namespace Metas.BLL.Interfaces
     public interface IProgramacionService
     {
         Task<bool> GuardarProgramacion(ProgramacionDTO modelo);
-        Task<List<LlenadoInterno>> ObtenerDatosProgramacion(int anoFiscal, int? departamentoId);
+        Task<List<LlenadoInterno>> ObtenerDatosProgramacion(int anoFiscal, int? departamentoId, string area = null);
         Task<bool> EliminarProgramacion(int idLlenado);
         Task<ProgramacionDTO> ObtenerDatosCompletos(int idLlenado);
         Task<Comentario> ObtenerComentariosPorProgramacion(int idProgramacion);

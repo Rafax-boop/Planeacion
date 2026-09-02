@@ -14,6 +14,17 @@
         </a>
     </div>
 
+    @if (Model.Estatus == 3)
+    {
+        <div class="aviso-validado aviso-validado-centrado">
+            <i class="fas fa-check-circle"></i>
+            <div>
+                <h4>Programación Validada</h4>
+                <p>Esta programación ha sido aprobada y validada.</p>
+            </div>
+        </div>
+    }
+
     @* Datos del solicitante *@
     <div class="ficha-solicitante">
         <div class="ficha-solicitante-tab">
@@ -892,17 +903,6 @@
         }
     }
 
-    @if (Model.Estatus == 3)
-    {
-        <div class="aviso-validado">
-            <i class="fas fa-check-circle"></i>
-            <div>
-                <h4>Programación Validada</h4>
-                <p>Esta programación ha sido aprobada y validada.</p>
-            </div>
-        </div>
-    }
-
     @* Modal para comentarios *@
     <div class="modal fade" id="modalComentario" tabindex="-1" aria-labelledby="modalComentarioLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -1497,6 +1497,30 @@
         }
 
         // ========================================
+        // CAMPOS OBLIGATORIOS DE LA FICHA
+        // ========================================
+        function obtenerCamposObligatoriosFicha() {
+            const valorTexto = id => document.getElementById(id)?.value?.trim() || '';
+            const valorSelect = id => document.getElementById(id)?.value || '';
+
+            return [
+                { label: 'Número de actividad', campoId: 'inputActividad', valido: !!valorTexto('inputActividad') },
+                { label: 'Justificación', campoId: 'inputJustificacion', valido: !!valorTexto('inputJustificacion') },
+                { label: 'Documentación soporte de la justificación', campoId: 'inputDocumentacion', valido: !!valorTexto('inputDocumentacion') },
+                { label: 'Recurso Federal', campoId: 'selectFederal', valido: !!valorSelect('selectFederal') },
+                { label: 'Recurso Estatal', campoId: 'selectEstatal', valido: !!valorSelect('selectEstatal') },
+                { label: 'Programa social, servicio y/o proyecto', campoId: 'inputPrograma', valido: !!valorTexto('inputPrograma') },
+                { label: 'Descripción de la actividad', campoId: 'inputDescripcion', valido: !!valorTexto('inputDescripcion') },
+                { label: 'Nombre del indicador', campoId: 'inputIndicador', valido: !!valorTexto('inputIndicador') },
+                { label: 'Definición del indicador', campoId: 'inputDefinicion', valido: !!valorTexto('inputDefinicion') },
+                { label: 'Unidad de medida', campoId: 'selectMedida', valido: !!valorSelect('selectMedida') },
+                { label: 'Medios de verificación', campoId: 'inputMedios', valido: !!valorTexto('inputMedios') },
+                { label: 'Serie de información disponible (desde)', campoId: 'selectDesde', valido: !!valorSelect('selectDesde') },
+                { label: 'Fuentes de información', campoId: 'inputFuentes', valido: !!valorTexto('inputFuentes') }
+            ];
+        }
+
+        // ========================================
         // VALIDAR PROGRAMACIÓN (GUARDA + VALIDA)
         // ========================================
         async function validarProgramacion() {
@@ -1508,6 +1532,8 @@
                 await Swal.fire({ title: 'Error', text: 'No se encontró el ID de programación', icon: 'error' });
                 return;
             }
+
+            if (!validarCamposRequeridos(obtenerCamposObligatoriosFicha())) return;
 
             const confirmacion = await Swal.fire({
                 title: '¿Guardar y Validar Programación?',
@@ -1733,6 +1759,8 @@
                 return;
             }
 
+            if (!validarCamposRequeridos(obtenerCamposObligatoriosFicha())) return;
+
             try {
                 btnGuardar.disabled = true;
                 btnGuardar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
@@ -1924,6 +1952,8 @@
                 await Swal.fire({ title: 'Error', text: 'No se encontró el ID de programación', icon: 'error' });
                 return;
             }
+
+            if (!validarCamposRequeridos(obtenerCamposObligatoriosFicha())) return;
 
             try {
                 btnGuardar.disabled = true;

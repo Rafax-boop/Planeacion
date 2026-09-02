@@ -39,6 +39,17 @@ else
                 </a>
             </div>
 
+            @if (esSoloVista)
+            {
+                <div class="aviso-validado aviso-validado-centrado">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <div>
+                        <h4>Información completa</h4>
+                        <p>Esta información está completa y se muestra en modo solo lectura.</p>
+                    </div>
+                </div>
+            }
+
             @* Contexto de la actividad (solo lectura) *@
             <div class="ficha-seccion">
                 <h5 class="ficha-seccion-titulo">Contexto de la Actividad</h5>
@@ -295,27 +306,17 @@ else
             </div>
 
             @* Botones *@
-            <div class="text-center mb-5">
-                @if (!esSoloVista)
-                {
+            @if (!esSoloVista)
+            {
+                <div class="text-center mb-5">
                     <button type="button" class="btn-app-gris mx-2" id="btnGuardarBorrador">
                         <i class="fa-solid fa-floppy-disk"></i> Guardar
                     </button>
                     <button type="button" class="btn-app-rosa mx-2" id="btnEnviarFinal">
                         <i class="fa-solid fa-paper-plane"></i> Enviar
                     </button>
-                }
-                else
-                {
-                    <div class="aviso-validado">
-                        <i class="fa-solid fa-circle-check"></i>
-                        <div>
-                            <h4>Información completa</h4>
-                            <p>Esta información está completa y se muestra en modo solo lectura.</p>
-                        </div>
-                    </div>
-                }
-            </div>
+                </div>
+            }
 
         </form>
     </div>
@@ -405,59 +406,74 @@ else
             // =======================================================
             function enviarFormulario(esBorrador) {
 
-                // Si es envío final, forzamos la validación del navegador
-                if (!esBorrador && !formElement.checkValidity()) {
-                    formElement.reportValidity(); // Muestra los mensajes de error de HTML5
-                    return;
+                // Si es envío final, validamos los campos obligatorios dinámicos (evidencia/justificación)
+                if (!esBorrador) {
+                    const evidenciaOk = !$('#inputEvidencia').prop('required') || $('#inputEvidencia')[0]?.files?.length > 0;
+                    const justificacionOk = !$('#inputJustificacion').prop('required') || $('#inputJustificacion')[0]?.files?.length > 0;
+
+                    const campos = [
+                        { label: 'Evidencia', campoId: 'inputEvidencia', valido: evidenciaOk },
+                        { label: 'Justificación', campoId: 'inputJustificacion', valido: justificacionOk }
+                    ];
+
+                    if (!validarCamposRequeridos(campos)) return;
                 }
 
-                prepararFormularioParaEnvio();
+                var mensajeConfirmacion = esBorrador
+                    ? 'Se guardará esta información como borrador.'
+                    : 'Se enviará esta información para su revisión. Ya no podrá editarla.';
 
-                const formData = new FormData(formElement);
-                // 1. Añade el indicador de si es borrador (true) o envío final (false)
-                formData.append('EsBorrador', esBorrador);
+                confirmarGuardado(mensajeConfirmacion).then(function (confirmado) {
+                    if (!confirmado) return;
 
-                // 2. Agrega el token de Anti-Forgery
-                const antiforgeryToken = $('input[name="__RequestVerificationToken"]').val();
-                if (antiforgeryToken) {
-                    formData.append('__RequestVerificationToken', antiforgeryToken);
-                }
+                    prepararFormularioParaEnvio();
 
-                $.ajax({
-                    url: urlAccion,
-                    type: 'POST',
-                    data: formData,
-                    contentType: false, // Necesario para enviar archivos
-                    processData: false, // Necesario para enviar archivos
+                    const formData = new FormData(formElement);
+                    // 1. Añade el indicador de si es borrador (true) o envío final (false)
+                    formData.append('EsBorrador', esBorrador);
 
-                    beforeSend: function() {
-                         Swal.fire({
-                            title: "Procesando...",
-                            text: "Por favor, espere.",
-                            icon: "info",
-                            showConfirmButton: false, // Oculta el botón OK
-                            allowOutsideClick: false, // No permite cerrar haciendo clic fuera
-                            allowEscapeKey: false // No permite cerrar con la tecla Escape
-                        });
-                    },
-                    success: function(response) {
-                        Swal.close();
-                        restaurarFormatoVisual();
-                        if (response.success) {
-                            Swal.fire("Éxito", response.message, "success")
-                                .then(() => {
-                                    window.location.href = response.redirectTo;
-                                });
-                        } else {
-                            Swal.fire("Error", response.message || "Ocurrió un error al procesar la solicitud.", "error");
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        Swal.close();
-                        restaurarFormatoVisual();
-                        console.error("Error AJAX:", status, error, xhr.responseText);
-                        Swal.fire("Error de Conexión", "No se pudo comunicar con el servidor o el servidor devolvió un error.", "error");
+                    // 2. Agrega el token de Anti-Forgery
+                    const antiforgeryToken = $('input[name="__RequestVerificationToken"]').val();
+                    if (antiforgeryToken) {
+                        formData.append('__RequestVerificationToken', antiforgeryToken);
                     }
+
+                    $.ajax({
+                        url: urlAccion,
+                        type: 'POST',
+                        data: formData,
+                        contentType: false, // Necesario para enviar archivos
+                        processData: false, // Necesario para enviar archivos
+
+                        beforeSend: function() {
+                             Swal.fire({
+                                title: "Procesando...",
+                                text: "Por favor, espere.",
+                                icon: "info",
+                                showConfirmButton: false, // Oculta el botón OK
+                                allowOutsideClick: false, // No permite cerrar haciendo clic fuera
+                                allowEscapeKey: false // No permite cerrar con la tecla Escape
+                            });
+                        },
+                        success: function(response) {
+                            Swal.close();
+                            restaurarFormatoVisual();
+                            if (response.success) {
+                                Toast.fire({ icon: 'success', title: response.message || 'Guardado correctamente' })
+                                    .then(() => {
+                                        window.location.href = response.redirectTo;
+                                    });
+                            } else {
+                                Swal.fire("Error", response.message || "Ocurrió un error al procesar la solicitud.", "error");
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            Swal.close();
+                            restaurarFormatoVisual();
+                            console.error("Error AJAX:", status, error, xhr.responseText);
+                            Swal.fire("Error de Conexión", "No se pudo comunicar con el servidor o el servidor devolvió un error.", "error");
+                        }
+                    });
                 });
             }
 

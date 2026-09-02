@@ -182,6 +182,7 @@ namespace Metas.BLL.Implementacion
                     TotalNoviembre = modelo.MesesServicios[10],
                     TotalDiciembre = modelo.MesesServicios[11],
                     UnidadMedida = modelo.UnidadMedida,
+                    // Debe coincidir con la suma mensual (la vista de calendarización muestra los 12 meses)
                     TotalProgramado = modelo.MesesServicios.Sum(),
                     TotalPersona = modelo.MesesPersonas.Sum(),
                     EneroPersona = modelo.MesesPersonas[0],
@@ -242,13 +243,15 @@ namespace Metas.BLL.Implementacion
             }
         }
 
-        public async Task<List<LlenadoInterno>> ObtenerDatosProgramacion(int anoFiscal, int? departamentoId)
+        public async Task<List<LlenadoInterno>> ObtenerDatosProgramacion(int anoFiscal, int? departamentoId, string area = null)
         {
             try
             {
                 if (!departamentoId.HasValue || departamentoId.Value == 0)
                 {
-                    var queryTodos = await _repositorioLlenadoInterno.Consultar(x => x.Ano == anoFiscal);
+                    var queryTodos = !string.IsNullOrWhiteSpace(area)
+                        ? await _repositorioLlenadoInterno.Consultar(x => x.Ano == anoFiscal && x.Area == area)
+                        : await _repositorioLlenadoInterno.Consultar(x => x.Ano == anoFiscal);
 
                     var resultadoTodos = await queryTodos
                         .Include(x => x.Programacions)
@@ -827,7 +830,7 @@ namespace Metas.BLL.Implementacion
                         llenadoInterno.NoviembrePersona = modelo.MesesPersonas[10];
                         llenadoInterno.DiciembrePersona = modelo.MesesPersonas[11];
 
-                        // Totales alineados con la calendarizacion mensual (12 meses)
+                        // Totales alineados con la calendarización mensual (12 meses)
                         llenadoInterno.TotalProgramado = modelo.MesesServicios.Sum();
                         llenadoInterno.TotalPersona = modelo.MesesPersonas.Sum();
 

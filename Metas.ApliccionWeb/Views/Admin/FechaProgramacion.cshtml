@@ -2,6 +2,9 @@
 @model List<VMFechas>
 @{
     ViewData["Title"] = "Fecha Programacion";
+    var anoActual = DateTime.Now.Year;
+    var anoMinimo = anoActual - 5;
+    var anoMaximo = anoActual + 1;
 }
 
 <div class="titulo-vista-wrap">
@@ -63,13 +66,14 @@ else
                     <input type="hidden" id="txtIdFechaCaptura" name="IdFechaCaptura" />
 
                     <label class="form-label fw-semibold">Fecha Inicio</label>
-                    <input type="date" class="form-control mb-3" id="txtFechaInicio" name="FechaInicio" required />
+                    <input type="date" class="form-control mb-3" id="txtFechaInicio" name="FechaInicio" />
 
                     <label class="form-label fw-semibold">Fecha Término</label>
-                    <input type="date" class="form-control mb-3" id="txtFechaFin" name="FechaFin" required />
+                    <input type="date" class="form-control mb-3" id="txtFechaFin" name="FechaFin" />
 
                     <label class="form-label fw-semibold">Año</label>
-                    <input type="number" class="form-control" id="txtAno" name="Ano" required />
+                    <input type="number" class="form-control" id="txtAno" name="Ano" min="@anoMinimo" max="@anoMaximo" />
+                    <div class="form-text">Debe estar entre @anoMinimo y @anoMaximo.</div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn-app-gris" data-bs-dismiss="modal">Cerrar</button>
@@ -82,6 +86,9 @@ else
 
 @section Scripts {
     <script>
+        const anoMinimoPermitido = @anoMinimo;
+        const anoMaximoPermitido = @anoMaximo;
+
         function cargarDatosFecha(id, fechaInicio, fechaFin, ano) {
             document.getElementById('txtIdFechaCaptura').value = id;
             document.getElementById('txtFechaInicio').value = fechaInicio;
@@ -107,38 +114,46 @@ else
 
         $("#formEditar").submit(function (e) {
             e.preventDefault();
-            var formData = $(this).serialize();
-            $("#btnEditar").prop('disabled', true).text('Editando...');
 
-            $.ajax({
-                type: 'PUT',
-                url: '/Admin/EditarProgramacion',
-                data: formData,
-                dataType: 'json',
-                success: function (response) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: '¡Éxito!',
-                        text: response.mensaje,
-                        confirmButtonText: 'Aceptar'
-                    }).then(() => {
+            var anoIngresado = parseInt($('#txtAno').val(), 10);
+            var anoEnRango = !isNaN(anoIngresado) && anoIngresado >= anoMinimoPermitido && anoIngresado <= anoMaximoPermitido;
+
+            var camposValidos = validarCamposRequeridos([
+                { label: 'Fecha Inicio', campoId: 'txtFechaInicio', valido: !!$('#txtFechaInicio').val() },
+                { label: 'Fecha Término', campoId: 'txtFechaFin', valido: !!$('#txtFechaFin').val() },
+                { label: 'Año (debe estar entre ' + anoMinimoPermitido + ' y ' + anoMaximoPermitido + ')', campoId: 'txtAno', valido: anoEnRango }
+            ]);
+            if (!camposValidos) return;
+
+            confirmarGuardado('Se actualizará la fecha de captura de programación seleccionada.').then(function (confirmado) {
+                if (!confirmado) return;
+
+                var formData = $('#formEditar').serialize();
+                $("#btnEditar").prop('disabled', true).text('Editando...');
+
+                $.ajax({
+                    type: 'PUT',
+                    url: '/Admin/EditarProgramacion',
+                    data: formData,
+                    dataType: 'json',
+                    success: function (response) {
                         $("#ModalFecha").modal('hide');
                         $("#formEditar")[0].reset();
-                        location.reload();
-                    });
-                },
-                error: function (xhr) {
-                    var error = xhr.responseJSON;
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: error?.mensaje || 'Error al editar fechas',
-                        confirmButtonText: 'Entendido'
-                    });
-                },
-                complete: function() {
-                    $("#btnEditar").prop('disabled', false).text('Editar');
-                }
+                        Toast.fire({ icon: 'success', title: response.mensaje || 'Fecha actualizada' }).then(() => location.reload());
+                    },
+                    error: function (xhr) {
+                        var error = xhr.responseJSON;
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: error?.mensaje || 'Error al editar fechas',
+                            confirmButtonText: 'Entendido'
+                        });
+                    },
+                    complete: function() {
+                        $("#btnEditar").prop('disabled', false).text('Editar');
+                    }
+                });
             });
         });
     </script>

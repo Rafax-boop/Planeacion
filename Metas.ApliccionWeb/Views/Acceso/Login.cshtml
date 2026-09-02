@@ -16,7 +16,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    <link rel="stylesheet" href="~/css/estilos-login.css" />
+    <link rel="stylesheet" href="~/css/estilos-login.css" asp-append-version="true" />
 </head>
 <body>
     <div class="login-page">
@@ -38,6 +38,7 @@
 
             <div class="brand-footer">
                 <img src="~/img/familias-dif.png" alt="Familias Sistema Estatal DIF" class="brand-logo" />
+                <span class="brand-footer-copy">&copy; @DateTime.Now.Year - Desarrollado por el Departamento de Soporte Técnico.</span>
                 <img src="~/img/pensargrande.png" alt="Pensar en Grande" class="brand-logo" />
             </div>
         </section>
@@ -63,7 +64,7 @@
                             <input asp-for="Password" type="password" placeholder=" " autocomplete="current-password" />
                             <label asp-for="Password">Contraseña</label>
                             <button type="button" class="toggle-password" data-target="Password" aria-label="Mostrar contraseña">
-                                <i class="fa-regular fa-eye"></i>
+                                <i class="fa-regular fa-eye-slash"></i>
                             </button>
                         </div>
 
@@ -77,11 +78,12 @@
                 </div>
 
                 <p class="login-caption">Gobierno del Estado de Puebla · Control de Seguimiento de Metas</p>
+                <p class="login-soporte">Si no cuenta con usuario y/o contraseña, favor de comunicarse con el Departamento de Soporte Técnico.</p>
             </div>
         </section>
 
     </div>
 
-    <script src="~/js/login.js"></script>
+    <script src="~/js/login.js" asp-append-version="true"></script>
 </body>
 </html>

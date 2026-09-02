@@ -49,7 +49,8 @@ namespace Metas.AplicacionWeb.Controllers
                     .Select(d => new SelectListItem
                     {
                         Value = d.IdDepartamento.ToString(),
-                        Text = d.Departamento1
+                        Text = d.Departamento1,
+                        Group = new SelectListGroup { Name = d.Area }
                     })
                     .OrderBy(item => item.Text);
             }
@@ -63,7 +64,8 @@ namespace Metas.AplicacionWeb.Controllers
                         .Select(d => new SelectListItem
                         {
                             Value = d.IdDepartamento.ToString(),
-                            Text = d.Departamento1
+                            Text = d.Departamento1,
+                            Group = new SelectListGroup { Name = d.Area }
                         });
                 }
                 else
@@ -74,7 +76,8 @@ namespace Metas.AplicacionWeb.Controllers
                         .Select(d => new SelectListItem
                         {
                             Value = d.IdDepartamento.ToString(),
-                            Text = d.Departamento1
+                            Text = d.Departamento1,
+                            Group = new SelectListGroup { Name = d.Area }
                         })
                         .OrderBy(item => item.Text);
                 }
@@ -97,14 +100,14 @@ namespace Metas.AplicacionWeb.Controllers
             return View(modelo);
         }
 
-        public async Task<IActionResult> ObtenerDatos(int anoFiscal, int departamento)
+        public async Task<IActionResult> ObtenerDatos(int anoFiscal, int? departamento, string area = null)
         {
             try
             {
                 bool esAdmin = User.IsInRole("Administrador");
 
                 // Obtener datos de programación
-                var datos = await _programacionService.ObtenerDatosProgramacion(anoFiscal, departamento);
+                var datos = await _programacionService.ObtenerDatosProgramacion(anoFiscal, departamento, area);
 
                 // Obtener fechas de captura
                 var fechasCaptura = await _fechasService.Lista();

@@ -22,6 +22,13 @@
 
     <div class="sidebar-divider"></div>
 
+    <div class="sidebar-usuario" title="@User.Identity.Name">
+        <i class="fa-solid fa-circle-user icon"></i>
+        <span class="label sidebar-expand-text">@User.Identity.Name</span>
+    </div>
+
+    <div class="sidebar-divider"></div>
+
     <nav class="sidebar-nav">
         <a class="sidebar-nav-item @EsActivo("Programacion")" asp-area="" asp-controller="Programacion" asp-action="Programacion" title="Ejercicio de Programación">
             <i class="fa-solid fa-calendar-check icon"></i>
@@ -30,10 +37,6 @@
         <a class="sidebar-nav-item @EsActivo("Monitoreo", "Monitoreo")" asp-area="" asp-controller="Monitoreo" asp-action="Monitoreo" title="Monitoreo y Seguimiento de Metas">
             <i class="fa-solid fa-chart-line icon"></i>
             <span class="label sidebar-expand-text">Monitoreo y Seguimiento de Metas</span>
-        </a>
-        <a class="sidebar-nav-item @EsActivo("Home", "Documentos")" asp-area="" asp-controller="Home" asp-action="Documentos" title="Documentos del Departamento">
-            <i class="fa-solid fa-folder-open icon"></i>
-            <span class="label sidebar-expand-text">DOCUMENTOS</span>
         </a>
         @if (User.IsInRole("Administrador"))
         {
@@ -54,6 +57,10 @@
                 <span class="label sidebar-expand-text">Fecha de Captura Programación</span>
             </a>
         }
+        <a class="sidebar-nav-item @EsActivo("Home", "Documentos")" asp-area="" asp-controller="Home" asp-action="Documentos" title="Documentos del Departamento">
+            <i class="fa-solid fa-folder-open icon"></i>
+            <span class="label sidebar-expand-text">DOCUMENTOS</span>
+        </a>
     </nav>
 
     <div class="sidebar-footer">

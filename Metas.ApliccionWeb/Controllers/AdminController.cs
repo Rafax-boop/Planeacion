@@ -81,6 +81,38 @@ namespace Metas.AplicacionWeb.Controllers
             }
         }
 
+        [HttpPut]
+        public async Task<IActionResult> EditarUsuario(VMUsuario modelo)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(new { mensaje = "Datos inválidos" });
+                }
+
+                var entidad = _mapper.Map<Usuario>(modelo);
+                Usuario resultado = await _usuarioService.Editar(entidad);
+
+                if (resultado != null)
+                {
+                    return Ok(new { mensaje = "Usuario editado exitosamente" });
+                }
+                else
+                {
+                    return BadRequest(new { mensaje = "No se pudo editar el usuario" });
+                }
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { mensaje = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Error al editar", error = ex.Message });
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> Eliminar(int id)
         {
@@ -153,6 +185,15 @@ namespace Metas.AplicacionWeb.Controllers
         {
             try
             {
+                int anoActual = DateTime.Now.Year;
+                int anoMinimo = anoActual - 5;
+                int anoMaximo = anoActual + 1;
+
+                if (model.Ano < anoMinimo || model.Ano > anoMaximo)
+                {
+                    return BadRequest(new { mensaje = $"El año debe estar entre {anoMinimo} y {anoMaximo}" });
+                }
+
                 var entidad = _mapper.Map<CapturaProgramacion>(model);
 
                 CapturaProgramacion resultado = await _fechasService.EditarProgramacion(entidad);

@@ -12,6 +12,7 @@ namespace Metas.BLL.Interfaces
         Task<Usuario> ObtenerPorCredenciales(string usuario, string clave);
         Task<List<Usuario>> Lista();
         Task<bool> Crear(Usuario entidad);
+        Task<Usuario> Editar(Usuario entidad);
         Task<bool> Eliminar(int idUsuario);
         Task<CorreosInstitucionale> ObtenerCorreos(string departamento);
     }

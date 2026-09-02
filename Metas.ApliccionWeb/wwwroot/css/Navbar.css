@@ -1,4 +1,4 @@
-﻿.li-nav {
+.li-nav {
     transition: all 0.3s ease;
     box-shadow: none !important;
     border-radius: 5px;
@@ -282,3 +282,39 @@
     background-color: #c00000 !important;
     color: white !important;
     font-weight: bold;
+}
+
+/* ========================================
+   AJUSTES RESPONSIVOS (MÓVILES)
+   ======================================== */
+@media (max-width: 991.98px) {
+    /* Quitar bordes al toggle (hamburguesa) en móvil */
+    .navbar-toggler {
+        border: none !important;
+        box-shadow: none !important;
+        padding: 5px;
+    }
+    
+    .navbar-toggler:focus {
+        outline: none !important;
+        box-shadow: none !important;
+    }
+
+    /* Navbar Collapse Responsive a Cristal */
+    .navbar-collapse {
+        border: none !important;
+        background: rgba(255, 255, 255, 0.05) !important;
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border-radius: 15px;
+        padding: 10px;
+        margin-top: 15px;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    .navbar .dropdown-menu {
+        border: none !important;
+        background: transparent !important;
+        box-shadow: none !important;
+    }
+}

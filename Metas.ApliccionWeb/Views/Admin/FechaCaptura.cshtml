@@ -63,10 +63,10 @@ else
                     <input type="hidden" id="txtIdFechaCaptura" name="IdFechaCaptura" />
 
                     <label class="form-label fw-semibold">Fecha Inicio</label>
-                    <input type="date" class="form-control mb-3" id="txtFechaInicio" name="FechaInicio" required />
+                    <input type="date" class="form-control mb-3" id="txtFechaInicio" name="FechaInicio" />
 
                     <label class="form-label fw-semibold">Fecha Término</label>
-                    <input type="date" class="form-control" id="txtFechaFin" name="FechaFin" required />
+                    <input type="date" class="form-control" id="txtFechaFin" name="FechaFin" />
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn-app-gris" data-bs-dismiss="modal">Cerrar</button>
@@ -103,38 +103,42 @@ else
 
         $("#formEditar").submit(function (e) {
             e.preventDefault();
-            var formData = $(this).serialize();
-            $("#btnEditar").prop('disabled', true).text('Editando...');
 
-            $.ajax({
-                type: 'PUT',
-                url: '/Admin/Editar',
-                data: formData,
-                dataType: 'json',
-                success: function (response) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: '¡Éxito!',
-                        text: response.mensaje,
-                        confirmButtonText: 'Aceptar'
-                    }).then(() => {
+            var camposValidos = validarCamposRequeridos([
+                { label: 'Fecha Inicio', campoId: 'txtFechaInicio', valido: !!$('#txtFechaInicio').val() },
+                { label: 'Fecha Término', campoId: 'txtFechaFin', valido: !!$('#txtFechaFin').val() }
+            ]);
+            if (!camposValidos) return;
+
+            confirmarGuardado('Se actualizará la fecha de captura seleccionada.').then(function (confirmado) {
+                if (!confirmado) return;
+
+                var formData = $('#formEditar').serialize();
+                $("#btnEditar").prop('disabled', true).text('Editando...');
+
+                $.ajax({
+                    type: 'PUT',
+                    url: '/Admin/Editar',
+                    data: formData,
+                    dataType: 'json',
+                    success: function (response) {
                         $("#ModalFecha").modal('hide');
                         $("#formEditar")[0].reset();
-                        location.reload();
-                    });
-                },
-                error: function (xhr) {
-                    var error = xhr.responseJSON;
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: error?.mensaje || 'Error al editar fechas',
-                        confirmButtonText: 'Entendido'
-                    });
-                },
-                complete: function() {
-                    $("#btnEditar").prop('disabled', false).text('Editar');
-                }
+                        Toast.fire({ icon: 'success', title: response.mensaje || 'Fecha actualizada' }).then(() => location.reload());
+                    },
+                    error: function (xhr) {
+                        var error = xhr.responseJSON;
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: error?.mensaje || 'Error al editar fechas',
+                            confirmButtonText: 'Entendido'
+                        });
+                    },
+                    complete: function() {
+                        $("#btnEditar").prop('disabled', false).text('Editar');
+                    }
+                });
             });
         });
     </script>

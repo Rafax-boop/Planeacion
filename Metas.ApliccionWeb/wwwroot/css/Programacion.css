@@ -1,16 +1,15 @@
-﻿.boton-rojo {
+.boton-rojo {
     background-color: #fdf3f6;
     color: #741732;
-    border-radius: 5px 5px 5px 5px;
-    font-size: 20px;
-    padding-bottom: 4px;
-    padding-top: 4px;
-    padding-left: 6px;
-    padding-right: 6px;
+    border-radius: 8px;
+    font-size: clamp(14px, 4vw, 20px);
+    padding: 8px 16px;
     font-weight: 500;
     box-shadow: 0 5px 8px 0 #741732;
-    transition: box-shadow 0.1s ease;
+    transition: all 0.2s ease;
     border: 1px solid #741732 !important;
+    word-break: break-word;
+    max-width: 100%;
 }
     .boton-rojo:hover {
         box-shadow: none !important;
@@ -26,16 +25,15 @@
 .boton-amarillo {
     background-color: #fdf3f6;
     color: #c09866;
-    border-radius: 5px 5px 5px 5px;
-    font-size: 20px;
-    padding-bottom: 4px;
-    padding-top: 4px;
-    padding-left: 6px;
-    padding-right: 6px;
+    border-radius: 8px;
+    font-size: clamp(14px, 4vw, 20px);
+    padding: 8px 16px;
     font-weight: 500;
     box-shadow: 0 5px 8px 0 #c09866;
-    transition: box-shadow 0.1s ease;
+    transition: all 0.2s ease;
     border: 1px solid #c09866 !important;
+    word-break: break-word;
+    max-width: 100%;
 }
 
     .boton-amarillo:hover {

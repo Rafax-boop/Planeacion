@@ -188,12 +188,9 @@
 
             // Validación obligatorios + justificación al enviar
             $('#formDocumentos').on('submit', function (e) {
+                e.preventDefault();
+
                 const id = obtenerIdDepartamento();
-                if (!id) {
-                    e.preventDefault();
-                    Swal.fire('Error', 'Debe seleccionar un departamento.', 'error');
-                    return;
-                }
 
                 let faltaReglas = true;
                 let faltaLineamientos = true;
@@ -201,7 +198,7 @@
                 $('input[type="file"]').each(function () {
                     const tipo = $(this).closest('.row').data('documento');
                     const tieneExistente = $(this).data('tiene-archivo-existente') === true;
-                    const tieneNuevo = this.files && this.files.length > 0;
+                    let tieneNuevo = this.files && this.files.length > 0;
 
                     if (!validarArchivo(this, tipo)) {
                         tieneNuevo = false;
@@ -213,20 +210,18 @@
                 });
 
                 const justificacion = $('#justificacion').val().trim();
+                const faltanObligatorios = faltaReglas || faltaLineamientos;
 
-                if ((faltaReglas || faltaLineamientos) && !justificacion) {
-                    e.preventDefault();
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Documentos obligatorios faltantes',
-                        text: 'Los documentos de Reglas de Operación y Lineamientos de Operación son obligatorios. Cárguelos o proporcione una justificación.',
-                        confirmButtonText: 'Entendido'
-                    });
-                    return;
-                }
+                const campos = [
+                    { label: 'Departamento', campoId: 'selectDepartamento', valido: !!id },
+                    { label: 'Reglas de Operación (documento o justificación)', campoId: 'inputreglas', valido: !faltaReglas || !!justificacion },
+                    { label: 'Lineamientos de Operación (documento o justificación)', campoId: 'inputlineamientos', valido: !faltaLineamientos || !!justificacion },
+                    { label: 'Justificación', campoId: 'justificacion', valido: !faltanObligatorios || !!justificacion }
+                ];
+
+                if (!validarCamposRequeridos(campos)) return;
 
                 // Enviar vía AJAX
-                e.preventDefault();
                 const formData = new FormData(this);
                 formData.append('IdDepartamento', id);
 
