@@ -27,7 +27,10 @@
     <div class="filtro-grupo">
         <label for="selectAreaFiltro">Área</label>
         <select id="selectAreaFiltro" class="select2-simple">
-            <option value="">Todas</option>
+            @if (User.IsInRole("Administrador"))
+            {
+                <option value="">Todas</option>
+            }
             @foreach (var area in Model.ListaAreas)
             {
                 <option value="@area.Text">@area.Text</option>
