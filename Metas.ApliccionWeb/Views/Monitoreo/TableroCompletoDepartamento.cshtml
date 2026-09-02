@@ -11,12 +11,48 @@
             <h1 class="titulo-vista"><i class="fas fa-table me-2"></i> Tablero Completo por Departamento</h1>
         </div>
         <div class="d-flex gap-2">
-            <a href="@Url.Action("Monitoreo", "Monitoreo")" class="btn-app-gris">
+            <a href="@Url.Action("Monitoreo", "Monitoreo")" class="btn-app-gris" onclick="if (window.history.length > 1) { event.preventDefault(); window.history.back(); }">
                 <i class="fas fa-arrow-left"></i> Volver
             </a>
             <button type="button" class="btn-app-verde" id="btnExportarExcel">
                 <i class="fas fa-file-excel"></i> Exportar Excel
             </button>
+        </div>
+    </div>
+
+    @* Resumen General *@
+    <div class="row mb-4 g-3">
+        <div class="col-md-3 col-6">
+            <div class="card card-resumen-small">
+                <div class="card-body text-center">
+                    <h6 class="text-muted">Total Registros</h6>
+                    <h4 class="fw-bold text-dark" id="totalRegistros">0</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card card-resumen-small" style="border-left: 4px solid #ffc107;">
+                <div class="card-body text-center">
+                    <h6 class="text-muted">Total Programado</h6>
+                    <h4 class="fw-bold" style="color: #d49a00;" id="totalProgramado">0</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card card-resumen-small" style="border-left: 4px solid #20c997;">
+                <div class="card-body text-center">
+                    <h6 class="text-muted">Total Realizado</h6>
+                    <h4 class="fw-bold" style="color: #20c997;" id="totalRealizado">0</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card card-resumen-small" style="border-left: 4px solid #6f42c1;">
+                <div class="card-body text-center">
+                    <h6 class="text-muted">Personas Atendidas</h6>
+                    <h4 class="fw-bold" style="color: #6f42c1;" id="totalPersonas">0</h4>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -194,49 +230,13 @@
             </thead>
             <tbody id="tbodyTablero">
                 <tr>
-                    <td colspan="203" class="text-center py-5 text-muted">
-                        <i class="fas fa-filter fa-2x mb-3 d-block"></i>
-                        Seleccione un año fiscal y presione "Cargar Datos" para ver la información.
+                    <td colspan="203" class="sin-registros">
+                        <i class="bi bi-clipboard2-x"></i><br>
+                        <span>Seleccione un año fiscal y presione "Cargar Datos" para ver la información.</span>
                     </td>
                 </tr>
             </tbody>
         </table>
-    </div>
-
-    @* Resumen General *@
-    <div class="row mt-4 g-3">
-        <div class="col-md-3 col-6">
-            <div class="card card-resumen-small">
-                <div class="card-body text-center">
-                    <h6 class="text-muted">Total Registros</h6>
-                    <h4 class="fw-bold text-dark" id="totalRegistros">0</h4>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 col-6">
-            <div class="card card-resumen-small" style="border-left: 4px solid #ffc107;">
-                <div class="card-body text-center">
-                    <h6 class="text-muted">Total Programado</h6>
-                    <h4 class="fw-bold" style="color: #d49a00;" id="totalProgramado">0</h4>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 col-6">
-            <div class="card card-resumen-small" style="border-left: 4px solid #20c997;">
-                <div class="card-body text-center">
-                    <h6 class="text-muted">Total Realizado</h6>
-                    <h4 class="fw-bold" style="color: #20c997;" id="totalRealizado">0</h4>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 col-6">
-            <div class="card card-resumen-small" style="border-left: 4px solid #6f42c1;">
-                <div class="card-body text-center">
-                    <h6 class="text-muted">Personas Atendidas</h6>
-                    <h4 class="fw-bold" style="color: #6f42c1;" id="totalPersonas">0</h4>
-                </div>
-            </div>
-        </div>
     </div>
 
 </div>
@@ -341,9 +341,9 @@
             if (!datos || datos.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="203" class="text-center py-5 text-muted">
-                            <i class="fas fa-inbox fa-2x mb-3 d-block"></i>
-                            No hay datos para mostrar.
+                        <td colspan="203" class="sin-registros">
+                            <i class="bi bi-clipboard2-x"></i><br>
+                            <span>No hay datos para mostrar.</span>
                         </td>
                     </tr>
                 `;

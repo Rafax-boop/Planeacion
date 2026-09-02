@@ -47,6 +47,10 @@ else
                         <td class="text-center">@usuario.Definicion</td>
                         <td>
                             <div class="acciones-grupo">
+                                <button type="button" class="btn-accion btn-accion-editar" title="Editar" data-bs-toggle="tooltip" data-bs-placement="top"
+                                        onclick="cargarDatosUsuario(@usuario.IdUsuario, '@usuario.Usuario1', '@usuario.Pass', '@usuario.Definicion', '@usuario.Area')">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </button>
                                 <button type="button" class="btn-accion btn-accion-eliminar" title="Eliminar" data-bs-toggle="tooltip" data-bs-placement="top"
                                         onclick="eliminarUsuario(@usuario.IdUsuario, '@usuario.Usuario1')">
                                     <i class="fa-solid fa-trash"></i>
@@ -71,13 +75,13 @@ else
             <form id="formCrearUsuario">
                 <div class="modal-body">
                     <label class="form-label fw-semibold">Nombre</label>
-                    <input type="text" class="form-control mb-3" id="txtUsuario" name="Usuario1" required />
+                    <input type="text" class="form-control mb-3" id="txtUsuario" name="Usuario1" />
 
                     <label class="form-label fw-semibold">Contraseña</label>
-                    <input type="text" class="form-control mb-3" id="txtPassword" name="Pass" required />
+                    <input type="text" class="form-control mb-3" id="txtPassword" name="Pass" />
 
                     <label class="form-label fw-semibold">Tipo</label>
-                    <select class="form-select mb-3" id="selectTipo" name="Definicion" required>
+                    <select class="form-select mb-3" id="selectTipo" name="Definicion">
                         <option value="">Seleccione Tipo de Usuario</option>
                         <option value="Dirección">Dirección</option>
                         <option value="Unidad">Unidad</option>
@@ -85,7 +89,7 @@ else
                     </select>
 
                     <label class="form-label fw-semibold">Área</label>
-                    <select class="form-select mb-3" id="selectArea" name="Area" required>
+                    <select class="form-select mb-3" id="selectArea" name="Area">
                         <option value="">Seleccione Área</option>
                     </select>
                 </div>
@@ -98,8 +102,90 @@ else
     </div>
 </div>
 
+<div class="modal fade" id="ModalEditarUsuario" tabindex="-1" aria-labelledby="miModalEditarLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="miModalEditarLabel">Editar usuario</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="formEditarUsuario">
+                <div class="modal-body">
+                    <input type="hidden" id="txtIdUsuarioEditar" name="IdUsuario" />
+
+                    <label class="form-label fw-semibold">Nombre</label>
+                    <input type="text" class="form-control mb-3" id="txtUsuarioEditar" name="Usuario1" />
+
+                    <label class="form-label fw-semibold">Contraseña</label>
+                    <input type="text" class="form-control mb-3" id="txtPasswordEditar" name="Pass" />
+
+                    <label class="form-label fw-semibold">Tipo</label>
+                    <select class="form-select mb-3" id="selectTipoEditar" name="Definicion">
+                        <option value="">Seleccione Tipo de Usuario</option>
+                        <option value="Dirección">Dirección</option>
+                        <option value="Unidad">Unidad</option>
+                        <option value="Departamento">Departamento</option>
+                    </select>
+
+                    <label class="form-label fw-semibold">Área</label>
+                    <select class="form-select mb-3" id="selectAreaEditar" name="Area">
+                        <option value="">Seleccione Área</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-app-gris" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn-app-rosa" id="btnGuardarEditar">Guardar cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script>
+        // Cargar áreas según el tipo (reutilizable para crear y editar)
+        function cargarAreasPorTipo($selectArea, tipo, areaAPreseleccionar) {
+            $selectArea.empty().append('<option value="">Seleccione Area</option>');
+            if (!tipo) return;
+
+            $.ajax({
+                type: 'POST',
+                url: '/Admin/GetTipo',
+                data: { id: tipo },
+                dataType: 'json',
+                success: function (states) {
+                    $.each(states, function (i, state) {
+                        $selectArea.append('<option value="' + state.value + '">' +
+                            state.text + '</option>');
+                    });
+                    if (areaAPreseleccionar) {
+                        $selectArea.val(areaAPreseleccionar);
+                    }
+                },
+                error: function (xhr) {
+                    console.error('Error:', xhr);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Error al cargar las áreas',
+                        confirmButtonText: 'Entendido'
+                    });
+                }
+            });
+        }
+
+        // Abre la modal de edición y precarga los datos del usuario
+        function cargarDatosUsuario(id, usuario, pass, definicion, area) {
+            $('#txtIdUsuarioEditar').val(id);
+            $('#txtUsuarioEditar').val(usuario);
+            $('#txtPasswordEditar').val(pass);
+            $('#selectTipoEditar').val(definicion);
+            cargarAreasPorTipo($('#selectAreaEditar'), definicion, area);
+
+            var modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('ModalEditarUsuario'));
+            modal.show();
+        }
+
         $(document).ready(function() {
             $('[data-bs-toggle="tooltip"]').each(function () {
                 bootstrap.Tooltip.getOrCreateInstance(this);
@@ -107,73 +193,98 @@ else
 
             TablaPaginada.iniciar('tablaDatos', { pageSize: 10 });
 
-            // Cargar áreas según el tipo
             $("#selectTipo").change(function () {
-                $("#selectArea").empty();
-                $("#selectArea").append('<option value="">Seleccione Area</option>');
+                cargarAreasPorTipo($('#selectArea'), $(this).val(), null);
+            });
 
-                var selected = $(this).val();
-
-                if (selected != "") {
-                    $.ajax({
-                        type: 'POST',
-                        url: '/Admin/GetTipo',
-                        data: { id: selected },
-                        dataType: 'json',
-                        success: function (states) {
-                            $.each(states, function (i, state) {
-                                $("#selectArea").append('<option value="' + state.value + '">' +
-                                    state.text + '</option>');
-                            });
-                        },
-                        error: function (xhr) {
-                            console.error('Error:', xhr);
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: 'Error al cargar las áreas',
-                                confirmButtonText: 'Entendido'
-                            });
-                        }
-                    });
-                }
+            $("#selectTipoEditar").change(function () {
+                cargarAreasPorTipo($('#selectAreaEditar'), $(this).val(), null);
             });
 
             // Crear usuario con AJAX
             $("#formCrearUsuario").submit(function (e) {
                 e.preventDefault();
-                var formData = $(this).serialize();
-                $("#btnGuardar").prop('disabled', true).text('Guardando...');
 
-                $.ajax({
-                    type: 'POST',
-                    url: '/Admin/Crear',
-                    data: formData,
-                    dataType: 'json',
-                    success: function (response) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: '¡Éxito!',
-                            text: response.mensaje,
-                            confirmButtonText: 'Aceptar'
-                        }).then(() => {
+                var camposValidos = validarCamposRequeridos([
+                    { label: 'Nombre de usuario', campoId: 'txtUsuario', valido: !!$('#txtUsuario').val().trim() },
+                    { label: 'Contraseña', campoId: 'txtPassword', valido: !!$('#txtPassword').val().trim() },
+                    { label: 'Tipo de usuario', campoId: 'selectTipo', valido: !!$('#selectTipo').val() },
+                    { label: 'Área', campoId: 'selectArea', valido: !!$('#selectArea').val() }
+                ]);
+                if (!camposValidos) return;
+
+                confirmarGuardado('Se creará el nuevo usuario con los datos capturados.').then(function (confirmado) {
+                    if (!confirmado) return;
+
+                    var formData = $('#formCrearUsuario').serialize();
+                    $("#btnGuardar").prop('disabled', true).text('Guardando...');
+
+                    $.ajax({
+                        type: 'POST',
+                        url: '/Admin/Crear',
+                        data: formData,
+                        dataType: 'json',
+                        success: function (response) {
                             $("#ModalUsuario").modal('hide');
                             $("#formCrearUsuario")[0].reset();
-                            location.reload();
-                        });
-                    },
-                    error: function (xhr) {
-                        var error = xhr.responseJSON;
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: error?.mensaje || 'Error al crear usuario',
-                            confirmButtonText: 'Entendido'
-                        });
-                    },
-                    complete: function() {
-                        $("#btnGuardar").prop('disabled', false).text('Crear Usuario');
-                    }
+                            Toast.fire({ icon: 'success', title: response.mensaje || 'Usuario creado' }).then(() => location.reload());
+                        },
+                        error: function (xhr) {
+                            var error = xhr.responseJSON;
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: error?.mensaje || 'Error al crear usuario',
+                                confirmButtonText: 'Entendido'
+                            });
+                        },
+                        complete: function() {
+                            $("#btnGuardar").prop('disabled', false).text('Crear Usuario');
+                        }
+                    });
+                });
+            });
+
+            // Editar usuario con AJAX
+            $("#formEditarUsuario").submit(function (e) {
+                e.preventDefault();
+
+                var camposValidos = validarCamposRequeridos([
+                    { label: 'Nombre de usuario', campoId: 'txtUsuarioEditar', valido: !!$('#txtUsuarioEditar').val().trim() },
+                    { label: 'Contraseña', campoId: 'txtPasswordEditar', valido: !!$('#txtPasswordEditar').val().trim() },
+                    { label: 'Tipo de usuario', campoId: 'selectTipoEditar', valido: !!$('#selectTipoEditar').val() },
+                    { label: 'Área', campoId: 'selectAreaEditar', valido: !!$('#selectAreaEditar').val() }
+                ]);
+                if (!camposValidos) return;
+
+                confirmarGuardado('Se actualizarán los datos de este usuario.').then(function (confirmado) {
+                    if (!confirmado) return;
+
+                    var formData = $('#formEditarUsuario').serialize();
+                    $("#btnGuardarEditar").prop('disabled', true).text('Guardando...');
+
+                    $.ajax({
+                        type: 'PUT',
+                        url: '/Admin/EditarUsuario',
+                        data: formData,
+                        dataType: 'json',
+                        success: function (response) {
+                            $("#ModalEditarUsuario").modal('hide');
+                            Toast.fire({ icon: 'success', title: response.mensaje || 'Usuario editado' }).then(() => location.reload());
+                        },
+                        error: function (xhr) {
+                            var error = xhr.responseJSON;
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: error?.mensaje || 'Error al editar usuario',
+                                confirmButtonText: 'Entendido'
+                            });
+                        },
+                        complete: function() {
+                            $("#btnGuardarEditar").prop('disabled', false).text('Guardar cambios');
+                        }
+                    });
                 });
             });
         });
@@ -205,14 +316,8 @@ else
                         data: { id: idUsuario },
                         dataType: 'json',
                         success: function (response) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: '¡Eliminado!',
-                                text: response.mensaje,
-                                confirmButtonText: 'Aceptar'
-                            }).then(() => {
-                                location.reload();
-                            });
+                            Swal.close();
+                            Toast.fire({ icon: 'success', title: response.mensaje || 'Usuario eliminado' }).then(() => location.reload());
                         },
                         error: function (xhr) {
                             var error = xhr.responseJSON;

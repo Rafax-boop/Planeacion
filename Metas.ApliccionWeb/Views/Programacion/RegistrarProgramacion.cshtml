@@ -1219,23 +1219,7 @@
                 // ========================================
                 // VALIDACIONES INMEDIATAS (ANTES DE CARGAR)
                 // ========================================
-                const erroresValidacion = validarDatosAntesDeGuardar();
-                if (erroresValidacion.length > 0) {
-                    // Usar SweetAlert en lugar de alert normal
-                    await Swal.fire({
-                        title: 'Campos obligatorios',
-                        html: 'Por favor complete los siguientes campos:<br><br>' +
-                              erroresValidacion.join('<br>'),
-                        icon: 'warning',
-                        confirmButtonText: 'Aceptar',
-                        confirmButtonColor: '#3085d6',
-                        allowOutsideClick: false
-                    });
-
-                    // Enfocar el primer campo faltante
-                    enfocarPrimerCampoFaltante(erroresValidacion);
-                    return;
-                }
+                if (!validarCamposRequeridos(obtenerCamposObligatoriosRegistro())) return;
 
                 // ========================================
                 // CONFIRMACIÓN ANTES DE GUARDAR
@@ -1522,113 +1506,33 @@
         }
 
         // ========================================
-        // FUNCIÓN PARA ENFOCAR PRIMER CAMPO FALTANTE
+        // CAMPOS OBLIGATORIOS DEL REGISTRO
         // ========================================
-        function enfocarPrimerCampoFaltante(errores) {
-            // Mapeo de errores a IDs de campos
-            const mapaErrores = {
-                '• Programa presupuestario': 'selectPrograma',
-                '• Número de componente': 'selectComponente',
-                '• Número de actividad válido': 'inputActividad',
-                '• Justificación': 'inputJustificacion',
-                '• Descripción de la actividad': 'inputDescripcion',
-                '• Unidad de medida': 'selectMedida',
-                '• Nombre de quien elabora': 'inputElaboro',
-                '• Cargo de quien elabora': 'inputElaboroCargo',
-                '• Mínimo 3 acciones necesarias': 'accionesContainer'
-            };
-
-            // Buscar el primer error que tenga un campo asociado
-            for (const error of errores) {
-                const campoId = mapaErrores[error];
-                if (campoId) {
-                    const campo = document.getElementById(campoId);
-                    if (campo) {
-                        // Hacer scroll suave hasta el campo
-                        campo.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'center'
-                        });
-
-                        // Enfocar el campo después de un pequeño delay
-                        setTimeout(() => {
-                            if (campo.tagName === 'SELECT' && $(campo).hasClass('select2-hidden-accessible')) {
-                                // Los <select> con select2 quedan ocultos; se resalta y abre el widget visible
-                                const $widget = $(campo).next('.select2-container').find('.select2-selection');
-                                $widget.css({ 'border-color': '#dc3545', 'background-color': '#fff5f5' });
-                                $(campo).select2('open');
-
-                                setTimeout(() => {
-                                    $widget.css({ 'border-color': '', 'background-color': '' });
-                                }, 3000);
-                            } else if (campo.tagName === 'SELECT' || campo.tagName === 'INPUT' || campo.tagName === 'TEXTAREA') {
-                                campo.focus();
-
-                                // Resaltar visualmente el campo
-                                campo.style.border = '2px solid #dc3545';
-                                campo.style.backgroundColor = '#fff5f5';
-
-                                // Quitar el resaltado después de 3 segundos
-                                setTimeout(() => {
-                                    campo.style.border = '';
-                                    campo.style.backgroundColor = '';
-                                }, 3000);
-                            }
-                        }, 500);
-
-                        break; // Solo enfocar el primer campo
-                    }
-                }
-            }
-        }
-
-        // ========================================
-        // FUNCIONES DE VALIDACIÓN (MISMO CÓDIGO)
-        // ========================================
-        function validarDatosAntesDeGuardar() {
-            const errores = [];
-            
-            // Validar campos obligatorios básicos
-            if (!document.getElementById('selectPrograma').value) {
-                errores.push('• Programa presupuestario');
-            }
-
-            if (!document.getElementById('selectComponente').value) {
-                errores.push('• Número de componente');
-            }
-
-            if (!document.getElementById('inputActividad').value || parseInt(document.getElementById('inputActividad').value) <= 0) {
-                errores.push('• Número de actividad válido');
-            }
-
-            if (!document.getElementById('inputJustificacion').value.trim()) {
-                errores.push('• Justificación');
-            }
-
-            if (!document.getElementById('inputDescripcion').value.trim()) {
-                errores.push('• Descripción de la actividad');
-            }
-
-            if (!document.getElementById('selectMedida').value) {
-                errores.push('• Unidad de medida');
-            }
-
-            // Validar que haya al menos 3 acciones completas
+        function obtenerCamposObligatoriosRegistro() {
+            const valorTexto = id => document.getElementById(id)?.value?.trim() || '';
+            const valorSelect = id => document.getElementById(id)?.value || '';
             const accionesCompletas = document.querySelectorAll('.accion-item').length;
-            if (accionesCompletas < 3) {
-                errores.push('• Mínimo 3 acciones necesarias');
-            }
 
-            // Validar firmas
-            if (!document.getElementById('inputElaboro').value.trim()) {
-                errores.push('• Nombre de quien elabora');
-            }
-
-            if (!document.getElementById('inputElaboroCargo').value.trim()) {
-                errores.push('• Cargo de quien elabora');
-            }
-
-            return errores;
+            return [
+                { label: 'Programa presupuestario', campoId: 'selectPrograma', valido: !!valorSelect('selectPrograma') },
+                { label: 'Número de componente', campoId: 'selectComponente', valido: !!valorSelect('selectComponente') },
+                { label: 'Número de actividad', campoId: 'inputActividad', valido: parseInt(valorTexto('inputActividad')) > 0 },
+                { label: 'Justificación', campoId: 'inputJustificacion', valido: !!valorTexto('inputJustificacion') },
+                { label: 'Documentación soporte de la justificación', campoId: 'inputDocumentacion', valido: !!valorTexto('inputDocumentacion') },
+                { label: 'Recurso Federal', campoId: 'selectFederal', valido: !!valorSelect('selectFederal') },
+                { label: 'Recurso Estatal', campoId: 'selectEstatal', valido: !!valorSelect('selectEstatal') },
+                { label: 'Programa social, servicio y/o proyecto', campoId: 'inputPrograma', valido: !!valorTexto('inputPrograma') },
+                { label: 'Descripción de la actividad', campoId: 'inputDescripcion', valido: !!valorTexto('inputDescripcion') },
+                { label: 'Nombre del indicador', campoId: 'inputIndicador', valido: !!valorTexto('inputIndicador') },
+                { label: 'Definición del indicador', campoId: 'inputDefinicion', valido: !!valorTexto('inputDefinicion') },
+                { label: 'Unidad de medida', campoId: 'selectMedida', valido: !!valorSelect('selectMedida') },
+                { label: 'Medios de verificación', campoId: 'inputMedios', valido: !!valorTexto('inputMedios') },
+                { label: 'Serie de información disponible (desde)', campoId: 'selectDesde', valido: !!valorSelect('selectDesde') },
+                { label: 'Fuentes de información', campoId: 'inputFuentes', valido: !!valorTexto('inputFuentes') },
+                { label: 'Mínimo 3 acciones necesarias', campoId: 'accionesContainer', valido: accionesCompletas >= 3 },
+                { label: 'Nombre de quien elabora', campoId: 'inputElaboro', valido: !!valorTexto('inputElaboro') },
+                { label: 'Cargo de quien elabora', campoId: 'inputElaboroCargo', valido: !!valorTexto('inputElaboroCargo') }
+            ];
         }
 
         function validarDatosCompletos(datosCompletos) {

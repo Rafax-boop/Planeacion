@@ -11,7 +11,7 @@
             <h1 class="titulo-vista"><i class="fa-solid fa-gauge-high me-2"></i>Tablero de Control</h1>
             <span class="subtitulo-vista" id="infoEncabezado">- Ejercicio Fiscal: @anoFiscal · Cargando...</span>
         </div>
-        <a asp-controller="Monitoreo" asp-action="Monitoreo" class="btn-app-gris">
+        <a asp-controller="Monitoreo" asp-action="Monitoreo" class="btn-app-gris" onclick="if (window.history.length > 1) { event.preventDefault(); window.history.back(); }">
             <i class="fa-solid fa-arrow-left"></i> Volver al Monitoreo
         </a>
     </div>

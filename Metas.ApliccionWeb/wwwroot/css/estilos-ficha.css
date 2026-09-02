@@ -271,6 +271,20 @@ input.form-control:read-only {
     font-size: 0.875rem;
 }
 
+/* Variante usada al inicio de la ficha (en vez de al final, junto a los
+   botones): se centra como bloque y su contenido se apila en columna. */
+.aviso-validado-centrado {
+    max-width: 520px;
+    margin-left: auto;
+    margin-right: auto;
+    flex-direction: column;
+    text-align: center;
+}
+
+.aviso-validado-centrado i {
+    margin-bottom: 4px;
+}
+
 /* === Bloque de "acción necesaria" === */
 .ficha-accion-item {
     border: 1px solid var(--border);

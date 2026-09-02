@@ -25,6 +25,16 @@
         </select>
     </div>
     <div class="filtro-grupo">
+        <label for="selectAreaFiltro">Área</label>
+        <select id="selectAreaFiltro" class="select2-simple">
+            <option value="">Todas</option>
+            @foreach (var area in Model.ListaAreas)
+            {
+                <option value="@area.Text">@area.Text</option>
+            }
+        </select>
+    </div>
+    <div class="filtro-grupo">
         <label for="selectDepartamento">Departamento</label>
         <select id="selectDepartamento" class="select2-simple">
             @if (User.IsInRole("Administrador") || Model.ListaDepartamentos.Count() > 1)
@@ -34,7 +44,7 @@
 
             @foreach (var depto in Model.ListaDepartamentos)
             {
-                <option value="@depto.Value">@depto.Text</option>
+                <option value="@depto.Value" data-area="@depto.Group?.Name">@depto.Text</option>
             }
         </select>
     </div>
@@ -47,15 +57,11 @@
             <option value="E047">E047</option>
         </select>
     </div>
-    <div class="filtro-grupo">
-        <label for="selectAreaFiltro">Área</label>
-        <select id="selectAreaFiltro" class="select2-simple">
-            <option value="">Todas</option>
-            @foreach (var area in Model.ListaAreas)
-            {
-                <option value="@area.Text">@area.Text</option>
-            }
-        </select>
+    <div class="filtro-grupo" style="flex: 0 0 auto; min-width: auto;">
+        <label>&nbsp;</label>
+        <button class="btn-app-gris" type="button" id="btnLimpiarFiltros">
+            <i class="fa-solid fa-broom"></i> Limpiar filtros
+        </button>
     </div>
     <div class="filtro-grupo" style="flex: 0 0 auto; min-width: auto;">
         <label>&nbsp;</label>
@@ -127,6 +133,78 @@
     (function () {
         $('.select2-simple').select2({ width: '100%', language: 'es', minimumResultsForSearch: 8 });
 
+        // ========================================
+        // CASCADA ÁREA -> DEPARTAMENTO
+        // ========================================
+        // Se guarda la lista completa de departamentos (con su área) una sola
+        // vez, antes de que la cascada empiece a recortar las opciones.
+        var todosLosDepartamentos = $('#selectDepartamento option').map(function () {
+            return { value: this.value, text: $(this).text(), area: $(this).data('area') || '' };
+        }).get();
+
+        function repoblarDepartamentos(area) {
+            var valorActual = $('#selectDepartamento').val();
+            var opciones = todosLosDepartamentos.filter(function (d) {
+                return d.value === '' || !area || d.area === area;
+            });
+
+            var select = $('#selectDepartamento').empty();
+            opciones.forEach(function (d) {
+                select.append($('<option>', { value: d.value, text: d.text }).attr('data-area', d.area));
+            });
+
+            if (opciones.some(function (d) { return d.value === valorActual; })) {
+                select.val(valorActual);
+            }
+            select.trigger('change');
+        }
+
+        $('#selectAreaFiltro').on('change', function () {
+            repoblarDepartamentos($(this).val());
+        });
+
+        // ========================================
+        // RECORDAR / RESTAURAR LA ÚLTIMA BÚSQUEDA
+        // ========================================
+        // Al volver desde Tablero Completo de Programación con el botón
+        // "Volver", se restaura la última combinación de filtros buscada
+        // (incluida una búsqueda de "todos", sin departamento ni área).
+        var CLAVE_ULTIMA_BUSQUEDA_PROGRAMACION = 'programacionUltimaBusqueda';
+
+        function guardarUltimaBusquedaProgramacion(anoFiscal, departamento, area) {
+            try {
+                sessionStorage.setItem(CLAVE_ULTIMA_BUSQUEDA_PROGRAMACION, JSON.stringify({ anoFiscal: anoFiscal, departamento: departamento, area: area }));
+            } catch (e) { /* almacenamiento no disponible, se ignora */ }
+        }
+
+        function restaurarUltimaBusquedaProgramacion() {
+            var guardada;
+            try {
+                guardada = JSON.parse(sessionStorage.getItem(CLAVE_ULTIMA_BUSQUEDA_PROGRAMACION) || 'null');
+            } catch (e) {
+                guardada = null;
+            }
+            if (!guardada) return;
+
+            $('#selectAnoFiscal').val(guardada.anoFiscal).trigger('change');
+            $('#selectAreaFiltro').val(guardada.area || '').trigger('change');
+            $('#selectDepartamento').val(guardada.departamento || '').trigger('change');
+            $('#btnBuscar').click();
+        }
+
+        // ========================================
+        // LIMPIAR FILTROS
+        // ========================================
+        $('#btnLimpiarFiltros').click(function () {
+            var anoDefault = $('#selectAnoFiscal option[selected]').val();
+            $('#selectAnoFiscal').val(anoDefault).trigger('change');
+            $('#selectAreaFiltro').val('').trigger('change');
+            repoblarDepartamentos('');
+            $('#selectProgramaFiltro').val('').trigger('change');
+            $('#seccionResultados').slideUp();
+            try { sessionStorage.removeItem(CLAVE_ULTIMA_BUSQUEDA_PROGRAMACION); } catch (e) { /* se ignora */ }
+        });
+
         function irATableroProgramacion() {
             var anoFiscal = $('#selectAnoFiscal').val();
 
@@ -167,24 +245,19 @@
                 var anoFiscal = $('#selectAnoFiscal').val();
                 var departamento = $('#selectDepartamento').val();
                 var departamentoTexto = $('#selectDepartamento option:selected').text();
+                var area = $('#selectAreaFiltro').val();
 
-                // Validar que se haya seleccionado un departamento
-                if (!departamento) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Selecciona un departamento',
-                        text: 'Por favor, selecciona un departamento para continuar.',
-                        confirmButtonText: 'Entendido'
-                    });
-                    return;
-                }
+                guardarUltimaBusquedaProgramacion(anoFiscal, departamento, area);
 
                 // Mostrar la sección de resultados
                 $('#seccionResultados').slideDown();
 
                 // Cambiar los títulos dinámicamente
                 $('#ano').text('Ejercicio Fiscal: ' + anoFiscal);
-                $('#tituloDepartamento').text('Departamento: ' + departamentoTexto);
+                var textoDepartamento = departamento
+                    ? ('Departamento: ' + departamentoTexto)
+                    : (area ? ('Área: ' + area + ' (todos sus departamentos)') : 'Todos los departamentos');
+                $('#tituloDepartamento').text(textoDepartamento);
 
                 // Mostrar mensaje de carga
                 $('#mensajeCarga').show();
@@ -197,13 +270,15 @@
                     type: 'GET',
                     data: {
                         anoFiscal: anoFiscal,
-                        departamento: departamento
+                        departamento: departamento || null,
+                        area: departamento ? null : area
                     },
                     success: function(response) {
                         $('#mensajeCarga').hide();
 
-                        // Mostrar/Ocultar el botón "Iniciar Programación" según fecha habilitada
-                        if (response.fechaHabilitada) {
+                        // "Iniciar Programación" necesita un departamento específico:
+                        // solo se muestra si hay fecha habilitada Y se buscó por un departamento.
+                        if (response.fechaHabilitada && departamento) {
                             $('#btnIniciarProgramacion').show();
                         } else {
                             $('#btnIniciarProgramacion').hide().prop('disabled', true);
@@ -325,15 +400,9 @@
                         data: { id: idProceso },
                         success: function(response) {
                             if (response.success) {
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Registro eliminado',
-                                    text: response.mensaje,
-                                    confirmButtonText: 'Aceptar'
-                                }).then(function () {
-                                    // Recargar la tabla
-                                    $('#btnBuscar').click();
-                                });
+                                Toast.fire({ icon: 'success', title: response.mensaje || 'Registro eliminado' });
+                                // Recargar la tabla
+                                $('#btnBuscar').click();
                             } else {
                                 Swal.fire({
                                     icon: 'error',
@@ -384,18 +453,9 @@
                 window.location.href = urlRedireccion;
             });
 
-            // Si se regresa con "atrás" del navegador (sin que el bfcache haya
-            // restaurado la página completa), el filtro conserva el valor pero
-            // la tabla queda vacía porque nunca se disparó el clic de "Buscar".
-            // Se vuelve a ejecutar la búsqueda automáticamente en ese caso.
-            var entradaNavegacion = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
-            var esNavegacionAtras = entradaNavegacion
-                ? entradaNavegacion.type === 'back_forward'
-                : (performance.navigation && performance.navigation.type === 2);
-
-            if (esNavegacionAtras && $('#selectDepartamento').val()) {
-                $('#btnBuscar').click();
-            }
+            // Al volver desde Tablero Completo de Programación con el botón
+            // "Volver", se restaura la última búsqueda aplicada.
+            restaurarUltimaBusquedaProgramacion();
         });
     })();
     </script>

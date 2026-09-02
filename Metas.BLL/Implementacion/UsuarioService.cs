@@ -56,6 +56,37 @@ namespace Metas.BLL.Implementacion
             }
         }
 
+        public async Task<Usuario> Editar(Usuario entidad)
+        {
+            try
+            {
+                var usuarioEditar = await _repositorio.Obtener(u => u.IdUsuario == entidad.IdUsuario);
+
+                if (usuarioEditar == null)
+                {
+                    throw new InvalidOperationException("No se encontró el usuario a editar");
+                }
+
+                usuarioEditar.Usuario1 = entidad.Usuario1;
+                usuarioEditar.Pass = entidad.Pass;
+                usuarioEditar.Area = entidad.Area;
+                usuarioEditar.Definicion = entidad.Definicion;
+
+                bool resultado = await _repositorio.Editar(usuarioEditar);
+
+                if (!resultado)
+                {
+                    throw new InvalidOperationException("No se pudo editar el usuario");
+                }
+
+                return usuarioEditar;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
         public async Task<bool> Eliminar(int idUsuario)
         {
             try

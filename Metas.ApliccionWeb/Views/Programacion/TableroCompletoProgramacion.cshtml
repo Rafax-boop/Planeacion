@@ -10,7 +10,7 @@
             <h1 class="titulo-vista"><i class="fas fa-table me-2"></i> Tablero Completo de Programación</h1>
         </div>
         <div class="d-flex gap-2">
-            <a href="@Url.Action("Programacion", "Programacion")" class="btn-app-gris">
+            <a href="@Url.Action("Programacion", "Programacion")" class="btn-app-gris" onclick="if (window.history.length > 1) { event.preventDefault(); window.history.back(); }">
                 <i class="fas fa-arrow-left"></i> Volver
             </a>
             <button type="button" class="btn-app-verde" id="btnExportarExcel">
@@ -197,9 +197,9 @@
             </thead>
             <tbody id="tbodyTablero">
                 <tr>
-                    <td colspan="61" class="text-center py-5 text-muted">
-                        <i class="fas fa-filter fa-2x mb-3 d-block"></i>
-                        Seleccione un año fiscal para ver los datos.
+                    <td colspan="61" class="sin-registros">
+                        <i class="bi bi-clipboard2-x"></i><br>
+                        <span>Seleccione un año fiscal para ver los datos.</span>
                     </td>
                 </tr>
             </tbody>
@@ -290,9 +290,9 @@
             if (!datos || datos.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="61" class="text-center py-5 text-muted">
-                            <i class="fas fa-inbox fa-2x mb-3 d-block"></i>
-                            No hay datos para mostrar.
+                        <td colspan="61" class="sin-registros">
+                            <i class="bi bi-clipboard2-x"></i><br>
+                            <span>No hay datos para mostrar.</span>
                         </td>
                     </tr>
                 `;

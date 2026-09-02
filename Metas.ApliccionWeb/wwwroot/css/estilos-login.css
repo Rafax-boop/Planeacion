@@ -181,9 +181,6 @@ body {
 }
 
 .brand-title-soft {
-    font-weight: 400;
-    color: rgba(255, 255, 255, 0.75);
-    text-shadow: none;
     margin-top: 4px;
 }
 
@@ -202,6 +199,15 @@ body {
     height: 44px;
     width: auto;
     filter: brightness(0) invert(1);
+}
+
+.brand-footer-copy {
+    flex: 1 1 auto;
+    padding: 0 12px;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 21px;
+    text-align: center;
 }
 
 /* ── Panel derecho: formulario ── */
@@ -365,6 +371,13 @@ body {
 
 .login-caption {
     margin-top: 24px;
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.login-soporte {
+    margin-top: 8px;
     text-align: center;
     font-size: 0.75rem;
     color: var(--text-secondary);

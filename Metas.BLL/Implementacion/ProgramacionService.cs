@@ -243,13 +243,15 @@ namespace Metas.BLL.Implementacion
             }
         }
 
-        public async Task<List<LlenadoInterno>> ObtenerDatosProgramacion(int anoFiscal, int? departamentoId)
+        public async Task<List<LlenadoInterno>> ObtenerDatosProgramacion(int anoFiscal, int? departamentoId, string area = null)
         {
             try
             {
                 if (!departamentoId.HasValue || departamentoId.Value == 0)
                 {
-                    var queryTodos = await _repositorioLlenadoInterno.Consultar(x => x.Ano == anoFiscal);
+                    var queryTodos = !string.IsNullOrWhiteSpace(area)
+                        ? await _repositorioLlenadoInterno.Consultar(x => x.Ano == anoFiscal && x.Area == area)
+                        : await _repositorioLlenadoInterno.Consultar(x => x.Ano == anoFiscal);
 
                     var resultadoTodos = await queryTodos
                         .Include(x => x.Programacions)
