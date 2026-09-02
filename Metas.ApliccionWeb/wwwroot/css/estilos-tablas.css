@@ -585,6 +585,10 @@ select::-ms-expand {
     max-width: 900px;
 }
 
+.modal-dialog-600 {
+    max-width: 600px;
+}
+
 .modal-fijo {
     height: min(900px, calc(100vh - 3.5rem)) !important;
     max-height: min(900px, calc(100vh - 3.5rem)) !important;

@@ -256,6 +256,9 @@ else
                                 <a target="_blank" href="@Url.Content("~/FormatoEvidencia/JUSTIFICACION.xlsx")" download="JUSTIFICACION.xlsx" class="btn-app-verde btn-tablero-pdf mb-2">
                                     <i class="fa-solid fa-file-arrow-down"></i> Descargar formato
                                 </a>
+                                <a href="#" id="btnDescargarJustPrellenada" class="btn-app-azul btn-tablero-pdf mb-2 ms-2">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i> Descargar pre-llenada
+                                </a>
                                 <input type="file"
                                        class="form-control"
                                        id="inputJustificacion"
@@ -653,6 +656,201 @@ else
             if (parseInt(removerFormato($('.rango-input:first').val())) > 0) {
                 $('.rango-input:first').trigger('input');
             }
+            });
+
+            // --- Descargar justificación pre-llenada (ExcelJS + FileSaver) ---
+            const mesesJust = ['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'];
+            $('#btnDescargarJustPrellenada').on('click', async function (e) {
+                e.preventDefault();
+                try {
+                    const [respDatos, respTpl] = await Promise.all([
+                        fetch('@Url.Action("ObtenerDatosJustificacion", "Monitoreo")?idProceso=@Model.IdProceso'),
+                        fetch('@Url.Content("~/FormatoEvidencia/JUSTIFICACION.xlsx")')
+                    ]);
+                    if (!respDatos.ok) throw new Error('No se pudieron obtener los datos del registro');
+                    if (!respTpl.ok) throw new Error('No se pudo cargar el formato');
+                    const datos = await respDatos.json();
+
+                    const buffer = await respTpl.arrayBuffer();
+                    const wb = new ExcelJS.Workbook();
+                    await wb.xlsx.load(buffer);
+                    const ws = wb.getWorksheet(1);
+                    const ws2 = wb.getWorksheet(2);
+
+                    // --- Coincidencia con las listas desplegables del template ---
+                    function leerOpciones(hoja, formula) {
+                        const m = String(formula || '').replace(/\$/g, '').match(/^([A-Z]+)(\d+):([A-Z]+)(\d+)$/);
+                        if (!m) return [];
+                        const opciones = [];
+                        const colA = m[1], filaA = +m[2], colB = m[3], filaB = +m[4];
+                        // recorre columnas (A..Z) y filas del rango
+                        let col = colA;
+                        for (let i = 0; i < 26 && col <= colB; i++, col = nextCol(col)) {
+                            for (let f = filaA; f <= filaB; f++) {
+                                const v = hoja.getCell(col + f).value;
+                                if (v != null && v !== '') opciones.push(String(v));
+                            }
+                        }
+                        return opciones;
+                    }
+                    function nextCol(c) {
+                        let s = c.split('');
+                        let i = s.length - 1;
+                        while (i >= 0 && s[i] === 'Z') { s[i] = 'A'; i--; }
+                        if (i < 0) return null;
+                        s[i] = String.fromCharCode(s[i].charCodeAt(0) + 1);
+                        return s.join('');
+                    }
+                    function normalizar(s) {
+                        return String(s || '').toLowerCase()
+                            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                            .replace(/[^a-z0-9]/g, ' ').replace(/\s+/g, ' ').trim();
+                    }
+                    function tokens(s) { return normalizar(s).split(' ').filter(Boolean); }
+                    // Programa (B12): la opción del template que coincida con la clave (E046/E047/Agenda)
+                    function matchPrograma(lista, pp) {
+                        const clave = normalizar(pp) === 'agenda' ? 'agenda' : normalizar(pp);
+                        if (!clave) return null;
+                        for (const op of lista) {
+                            const n = normalizar(op);
+                            if (n === clave || n.startsWith(clave) || (clave === 'agenda' && n.includes('agenda'))) return op;
+                        }
+                        return null;
+                    }
+                    // Actividad (B14): filtra por el código "X.Y"/"TX.Y" y decide por la descripción; si no hay código, por descripción
+                    function matchActividad(lista, componente, actividad, desc) {
+                        const codigos = [];
+                        if (componente != null && actividad != null && actividad !== '') {
+                            codigos.push(componente + '.' + actividad);
+                            codigos.push('T' + componente + '.' + actividad);
+                        }
+                        const descTok = tokens(desc);
+                        let mejores = new Map();
+                        if (codigos.length) {
+                            for (const op of lista) {
+                                const n = normalizar(op);
+                                for (const cd of codigos) {
+                                    if (!n.startsWith(cd)) continue;
+                                    const sinPref = normalizar(op).substring(normalizar(cd).length).split(' ').filter(Boolean);
+                                    const comunes = descTok.filter(t => sinPref.includes(t)).length;
+                                    if (!mejores.has(cd) || comunes > mejores.get(cd).score) {
+                                        mejores.set(cd, { op, score: comunes });
+                                    }
+                                }
+                            }
+                            let mejorCd = null, mejorSc = -1;
+                            mejores.forEach((o, cd) => { if (o.score > mejorSc) { mejorSc = o.score; mejorCd = o; } });
+                            if (mejorCd) return mejorCd.op;
+                        }
+                        if (descTok.length) {
+                            let mejor = null, mejorSc = -1;
+                            for (const op of lista) {
+                                const comunes = descTok.filter(t => tokens(op).includes(t)).length;
+                                if (comunes > mejorSc) { mejorSc = comunes; mejor = op; }
+                            }
+                            if (mejorSc > 0) return mejor;
+                        }
+                        return null;
+                    }
+
+                    // Componente (B13): según el programa, el número de componente se ubica distinto en la lista
+                    function matchComponente(lista, pp, componente) {
+                        const npp = normalizar(pp);
+                        if (!npp || componente == null) return null;
+                        const comp = String(componente).toLowerCase();
+                        for (const op of lista) {
+                            const n = normalizar(op);
+                            if (npp.includes('agenda')) {
+                                if (n.startsWith('t' + comp + ' ')) return op;         // T1..T5
+                            } else if (npp === 'e046') {
+                                if (n.startsWith(comp + ' ') && !n.includes('apoyos y servicios')) return op;  // 1./2.
+                            } else if (npp === 'e047') {
+                                if (n.startsWith(comp + ' ') && n.includes('apoyos y servicios')) return op;   // 1..7
+                            }
+                        }
+                        return null;
+                    }
+
+                    // Leer las opciones de Programa (B12), Componente (B13) y Actividad (B14) desde el template
+                    const opProg = leerOpciones(ws, ws.getCell('B12').dataValidation && ws.getCell('B12').dataValidation.formulae[0]);
+                    const opComp = leerOpciones(ws, ws.getCell('B13').dataValidation && ws.getCell('B13').dataValidation.formulae[0]);
+                    const opActiv = leerOpciones(ws, ws.getCell('B14').dataValidation && ws.getCell('B14').dataValidation.formulae[0]);
+
+                    const ppSistema = datos.pp || '';
+
+                    // Programa (B12)
+                    let progFinal = ppSistema;
+                    const mProg = matchPrograma(opProg, ppSistema);
+                    if (mProg) progFinal = mProg;
+
+                    // Componente (B13)
+                    let compFinal = (datos.componente != null && datos.componente !== '') ? datos.componente : '';
+                    const mComp = matchComponente(opComp, ppSistema, datos.componente);
+                    if (mComp) compFinal = mComp;
+
+                    // Actividad (B14)
+                    let activFinal = (datos.actividad != null && datos.actividad !== '') ? datos.actividad + ' ' + (datos.descripcionActividad || '') : (datos.descripcionActividad || '');
+                    const mAct = matchActividad(opActiv, datos.componente, datos.actividad, datos.descripcionActividad);
+                    if (mAct) activFinal = mAct;
+
+                    const ahora = new Date();
+                    const mesActual = mesesJust[ahora.getMonth()] || '';
+                    const mesJust = mesesJust[@Model.MesNum - 1] || '';
+
+                    const campos = {
+                        'B7': ahora.getDate(),
+                        'B8': mesActual,
+                        'B9': ahora.getFullYear(),
+                        'B11': mesJust,
+                        'B12': progFinal,
+                        'B13': compFinal,
+                        'B14': activFinal,
+                        'B16': datos.nombreRealizo,
+                        'B17': datos.cargoRealizo,
+                        'B18': datos.nombreValido,
+                        'B19': datos.cargoValido
+                    };
+
+                    for (const ref in campos) {
+                        const val = campos[ref];
+                        if (val !== '' && val !== undefined && val !== null) {
+                            ws.getCell(ref).value = val;
+                        }
+                    }
+
+                    // --- Personalización del archivo descargado (solo el que se descarga) ---
+                    ws.name = 'EDITABLE';
+                    ws2.name = 'DOC. IMPRIMIR';
+
+                    // Fila de firmas: mayor altura y ajuste de texto
+                    const firmasOpt = { wrapText: true, vertical: 'middle', horizontal: 'center' };
+                    for (const ref of ['B35', 'C35', 'E35', 'F35', 'B36', 'C36', 'E36', 'F36']) {
+                        ws2.getCell(ref).alignment = firmasOpt;
+                    }
+                    ws2.getRow(35).height = 40;
+                    ws2.getRow(36).height = 40;
+
+                    // Actualizar todas las referencias de fórmula al nuevo nombre de hoja (evita aviso de reparación)
+                    ws2.eachRow((fila) => {
+                        fila.eachCell((celda) => {
+                            const val = celda.value;
+                            if (val && typeof val === 'object' && val.formula && String(val.formula).includes('Hoja1!')) {
+                                const nueva = String(val.formula).replace(/Hoja1!/g, 'EDITABLE!');
+                                celda.value = { formula: nueva, result: val.result };
+                            }
+                        });
+                    });
+
+                    // Proteger la hoja de impresión (no editable)
+                    ws2.protect('', { selectLockedCells: true, selectUnlockedCells: true });
+
+                    const out = await wb.xlsx.writeBuffer();
+                    const blob = new Blob([out], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                    saveAs(blob, 'JUSTIFICACION_prellenada.xlsx');
+                } catch (err) {
+                    console.error(err);
+                    Swal.fire('Error', 'No se pudo generar la justificación pre-llenada.', 'error');
+                }
             });
     </script>
 }

@@ -1,4 +1,5 @@
 using AutoMapper;
+using ClosedXML.Excel;
 using Metas.AplicacionWeb.Models.ViewModels;
 using Metas.BLL.DTO;
 using Metas.BLL.Implementacion;
@@ -551,6 +552,28 @@ namespace Metas.AplicacionWeb.Controllers
             return Json(datosEdicion);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> ObtenerDatosJustificacion(int idProceso)
+        {
+            var registro = await _programacionService.ObtenerporId(idProceso);
+            if (registro == null)
+            {
+                return NotFound();
+            }
+
+            return Json(new
+            {
+                pp = registro.Pp,
+                componente = registro.Componente,
+                actividad = registro.Actividad,
+                descripcionActividad = registro.DescripcionActividad,
+                nombreRealizo = registro.NombreRealizo,
+                cargoRealizo = registro.CargoRealizo,
+                nombreValido = registro.NombreValido,
+                cargoValido = registro.CargoValido
+            });
+        }
+
         [HttpPost]
         public async Task<IActionResult> GuardarEdicion(VMDatosEdicionActividad modelo)
         {
@@ -631,6 +654,429 @@ namespace Metas.AplicacionWeb.Controllers
                     message = $"Error al guardar: {ex.Message}"
                 });
             }
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> DescargarPlantilla()
+        {
+            var departamentos = await _departamentoService.ObtenerDepartamentos();
+            var medidas = await _departamentoService.ObtenerMedidas();
+
+            using var workbook = new XLWorkbook();
+            var hoja = workbook.Worksheets.Add("Actividades");
+
+            string[] encabezados = new string[]
+            {
+                "Año Fiscal", "Programa Presupuestario", "Componente", "Actividad", "Descripción Actividad",
+                "Unidad Medida", "Programa Social", "Departamento",
+                "Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic",
+                "Ene Personas", "Feb Personas", "Mar Personas", "Abr Personas", "May Personas", "Jun Personas",
+                "Jul Personas", "Ago Personas", "Sep Personas", "Oct Personas", "Nov Personas", "Dic Personas"
+            };
+
+            for (int i = 0; i < encabezados.Length; i++)
+            {
+                hoja.Cell(1, i + 1).Value = encabezados[i];
+            }
+
+            var rangoEncabezados = hoja.Range(1, 1, 1, encabezados.Length);
+            rangoEncabezados.Style.Font.Bold = true;
+            rangoEncabezados.Style.Font.FontColor = XLColor.White;
+            rangoEncabezados.Style.Fill.BackgroundColor = XLColor.FromHtml("#C8B6D8");
+            rangoEncabezados.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+
+            // Listas desplegables: catálogos en hoja oculta "Listas" y validaciones
+            // por referencia a rango (evita que Excel marque reparación por listas literales)
+            var hojaListas = workbook.Worksheets.Add("Listas");
+
+            hojaListas.Cell(1, 1).Value = "Programa Presupuestario";
+            hojaListas.Cell(1, 2).Value = "Unidad Medida";
+            hojaListas.Cell(1, 3).Value = "Departamento";
+            hojaListas.Range(1, 1, 1, 3).Style.Font.Bold = true;
+
+            hojaListas.Cell(2, 1).Value = "Agenda";
+            hojaListas.Cell(3, 1).Value = "E046";
+            hojaListas.Cell(4, 1).Value = "E047";
+
+            var nombresMedidas = medidas
+                .Where(m => !string.IsNullOrWhiteSpace(m.Valor))
+                .Select(m => m.Valor.Trim())
+                .ToList();
+
+            for (int i = 0; i < nombresMedidas.Count; i++)
+            {
+                hojaListas.Cell(i + 2, 2).Value = nombresMedidas[i];
+            }
+
+            var nombresDepartamentos = departamentos
+                .Where(d => !string.IsNullOrWhiteSpace(d.Departamento1))
+                .Select(d => d.Departamento1.Trim())
+                .ToList();
+
+            for (int i = 0; i < nombresDepartamentos.Count; i++)
+            {
+                hojaListas.Cell(i + 2, 3).Value = nombresDepartamentos[i];
+            }
+
+            // Validaciones aplicadas a las filas de datos (2-150), no al encabezado
+            const int FILAS_DATOS = 150;
+            string refMedidas = $"'Listas'!$B$2:$B${nombresMedidas.Count + 1}";
+            string refDepartamentos = $"'Listas'!$C$2:$C${nombresDepartamentos.Count + 1}";
+
+            hoja.Range(2, 2, FILAS_DATOS, 2).CreateDataValidation().List("'Listas'!$A$2:$A$4");
+            if (nombresMedidas.Any())
+            {
+                hoja.Range(2, 6, FILAS_DATOS, 6).CreateDataValidation().List(refMedidas);
+            }
+            if (nombresDepartamentos.Any())
+            {
+                hoja.Range(2, 8, FILAS_DATOS, 8).CreateDataValidation().List(refDepartamentos);
+            }
+
+            hojaListas.Hide();
+
+            hoja.SheetView.FreezeRows(1);
+            hoja.Columns().AdjustToContents();
+
+            var instrucciones = workbook.Worksheets.Add("Instrucciones");
+            instrucciones.Cell(1, 1).Value = "Instrucciones para llenar la plantilla";
+            instrucciones.Cell(1, 1).Style.Font.Bold = true;
+            instrucciones.Cell(1, 1).Style.Font.FontSize = 14;
+
+            string[] pasos = new string[]
+            {
+                "1. Llena una fila por cada actividad a registrar. No dejes filas en blanco en medio.",
+                "2. Año Fiscal: año del ejercicio (ej. 2026).",
+                "3. Programa Presupuestario: elige de la lista desplegable (Agenda, E046 o E047).",
+                "4. Componente y Actividad: números obligatorios mayores a cero.",
+                "5. Descripción Actividad: texto descriptivo de la actividad.",
+                "6. Unidad Medida: elige de la lista desplegable.",
+                "7. Programa Social: opcional, texto.",
+                "8. Departamento: elige de la lista desplegable. Puedes cargar varios departamentos en el mismo archivo.",
+                "9. Columnas Ene-Dic: meta programada del mes (números, puede ser 0 o vacío).",
+                "10. Columnas con 'Personas': personas programadas por mes (números, puede ser 0 o vacío).",
+                "11. Guarda el archivo como .xlsx y súbelo desde el botón 'Cargar Excel' en Monitoreo.",
+                "12. Si una fila tiene errores, se omitirá y se mostrará el detalle al final del proceso."
+            };
+
+            for (int i = 0; i < pasos.Length; i++)
+            {
+                instrucciones.Cell(i + 3, 1).Value = pasos[i];
+            }
+            instrucciones.Columns().AdjustToContents();
+
+            using var ms = new MemoryStream();
+            workbook.SaveAs(ms);
+            ms.Position = 0;
+
+            return File(ms.ToArray(),
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "Plantilla_Actividades.xlsx");
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> ValidarCargarExcel(IFormFile archivoExcel)
+        {
+            try
+            {
+                var resultado = await ParsearArchivo(archivoExcel);
+
+                if (!resultado.CorrectoArchivo)
+                {
+                    return Json(new { success = false, message = resultado.MensajeError });
+                }
+
+                return Json(new
+                {
+                    success = true,
+                    totalFilas = resultado.TotalFilas,
+                    registrosValidos = resultado.RegistrosValidos.Count,
+                    totalErrores = resultado.Errores.Count,
+                    errores = resultado.Errores.Take(50).ToList(),
+                    message = $"Se encontraron {resultado.RegistrosValidos.Count} registro(s) válido(s) de {resultado.TotalFilas} fila(s)."
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Error al validar el archivo: {ex.Message}" });
+            }
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> CargarExcel(IFormFile archivoExcel)
+        {
+            try
+            {
+                var resultado = await ParsearArchivo(archivoExcel);
+
+                if (!resultado.CorrectoArchivo)
+                {
+                    return Json(new { success = false, message = resultado.MensajeError });
+                }
+
+                int exitosos = 0;
+                int fallidos = 0;
+                var errores = new List<string>(resultado.Errores);
+
+                foreach (var dto in resultado.RegistrosValidos)
+                {
+                    try
+                    {
+                        bool exito = await _monitoreoService.CrearNuevoProceso(dto);
+                        if (exito)
+                        {
+                            exitosos++;
+                        }
+                        else
+                        {
+                            fallidos++;
+                            errores.Add("Un registro válido no se pudo guardar en la base de datos.");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        fallidos++;
+                        errores.Add($"Error al guardar: {ex.Message}");
+                    }
+                }
+
+                return Json(new
+                {
+                    success = exitosos > 0,
+                    totalProcesados = resultado.RegistrosValidos.Count,
+                    exitosos,
+                    fallidos,
+                    errores = errores.Take(50).ToList(),
+                    message = $"Se procesaron {resultado.RegistrosValidos.Count} registro(s) válido(s): {exitosos} creados, {fallidos} fallidos."
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Error al procesar el archivo: {ex.Message}" });
+            }
+        }
+
+        private async Task<ResultadoParseoExcel> ParsearArchivo(IFormFile archivoExcel)
+        {
+            var resultado = new ResultadoParseoExcel();
+
+            if (archivoExcel == null || archivoExcel.Length == 0)
+            {
+                resultado.MensajeError = "Debes seleccionar un archivo Excel.";
+                return resultado;
+            }
+
+            var extension = Path.GetExtension(archivoExcel.FileName).ToLowerInvariant();
+            if (extension != ".xlsx")
+            {
+                resultado.MensajeError = "El archivo debe tener extensión .xlsx.";
+                return resultado;
+            }
+
+            var departamentos = await _departamentoService.ObtenerDepartamentos();
+            var medidas = await _departamentoService.ObtenerMedidas();
+
+            var medidasValidas = medidas
+                .Where(m => !string.IsNullOrWhiteSpace(m.Valor))
+                .Select(m => m.Valor.Trim().ToUpperInvariant())
+                .ToHashSet();
+
+            using (var stream = new MemoryStream())
+            {
+                await archivoExcel.CopyToAsync(stream);
+                stream.Position = 0;
+
+                using (var workbook = new XLWorkbook(stream))
+                {
+                    IXLWorksheet hoja;
+                    if (!workbook.TryGetWorksheet("Actividades", out hoja))
+                    {
+                        resultado.MensajeError = "El archivo no contiene la hoja 'Actividades'.";
+                        return resultado;
+                    }
+
+                    var filas = hoja.RowsUsed();
+                    if (!filas.Any())
+                    {
+                        resultado.MensajeError = "El archivo no contiene datos.";
+                        return resultado;
+                    }
+
+                    resultado.CorrectoArchivo = true;
+
+                    foreach (var fila in filas.Skip(1))
+                    {
+                        resultado.TotalFilas++;
+                        int numeroFila = fila.RowNumber();
+
+                        try
+                        {
+                            var modelo = new VMDatosEdicionActividad();
+
+                            // Año Fiscal
+                            if (!int.TryParse(fila.Cell(1).GetString().Trim(), out int anoFiscal) || anoFiscal <= 0)
+                            {
+                                resultado.Errores.Add($"Fila {numeroFila}: Año Fiscal inválido o vacío.");
+                                continue;
+                            }
+                            modelo.AnoFiscal = anoFiscal;
+
+                            // Programa Presupuestario
+                            var idPP = ResolverProgramaPresupuestario(fila.Cell(2).GetString().Trim());
+                            if (idPP == null)
+                            {
+                                resultado.Errores.Add($"Fila {numeroFila}: Programa Presupuestario inválido. Use Agenda, E046 o E047.");
+                                continue;
+                            }
+                            modelo.PP = idPP;
+
+                            // Componente
+                            modelo.Componente = LeerEnteroEntero(fila, 3);
+                            if (modelo.Componente == null || modelo.Componente <= 0)
+                            {
+                                resultado.Errores.Add($"Fila {numeroFila}: Componente inválido o vacío.");
+                                continue;
+                            }
+
+                            // Actividad
+                            modelo.Actividad = LeerEnteroEntero(fila, 4);
+                            if (modelo.Actividad == null || modelo.Actividad <= 0)
+                            {
+                                resultado.Errores.Add($"Fila {numeroFila}: Actividad inválida o vacía.");
+                                continue;
+                            }
+
+                            // Descripción Actividad
+                            modelo.DescripcionActividad = fila.Cell(5).GetString().Trim();
+                            if (string.IsNullOrEmpty(modelo.DescripcionActividad))
+                            {
+                                resultado.Errores.Add($"Fila {numeroFila}: Descripción de la actividad es requerida.");
+                                continue;
+                            }
+
+                            // Unidad de Medida
+                            var unidadRaw = fila.Cell(6).GetString().Trim().ToUpperInvariant();
+                            if (!medidasValidas.Contains(unidadRaw))
+                            {
+                                resultado.Errores.Add($"Fila {numeroFila}: Unidad de medida '{fila.Cell(6).GetString().Trim()}' no válida.");
+                                continue;
+                            }
+                            modelo.UnidadMedida = unidadRaw;
+
+                            // Programa Social (opcional)
+                            modelo.ProgramaSocial = fila.Cell(7).GetString().Trim();
+
+                            // Departamento -> resolver Área desde BD
+                            var deptoTexto = fila.Cell(8).GetString().Trim();
+                            var departamento = departamentos.FirstOrDefault(d =>
+                                !string.IsNullOrWhiteSpace(d.Departamento1)
+                                && string.Equals(d.Departamento1.Trim(), deptoTexto, StringComparison.OrdinalIgnoreCase));
+                            if (departamento == null)
+                            {
+                                resultado.Errores.Add($"Fila {numeroFila}: Departamento '{deptoTexto}' no encontrado.");
+                                continue;
+                            }
+                            modelo.Departamento = departamento.Departamento1;
+                            modelo.Area = departamento.Area;
+
+                            // Metas Programadas (columnas 9-20): Ene, Feb, Mar, Abr, May, Jun, Jul, Ago, Sep, Oct, Nov, Dic
+                            modelo.TotalEnero = LeerEnteroEntero(fila, 9) ?? 0;
+                            modelo.TotalFebrero = LeerEnteroEntero(fila, 10) ?? 0;
+                            modelo.TotalMarzo = LeerEnteroEntero(fila, 11) ?? 0;
+                            modelo.TotalAbril = LeerEnteroEntero(fila, 12) ?? 0;
+                            modelo.TotalMayo = LeerEnteroEntero(fila, 13) ?? 0;
+                            modelo.TotalJunio = LeerEnteroEntero(fila, 14) ?? 0;
+                            modelo.TotalJulio = LeerEnteroEntero(fila, 15) ?? 0;
+                            modelo.TotalAgosto = LeerEnteroEntero(fila, 16) ?? 0;
+                            modelo.TotalSeptiembre = LeerEnteroEntero(fila, 17) ?? 0;
+                            modelo.TotalOctubre = LeerEnteroEntero(fila, 18) ?? 0;
+                            modelo.TotalNoviembre = LeerEnteroEntero(fila, 19) ?? 0;
+                            modelo.TotalDiciembre = LeerEnteroEntero(fila, 20) ?? 0;
+
+                            // Personas Programadas (columnas 21-32)
+                            modelo.EneroPersona = LeerEnteroEntero(fila, 21) ?? 0;
+                            modelo.FebreroPersona = LeerEnteroEntero(fila, 22) ?? 0;
+                            modelo.MarzoPersona = LeerEnteroEntero(fila, 23) ?? 0;
+                            modelo.AbrilPersona = LeerEnteroEntero(fila, 24) ?? 0;
+                            modelo.MayoPersona = LeerEnteroEntero(fila, 25) ?? 0;
+                            modelo.JunioPersona = LeerEnteroEntero(fila, 26) ?? 0;
+                            modelo.JulioPersona = LeerEnteroEntero(fila, 27) ?? 0;
+                            modelo.AgostoPersona = LeerEnteroEntero(fila, 28) ?? 0;
+                            modelo.SeptiembrePersona = LeerEnteroEntero(fila, 29) ?? 0;
+                            modelo.OctubrePersona = LeerEnteroEntero(fila, 30) ?? 0;
+                            modelo.NoviembrePersona = LeerEnteroEntero(fila, 31) ?? 0;
+                            modelo.DiciembrePersona = LeerEnteroEntero(fila, 32) ?? 0;
+
+                            resultado.RegistrosValidos.Add(_mapper.Map<DatosEdicionDTO>(modelo));
+                        }
+                        catch (Exception ex)
+                        {
+                            resultado.Errores.Add($"Fila {numeroFila}: {ex.Message}");
+                        }
+                    }
+                }
+            }
+
+            return resultado;
+        }
+
+        private class ResultadoParseoExcel
+        {
+            public bool CorrectoArchivo { get; set; }
+            public string MensajeError { get; set; } = string.Empty;
+            public List<DatosEdicionDTO> RegistrosValidos { get; set; } = new List<DatosEdicionDTO>();
+            public List<string> Errores { get; set; } = new List<string>();
+            public int TotalFilas { get; set; }
+        }
+
+        private int? LeerEnteroEntero(IXLRow fila, int columna)
+        {
+            var celda = fila.Cell(columna);
+            if (celda.IsEmpty())
+            {
+                return null;
+            }
+
+            var texto = celda.GetString().Trim().Replace(",", "").Replace(" ", "");
+            if (string.IsNullOrEmpty(texto))
+            {
+                return null;
+            }
+
+            if (int.TryParse(texto, out int valor))
+            {
+                return valor;
+            }
+
+            if (celda.DataType == XLDataType.Number)
+            {
+                return (int)Math.Round(celda.GetDouble());
+            }
+
+            return null;
+        }
+
+        private int? ResolverProgramaPresupuestario(string valor)
+        {
+            if (int.TryParse(valor.Trim(), out int id))
+            {
+                if (id == 1 || id == 2 || id == 3)
+                {
+                    return id;
+                }
+                return null;
+            }
+
+            return valor.Trim().ToUpperInvariant() switch
+            {
+                "AGENDA" => 3,
+                "E046" => 1,
+                "E047" => 2,
+                _ => null
+            };
         }
 
         [HttpPost]
