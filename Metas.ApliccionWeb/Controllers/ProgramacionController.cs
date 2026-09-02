@@ -133,9 +133,25 @@ namespace Metas.AplicacionWeb.Controllers
                 }
             }
 
-            var listaAreas = departamentos
-                .Where(d => !string.IsNullOrWhiteSpace(d.Area))
-                .Select(d => d.Area)
+            IEnumerable<string> areasPermitidas;
+
+            if (esAdmin)
+            {
+                areasPermitidas = departamentos.Select(d => d.Area);
+            }
+            else if (User.IsInRole("Departamento"))
+            {
+                areasPermitidas = departamentos
+                    .Where(d => d.Departamento1 == areaClaim)
+                    .Select(d => d.Area);
+            }
+            else
+            {
+                areasPermitidas = new[] { areaClaim };
+            }
+
+            var listaAreas = areasPermitidas
+                .Where(a => !string.IsNullOrWhiteSpace(a))
                 .Distinct()
                 .OrderBy(a => a)
                 .Select(a => new SelectListItem { Value = a, Text = a })
