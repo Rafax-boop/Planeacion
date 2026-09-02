@@ -65,6 +65,12 @@
                 <i class="fa-solid fa-plus"></i> Agregar Nuevo
             </button>
         </div>
+        <div class="filtro-grupo" style="flex: 0 0 auto; min-width: auto;">
+            <label>&nbsp;</label>
+            <button class="btn-app-verde" type="button" id="btnCargarExcel">
+                <i class="fa-solid fa-file-excel"></i> Cargar Excel
+            </button>
+        </div>
     }
     <div class="filtro-grupo" style="flex: 0 0 auto; min-width: auto;">
         <label>&nbsp;</label>
@@ -257,6 +263,54 @@
                 <div class="modal-footer">
                     <button type="button" class="btn-app-gris" data-bs-dismiss="modal">Cerrar</button>
                     <button type="submit" class="btn-app-rosa" id="btnGuardarModal">Guardar y continuar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalCargarExcel" tabindex="-1" aria-labelledby="modalCargarExcelLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-600 modal-dialog-scrollable">
+        <div class="modal-content modal-fijo">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCargarExcelLabel">Cargar Actividades desde Excel</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="formCargarExcel">
+                <div class="modal-body">
+                    <div class="modal-seccion">
+                        <h6 class="modal-seccion-titulo">Plantilla</h6>
+                        <p class="small text-muted mb-2">
+                            Descarga la plantilla para conocer las columnas y el formato requerido.
+                        </p>
+                        <button type="button" class="btn-app-azul w-100" id="btnDescargarPlantilla">
+                            <i class="fa-solid fa-download"></i> Descargar Plantilla
+                        </button>
+                    </div>
+
+                    <div class="modal-seccion">
+                        <h6 class="modal-seccion-titulo">Archivo</h6>
+                        <label for="archivoExcel" class="form-label small text-muted mb-1">Selecciona el archivo .xlsx</label>
+                        <input type="file" class="form-control" id="archivoExcel" name="archivoExcel" accept=".xlsx" required>
+                        <div class="form-text">
+                            Se crean registros de la tabla. El Área se asigna automáticamente según el Departamento. Las filas con errores se omiten y se reportan al final.
+                        </div>
+                    </div>
+
+                    <div id="panelProgresoCarga" style="display: none;">
+                        <div class="d-flex align-items-center gap-2 mt-2">
+                            <div class="spinner-border spinner-border-sm text-primary" role="status">
+                                <span class="visually-hidden">Cargando...</span>
+                            </div>
+                            <span class="small">Procesando archivo... esto puede tardar unos momentos.</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-app-gris" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn-app-rosa" id="btnSubirExcel">
+                        <i class="fa-solid fa-upload"></i> Cargar
+                    </button>
                 </div>
             </form>
         </div>
@@ -895,6 +949,155 @@
                             text: 'No se pudo guardar la información.',
                             confirmButtonText: 'Entendido'
                         });
+                    }
+                });
+            });
+
+            $('#btnCargarExcel').click(function() {
+                $('#formCargarExcel')[0].reset();
+                $('#panelProgresoCarga').hide();
+                var modal = new bootstrap.Modal(document.getElementById('modalCargarExcel'));
+                modal.show();
+            });
+
+            $('#btnDescargarPlantilla').click(function() {
+                window.location.href = '@Url.Action("DescargarPlantilla", "Monitoreo")';
+            });
+
+            function construirDetalleErrores(errores, totalErrores) {
+                if (!errores || errores.length === 0) return '';
+                return '<div class="text-start small text-danger" style="max-height: 200px; overflow-y: auto;">' +
+                    errores.slice(0, 10).map(function (e) { return '<div>• ' + e + '</div>'; }).join('') +
+                    (totalErrores > 10 ? '<div>… y ' + (totalErrores - 10) + ' más.</div>' : '') +
+                    '</div>';
+            }
+
+            $('#formCargarExcel').submit(function(e) {
+                e.preventDefault();
+
+                var archivo = $('#archivoExcel')[0].files[0];
+                if (!archivo) {
+                    Swal.fire({ icon: 'warning', title: 'Falta archivo', text: 'Selecciona un archivo .xlsx primero.', confirmButtonText: 'Entendido' });
+                    return;
+                }
+
+                if (!/\.xlsx$/i.test(archivo.name)) {
+                    Swal.fire({ icon: 'warning', title: 'Formato no válido', text: 'El archivo debe tener extensión .xlsx.', confirmButtonText: 'Entendido' });
+                    return;
+                }
+
+                var formData = new FormData();
+                formData.append('archivoExcel', archivo);
+
+                $('#panelProgresoCarga').show();
+                $('#btnSubirExcel').prop('disabled', true);
+
+                $.ajax({
+                    url: '@Url.Action("ValidarCargarExcel", "Monitoreo")',
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        $('#panelProgresoCarga').hide();
+                        $('#btnSubirExcel').prop('disabled', false);
+
+                        if (!response.success) {
+                            Swal.fire({ icon: 'error', title: 'No se pudo validar el archivo', text: response.message, confirmButtonText: 'Entendido' });
+                            return;
+                        }
+
+                        if (response.registrosValidos === 0) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'No hay registros válidos',
+                                html: response.message + construirDetalleErrores(response.errores, response.totalErrores),
+                                confirmButtonText: 'Entendido'
+                            });
+                            return;
+                        }
+
+                        var mensaje = 'Se insertarán <b>' + response.registrosValidos + '</b> registro(s) de <b>' + response.totalFilas + '</b> fila(s).';
+                        if (response.totalErrores > 0) {
+                            mensaje += '<br>Las siguientes filas presentan errores y se omitirán:' +
+                                construirDetalleErrores(response.errores, response.totalErrores);
+                        } else {
+                            mensaje += '<br>No se detectaron errores en ninguna fila.';
+                        }
+
+                        Swal.fire({
+                            icon: 'question',
+                            title: 'Confirmar carga',
+                            html: mensaje,
+                            showCancelButton: true,
+                            confirmButtonText: 'Sí, insertar',
+                            cancelButtonText: 'Cancelar'
+                        }).then(function (resultado) {
+                            if (!resultado.isConfirmed) return;
+
+                            $('#panelProgresoCarga').show();
+                            $('#btnSubirExcel').prop('disabled', true);
+
+                            var formDataInsert = new FormData();
+                            formDataInsert.append('archivoExcel', archivo);
+
+                            $.ajax({
+                                url: '@Url.Action("CargarExcel", "Monitoreo")',
+                                type: 'POST',
+                                data: formDataInsert,
+                                contentType: false,
+                                processData: false,
+                                success: function(responseInsert) {
+                                    $('#panelProgresoCarga').hide();
+                                    $('#btnSubirExcel').prop('disabled', false);
+
+                                    if (responseInsert.success) {
+                                        var detalle = '';
+                                        if (responseInsert.errores && responseInsert.errores.length > 0) {
+                                            detalle = '<br><div class="text-start small" style="max-height: 150px; overflow-y: auto;">' +
+                                                responseInsert.errores.slice(0, 10).map(function (e) { return '<div>• ' + e + '</div>'; }).join('') +
+                                                (responseInsert.errores.length > 10 ? '<div>… y ' + (responseInsert.errores.length - 10) + ' más.</div>' : '') +
+                                                '</div>';
+                                        }
+
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: '¡Carga finalizada!',
+                                            html: responseInsert.message + detalle,
+                                            confirmButtonText: 'Aceptar'
+                                        }).then(function () {
+                                            var modal = bootstrap.Modal.getInstance(document.getElementById('modalCargarExcel'));
+                                            if (modal) modal.hide();
+                                            $('#formCargarExcel')[0].reset();
+                                            $('#btnBuscar').click();
+                                        });
+                                    } else {
+                                        var detalle = '';
+                                        if (responseInsert.errores && responseInsert.errores.length > 0) {
+                                            detalle = construirDetalleErrores(responseInsert.errores, responseInsert.errores.length);
+                                        }
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'No se pudieron crear registros',
+                                            html: (responseInsert.message || 'No se procesó ningún registro.') + detalle,
+                                            confirmButtonText: 'Entendido'
+                                        });
+                                    }
+                                },
+                                error: function(xhr, status, error) {
+                                    $('#panelProgresoCarga').hide();
+                                    $('#btnSubirExcel').prop('disabled', false);
+                                    console.error('Error AJAX:', xhr.responseText);
+                                    Swal.fire({ icon: 'error', title: 'Error de conexión', text: 'No se pudo cargar el archivo.', confirmButtonText: 'Entendido' });
+                                }
+                            });
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        $('#panelProgresoCarga').hide();
+                        $('#btnSubirExcel').prop('disabled', false);
+                        console.error('Error AJAX:', xhr.responseText);
+                        Swal.fire({ icon: 'error', title: 'Error de conexión', text: 'No se pudo validar el archivo.', confirmButtonText: 'Entendido' });
                     }
                 });
             });
