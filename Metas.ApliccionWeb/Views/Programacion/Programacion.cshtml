@@ -172,7 +172,8 @@
         // Al volver desde Tablero Completo de Programación con el botón
         // "Volver", se restaura la última combinación de filtros buscada
         // (incluida una búsqueda de "todos", sin departamento ni área).
-        var CLAVE_ULTIMA_BUSQUEDA_PROGRAMACION = 'programacionUltimaBusqueda';
+        var idUsuarioActual = '@(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "anon")';
+        var CLAVE_ULTIMA_BUSQUEDA_PROGRAMACION = 'programacionUltimaBusqueda_' + idUsuarioActual;
 
         function guardarUltimaBusquedaProgramacion(anoFiscal, departamento, area) {
             try {
@@ -188,6 +189,14 @@
                 guardada = null;
             }
             if (!guardada) return;
+
+            // Solo se restaura el área si sigue siendo una opción válida para
+            // este usuario (evita heredar el filtro de un usuario anterior).
+            var areaValida = !guardada.area || $('#selectAreaFiltro option[value="' + guardada.area + '"]').length > 0;
+            if (!areaValida) {
+                try { sessionStorage.removeItem(CLAVE_ULTIMA_BUSQUEDA_PROGRAMACION); } catch (e) { /* se ignora */ }
+                return;
+            }
 
             $('#selectAnoFiscal').val(guardada.anoFiscal).trigger('change');
             $('#selectAreaFiltro').val(guardada.area || '').trigger('change');
