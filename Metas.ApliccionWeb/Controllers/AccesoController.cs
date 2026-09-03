@@ -40,6 +40,12 @@ namespace Metas.AplicacionWeb.Controllers
                 return View(modelo);
             }
 
+            if (usuarioEncontrado.Activo == false)
+            {
+                ViewData["Mensaje"] = "El usuario está inactivo. Contacte al administrador.";
+                return View(modelo);
+            }
+
             ViewData["Mensaje"] = null;
 
             List<Claim> claims = new List<Claim>

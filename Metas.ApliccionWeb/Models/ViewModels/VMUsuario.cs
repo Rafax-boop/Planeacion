@@ -7,5 +7,6 @@
         public string Pass { get; set; }
         public string Area { get; set; }
         public string Definicion { get; set; }
+        public bool? Activo { get; set; }
     }
 }

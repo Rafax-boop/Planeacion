@@ -26,4 +26,6 @@ public partial class Departamento
     public string? Diagnostico { get; set; }
 
     public string? Justificacion { get; set; }
+
+    public bool? Activo { get; set; }
 }

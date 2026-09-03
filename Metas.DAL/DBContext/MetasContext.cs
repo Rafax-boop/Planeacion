@@ -289,7 +289,6 @@ public partial class MetasContext : DbContext
 
             entity.Property(e => e.Area).HasMaxLength(500);
             entity.Property(e => e.Definicion).HasMaxLength(15);
-            entity.Property(e => e.Direccion).HasMaxLength(200);
             entity.Property(e => e.Pass).HasMaxLength(30);
             entity.Property(e => e.Usuario1)
                 .HasMaxLength(30)

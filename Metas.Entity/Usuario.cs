@@ -15,5 +15,5 @@ public partial class Usuario
 
     public string? Definicion { get; set; }
 
-    public string? Direccion { get; set; }
+    public bool? Activo { get; set; }
 }

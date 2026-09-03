@@ -50,6 +50,7 @@ namespace Metas.BLL.Implementacion
             var query = await _repositorio.Consultar();
 
             var departamentos = query
+                .Where(d => d.Activo != false)
                 .Select(d => new Departamento
                 {
                     IdDepartamento = d.IdDepartamento,
@@ -71,6 +72,7 @@ namespace Metas.BLL.Implementacion
             {
                 case "Unidad":
                     lista = query
+                        .Where(p => p.Activo != false)
                         .Select(p => new SelectListItem
                         {
                             Text = p.UnidadRepresentante,
@@ -83,6 +85,7 @@ namespace Metas.BLL.Implementacion
 
                 case "Dirección":
                     lista = query
+                        .Where(p => p.Activo != false)
                         .Select(p => new SelectListItem
                         {
                             Text = p.Area,
@@ -95,6 +98,7 @@ namespace Metas.BLL.Implementacion
 
                 case "Departamento":
                     lista = query
+                        .Where(p => p.Activo != false)
                         .Select(p => new SelectListItem
                         {
                             Text = p.Departamento1,

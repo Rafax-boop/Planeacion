@@ -25,10 +25,16 @@ namespace Metas.BLL.Implementacion
 
         public async Task<Usuario> ObtenerPorCredenciales(string usuario, string clave)
         {
-            Usuario usuarioEncontrado = await _repositorio.Obtener(
-                u => u.Usuario1.Equals(usuario) && u.Pass.Equals(clave));
+            Usuario candidato = await _repositorio.Obtener(
+                u => u.Usuario1 == usuario);
 
-            return usuarioEncontrado;
+            if (candidato == null)
+                return null;
+
+            bool usuarioOk = candidato.Usuario1.Equals(usuario, StringComparison.Ordinal);
+            bool claveOk = candidato.Pass.Equals(clave, StringComparison.Ordinal);
+
+            return (usuarioOk && claveOk) ? candidato : null;
         }
 
         public async Task<List<Usuario>> Lista()
@@ -71,6 +77,7 @@ namespace Metas.BLL.Implementacion
                 usuarioEditar.Pass = entidad.Pass;
                 usuarioEditar.Area = entidad.Area;
                 usuarioEditar.Definicion = entidad.Definicion;
+                usuarioEditar.Activo = entidad.Activo;
 
                 bool resultado = await _repositorio.Editar(usuarioEditar);
 

@@ -33,6 +33,7 @@ else
                     <th>Contraseña</th>
                     <th>Área</th>
                     <th class="text-center">Rol</th>
+                    <th class="text-center">Activo</th>
                     <th class="text-center">Acciones</th>
                 </tr>
             </thead>
@@ -45,10 +46,20 @@ else
                         <td>@usuario.Pass</td>
                         <td>@usuario.Area</td>
                         <td class="text-center">@usuario.Definicion</td>
+                        <td class="text-center">
+                            @if (usuario.Activo == true)
+                            {
+                                <span class="badge bg-success">Activo</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Inactivo</span>
+                            }
+                        </td>
                         <td>
                             <div class="acciones-grupo">
                                 <button type="button" class="btn-accion btn-accion-editar" title="Editar" data-bs-toggle="tooltip" data-bs-placement="top"
-                                        onclick="cargarDatosUsuario(@usuario.IdUsuario, '@usuario.Usuario1', '@usuario.Pass', '@usuario.Definicion', '@usuario.Area')">
+                                        onclick="cargarDatosUsuario(@usuario.IdUsuario, '@usuario.Usuario1', '@usuario.Pass', '@usuario.Definicion', '@usuario.Area', @((usuario.Activo ?? true).ToString().ToLower()))">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </button>
                                 <button type="button" class="btn-accion btn-accion-eliminar" title="Eliminar" data-bs-toggle="tooltip" data-bs-placement="top"
@@ -92,6 +103,12 @@ else
                     <select class="form-select mb-3" id="selectArea" name="Area">
                         <option value="">Seleccione Área</option>
                     </select>
+
+                    <div class="form-check form-switch">
+                        <input type="hidden" id="hiddenActivo" name="Activo" value="true">
+                        <input class="form-check-input" type="checkbox" role="switch" id="chkActivo" checked>
+                        <label class="form-check-label fw-semibold" for="chkActivo">Activo</label>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn-app-gris" data-bs-dismiss="modal">Cerrar</button>
@@ -131,6 +148,12 @@ else
                     <select class="form-select mb-3" id="selectAreaEditar" name="Area">
                         <option value="">Seleccione Área</option>
                     </select>
+
+                    <div class="form-check form-switch">
+                        <input type="hidden" id="hiddenActivoEditar" name="Activo" value="true">
+                        <input class="form-check-input" type="checkbox" role="switch" id="chkActivoEditar" checked>
+                        <label class="form-check-label fw-semibold" for="chkActivoEditar">Activo</label>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn-app-gris" data-bs-dismiss="modal">Cerrar</button>
@@ -175,12 +198,16 @@ else
         }
 
         // Abre la modal de edición y precarga los datos del usuario
-        function cargarDatosUsuario(id, usuario, pass, definicion, area) {
+        function cargarDatosUsuario(id, usuario, pass, definicion, area, activo) {
             $('#txtIdUsuarioEditar').val(id);
             $('#txtUsuarioEditar').val(usuario);
             $('#txtPasswordEditar').val(pass);
             $('#selectTipoEditar').val(definicion);
             cargarAreasPorTipo($('#selectAreaEditar'), definicion, area);
+
+            var esActivo = activo === undefined ? true : activo;
+            $('#hiddenActivoEditar').val(esActivo);
+            $('#chkActivoEditar').prop('checked', esActivo);
 
             var modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('ModalEditarUsuario'));
             modal.show();
@@ -201,9 +228,20 @@ else
                 cargarAreasPorTipo($('#selectAreaEditar'), $(this).val(), null);
             });
 
+            // Sincronizar checkbox de Activo con su campo oculto
+            $('#chkActivo').on('change', function () {
+                $('#hiddenActivo').val($(this).is(':checked'));
+            });
+
+            $('#chkActivoEditar').on('change', function () {
+                $('#hiddenActivoEditar').val($(this).is(':checked'));
+            });
+
             // Crear usuario con AJAX
             $("#formCrearUsuario").submit(function (e) {
                 e.preventDefault();
+
+                $('#hiddenActivo').val($('#chkActivo').is(':checked'));
 
                 var camposValidos = validarCamposRequeridos([
                     { label: 'Nombre de usuario', campoId: 'txtUsuario', valido: !!$('#txtUsuario').val().trim() },
@@ -248,6 +286,8 @@ else
             // Editar usuario con AJAX
             $("#formEditarUsuario").submit(function (e) {
                 e.preventDefault();
+
+                $('#hiddenActivoEditar').val($('#chkActivoEditar').is(':checked'));
 
                 var camposValidos = validarCamposRequeridos([
                     { label: 'Nombre de usuario', campoId: 'txtUsuarioEditar', valido: !!$('#txtUsuarioEditar').val().trim() },
