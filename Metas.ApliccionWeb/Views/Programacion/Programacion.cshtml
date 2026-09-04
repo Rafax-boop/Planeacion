@@ -174,11 +174,23 @@
         // (incluida una búsqueda de "todos", sin departamento ni área).
         var idUsuarioActual = '@(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "anon")';
         var CLAVE_ULTIMA_BUSQUEDA_PROGRAMACION = 'programacionUltimaBusqueda_' + idUsuarioActual;
+        var xhrBusquedaProgramacion = null;
 
         function guardarUltimaBusquedaProgramacion(anoFiscal, departamento, area) {
             try {
                 sessionStorage.setItem(CLAVE_ULTIMA_BUSQUEDA_PROGRAMACION, JSON.stringify({ anoFiscal: anoFiscal, departamento: departamento, area: area }));
             } catch (e) { /* almacenamiento no disponible, se ignora */ }
+        }
+
+        // Solo se restaura al llegar mediante el botón "Volver" (navegación
+        // back/forward real), nunca al entrar desde el menú principal.
+        function esNavegacionDeVuelta() {
+            try {
+                var nav = performance.getEntriesByType('navigation')[0];
+                if (nav) return nav.type === 'back_forward';
+                if (performance.navigation) return performance.navigation.type === performance.navigation.TYPE_BACK_FORWARD;
+            } catch (e) { /* se ignora */ }
+            return false;
         }
 
         function restaurarUltimaBusquedaProgramacion() {
@@ -276,8 +288,14 @@
                 $('#tablaDatos').hide();
                 $('#mensajeSinDatos').hide();
 
+                // Se cancela cualquier búsqueda anterior en vuelo para que su
+                // respuesta no llegue tarde y sobrescriba estos resultados.
+                if (xhrBusquedaProgramacion) {
+                    xhrBusquedaProgramacion.abort();
+                }
+
                 // Llamada AJAX para obtener los datos
-                $.ajax({
+                xhrBusquedaProgramacion = $.ajax({
                     url: '@Url.Action("ObtenerDatos", "Programacion")',
                     type: 'GET',
                     data: {
@@ -377,6 +395,7 @@
                         }
                     },
                     error: function(xhr, status, error) {
+                        if (status === 'abort') return;
                         $('#mensajeCarga').hide();
                         Swal.fire({
                             icon: 'error',
@@ -466,8 +485,12 @@
             });
 
             // Al volver desde Tablero Completo de Programación con el botón
-            // "Volver", se restaura la última búsqueda aplicada.
-            restaurarUltimaBusquedaProgramacion();
+            // "Volver", se restaura la última búsqueda aplicada. Solo se
+            // hace si realmente se llegó por navegación back/forward, para
+            // no arrastrar filtros viejos al entrar desde el menú principal.
+            if (esNavegacionDeVuelta()) {
+                restaurarUltimaBusquedaProgramacion();
+            }
         });
     })();
     </script>

@@ -377,11 +377,23 @@
         // buscada (incluida una búsqueda de "todos", sin departamento ni área).
         var idUsuarioActual = '@(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "anon")';
         var CLAVE_ULTIMA_BUSQUEDA_MONITOREO = 'monitoreoUltimaBusqueda_' + idUsuarioActual;
+        var xhrBusquedaMonitoreo = null;
 
         function guardarUltimaBusquedaMonitoreo(anoFiscal, departamento, area) {
             try {
                 sessionStorage.setItem(CLAVE_ULTIMA_BUSQUEDA_MONITOREO, JSON.stringify({ anoFiscal: anoFiscal, departamento: departamento, area: area }));
             } catch (e) { /* almacenamiento no disponible, se ignora */ }
+        }
+
+        // Solo se restaura al llegar mediante el botón "Volver" (navegación
+        // back/forward real), nunca al entrar desde el menú principal.
+        function esNavegacionDeVuelta() {
+            try {
+                var nav = performance.getEntriesByType('navigation')[0];
+                if (nav) return nav.type === 'back_forward';
+                if (performance.navigation) return performance.navigation.type === performance.navigation.TYPE_BACK_FORWARD;
+            } catch (e) { /* se ignora */ }
+            return false;
         }
 
         function restaurarUltimaBusquedaMonitoreo() {
@@ -613,7 +625,13 @@
                 // al buscar por área (varios departamentos a la vez) se ocultan.
                 $('#btnTablero, #btnTableroCompleto').toggle(!!departamento);
 
-                $.ajax({
+                // Se cancela cualquier búsqueda anterior en vuelo para que su
+                // respuesta no llegue tarde y sobrescriba estos resultados.
+                if (xhrBusquedaMonitoreo) {
+                    xhrBusquedaMonitoreo.abort();
+                }
+
+                xhrBusquedaMonitoreo = $.ajax({
                     url: '@Url.Action("ObtenerDatos", "Monitoreo")',
                     type: 'GET',
                     data: {
@@ -768,6 +786,7 @@
                         }
                     },
                     error: function(xhr, status, error) {
+                        if (status === 'abort') return;
                         $('#mensajeCarga').hide();
                         Swal.fire({
                             icon: 'error',
@@ -1203,9 +1222,13 @@
 
         // Al volver desde Tablero / Tablero Completo / Actualización de mes con
         // el botón "Volver", se restaura la última búsqueda aplicada (año,
-        // departamento y/o área), incluida una búsqueda de "todos".
+        // departamento y/o área), incluida una búsqueda de "todos". Solo se
+        // hace si realmente se llegó por navegación back/forward, para no
+        // arrastrar filtros viejos cuando se entra desde el menú principal.
         $(document).ready(function () {
-            restaurarUltimaBusquedaMonitoreo();
+            if (esNavegacionDeVuelta()) {
+                restaurarUltimaBusquedaMonitoreo();
+            }
         });
     </script>
 }
