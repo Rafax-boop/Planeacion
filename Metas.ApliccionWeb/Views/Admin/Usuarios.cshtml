@@ -9,7 +9,28 @@
     <span class="subtitulo-vista">- Administra los usuarios que tienen acceso al sistema.</span>
 </div>
 
-<div class="d-flex justify-content-end mb-3">
+@{
+    var areasDisponibles = (Model ?? new List<VMUsuario>())
+        .Select(u => u.Area)
+        .Where(a => !string.IsNullOrWhiteSpace(a))
+        .Distinct()
+        .OrderBy(a => a)
+        .ToList();
+}
+
+<div class="d-flex justify-content-between align-items-end flex-wrap gap-2 mb-3">
+    <div class="filtros-container mb-0">
+        <div class="filtro-grupo" style="flex: 0 0 550px; min-width: 550px; max-width: 550px;">
+            <label for="selectAreaFiltro">Área</label>
+            <select id="selectAreaFiltro" class="select2-simple">
+                <option value="">Todas</option>
+                @foreach (var area in areasDisponibles)
+                {
+                    <option value="@area">@area</option>
+                }
+            </select>
+        </div>
+    </div>
     <button class="btn-app-rosa" type="button" data-bs-toggle="modal" data-bs-target="#ModalUsuario">
         <i class="fa-solid fa-user-plus"></i> Crear Usuario
     </button>
@@ -40,7 +61,7 @@ else
             <tbody id="tablaUsuarios">
                 @foreach (var usuario in Model)
                 {
-                    <tr>
+                    <tr data-area="@usuario.Area">
                         <td>@usuario.IdUsuario</td>
                         <td>@usuario.Usuario1</td>
                         <td>@usuario.Pass</td>
@@ -213,12 +234,32 @@ else
             modal.show();
         }
 
+        // Filtro por Área
+        function filtrarPorArea() {
+            var tabla = document.getElementById('tablaDatos');
+            if (!tabla) return;
+
+            var areaFiltro = $('#selectAreaFiltro').val() || '';
+
+            var filas = tabla.querySelectorAll('tbody tr');
+            filas.forEach(function (fila) {
+                var pasaArea = !areaFiltro || fila.getAttribute('data-area') === areaFiltro;
+                fila.style.display = pasaArea ? '' : 'none';
+            });
+
+            TablaPaginada.actualizar('tablaDatos');
+        }
+
         $(document).ready(function() {
             $('[data-bs-toggle="tooltip"]').each(function () {
                 bootstrap.Tooltip.getOrCreateInstance(this);
             });
 
+            $('.select2-simple').select2({ width: '100%', language: 'es', minimumResultsForSearch: 8 });
+
             TablaPaginada.iniciar('tablaDatos', { pageSize: 10 });
+
+            $('#selectAreaFiltro').on('change', filtrarPorArea);
 
             $("#selectTipo").change(function () {
                 cargarAreasPorTipo($('#selectArea'), $(this).val(), null);

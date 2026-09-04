@@ -184,6 +184,14 @@ body {
     margin-top: 4px;
 }
 
+.brand-subtitle {
+    margin: 12px 0 0;
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.7);
+    text-align: center;
+    animation: fade-up 0.5s ease-out 0.55s both;
+}
+
 .brand-footer {
     width: 100%;
     display: flex;
