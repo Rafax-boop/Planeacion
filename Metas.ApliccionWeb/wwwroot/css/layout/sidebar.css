@@ -1,8 +1,8 @@
 /* === Sidebar — Control de Seguimiento de Metas === */
 
 .app-shell {
-    min-height: 100vh;
-    overflow-x: hidden; /* deja que las orbes decorativas sangren en vertical, sin crear scroll horizontal */
+    height: 100vh;
+    overflow: hidden; /* la ventana no scrollea: el scroll único vive en .app-content */
     background: var(--bg);
 }
 
@@ -10,7 +10,8 @@
     display: flex;
     flex-direction: column;
     margin-left: 98px; /* 74px (ancho colapsado) + 12px*2 (margen del sidebar) */
-    min-height: 100vh;
+    height: 100vh;
+    overflow-y: auto; /* única barra de scroll de la vista */
 }
 
 /* El padding vive aquí (no en .app-content) para que el footer, como
