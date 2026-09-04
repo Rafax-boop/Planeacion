@@ -60,6 +60,14 @@
             <option value="E047">E047</option>
         </select>
     </div>
+    <div class="filtro-grupo">
+        <label for="selectEstatusFiltro">Estatus</label>
+        <select id="selectEstatusFiltro" class="select2-simple">
+            <option value="">Todos</option>
+            <option value="1">En Revisión</option>
+            <option value="3">Validado</option>
+        </select>
+    </div>
     <div class="filtro-grupo" style="flex: 0 0 auto; min-width: auto;">
         <label>&nbsp;</label>
         <button class="btn-app-gris" type="button" id="btnLimpiarFiltros">
@@ -225,6 +233,7 @@
             $('#selectAreaFiltro').val('').trigger('change');
             repoblarDepartamentos('');
             $('#selectProgramaFiltro').val('').trigger('change');
+            $('#selectEstatusFiltro').val('').trigger('change');
             $('#seccionResultados').slideUp();
             try { sessionStorage.removeItem(CLAVE_ULTIMA_BUSQUEDA_PROGRAMACION); } catch (e) { /* se ignora */ }
         });
@@ -243,22 +252,25 @@
 
             var ppFiltro = ($('#selectProgramaFiltro').val() || '').toLowerCase();
             var areaFiltro = $('#selectAreaFiltro').val() || '';
+            var estatusFiltro = $('#selectEstatusFiltro').val() || '';
 
             var filas = tabla.querySelectorAll('tbody tr');
             filas.forEach(function (fila) {
                 var ppCelda = fila.cells[0] ? fila.cells[0].textContent.trim().toLowerCase() : '';
                 var areaCelda = fila.cells[5] ? fila.cells[5].textContent.trim() : '';
+                var estatusCelda = fila.getAttribute('data-estatus') || '';
 
                 var pasaPp = !ppFiltro || ppCelda === ppFiltro;
                 var pasaArea = !areaFiltro || areaCelda === areaFiltro;
+                var pasaEstatus = !estatusFiltro || estatusCelda === estatusFiltro;
 
-                fila.style.display = (pasaPp && pasaArea) ? '' : 'none';
+                fila.style.display = (pasaPp && pasaArea && pasaEstatus) ? '' : 'none';
             });
 
             TablaPaginada.actualizar('tablaDatos');
         }
 
-        $('#selectProgramaFiltro, #selectAreaFiltro').on('change', filtrarTabla);
+        $('#selectProgramaFiltro, #selectAreaFiltro, #selectEstatusFiltro').on('change', filtrarTabla);
 
         $(document).ready(function() {
 
@@ -305,6 +317,7 @@
                     },
                     success: function(response) {
                         $('#mensajeCarga').hide();
+                        $('#tbodyDatos').empty();
 
                         // "Iniciar Programación" necesita un departamento específico:
                         // solo se muestra si hay fecha habilitada Y se buscó por un departamento.
@@ -316,8 +329,6 @@
 
                         // Verificar si hay datos
                         if (response.success && response.datos && response.datos.length > 0) {
-                            $('#tbodyDatos').empty();
-
                             var esAdmin = response.esAdmin;
 
                          // Llenar la tabla con los datos
@@ -366,7 +377,7 @@
                             var badgeEstatus = '<span class="badge-estatus ' + claseBadge + '"><i class="bi ' + iconoBadge + '"></i> ' + textoBadge + '</span>';
 
                             // Construir la fila de la tabla
-                            var fila = '<tr>' +
+                            var fila = '<tr data-estatus="' + item.idEstatus + '">' +
                                 '<td>' + item.pp + '</td>' +
                                 '<td>' + item.componente + '</td>' +
                                 '<td>' + actividadCompleta + '</td>' +
@@ -390,7 +401,9 @@
                             });
 
                         } else {
-                            $('#tablaDatos').show();
+                            $('#tablaDatos').hide();
+                            $('#tablaDatos').closest('.tabla-datos-wrap').css('min-height', '');
+                            $('#tablaDatos-paginacion').empty();
                             $('#mensajeSinDatos').show();
                         }
                     },

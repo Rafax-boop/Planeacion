@@ -641,9 +641,9 @@
                     },
                     success: function(response) {
                         $('#mensajeCarga').hide();
+                        $('#tbodyDatos').empty();
 
                         if (response.success && response.datos && response.datos.length > 0) {
-                            $('#tbodyDatos').empty();
 
                             var esAdmin = response.esAdmin;
 
@@ -781,7 +781,9 @@
                             filtrarTabla();
                             inicializarTooltips();
                         } else {
-                            $('#tablaDatos').show();
+                            $('#tablaDatos').hide();
+                            $('#tablaDatos').closest('.tabla-datos-wrap').css('min-height', '');
+                            $('#tablaDatos-paginacion').empty();
                             $('#mensajeSinDatos').show();
                         }
                     },
