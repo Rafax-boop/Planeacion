@@ -251,7 +251,7 @@ else
                 bootstrap.Tooltip.getOrCreateInstance(this);
             });
 
-            $('.select2-simple').select2({ width: '100%', language: 'es', minimumResultsForSearch: 8 });
+            $('.select2-simple').select2({ width: '100%', language: 'es', minimumResultsForSearch: 8, dropdownParent: $('.app-content') });
 
             TablaPaginada.iniciar('tablaDatos', { pageSize: 10 });
 

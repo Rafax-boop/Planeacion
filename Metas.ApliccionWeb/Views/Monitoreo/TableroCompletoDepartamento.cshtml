@@ -813,7 +813,7 @@
         // INICIALIZACIÓN
         // ========================================
         document.addEventListener('DOMContentLoaded', function() {
-            $('.select2-simple').select2({ width: '100%', language: 'es', minimumResultsForSearch: 8 });
+            $('.select2-simple').select2({ width: '100%', language: 'es', minimumResultsForSearch: 8, dropdownParent: $('.app-content') });
 
             document.getElementById('btnFiltrar').addEventListener('click', cargarDatosTablero);
             document.getElementById('btnExportarExcel').addEventListener('click', exportarExcel);

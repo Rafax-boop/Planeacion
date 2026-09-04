@@ -342,7 +342,7 @@
                                 var anoActual = DateTime.Now.Year;
                                 var anoMinimo = anoActual - 5;
 
-                                for (int ano = anoActual; ano >= anoMinimo; ano--)
+                                for (int ano = anoActual + 1; ano >= anoMinimo; ano--)
                                 {
                                     <option value="@ano"
                                             selected="@(ano.ToString() == Model.SerieInformacionDesde)">
@@ -360,7 +360,7 @@
                                 data-campo="17">
                             <option value="">Seleccione Hasta</option>
                             @{
-                                for (int ano = anoActual; ano >= anoMinimo; ano--)
+                                for (int ano = anoActual + 1; ano >= anoMinimo; ano--)
                                 {
                                     <option value="@ano"
                                             selected="@(ano.ToString() == Model.SerieInformacionHasta)">
@@ -457,7 +457,7 @@
                 <div class="campo-ficha">
                     <div class="campo-ficha-label campo-ficha-label-corta">22. PORCENTAJE DE CUMPLIMIENTO</div>
                     <div class="campo-ficha-control">
-                        <input id="inputPorcentajeBase" @(!ViewBag.EsAdministrador ? "disabled" : "") type="number" class="form-control text-center" value="@Model.PorcentajeBase" min="0" max="100">
+                        <input id="inputPorcentajeBase" @(!ViewBag.EsAdministrador ? "disabled" : "") type="text" inputmode="decimal" class="form-control text-center" value="@Model.PorcentajeBase">
                     </div>
                     <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
                             data-campo="22" data-bs-toggle="tooltip" title="Agregar comentario">
@@ -2136,23 +2136,23 @@
         function configurarSelectPersonas() {
             const selectPersonas = document.getElementById('selectPersonas');
             const selectAcumulable = document.getElementById('selectAcumulable');
-            const inputsGrupo2 = document.querySelectorAll('.mes-grupo2');
 
             if (!selectPersonas || !selectAcumulable) return;
 
-            selectPersonas.addEventListener('change', function() {
-                if (this.value === 'Personas' || this.value === 'Instituciones') {
-                    $(selectAcumulable).prop('disabled', false);
-                } else {
-                    $(selectAcumulable).prop('disabled', true);
+            // Select2 dispara el cambio vía jQuery, no como evento nativo del DOM:
+            // addEventListener('change', ...) nunca se ejecutaría al elegir una opción con el mouse.
+            $(selectPersonas).on('change', function() {
+                const seleccionValida = this.value === 'Personas' || this.value === 'Instituciones';
+                $(selectAcumulable).prop('disabled', !seleccionValida);
+
+                if (!seleccionValida) {
+                    // Sin Personas/Instituciones no tiene sentido conservar Acumulable.
                     $(selectAcumulable).val('').trigger('change');
-
-                    inputsGrupo2.forEach(input => {
-                        input.disabled = true;
-                        input.value = 0;
-                    });
-
-                    calcularSumatorias();
+                } else if (selectAcumulable.value) {
+                    // Personas/Instituciones cambió: recalcular meses y municipios habilitados
+                    // con la nueva categoría, conservando el Sí/No que ya tenía Acumulable
+                    // (habilitar Sí/No significa cosas distintas según Personas o Instituciones).
+                    $(selectAcumulable).trigger('change');
                 }
             });
         }
@@ -2167,7 +2167,7 @@
 
             if (!selectAcumulable) return;
 
-            selectAcumulable.addEventListener('change', function() {
+            $(selectAcumulable).on('change', function() {
                 const esAcumulable = this.value === 'si';
                 const esPersonas = selectPersonas?.value === 'Personas';
                 const esInstituciones = selectPersonas?.value === 'Instituciones';
@@ -2382,20 +2382,13 @@
                 // Evento al escribir/pegar
                 input.addEventListener('input', function(e) {
                     const cursorPos = this.selectionStart;
-                    const valorAnterior = this.value;
-                    const longitudAnterior = valorAnterior.length;
+                    const longitudAnterior = this.value.length;
 
-                    // Remover formato, validar y reformatear
-                    const valorSinFormato = this.value.replace(/,/g, '');
-
-                    // Solo permitir números
-                    if (valorSinFormato && !/^\d+$/.test(valorSinFormato)) {
-                        this.value = valorAnterior;
-                        return;
-                    }
+                    // Descartar cualquier caracter que no sea dígito (letras, símbolos, etc.)
+                    const soloDigitos = this.value.replace(/\D/g, '');
 
                     // Aplicar formato
-                    const valorFormateado = formatearMiles(valorSinFormato);
+                    const valorFormateado = formatearMiles(soloDigitos);
                     this.value = valorFormateado;
 
                     // Ajustar posición del cursor
@@ -2434,12 +2427,45 @@
             return removerFormatoMiles(elemento.value);
         }
 
+        // ========================================
+        // RESTRINGIR UN INPUT A SOLO DÍGITOS (Y UN PUNTO DECIMAL OPCIONAL)
+        // No basta con type="number": algunos navegadores (p. ej. Firefox)
+        // permiten teclear letras en el campo aunque luego lo invaliden.
+        // ========================================
+        function configurarSoloNumeros(input, { decimales = false, min, max } = {}) {
+            if (!input) return;
+
+            input.addEventListener('input', function() {
+                let valor = decimales ? this.value.replace(/[^\d.]/g, '') : this.value.replace(/\D/g, '');
+
+                if (decimales) {
+                    const partes = valor.split('.');
+                    if (partes.length > 2) {
+                        valor = partes[0] + '.' + partes.slice(1).join('');
+                    }
+                }
+
+                this.value = valor;
+            });
+
+            if (min !== undefined || max !== undefined) {
+                input.addEventListener('blur', function() {
+                    if (this.value === '') return;
+                    let numero = parseFloat(this.value);
+                    if (isNaN(numero)) numero = 0;
+                    if (min !== undefined) numero = Math.max(min, numero);
+                    if (max !== undefined) numero = Math.min(max, numero);
+                    this.value = numero;
+                });
+            }
+        }
+
 
         // ========================================
         // INICIALIZACIÓN PRINCIPAL
         // ========================================
         document.addEventListener('DOMContentLoaded', async function() {
-            $('.select2-simple').select2({ width: '100%', language: 'es', minimumResultsForSearch: 8 });
+            $('.select2-simple').select2({ width: '100%', language: 'es', minimumResultsForSearch: 8, dropdownParent: $('.app-content') });
 
             await cargarMunicipios();
 
@@ -2454,7 +2480,8 @@
             configurarAgregarPersonas('Grupo1');
             configurarAgregarPersonas('Grupo2');
 
-            configurarFormatoMiles('formato-miles');  
+            configurarFormatoMiles('formato-miles');
+            configurarSoloNumeros(document.getElementById('inputPorcentajeBase'), { decimales: true, min: 0, max: 100 });
 
             document.querySelectorAll('.mes-grupo1, .mes-grupo2').forEach(input => {
                 input.addEventListener('input', calcularSumatorias);

@@ -241,7 +241,7 @@
                                 var anoActual = DateTime.Now.Year;
                                 var anoMinimo = anoActual - 5;
 
-                                for (int ano = anoActual; ano >= anoMinimo; ano--)
+                                for (int ano = anoActual + 1; ano >= anoMinimo; ano--)
                                 {
                                     <option value="@ano">@ano</option>
                                 }
@@ -253,7 +253,7 @@
                         <select class="form-control select2-simple" id="selectHasta">
                             <option value="">Seleccione Hasta</option>
                             @{
-                                for (int ano = anoActual; ano >= anoMinimo; ano--)
+                                for (int ano = anoActual + 1; ano >= anoMinimo; ano--)
                                 {
                                     <option value="@ano">@ano</option>
                                 }
@@ -323,7 +323,7 @@
                 <div class="campo-ficha">
                     <div class="campo-ficha-label campo-ficha-label-corta">22. PORCENTAJE DE CUMPLIMIENTO</div>
                     <div class="campo-ficha-control">
-                        <input id="inputPorcentajeBase" type="number" class="form-control text-center" value="0" min="0" max="100">
+                        <input id="inputPorcentajeBase" type="text" inputmode="decimal" class="form-control text-center" value="0">
                     </div>
                 </div>
 
@@ -869,7 +869,7 @@
                     contadorAcciones++;
                     accionesList.insertAdjacentHTML('beforeend', getAccionTemplate(contadorAcciones));
                     $(accionesList).find('.accion-item:last-child select.select2-simple:not(.select2-hidden-accessible)')
-                        .select2({ width: '100%', language: 'es', minimumResultsForSearch: 8 });
+                        .select2({ width: '100%', language: 'es', minimumResultsForSearch: 8, dropdownParent: $('.app-content') });
                     actualizarNumeros();
                     actualizarBotones(btnAgregar, btnEliminar);
                 }
@@ -1109,7 +1109,9 @@
 
             inputDelegaciones.disabled = true;
 
-            selectDelegaciones.addEventListener('change', function() {
+            // Select2 dispara el cambio vía jQuery, no como evento nativo del DOM:
+            // addEventListener('change', ...) nunca se ejecutaría al elegir una opción con el mouse.
+            $(selectDelegaciones).on('change', function() {
                 const valorSeleccionado = this.value;
 
                 if (valorSeleccionado === 'No') {
@@ -1128,23 +1130,21 @@
         function configurarSelectPersonas() {
             const selectPersonas = document.getElementById('selectPersonas');
             const selectAcumulable = document.getElementById('selectAcumulable');
-            const inputsGrupo2 = document.querySelectorAll('.mes-grupo2');
 
             $(selectAcumulable).prop('disabled', true);
 
-            selectPersonas.addEventListener('change', function() {
-                if (this.value === 'Personas' || this.value === 'Instituciones') {
-                    $(selectAcumulable).prop('disabled', false);
-                } else {
-                    $(selectAcumulable).prop('disabled', true);
+            $(selectPersonas).on('change', function() {
+                const seleccionValida = this.value === 'Personas' || this.value === 'Instituciones';
+                $(selectAcumulable).prop('disabled', !seleccionValida);
+
+                if (!seleccionValida) {
+                    // Sin Personas/Instituciones no tiene sentido conservar Acumulable.
                     $(selectAcumulable).val('').trigger('change');
-
-                    inputsGrupo2.forEach(input => {
-                        input.disabled = true;
-                        input.value = 0;
-                    });
-
-                    calcularSumatorias();
+                } else if (selectAcumulable.value) {
+                    // Personas/Instituciones cambió: recalcular meses y municipios habilitados
+                    // con la nueva categoría, conservando el Sí/No que ya tenía Acumulable
+                    // (habilitar Sí/No significa cosas distintas según Personas o Instituciones).
+                    $(selectAcumulable).trigger('change');
                 }
             });
         }
@@ -1157,7 +1157,7 @@
             const personasAtendidasGrupo2 = document.getElementById('personasAtendidasGrupo2');
             const btnAgregarGrupo2 = document.getElementById('btnAgregarGrupo2');
 
-            selectAcumulable.addEventListener('change', function() {
+            $(selectAcumulable).on('change', function() {
                 const esAcumulable = this.value === 'si';
                 const esPersonas = selectPersonas.value === 'Personas';
                 const esInstituciones = selectPersonas.value === 'Instituciones';
@@ -1213,13 +1213,24 @@
         // ========================================
         async function guardarProgramacion() {
             const btnGuardar = document.getElementById('btnGuardarProgramacion');
+            if (btnGuardar.disabled) return; // evita doble ejecución por doble clic
+
             const textoOriginal = btnGuardar.innerHTML;
+
+            // Se deshabilita de inmediato (antes de cualquier validación/modal) para que un
+            // segundo clic mientras el modal de "campos obligatorios" está abierto no dispare
+            // otra ejecución en paralelo: dos scrolls compitiendo es lo que se veía como
+            // pantalla "trabada" (sube/baja sin asentarse hasta el siguiente clic).
+            btnGuardar.disabled = true;
 
             try {
                 // ========================================
                 // VALIDACIONES INMEDIATAS (ANTES DE CARGAR)
                 // ========================================
-                if (!validarCamposRequeridos(obtenerCamposObligatoriosRegistro())) return;
+                if (!validarCamposRequeridos(obtenerCamposObligatoriosRegistro())) {
+                    btnGuardar.disabled = false;
+                    return;
+                }
 
                 // ========================================
                 // CONFIRMACIÓN ANTES DE GUARDAR
@@ -1238,13 +1249,13 @@
                 });
 
                 if (!confirmacion.isConfirmed) {
+                    btnGuardar.disabled = false;
                     return;
                 }
 
                 // ========================================
                 // SOLO SI PASÓ LAS VALIDACIONES, MOSTRAR LOADING
                 // ========================================
-                btnGuardar.disabled = true;
                 btnGuardar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
 
                 // ========================================
@@ -1612,20 +1623,13 @@
                 // Evento al escribir/pegar
                 input.addEventListener('input', function(e) {
                     const cursorPos = this.selectionStart;
-                    const valorAnterior = this.value;
-                    const longitudAnterior = valorAnterior.length;
+                    const longitudAnterior = this.value.length;
 
-                    // Remover formato, validar y reformatear
-                    const valorSinFormato = this.value.replace(/,/g, '');
-
-                    // Solo permitir números
-                    if (valorSinFormato && !/^\d+$/.test(valorSinFormato)) {
-                        this.value = valorAnterior;
-                        return;
-                    }
+                    // Descartar cualquier caracter que no sea dígito (letras, símbolos, etc.)
+                    const soloDigitos = this.value.replace(/\D/g, '');
 
                     // Aplicar formato
-                    const valorFormateado = formatearMiles(valorSinFormato);
+                    const valorFormateado = formatearMiles(soloDigitos);
                     this.value = valorFormateado;
 
                     // Ajustar posición del cursor
@@ -1655,6 +1659,39 @@
         }
 
         // ========================================
+        // RESTRINGIR UN INPUT A SOLO DÍGITOS (Y UN PUNTO DECIMAL OPCIONAL)
+        // No basta con type="number": algunos navegadores (p. ej. Firefox)
+        // permiten teclear letras en el campo aunque luego lo invaliden.
+        // ========================================
+        function configurarSoloNumeros(input, { decimales = false, min, max } = {}) {
+            if (!input) return;
+
+            input.addEventListener('input', function() {
+                let valor = decimales ? this.value.replace(/[^\d.]/g, '') : this.value.replace(/\D/g, '');
+
+                if (decimales) {
+                    const partes = valor.split('.');
+                    if (partes.length > 2) {
+                        valor = partes[0] + '.' + partes.slice(1).join('');
+                    }
+                }
+
+                this.value = valor;
+            });
+
+            if (min !== undefined || max !== undefined) {
+                input.addEventListener('blur', function() {
+                    if (this.value === '') return;
+                    let numero = parseFloat(this.value);
+                    if (isNaN(numero)) numero = 0;
+                    if (min !== undefined) numero = Math.max(min, numero);
+                    if (max !== undefined) numero = Math.min(max, numero);
+                    this.value = numero;
+                });
+            }
+        }
+
+        // ========================================
         // FUNCIÓN AUXILIAR PARA OBTENER VALOR NUMÉRICO
         // ========================================
         function obtenerValorNumerico(idElemento) {
@@ -1668,7 +1705,7 @@
         // INICIALIZACIÓN PRINCIPAL
         // ========================================
         document.addEventListener('DOMContentLoaded', async function() {
-            $('.select2-simple').select2({ width: '100%', language: 'es', minimumResultsForSearch: 8 });
+            $('.select2-simple').select2({ width: '100%', language: 'es', minimumResultsForSearch: 8, dropdownParent: $('.app-content') });
 
             await cargarMunicipios();
             configurarAcciones();
@@ -1680,6 +1717,7 @@
             configurarAgregarPersonas('Grupo2');
 
             configurarFormatoMiles('formato-miles');
+            configurarSoloNumeros(document.getElementById('inputPorcentajeBase'), { decimales: true, min: 0, max: 100 });
 
             document.querySelectorAll('.mes-grupo1, .mes-grupo2').forEach(input => {
                 input.addEventListener('input', calcularSumatorias);

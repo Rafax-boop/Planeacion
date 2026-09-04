@@ -60,10 +60,21 @@ function enfocarCampo(campoId) {
     const campo = document.getElementById(campoId);
     if (!campo) return;
 
-    campo.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    const esSelect2 = campo.tagName === 'SELECT' && $(campo).hasClass('select2-hidden-accessible');
+
+    // Select2 reduce el <select> original a una cajita de ~1x1px (oculta pero accesible);
+    // scrollIntoView sobre ESE elemento no mueve nada. Hay que scrollear el widget visible
+    // que Select2 genera justo al lado (".select2-container").
+    const elementoVisible = esSelect2 ? $(campo).next('.select2-container')[0] : null;
+
+    // 'smooth' se ve "trabado" al scrollear dentro de .app-content (no está acelerado
+    // por el compositor como el scroll nativo de la ventana): en formularios largos la
+    // animación tarda segundos en avanzar y la página parece congelada hasta el próximo
+    // click, que fuerza el repintado. Salto instantáneo evita ese problema.
+    (elementoVisible || campo).scrollIntoView({ behavior: 'auto', block: 'center' });
 
     setTimeout(() => {
-        if (campo.tagName === 'SELECT' && $(campo).hasClass('select2-hidden-accessible')) {
+        if (esSelect2) {
             // Los <select> con select2 quedan ocultos; se resalta el widget visible y se abre.
             const $widget = $(campo).next('.select2-container').find('.select2-selection');
             $widget.css({ 'border-color': '#dc3545', 'background-color': '#fff5f5' });
@@ -78,7 +89,7 @@ function enfocarCampo(campoId) {
                 campo.style.backgroundColor = '';
             }, 3000);
         }
-    }, 500);
+    }, 100); // solo para dejar que el navegador repinte el salto instantáneo antes de resaltar
 }
 
 // Write your JavaScript code.
