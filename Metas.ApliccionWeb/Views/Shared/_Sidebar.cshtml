@@ -8,6 +8,10 @@
         if (accion != null && !string.Equals(accionActual, accion, StringComparison.OrdinalIgnoreCase)) return "";
         return "active";
     }
+
+    var accionesSubmenuAdmin = new[] { "Usuarios", "FechaCaptura", "FechaProgramacion", "Rangos" };
+    bool submenuAdminActivo = string.Equals(controladorActual, "Admin", StringComparison.OrdinalIgnoreCase)
+        && Array.Exists(accionesSubmenuAdmin, a => string.Equals(accionActual, a, StringComparison.OrdinalIgnoreCase));
 }
 <aside class="sidebar">
     <a class="sidebar-logo" asp-area="" asp-controller="Home" asp-action="Index">
@@ -44,26 +48,15 @@
                 <i class="fa-solid fa-table icon"></i>
                 <span class="label sidebar-expand-text">Tablero Completo por Departamento</span>
             </a>
-            <a class="sidebar-nav-item @EsActivo("Admin", "Usuarios")" asp-area="" asp-controller="Admin" asp-action="Usuarios" title="Creación de Usuarios">
-                <i class="fa-solid fa-user-plus icon"></i>
-                <span class="label sidebar-expand-text">Creación de Usuarios</span>
-            </a>
-            <a class="sidebar-nav-item @EsActivo("Admin", "FechaCaptura")" asp-area="" asp-controller="Admin" asp-action="FechaCaptura" title="Fecha de Captura">
-                <i class="fa-solid fa-calendar-day icon"></i>
-                <span class="label sidebar-expand-text">Fecha de Captura</span>
-            </a>
-            <a class="sidebar-nav-item @EsActivo("Admin", "FechaProgramacion")" asp-area="" asp-controller="Admin" asp-action="FechaProgramacion" title="Fecha de Captura Programación">
-                <i class="fa-solid fa-calendar-week icon"></i>
-                <span class="label sidebar-expand-text">Fecha de Captura Programación</span>
-            </a>
-            <a class="sidebar-nav-item @EsActivo("Admin", "Rangos")" asp-area="" asp-controller="Admin" asp-action="Rangos" title="Rangos de Desempeño">
-                <i class="fa-solid fa-sliders icon"></i>
-                <span class="label sidebar-expand-text">Rangos de Desempeño</span>
-            </a>
+            <button type="button" class="sidebar-nav-item sidebar-nav-toggle @(submenuAdminActivo ? "active" : "")" id="btnAccionesAdmin" title="Acciones Admin" aria-haspopup="true" aria-expanded="false">
+                <i class="fa-solid fa-user-shield icon"></i>
+                <span class="label sidebar-expand-text">Acciones Admin</span>
+                <i class="fa-solid fa-chevron-right submenu-arrow"></i>
+            </button>
         }
         <a class="sidebar-nav-item @EsActivo("Home", "Documentos")" asp-area="" asp-controller="Home" asp-action="Documentos" title="Documentos del Departamento">
             <i class="fa-solid fa-folder-open icon"></i>
-            <span class="label sidebar-expand-text">DOCUMENTOS</span>
+            <span class="label sidebar-expand-text">Documentos</span>
         </a>
     </nav>
 
@@ -76,3 +69,25 @@
         <div class="sidebar-caption sidebar-expand-text">Puebla · Control de Seguimiento de Metas</div>
     </div>
 </aside>
+
+@if (User.IsInRole("Administrador"))
+{
+    <div class="sidebar-flyout" id="submenuAccionesAdmin">
+        <a class="sidebar-flyout-item @EsActivo("Admin", "Usuarios")" asp-area="" asp-controller="Admin" asp-action="Usuarios">
+            <i class="fa-solid fa-user-plus icon"></i>
+            <span class="label">Creación de Usuarios</span>
+        </a>
+        <a class="sidebar-flyout-item @EsActivo("Admin", "FechaCaptura")" asp-area="" asp-controller="Admin" asp-action="FechaCaptura">
+            <i class="fa-solid fa-calendar-day icon"></i>
+            <span class="label">Fecha de Captura</span>
+        </a>
+        <a class="sidebar-flyout-item @EsActivo("Admin", "FechaProgramacion")" asp-area="" asp-controller="Admin" asp-action="FechaProgramacion">
+            <i class="fa-solid fa-calendar-week icon"></i>
+            <span class="label">Fecha de Captura Programación</span>
+        </a>
+        <a class="sidebar-flyout-item @EsActivo("Admin", "Rangos")" asp-area="" asp-controller="Admin" asp-action="Rangos">
+            <i class="fa-solid fa-sliders icon"></i>
+            <span class="label">Rangos de Desempeño</span>
+        </a>
+    </div>
+}
