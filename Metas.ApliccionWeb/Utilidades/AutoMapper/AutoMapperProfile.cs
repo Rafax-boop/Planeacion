@@ -20,6 +20,9 @@ namespace Metas.AplicacionWeb.Utilidades.AutoMapper
 
             CreateMap<VMDatosEdicionActividad, DatosEdicionDTO>()
                 .ReverseMap();
+
+            CreateMap<VMRangoDesempenio, RangoDesempenio>()
+                .ReverseMap();
         }
     }
 }

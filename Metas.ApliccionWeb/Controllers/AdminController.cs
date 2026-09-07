@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Linq;
 
 namespace Metas.AplicacionWeb.Controllers
 {
@@ -17,12 +18,14 @@ namespace Metas.AplicacionWeb.Controllers
         private readonly IUsuarioService _usuarioService;
         private readonly IDepartamentoService _departamentoService;
         private readonly IFechasService _fechasService;
-        public AdminController(IUsuarioService usuarioService, IMapper mapper, IDepartamentoService departamentoService, IFechasService fechasService)
+        private readonly IRangoDesempenioService _rangoDesempenioService;
+        public AdminController(IUsuarioService usuarioService, IMapper mapper, IDepartamentoService departamentoService, IFechasService fechasService, IRangoDesempenioService rangoDesempenioService)
         {
             _usuarioService = usuarioService;
             _mapper = mapper;
             _departamentoService = departamentoService;
             _fechasService = fechasService;
+            _rangoDesempenioService = rangoDesempenioService;
         }
         public async Task<ActionResult> Usuarios()
         {
@@ -214,6 +217,55 @@ namespace Metas.AplicacionWeb.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new { mensaje = "Error al editar", error = ex.Message });
+            }
+        }
+
+        public async Task<IActionResult> Rangos()
+        {
+            List<VMRangoDesempenio> vmRangos = _mapper.Map<List<VMRangoDesempenio>>(await _rangoDesempenioService.Lista());
+            return View(vmRangos);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ObtenerRangos()
+        {
+            try
+            {
+                var rangos = await _rangoDesempenioService.Lista();
+                var resultado = _mapper.Map<List<VMRangoDesempenio>>(rangos);
+                return Json(resultado);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { mensaje = "Error al obtener los rangos", error = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GuardarRangos([FromBody] List<VMRangoDesempenio> modelo)
+        {
+            try
+            {
+                if (modelo == null || !modelo.Any())
+                {
+                    return BadRequest(new { mensaje = "No se recibieron rangos para guardar" });
+                }
+
+                var entidades = _mapper.Map<List<RangoDesempenio>>(modelo);
+                bool resultado = await _rangoDesempenioService.GuardarRangos(entidades);
+
+                if (resultado)
+                {
+                    return Ok(new { mensaje = "Rangos de desempeño guardados exitosamente" });
+                }
+                else
+                {
+                    return BadRequest(new { mensaje = "No se pudieron guardar los rangos" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Error al guardar los rangos", error = ex.Message });
             }
         }
     }

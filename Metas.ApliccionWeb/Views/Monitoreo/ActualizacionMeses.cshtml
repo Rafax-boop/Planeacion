@@ -323,6 +323,15 @@ else
 }
 @section Scripts {
     <script>
+        const rangosDesempenio = @Html.Raw(Json.Serialize(ViewBag.RangosDesempenio ?? new List<object>()));
+        function nivelPorcentajeConfig(porcentaje) {
+            if (!rangosDesempenio || rangosDesempenio.length === 0) {
+                return { claseColor: 'error', requiereJustificacion: false };
+            }
+            const nivel = rangosDesempenio.find(r => porcentaje >= r.minimo &&
+                (r.maximo === null || r.maximo === undefined || porcentaje <= r.maximo));
+            return nivel ? { claseColor: nivel.claseColor, requiereJustificacion: nivel.requiereJustificacion } : { claseColor: 'error', requiereJustificacion: false };
+        }
         $(document).ready(function () {
             const formElement = $('form')[0];
             // URL única que apunta a la acción del controlador
@@ -563,8 +572,9 @@ else
                         $('#inputEvidencia').prop('required', false);
                     }
 
-                    // Si el porcentaje es <= 69.99 (incumplimiento) O >= 110 (sobre-cumplimiento extremo)
-                    if (porcentaje <= 69.99 || porcentaje >= 110) {
+                    // Requiere justificación si el rango alcanzado (configurado en BD) así lo indica
+                    const nivelConfig = nivelPorcentajeConfig(porcentaje);
+                    if (nivelConfig.requiereJustificacion) {
                         // Requerir Justificación
                         $('#justificacionDiv').show();
 
@@ -586,12 +596,11 @@ else
                     $('#inputEvidencia').prop('required', false).val('');
                 }
 
-                // Lógica de color de porcentaje
-                if (porcentaje < 70 || porcentaje >= 110) {
-                    $('#totalPorcentaje').removeClass('text-tablero-success').addClass('text-tablero-error');
-                } else {
-                    $('#totalPorcentaje').removeClass('text-tablero-error').addClass('text-tablero-success');
-                }
+                // Lógica de color de porcentaje (clase de color configurada en BD)
+                const nivelConfigColor = nivelPorcentajeConfig(porcentaje);
+                $('#totalPorcentaje')
+                    .removeClass('text-tablero-info text-tablero-success text-tablero-warning text-tablero-alerta text-tablero-error text-tablero-primary')
+                    .addClass('text-tablero-' + (nivelConfigColor.claseColor || 'error'));
             });
 
             // --- Lógica de suma y validación de Personas (Mujeres/Hombres) ---

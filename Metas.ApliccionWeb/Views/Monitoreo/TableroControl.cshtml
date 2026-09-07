@@ -25,6 +25,7 @@
     <script>
         let datosTablero = [];
         let llenadoInterno = {};
+        let nivelesRango = [];
         const anoFiscal = @ViewBag.AnoFiscal;
         const departamento = @ViewBag.Departamento;
 
@@ -58,6 +59,7 @@
 
                 datosTablero = result.datos;
                 llenadoInterno = result.llenadoInterno;
+                nivelesRango = result.rangos || [];
 
                 $('#infoEncabezado').text(`- Ejercicio Fiscal: ${anoFiscal} · Total de Actividades: ${datosTablero.length}`);
 
@@ -94,13 +96,15 @@
 
         // Clasificación semántica de un porcentaje de avance: cada nivel se mapea
         // a un sufijo compartido por badge-estatus-X, tablero-progress-bar-X y
-        // text-tablero-X, para no duplicar los cortes (115/95/85/70) en dos sitios.
+        // text-tablero-X. Los cortes se leen de la tabla RangoDesempenio (Base de Datos),
+        // cargada en nivelesRango al iniciar.
         function nivelPorcentaje(porcentaje) {
-            if (porcentaje >= 115) return 'info';
-            if (porcentaje >= 95) return 'success';
-            if (porcentaje >= 85) return 'warning';
-            if (porcentaje >= 70) return 'alerta';
-            return 'error';
+            if (!nivelesRango || nivelesRango.length === 0) {
+                return 'error';
+            }
+            const nivel = nivelesRango.find(r => porcentaje >= r.minimo &&
+                (r.maximo === null || r.maximo === undefined || porcentaje <= r.maximo));
+            return nivel ? nivel.claseColor : 'error';
         }
 
         function crearTablero(numeroTablero, data) {

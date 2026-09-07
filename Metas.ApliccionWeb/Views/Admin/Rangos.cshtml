@@ -1,0 +1,142 @@
+@using Metas.AplicacionWeb.Models.ViewModels
+@model List<VMRangoDesempenio>
+@{
+    ViewData["Title"] = "Rangos de Desempeño";
+    var listaColores = new[] { "error", "alerta", "warning", "success", "info" };
+}
+
+<div class="titulo-vista-wrap">
+    <h1 class="titulo-vista">Rangos de Desempeño</h1>
+    <span class="subtitulo-vista">- Administra los rangos de porcentaje de avance, su color y si requieren justificación.</span>
+</div>
+
+@if (Model == null || !Model.Any())
+{
+    <div class="sin-registros">
+        <i class="bi bi-clipboard2-x"></i><br>
+        <span>Sin rangos registrados. Ejecute el script de inserción inicial.</span>
+    </div>
+}
+else
+{
+    <div class="tabla-datos-wrap">
+        <table class="tabla-datos" id="tablaRangos">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Nombre del Nivel</th>
+                    <th>Mínimo</th>
+                    <th>Máximo</th>
+                    <th>Color</th>
+                    <th class="text-center">Requiere Justificación</th>
+                    <th>Orden</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var rango in Model.OrderBy(r => r.Orden))
+                {
+                    <tr data-id="@rango.Id">
+                        <td>@rango.Orden</td>
+                        <td>
+                            <input type="text" class="form-control form-control-sm rango-nombre" value="@rango.Nombre" />
+                        </td>
+                        <td>
+                            <input type="number" step="0.01" class="form-control form-control-sm rango-minimo" value="@rango.Minimo.ToString("0.00")" />
+                        </td>
+                        <td>
+                            <input type="text" class="form-control form-control-sm rango-maximo" value="@(rango.Maximo.HasValue ? rango.Maximo.Value.ToString("0.00") : "")" placeholder="Sin tope" />
+                        </td>
+                        <td>
+                            <select class="form-select form-select-sm rango-color">
+                                @foreach (var color in listaColores)
+                                {
+                                    <option value="@color" selected="@(rango.ClaseColor == color)">@color</option>
+                                }
+                            </select>
+                            <span class="badge-range-preview d-inline-block mt-1"></span>
+                        </td>
+                        <td class="text-center">
+                            <input type="checkbox" class="form-check-input rango-justificacion" @(rango.RequiereJustificacion ? "checked" : "") />
+                        </td>
+                        <td>
+                            <input type="number" step="1" class="form-control form-control-sm rango-orden" value="@rango.Orden" />
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="d-flex justify-content-end mt-3">
+        <button type="button" class="btn-app-rosa" id="btnGuardarRangos">
+            <i class="fa-solid fa-floppy-disk me-1"></i> Guardar Cambios
+        </button>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Preview del color al cambiar el select
+            function actualizarPreview(select) {
+                var fila = $(select).closest('tr');
+                var color = $(select).val();
+                var preview = fila.find('.badge-range-preview');
+                preview.html('<span class="badge-estatus badge-estatus-' + color + '">Muestra</span>');
+            }
+
+            $('.rango-color').on('change', function () {
+                actualizarPreview(this);
+            });
+            $('.rango-color').each(function () {
+                actualizarPreview(this);
+            });
+
+            $('#btnGuardarRangos').on('click', function () {
+                var rangos = [];
+                $('#tablaRangos tbody tr').each(function () {
+                    var fila = $(this);
+                    var maximoValor = fila.find('.rango-maximo').val().trim();
+                    rangos.push({
+                        id: parseInt(fila.data('id')),
+                        nombre: fila.find('.rango-nombre').val().trim(),
+                        minimo: parseFloat(fila.find('.rango-minimo').val()) || 0,
+                        maximo: maximoValor === '' ? null : (parseFloat(maximoValor) || null),
+                        claseColor: fila.find('.rango-color').val(),
+                        requiereJustificacion: fila.find('.rango-justificacion').is(':checked'),
+                        orden: parseInt(fila.find('.rango-orden').val()) || 0
+                    });
+                });
+
+                confirmarGuardado('Se actualizarán los rangos de desempeño.').then(function (confirmado) {
+                    if (!confirmado) return;
+
+                    $("#btnGuardarRangos").prop('disabled', true).html('<i class="fa-solid fa-spinner fa-spin me-1"></i> Guardando...');
+
+                    $.ajax({
+                        type: 'POST',
+                        url: '/Admin/GuardarRangos',
+                        contentType: 'application/json',
+                        data: JSON.stringify(rangos),
+                        dataType: 'json',
+                        success: function (response) {
+                            Toast.fire({ icon: 'success', title: response.mensaje || 'Rangos guardados' }).then(() => location.reload());
+                        },
+                        error: function (xhr) {
+                            var error = xhr.responseJSON;
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: error?.mensaje || 'Error al guardar los rangos',
+                                confirmButtonText: 'Entendido'
+                            });
+                        },
+                        complete: function () {
+                            $("#btnGuardarRangos").prop('disabled', false).html('<i class="fa-solid fa-floppy-disk me-1"></i> Guardar Cambios');
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+}

@@ -21,12 +21,14 @@ namespace Metas.AplicacionWeb.Controllers
         private readonly IMonitoreoService _monitoreoService;
         private readonly IWebHostEnvironment _hostEnvironment;
         private readonly IMapper _mapper;
+        private readonly IRangoDesempenioService _rangoDesempenioService;
         public MonitoreoController(IDepartamentoService departamentoService,
             IProgramacionService programacionService,
             IFechasService fechasService,
             IMonitoreoService monitoreoService,
             IWebHostEnvironment hostEnvironment,
-            IMapper mapper)
+            IMapper mapper,
+            IRangoDesempenioService rangoDesempenioService)
         {
             _departamentoService = departamentoService;
             _programacionService = programacionService;
@@ -34,6 +36,7 @@ namespace Metas.AplicacionWeb.Controllers
             _monitoreoService = monitoreoService;
             _hostEnvironment = hostEnvironment;
             _mapper = mapper;
+            _rangoDesempenioService = rangoDesempenioService;
         }
         public async Task<IActionResult> Monitoreo()
         {
@@ -263,6 +266,7 @@ namespace Metas.AplicacionWeb.Controllers
                 PuestoAutorizo = datosInternos.CargoValido ?? ""
             };
             ViewBag.EsModoVisualizar = (modo == "visualizar");
+            ViewBag.RangosDesempenio = await _rangoDesempenioService.Lista();
             return View(modelo);
         }
 
@@ -493,11 +497,23 @@ namespace Metas.AplicacionWeb.Controllers
                     Ano = primerRegistro?.Ano ?? DateTime.Now.Year
                 };
 
+                var rangos = (await _rangoDesempenioService.Lista()).Select(r => new
+                {
+                    r.Id,
+                    r.Nombre,
+                    r.Minimo,
+                    r.Maximo,
+                    r.ClaseColor,
+                    r.RequiereJustificacion,
+                    r.Orden
+                });
+
                 return Json(new
                 {
                     success = true,
                     datos = datosParaJSON,
-                    llenadoInterno = llenadoInterno
+                    llenadoInterno = llenadoInterno,
+                    rangos = rangos
                 });
             }
             catch (Exception ex)

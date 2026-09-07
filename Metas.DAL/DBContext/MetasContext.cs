@@ -42,6 +42,8 @@ public partial class MetasContext : DbContext
 
     public virtual DbSet<Pp> Pps { get; set; }
 
+    public virtual DbSet<RangoDesempenio> RangoDesempenios { get; set; }
+
     public virtual DbSet<PpCompuesto> PpCompuestos { get; set; }
 
     public virtual DbSet<Programacion> Programacions { get; set; }
@@ -204,6 +206,18 @@ public partial class MetasContext : DbContext
 
             entity.Property(e => e.Clave).HasMaxLength(150);
             entity.Property(e => e.NombrePp).HasMaxLength(150);
+        });
+
+        modelBuilder.Entity<RangoDesempenio>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__RangoDes__1788CC4C0DE3C8B7");
+
+            entity.ToTable("RangoDesempenio");
+
+            entity.Property(e => e.Nombre).HasMaxLength(50);
+            entity.Property(e => e.ClaseColor).HasMaxLength(20);
+            entity.Property(e => e.Minimo).HasColumnType("decimal(5, 2)");
+            entity.Property(e => e.Maximo).HasColumnType("decimal(5, 2)");
         });
 
         modelBuilder.Entity<PpCompuesto>(entity =>
