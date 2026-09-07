@@ -1197,6 +1197,8 @@
                 if (!esAdmin) {
                     setTimeout(bloquearCamposSinComentarios, 300);
                     setTimeout(configurarEventosEdicionCampos, 400);
+                } else {
+                    actualizarEstadoBotonValidar();
                 }
             });
         }
@@ -1364,7 +1366,9 @@
                     };
 
                     if (elemento.tagName === 'SELECT') {
-                        elemento.addEventListener('change', eventoChange);
+                        // Select2 dispara 'change' mediante jQuery.trigger(), que no es capturado
+                        // por addEventListener nativo. Hay que suscribirse con jQuery.
+                        $(elemento).on('change', eventoChange);
                     } else {
                         elemento.addEventListener('blur', eventoChange);
                     }
@@ -1431,6 +1435,7 @@
             };
 
             actualizarBotonComentario(campo, true);
+            actualizarEstadoBotonValidar();
             modalComentario.hide();
             Swal.fire('Éxito', 'Comentario guardado temporalmente', 'success');
         }
@@ -1443,6 +1448,7 @@
 
             delete comentariosTemp[campo];
             actualizarBotonComentario(campo, false);
+            actualizarEstadoBotonValidar();
 
             document.getElementById('textoComentario').value = '';
             modalComentario.hide();
@@ -1463,6 +1469,33 @@
                     btn.innerHTML = '<i class="fas fa-comment-medical"></i>';
                 }
             });
+        }
+
+        // ========================================
+        // HAY COMENTARIOS PENDIENTES (ADMIN)
+        // ========================================
+        function hayComentariosPendientes() {
+            return Object.values(comentariosTemp).some(c => c?.texto?.trim());
+        }
+
+        // ========================================
+        // ACTUALIZAR ESTADO BOTÓN VALIDAR (ADMIN)
+        // ========================================
+        function actualizarEstadoBotonValidar() {
+            const btnValidar = document.getElementById('btnValidarProgramacion');
+            if (!btnValidar) return;
+
+            if (hayComentariosPendientes()) {
+                btnValidar.disabled = true;
+                btnValidar.title = 'No puedes validar la programación mientras existan comentarios pendientes. Elimínalos o espera a que el usuario corrija los campos observados.';
+                btnValidar.style.cursor = 'not-allowed';
+                btnValidar.style.opacity = '0.6';
+            } else {
+                btnValidar.disabled = false;
+                btnValidar.title = '';
+                btnValidar.style.cursor = '';
+                btnValidar.style.opacity = '';
+            }
         }
 
         // ========================================
@@ -1534,6 +1567,16 @@
             }
 
             if (!validarCamposRequeridos(obtenerCamposObligatoriosFicha())) return;
+
+            if (hayComentariosPendientes()) {
+                await Swal.fire({
+                    title: 'Comentarios pendientes',
+                    text: 'No puedes validar la programación mientras existan comentarios pendientes. Elimínalos o espera a que el usuario corrija los campos observados.',
+                    icon: 'warning',
+                    confirmButtonText: 'Aceptar'
+                });
+                return;
+            }
 
             const confirmacion = await Swal.fire({
                 title: '¿Guardar y Validar Programación?',
