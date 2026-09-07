@@ -9,7 +9,5 @@ public partial class CorreosInstitucionale
 
     public string? CorreoElectronico { get; set; }
 
-    public string? Area { get; set; }
-
     public string? Departamentos { get; set; }
 }

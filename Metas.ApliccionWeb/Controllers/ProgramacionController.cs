@@ -219,8 +219,9 @@ namespace Metas.AplicacionWeb.Controllers
                     })
                     .ToList()
             };
-            var correo = await _usuarioService.ObtenerCorreos(modelo.DepartamentoNombre);
-            modelo.CorreoContacto = correo?.CorreoElectronico ?? "";
+            var correos = await _usuarioService.ObtenerCorreosPorDepartamento(modelo.DepartamentoNombre);
+            modelo.ListaCorreos = correos;
+            modelo.CorreoContacto = correos.FirstOrDefault() ?? "";
 
             return View(modelo);
         }
@@ -411,6 +412,8 @@ namespace Metas.AplicacionWeb.Controllers
                     Text = m.NombreMunicipios
                 })
                 .ToList();
+
+            datosCompletos.ListaCorreos = await _usuarioService.ObtenerCorreosPorDepartamento(datosCompletos.Departamento);
 
             var idProgramacion = datosCompletos.Id;
             var comentariosExistentes = await _programacionService.ObtenerComentariosPorProgramacion(idProgramacion);

@@ -218,6 +218,9 @@ namespace Metas.BLL.DTO
         public List<SelectListItem> ListaMedidas { get; set; } = new List<SelectListItem>();
 
         [JsonIgnore]
+        public List<string> ListaCorreos { get; set; } = new List<string>();
+
+        [JsonIgnore]
         public List<SelectListItem> ListaMunicipios { get; set; } = new List<SelectListItem>();
 
         // ========================================

@@ -18,6 +18,4 @@ public partial class Municipio
     public virtual ICollection<PersonasMunicipio> PersonasMunicipios { get; set; } = new List<PersonasMunicipio>();
 
     public virtual ICollection<ServiciosMunicipio> ServiciosMunicipios { get; set; } = new List<ServiciosMunicipio>();
-
-    public virtual ICollection<Vinculacion> Vinculacions { get; set; } = new List<Vinculacion>();
 }

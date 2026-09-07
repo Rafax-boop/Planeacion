@@ -56,6 +56,16 @@
             <div class="campo-ficha">
                 <div class="campo-ficha-label campo-ficha-label-corta">3. CORREO ELECTRÓNICO</div>
                 <div class="campo-ficha-control">
+                    @if (Model.ListaCorreos.Count > 1)
+                    {
+                        <select id="selectCorreo" @(!ViewBag.EsAdministrador ? "disabled" : "") class="form-select mb-2">
+                            @foreach (var correo in Model.ListaCorreos)
+                            {
+                                <option value="@correo">@correo</option>
+                            }
+                            <option value="">Escribir otro correo...</option>
+                        </select>
+                    }
                     <input type="email" @(!ViewBag.EsAdministrador ? "disabled" : "") class="form-control" placeholder="ejemplo@correo.com" id="inputCorreo" value="@Model.CorreoContacto">
                 </div>
             </div>
@@ -2509,6 +2519,18 @@
         // ========================================
         document.addEventListener('DOMContentLoaded', async function() {
             $('.select2-simple').select2({ width: '100%', language: 'es', minimumResultsForSearch: 8, dropdownParent: $('.app-content') });
+
+            const selectCorreo = document.getElementById('selectCorreo');
+            if (selectCorreo) {
+                var inputCorreo = document.getElementById('inputCorreo');
+                var valorActualCorreo = (inputCorreo && inputCorreo.value || '').trim();
+                var coincide = Array.from(selectCorreo.options).some(o => o.value !== '' && o.value === valorActualCorreo);
+                selectCorreo.value = (valorActualCorreo && coincide) ? valorActualCorreo : '';
+                selectCorreo.addEventListener('change', function () {
+                    inputCorreo.value = this.value;
+                    inputCorreo.focus();
+                });
+            }
 
             await cargarMunicipios();
 

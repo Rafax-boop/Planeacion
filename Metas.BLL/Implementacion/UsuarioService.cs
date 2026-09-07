@@ -110,12 +110,16 @@ namespace Metas.BLL.Implementacion
             }
         }
 
-        public async Task<CorreosInstitucionale> ObtenerCorreos(string departamento)
+        public async Task<List<string>> ObtenerCorreosPorDepartamento(string departamento)
         {
-            CorreosInstitucionale correoEncontrado = await _repositorioCorreos.Obtener(
+            IQueryable<CorreosInstitucionale> query = await _repositorioCorreos.Consultar(
                 u => u.Departamentos.Equals(departamento));
 
-            return correoEncontrado;
+            return query
+                .Select(u => u.CorreoElectronico)
+                .Where(c => !string.IsNullOrWhiteSpace(c))
+                .Distinct()
+                .ToList();
         }
     }
 }
