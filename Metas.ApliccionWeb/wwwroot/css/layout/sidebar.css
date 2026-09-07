@@ -40,7 +40,8 @@
     transition: width 240ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.sidebar:hover {
+.sidebar:hover,
+.sidebar.expanded-lock {
     width: 232px;
 }
 
@@ -50,7 +51,8 @@
     transition: opacity 180ms ease;
 }
 
-.sidebar:hover .sidebar-expand-text {
+.sidebar:hover .sidebar-expand-text,
+.sidebar.expanded-lock .sidebar-expand-text {
     opacity: 1;
 }
 
@@ -224,6 +226,101 @@
 
 .sidebar-nav-item.active .label {
     font-weight: 600;
+}
+
+/* ── Submenú "Acciones Admin" (botón disparador) ── */
+.sidebar-nav-toggle {
+    width: 100%;
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    text-align: left;
+    justify-content: flex-start;
+}
+
+.sidebar-nav-toggle.open {
+    background: rgba(255, 255, 255, 0.07);
+    color: var(--primary-light);
+}
+
+.submenu-arrow {
+    margin-left: auto;
+    flex-shrink: 0;
+    font-size: 0.75rem;
+    color: #ffffff;
+    opacity: 1;
+    transition: transform 200ms ease;
+}
+
+.sidebar-nav-toggle.open .submenu-arrow {
+    transform: rotate(90deg);
+}
+
+/* ── Submenú "Acciones Admin" (panel flotante fuera del sidebar) ──
+   Arranca justo después del borde del sidebar expandido (12px de margen +
+   232px de ancho expandido + 12px de separación) para no montarse encima
+   del propio sidebar mientras está abierto. */
+.sidebar-flyout {
+    position: fixed;
+    left: 256px;
+    top: 0;
+    min-width: 240px;
+    background: var(--navy);
+    border-radius: 14px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.28);
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    z-index: 1001;
+    opacity: 0;
+    /* pointer-events (no "visibility") corta la interacción al instante:
+       con "visibility" en la transición, el navegador sigue considerando el
+       panel "visible" para eventos de mouse durante todo el fade-out, lo
+       que podía disparar un mouseenter tardío y dejar el sidebar expandido
+       trabado sin submenú abierto. */
+    pointer-events: none;
+    transform: translateX(-8px);
+    transition: opacity 160ms ease, transform 160ms ease;
+}
+
+.sidebar-flyout.open {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(0);
+}
+
+.sidebar-flyout-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 16px;
+    border-radius: 10px;
+    color: #ffffff;
+    text-decoration: none;
+    white-space: nowrap;
+    box-shadow: inset 3px 0 0 transparent;
+    transition: background 160ms ease, color 160ms ease, box-shadow 160ms ease;
+}
+
+.sidebar-flyout-item:hover {
+    background: rgba(255, 255, 255, 0.07);
+    color: var(--primary-light);
+}
+
+.sidebar-flyout-item.active {
+    background: rgba(219, 39, 119, 0.18);
+    color: #ffffff;
+    box-shadow: inset 3px 0 0 var(--primary);
+    font-weight: 600;
+}
+
+.sidebar-flyout-item .icon {
+    width: 18px;
+    flex-shrink: 0;
+    text-align: center;
+    font-size: 1rem;
+    opacity: 0.9;
 }
 
 /* ── Pie: salir ── */
