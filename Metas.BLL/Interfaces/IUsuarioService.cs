@@ -14,6 +14,6 @@ namespace Metas.BLL.Interfaces
         Task<bool> Crear(Usuario entidad);
         Task<Usuario> Editar(Usuario entidad);
         Task<bool> Eliminar(int idUsuario);
-        Task<CorreosInstitucionale> ObtenerCorreos(string departamento);
+        Task<List<string>> ObtenerCorreosPorDepartamento(string departamento);
     }
 }

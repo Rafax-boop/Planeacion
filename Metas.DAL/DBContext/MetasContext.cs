@@ -16,8 +16,6 @@ public partial class MetasContext : DbContext
     {
     }
 
-    public virtual DbSet<AnoHabilitar> AnoHabilitars { get; set; }
-
     public virtual DbSet<CapturaProgramacion> CapturaProgramacions { get; set; }
 
     public virtual DbSet<Comentario> Comentarios { get; set; }
@@ -54,19 +52,10 @@ public partial class MetasContext : DbContext
 
     public virtual DbSet<Usuario> Usuarios { get; set; }
 
-    public virtual DbSet<Vinculacion> Vinculacions { get; set; }
-
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<AnoHabilitar>(entity =>
-        {
-            entity.HasKey(e => e.IdFecha).HasName("PK__AnoHabil__8D0F205A8DED97C6");
-
-            entity.ToTable("AnoHabilitar");
-        });
-
         modelBuilder.Entity<CapturaProgramacion>(entity =>
         {
             entity.HasKey(e => e.IdFechaCaptura).HasName("PK__CapturaP__0096601FA19851CD");
@@ -87,7 +76,6 @@ public partial class MetasContext : DbContext
         {
             entity.HasKey(e => e.IdCorreo).HasName("PK__CorreosI__872F8EAE12A2C2D6");
 
-            entity.Property(e => e.Area).HasMaxLength(500);
             entity.Property(e => e.CorreoElectronico).HasMaxLength(800);
             entity.Property(e => e.Departamentos).HasMaxLength(500);
         });
@@ -307,21 +295,6 @@ public partial class MetasContext : DbContext
             entity.Property(e => e.Usuario1)
                 .HasMaxLength(30)
                 .HasColumnName("Usuario");
-        });
-
-        modelBuilder.Entity<Vinculacion>(entity =>
-        {
-            entity.HasKey(e => e.IdVinculacion).HasName("PK__Vinculac__8F3EB47A78337A9F");
-
-            entity.ToTable("Vinculacion");
-
-            entity.HasOne(d => d.IdLlenadoNavigation).WithMany(p => p.Vinculacions)
-                .HasForeignKey(d => d.IdLlenado)
-                .HasConstraintName("FK_Vinculacion_LlenadoInterno");
-
-            entity.HasOne(d => d.IdMunicipioNavigation).WithMany(p => p.Vinculacions)
-                .HasForeignKey(d => d.IdMunicipio)
-                .HasConstraintName("FK_Vinculacion_Municipio");
         });
 
         OnModelCreatingPartial(modelBuilder);
