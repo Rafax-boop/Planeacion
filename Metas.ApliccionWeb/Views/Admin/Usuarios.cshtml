@@ -30,6 +30,14 @@
                 }
             </select>
         </div>
+        <div class="filtro-grupo" style="flex: 0 0 250px; min-width: 250px; max-width: 250px;">
+            <label for="selectEstadoFiltro">Estado</label>
+            <select id="selectEstadoFiltro" class="select2-simple">
+                <option value="">Todos</option>
+                <option value="activo">Activos</option>
+                <option value="inactivo">Inactivos</option>
+            </select>
+        </div>
     </div>
     <button class="btn-app-rosa" type="button" data-bs-toggle="modal" data-bs-target="#ModalUsuario">
         <i class="fa-solid fa-user-plus"></i> Crear Usuario
@@ -61,7 +69,7 @@ else
             <tbody id="tablaUsuarios">
                 @foreach (var usuario in Model)
                 {
-                    <tr data-area="@usuario.Area">
+                    <tr data-area="@usuario.Area" data-activo="@((usuario.Activo == true) ? "activo" : "inactivo")">
                         <td>@usuario.IdUsuario</td>
                         <td>@usuario.Usuario1</td>
                         <td>@usuario.Pass</td>
@@ -230,17 +238,19 @@ else
             modal.show();
         }
 
-        // Filtro por Área
-        function filtrarPorArea() {
+        // Filtro por Área y Estado
+        function filtrarUsuarios() {
             var tabla = document.getElementById('tablaDatos');
             if (!tabla) return;
 
             var areaFiltro = $('#selectAreaFiltro').val() || '';
+            var estadoFiltro = $('#selectEstadoFiltro').val() || '';
 
             var filas = tabla.querySelectorAll('tbody tr');
             filas.forEach(function (fila) {
                 var pasaArea = !areaFiltro || fila.getAttribute('data-area') === areaFiltro;
-                fila.style.display = pasaArea ? '' : 'none';
+                var pasaEstado = !estadoFiltro || fila.getAttribute('data-activo') === estadoFiltro;
+                fila.style.display = (pasaArea && pasaEstado) ? '' : 'none';
             });
 
             TablaPaginada.actualizar('tablaDatos');
@@ -255,7 +265,8 @@ else
 
             TablaPaginada.iniciar('tablaDatos', { pageSize: 10 });
 
-            $('#selectAreaFiltro').on('change', filtrarPorArea);
+            $('#selectAreaFiltro').on('change', filtrarUsuarios);
+            $('#selectEstadoFiltro').on('change', filtrarUsuarios);
 
             $("#selectTipo").change(function () {
                 cargarAreasPorTipo($('#selectArea'), $(this).val(), null);

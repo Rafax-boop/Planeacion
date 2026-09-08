@@ -60,13 +60,13 @@
     <div class="card shadow-sm mb-4 rounded-4">
         <div class="card-body">
             <div class="row g-3 align-items-end">
-                <div class="col-md-5">
+                <div class="col-md-4">
                     <label class="form-label fw-semibold small">Departamento</label>
                     <select class="form-select select2-simple" id="filtroDepartamento" asp-items="Model.ListaDepartamentos">
                         <option value="0">-- Todos los departamentos --</option>
                     </select>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <label class="form-label fw-semibold small">Año Fiscal</label>
                     <select class="form-select select2-simple" id="filtroAno">
                         @{
@@ -81,7 +81,16 @@
                         }
                     </select>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold small">Programa Presupuestal</label>
+                    <select class="form-select select2-simple" id="filtroPrograma">
+                        <option value="">Todos</option>
+                        <option value="Agenda">Agenda</option>
+                        <option value="E046">E046</option>
+                        <option value="E047">E047</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
                     <button type="button" class="btn-app-rosa w-100 justify-content-center" id="btnFiltrar">
                         <i class="fas fa-search me-2"></i> Cargar Datos
                     </button>
@@ -259,6 +268,7 @@
         // VARIABLES GLOBALES
         // ========================================
         let datosTablero = [];
+        let datosTableroSinFiltrarPrograma = [];
 
         // ========================================
         // FUNCIONES DE LOADING
@@ -293,9 +303,8 @@
                     throw new Error(result.mensaje || 'Error desconocido');
                 }
 
-                datosTablero = result.datos;
-                renderizarTabla(datosTablero);
-                actualizarResumen(datosTablero);
+                datosTableroSinFiltrarPrograma = result.datos;
+                aplicarFiltroPrograma();
 
             } catch (error) {
                 console.error('Error:', error);
@@ -310,6 +319,20 @@
             } finally {
                 ocultarLoading();
             }
+        }
+
+        // ========================================
+        // FILTRAR POR PROGRAMA PRESUPUESTAL (client-side)
+        // ========================================
+        function aplicarFiltroPrograma() {
+            const programa = document.getElementById('filtroPrograma').value;
+
+            datosTablero = programa
+                ? datosTableroSinFiltrarPrograma.filter(r => r.pp === programa)
+                : datosTableroSinFiltrarPrograma;
+
+            renderizarTabla(datosTablero);
+            actualizarResumen(datosTablero);
         }
 
         // ========================================
@@ -820,6 +843,10 @@
 
             $('#filtroDepartamento').on('change', function() {
                 cargarDatosTablero();
+            });
+
+            $('#filtroPrograma').on('change', function() {
+                aplicarFiltroPrograma();
             });
 
             @if (ViewBag.AnoFiscalSeleccionado != null)
