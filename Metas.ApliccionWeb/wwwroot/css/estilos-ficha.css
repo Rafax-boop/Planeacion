@@ -285,6 +285,37 @@ input.form-control:read-only {
     margin-bottom: 4px;
 }
 
+/* === Aviso de borrador === */
+.aviso-borrador {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 24px;
+    background: rgba(202, 138, 4, 0.08);
+    border: 1px solid rgba(202, 138, 4, 0.25);
+    border-radius: var(--radius-card);
+    margin-bottom: 32px;
+}
+
+.aviso-borrador i {
+    font-size: 1.8rem;
+    flex-shrink: 0;
+    color: #b45309;
+}
+
+.aviso-borrador h4 {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #b45309;
+}
+
+.aviso-borrador p {
+    margin: 4px 0 0;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
 /* === Bloque de "acción necesaria" === */
 .ficha-accion-item {
     border: 1px solid var(--border);

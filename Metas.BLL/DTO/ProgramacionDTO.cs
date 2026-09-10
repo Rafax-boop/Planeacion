@@ -85,6 +85,9 @@ namespace Metas.BLL.DTO
         [JsonPropertyName("estatus")]
         public int Estatus { get; set; }
 
+        [JsonPropertyName("esBorrador")]
+        public bool EsBorrador { get; set; } = false;
+
         [JsonPropertyName("beneficiarios")]
         public string Beneficiarios { get; set; }
 

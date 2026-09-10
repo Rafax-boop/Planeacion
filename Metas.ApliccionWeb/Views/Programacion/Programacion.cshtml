@@ -67,6 +67,10 @@
             <option value="1">En Revisión</option>
             <option value="2">Con Comentarios</option>
             <option value="3">Validado</option>
+            @if (!ViewBag.EsAdministrador)
+            {
+                <option value="4">Borrador</option>
+            }
         </select>
     </div>
     <div class="filtro-grupo" style="flex: 0 0 auto; min-width: auto;">
@@ -251,6 +255,8 @@
             var tabla = document.getElementById('tablaDatos');
             if (!tabla) return;
 
+            var esUsuarioAdmin = @(ViewBag.EsAdministrador ? "true" : "false");
+
             var ppFiltro = ($('#selectProgramaFiltro').val() || '').toLowerCase();
             var areaFiltro = $('#selectAreaFiltro').val() || '';
             var estatusFiltro = $('#selectEstatusFiltro').val() || '';
@@ -263,7 +269,12 @@
 
                 var pasaPp = !ppFiltro || ppCelda === ppFiltro;
                 var pasaArea = !areaFiltro || areaCelda === areaFiltro;
-                var pasaEstatus = !estatusFiltro || estatusCelda === estatusFiltro;
+                var pasaEstatus = (!estatusFiltro || estatusCelda === estatusFiltro);
+
+                // Refuerzo: el admin nunca ve borradores (estatus 4)
+                if (esUsuarioAdmin && estatusCelda === '4') {
+                    pasaEstatus = false;
+                }
 
                 fila.style.display = (pasaPp && pasaArea && pasaEstatus) ? '' : 'none';
             });
@@ -377,6 +388,11 @@
                                     claseBadge = 'badge-estatus-success';
                                     iconoBadge = 'bi-check-circle';
                                     textoBadge = 'Validado';
+                                    break;
+                                case 4:
+                                    claseBadge = 'badge-estatus-neutral';
+                                    iconoBadge = 'bi-pencil';
+                                    textoBadge = 'Borrador';
                                     break;
                             }
                             var badgeEstatus = '<span class="badge-estatus ' + claseBadge + '"><i class="bi ' + iconoBadge + '"></i> ' + textoBadge + '</span>';

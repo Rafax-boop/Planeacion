@@ -163,6 +163,8 @@ namespace Metas.AplicacionWeb.Controllers
                 ListaAreas = listaAreas
             };
 
+            ViewBag.EsAdministrador = esAdmin;
+
             return View(modelo);
         }
 
@@ -235,19 +237,25 @@ namespace Metas.AplicacionWeb.Controllers
                 var datos = await _programacionService.ObtenerDatosProgramacion(anoFiscal, departamento, area);
 
                 // Proyectar los datos a un DTO o modelo anónimo
-                var resultado = datos.Select(x => new VMDatosInternos
-                {
-                    IdProceso = x.IdProceso,
-                    pp = x.Pp,
-                    Componente = x.Componente,
-                    Actividad = x.Actividad,
-                    DescripcionActividad = x.DescripcionActividad,
-                    Area = x.Area,
-                    Departamento = x.Departamento,
-                    ProgramaSocial = x.ProgramaSocial,
-                    IdEstatus = x.Programacions.FirstOrDefault()?.IdEstatus,
-                    NombreEstatus = x.Programacions.FirstOrDefault()?.IdEstatusNavigation.Valor
-                }).ToList();
+var resultado = datos.Select(x => new VMDatosInternos
+        {
+            IdProceso = x.IdProceso,
+            pp = x.Pp,
+            Componente = x.Componente,
+            Actividad = x.Actividad,
+            DescripcionActividad = x.DescripcionActividad,
+            Area = x.Area,
+            Departamento = x.Departamento,
+            ProgramaSocial = x.ProgramaSocial,
+            IdEstatus = x.Programacions.FirstOrDefault()?.IdEstatus,
+            NombreEstatus = x.Programacions.FirstOrDefault()?.IdEstatusNavigation.Valor
+        }).ToList();
+
+        // El admin solo debe ver programaciones enviadas a revisión; sin borradores
+        if (esAdmin)
+        {
+            resultado = resultado.Where(x => x.IdEstatus != 4).ToList();
+        }
 
                 var fecha = await _fechasService.ValidarFechaHabilitada(anoFiscal);
 
@@ -294,35 +302,40 @@ namespace Metas.AplicacionWeb.Controllers
                     return BadRequest(new { success = false, message = "Los datos del formulario no fueron recibidos correctamente." });
                 }
 
-                // Validar campos requeridos
-                if (string.IsNullOrWhiteSpace(modelo.Pp))
-                    return BadRequest(new { success = false, message = "El programa presupuestario es requerido." });
+                // Solo validar campos requeridos si NO es borrador
+                if (!modelo.EsBorrador)
+                {
+                    if (string.IsNullOrWhiteSpace(modelo.Pp))
+                        return BadRequest(new { success = false, message = "El programa presupuestario es requerido." });
 
-                if (string.IsNullOrWhiteSpace(modelo.NComponente))
-                    return BadRequest(new { success = false, message = "El número de componente es requerido." });
+                    if (string.IsNullOrWhiteSpace(modelo.NComponente))
+                        return BadRequest(new { success = false, message = "El número de componente es requerido." });
 
-                if (modelo.NActividad <= 0)
-                    return BadRequest(new { success = false, message = "El número de actividad debe ser mayor a 0." });
+                    if (modelo.NActividad <= 0)
+                        return BadRequest(new { success = false, message = "El número de actividad debe ser mayor a 0." });
 
-                if (string.IsNullOrWhiteSpace(modelo.DescripcionActividad))
-                    return BadRequest(new { success = false, message = "La descripción de la actividad es requerida." });
+                    if (string.IsNullOrWhiteSpace(modelo.DescripcionActividad))
+                        return BadRequest(new { success = false, message = "La descripción de la actividad es requerida." });
 
-                if (modelo.MesesServicios == null || modelo.MesesServicios.Count != 12)
-                    return BadRequest(new { success = false, message = "Debe proporcionar los 12 meses de servicios." });
+                    if (modelo.MesesServicios == null || modelo.MesesServicios.Count != 12)
+                        return BadRequest(new { success = false, message = "Debe proporcionar los 12 meses de servicios." });
 
-                if (modelo.MesesPersonas == null || modelo.MesesPersonas.Count != 12)
-                    return BadRequest(new { success = false, message = "Debe proporcionar los 12 meses de personas." });
+                    if (modelo.MesesPersonas == null || modelo.MesesPersonas.Count != 12)
+                        return BadRequest(new { success = false, message = "Debe proporcionar los 12 meses de personas." });
 
-                // Validar que haya acciones (mínimo 3, máximo 6)
-                if (modelo.Acciones == null || modelo.Acciones.Count < 3 || modelo.Acciones.Count > 6)
-                    return BadRequest(new { success = false, message = "Debe haber entre 3 y 6 acciones." });
+                    if (modelo.Acciones == null || modelo.Acciones.Count < 3 || modelo.Acciones.Count > 6)
+                        return BadRequest(new { success = false, message = "Debe haber entre 3 y 6 acciones." });
+                }
 
                 // Llamar al servicio para guardar
                 bool resultado = await _programacionService.GuardarProgramacion(modelo);
 
                 if (resultado)
                 {
-                    return Ok(new { success = true, message = "Programación guardada correctamente." });
+                    string mensaje = modelo.EsBorrador
+                        ? "El borrador se guardó correctamente."
+                        : "Programación guardada correctamente.";
+                    return Ok(new { success = true, message = mensaje });
                 }
                 else
                 {
@@ -536,8 +549,12 @@ namespace Metas.AplicacionWeb.Controllers
                         await _programacionService.GuardarComentarios(modelo.Comentarios);
                     }
 
-                    // Cambiar estatus a 1 (En Revisión) después de que el usuario guarda
-                    await _programacionService.ActualizarEstatusProgramacion(modelo.Id, 1);
+                    // Cambiar estatus a 1 (En Revisión) después de que el usuario guarda,
+                    // a menos que sea un borrador (estatus 4), que conserva su estatus
+                    if (!modelo.EsBorrador)
+                    {
+                        await _programacionService.ActualizarEstatusProgramacion(modelo.Id, 1);
+                    }
 
                     return Ok(new { success = true, message = "Cambios guardados correctamente" });
                 }

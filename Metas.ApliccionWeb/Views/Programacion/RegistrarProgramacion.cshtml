@@ -774,8 +774,11 @@
     </div>
 
     <div class="text-center mb-5">
-        <button class="btn-app-rosa" id="btnGuardarProgramacion">
-            <i class="fa-solid fa-arrow-right"></i> Enviar a revisión
+        <button type="button" class="btn-app-gris mx-2" id="btnGuardarBorrador">
+            <i class="fa-solid fa-floppy-disk"></i> Guardar
+        </button>
+        <button class="btn-app-rosa mx-2" id="btnEnviarProgramacion">
+            <i class="fa-solid fa-paper-plane"></i> Enviar a revisión
         </button>
     </div>
 
@@ -1221,39 +1224,45 @@
         // ========================================
         // FUNCIÓN PARA GUARDAR PROGRAMACIÓN
         // ========================================
-        async function guardarProgramacion() {
-            const btnGuardar = document.getElementById('btnGuardarProgramacion');
-            if (btnGuardar.disabled) return; // evita doble ejecución por doble clic
+        async function guardarProgramacion(esBorrador = false) {
+            const btnGuardar = esBorrador
+                ? document.getElementById('btnGuardarBorrador')
+                : document.getElementById('btnEnviarProgramacion');
+            if (btnGuardar.disabled) return;
 
             const textoOriginal = btnGuardar.innerHTML;
-
-            // Se deshabilita de inmediato (antes de cualquier validación/modal) para que un
-            // segundo clic mientras el modal de "campos obligatorios" está abierto no dispare
-            // otra ejecución en paralelo: dos scrolls compitiendo es lo que se veía como
-            // pantalla "trabada" (sube/baja sin asentarse hasta el siguiente clic).
             btnGuardar.disabled = true;
 
             try {
                 // ========================================
-                // VALIDACIONES INMEDIATAS (ANTES DE CARGAR)
+                // VALIDACIONES (SOLO SI NO ES BORRADOR)
                 // ========================================
-                if (!validarCamposRequeridos(obtenerCamposObligatoriosRegistro())) {
-                    btnGuardar.disabled = false;
-                    return;
+                if (!esBorrador) {
+                    if (!validarCamposRequeridos(obtenerCamposObligatoriosRegistro())) {
+                        btnGuardar.disabled = false;
+                        return;
+                    }
                 }
 
                 // ========================================
                 // CONFIRMACIÓN ANTES DE GUARDAR
                 // ========================================
+                const tituloConfirmacion = esBorrador ? '¿Guardar borrador?' : '¿Enviar a revisión?';
+                const htmlConfirmacion = esBorrador
+                    ? '<p>Se guardará esta información como borrador.</p><p class="text-muted"><small>Podrá continuar editando después.</small></p>'
+                    : '<p>Está a punto de enviar su registro a revisión.</p><p class="text-muted"><small>Una vez enviada, el administrador revisará su información.</small></p>';
+                const textoConfirmar = esBorrador
+                    ? '<i class="fas fa-check"></i> Sí, guardar'
+                    : '<i class="fas fa-check"></i> Sí, enviar';
+
                 const confirmacion = await Swal.fire({
-                    title: '¿Enviar a revisión?',
-                    html: `<p>Está a punto de enviar su registro a revisión.</p>
-                           <p class="text-muted"><small>Una vez enviada, el administrador revisará su información.</small></p>`,
+                    title: tituloConfirmacion,
+                    html: htmlConfirmacion,
                     icon: 'question',
                     showCancelButton: true,
                     confirmButtonColor: '#28a745',
                     cancelButtonColor: '#dc3545',
-                    confirmButtonText: '<i class="fas fa-check"></i> Sí, enviar',
+                    confirmButtonText: textoConfirmar,
                     cancelButtonText: '<i class="fas fa-times"></i> No, revisar datos',
                     reverseButtons: true
                 });
@@ -1277,7 +1286,7 @@
                     correoContacto: document.getElementById('inputCorreo').value,
                     pp: document.getElementById('selectPrograma').value,
                     nComponente: document.getElementById('selectComponente').selectedOptions[0].text,
-                    componente: document.getElementById('selectComponente').value,
+                    componente: obtenerValorNumerico('selectComponente'),
                     nActividad: parseInt(document.getElementById('inputActividad').value) || 0,
                     justificacion: document.getElementById('inputJustificacion').value,
                     descripcionDocumento: document.getElementById('inputDocumentacion').value,
@@ -1415,28 +1424,29 @@
                     municipiosServicios: municipiosServicios,
                     municipiosPersonas: municipiosPersonas,
                     acciones: acciones,
-                    ...firmas
+                    ...firmas,
+                    esBorrador: esBorrador
                 };
 
                 // ========================================
-                // VALIDACIONES FINALES (DESPUÉS DE RECOLECTAR)
+                // VALIDACIONES FINALES (SOLO SI NO ES BORRADOR)
                 // ========================================
-                const erroresFinales = validarDatosCompletos(datosCompletos);
-                if (erroresFinales.length > 0) {
-                    // Restaurar botón inmediatamente si hay errores
-                    btnGuardar.disabled = false;
-                    btnGuardar.innerHTML = textoOriginal;
+                if (!esBorrador) {
+                    const erroresFinales = validarDatosCompletos(datosCompletos);
+                    if (erroresFinales.length > 0) {
+                        btnGuardar.disabled = false;
+                        btnGuardar.innerHTML = textoOriginal;
 
-                    // Usar SweetAlert para errores finales también
-                    await Swal.fire({
-                        title: 'Errores en el formulario',
-                        html: erroresFinales.join('<br>'),
-                        icon: 'error',
-                        confirmButtonText: 'Aceptar',
-                        confirmButtonColor: '#d33'
-                    });
+                        await Swal.fire({
+                            title: 'Errores en el formulario',
+                            html: erroresFinales.join('<br>'),
+                            icon: 'error',
+                            confirmButtonText: 'Aceptar',
+                            confirmButtonColor: '#d33'
+                        });
 
-                    return;
+                        return;
+                    }
                 }
 
                 console.log('Datos a enviar:', datosCompletos);
@@ -1459,14 +1469,13 @@
                 const resultado = await response.json();
 
                 if (resultado.success) {
-                    // Mostrar mensaje de éxito con SweetAlert
                     btnGuardar.innerHTML = '<i class="fas fa-check"></i> ¡Guardado!';
-                    btnGuardar.classList.remove('btn-app-rosa');
+                    btnGuardar.classList.remove('btn-app-rosa', 'btn-app-gris');
                     btnGuardar.classList.add('btn-app-verde');
 
                     await Swal.fire({
                         title: '¡Éxito!',
-                        text: 'Programación guardada correctamente',
+                        text: resultado.message || 'Programación guardada correctamente',
                         icon: 'success',
                         confirmButtonText: 'Aceptar',
                         confirmButtonColor: '#3085d6'
@@ -1481,11 +1490,14 @@
             } catch (error) {
                 console.error('Error al guardar:', error);
 
-                // Restaurar botón en caso de error
                 btnGuardar.disabled = false;
                 btnGuardar.innerHTML = textoOriginal;
                 btnGuardar.classList.remove('btn-app-verde');
-                btnGuardar.classList.add('btn-app-rosa');
+                if (esBorrador) {
+                    btnGuardar.classList.add('btn-app-gris');
+                } else {
+                    btnGuardar.classList.add('btn-app-rosa');
+                }
 
                 // Mostrar error específico con SweetAlert
                 let mensajeError = 'Error al guardar la programación';
@@ -1742,9 +1754,14 @@
                 input.addEventListener('input', calcularSumatorias);
             });
 
-            const btnGuardar = document.getElementById('btnGuardarProgramacion');
-            if (btnGuardar) {
-                btnGuardar.addEventListener('click', guardarProgramacion);
+            const btnBorrador = document.getElementById('btnGuardarBorrador');
+            if (btnBorrador) {
+                btnBorrador.addEventListener('click', () => guardarProgramacion(true));
+            }
+
+            const btnEnviar = document.getElementById('btnEnviarProgramacion');
+            if (btnEnviar) {
+                btnEnviar.addEventListener('click', () => guardarProgramacion(false));
             }
 
             calcularSumatorias();

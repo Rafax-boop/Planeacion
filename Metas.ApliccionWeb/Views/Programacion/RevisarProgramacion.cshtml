@@ -25,6 +25,22 @@
         </div>
     }
 
+    @if (Model.Estatus == 4)
+    {
+        <div class="aviso-borrador">
+            <i class="fas fa-pencil"></i>
+            <div>
+                <h4>Borrador</h4>
+                <p>Esta programación es un borrador. Puedes editarla y guardar tus avances; cuando esté completa, presiona "Enviar a Revisión".</p>
+            </div>
+        </div>
+
+        @* En borrador no se muestran los globos de comentarios (solo aplican a revisión) *@
+        <style>
+            .btn-comentario { display: none !important; }
+        </style>
+    }
+
     @* Datos del solicitante *@
     <div class="ficha-solicitante">
         <div class="ficha-solicitante-tab">
@@ -58,7 +74,7 @@
                 <div class="campo-ficha-control">
                     @if (Model.ListaCorreos.Count > 1)
                     {
-                        <select id="selectCorreo" @(!ViewBag.EsAdministrador ? "disabled" : "") class="form-select mb-2">
+                        <select id="selectCorreo" @(!ViewBag.EsAdministrador && Model.Estatus != 4 ? "disabled" : "") class="form-select mb-2">
                             @foreach (var correo in Model.ListaCorreos)
                             {
                                 <option value="@correo">@correo</option>
@@ -66,7 +82,7 @@
                             <option value="">Escribir otro correo...</option>
                         </select>
                     }
-                    <input type="email" @(!ViewBag.EsAdministrador ? "disabled" : "") class="form-control" placeholder="ejemplo@correo.com" id="inputCorreo" value="@Model.CorreoContacto">
+                    <input type="email" @(!ViewBag.EsAdministrador && Model.Estatus != 4 ? "disabled" : "") class="form-control" placeholder="ejemplo@correo.com" id="inputCorreo" value="@Model.CorreoContacto">
                 </div>
             </div>
         </div>
@@ -79,7 +95,7 @@
         <div class="campo-ficha">
             <div class="campo-ficha-label">4. PROGRAMA PRESUPUESTARIO</div>
             <div class="campo-ficha-control">
-                <select @(!ViewBag.EsAdministrador ? "disabled" : "") class="form-control select2-simple" id="selectPrograma" data-campo="4">
+                <select @(!ViewBag.EsAdministrador && Model.Estatus != 4 ? "disabled" : "") class="form-control select2-simple" id="selectPrograma" data-campo="4">
                     <option value="">Seleccione Programa</option>
                     @if (Model.ListaProgramas != null)
                     {
@@ -106,7 +122,7 @@
         <div class="campo-ficha">
             <div class="campo-ficha-label">5. NÚMERO DE COMPONENTE</div>
             <div class="campo-ficha-control">
-                <select @(!ViewBag.EsAdministrador ? "disabled" : "")
+                <select @(!ViewBag.EsAdministrador && Model.Estatus != 4 ? "disabled" : "")
                         class="form-control select2-simple"
                         id="selectComponente"
                         data-campo="5">
@@ -136,7 +152,7 @@
         <div class="campo-ficha">
             <div class="campo-ficha-label">6. NÚMERO DE ACTIVIDAD</div>
             <div class="campo-ficha-control">
-                <input type="number" @(!ViewBag.EsAdministrador ? "disabled" : "") required class="form-control" id="inputActividad" value="@Model.NActividad" data-campo="6">
+                <input type="number" @(!ViewBag.EsAdministrador && Model.Estatus != 4 ? "disabled" : "") required class="form-control" id="inputActividad" value="@Model.NActividad" data-campo="6">
             </div>
             <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
                     data-campo="6" data-bs-toggle="tooltip" title="Agregar comentario">
@@ -148,7 +164,7 @@
         <div class="campo-ficha">
             <div class="campo-ficha-label">7. JUSTIFICACIÓN</div>
             <div class="campo-ficha-control">
-                <textarea required class="form-control" @(!ViewBag.EsAdministrador ? "disabled" : "") rows="2" id="inputJustificacion" data-campo="7">@Model.Justificacion</textarea>
+                <textarea required class="form-control" @(!ViewBag.EsAdministrador && Model.Estatus != 4 ? "disabled" : "") rows="2" id="inputJustificacion" data-campo="7">@Model.Justificacion</textarea>
             </div>
             <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
                     data-campo="7" data-bs-toggle="tooltip" title="Agregar comentario">
@@ -160,7 +176,7 @@
         <div class="campo-ficha">
             <div class="campo-ficha-label">8. DOCUMENTACIÓN SOPORTE DE LA JUSTIFICACIÓN</div>
             <div class="campo-ficha-control">
-                <textarea @(!ViewBag.EsAdministrador ? "disabled" : "") required class="form-control" rows="2" id="inputDocumentacion" data-campo="8">@Model.DescripcionDocumento</textarea>
+                <textarea @(!ViewBag.EsAdministrador && Model.Estatus != 4 ? "disabled" : "") required class="form-control" rows="2" id="inputDocumentacion" data-campo="8">@Model.DescripcionDocumento</textarea>
             </div>
             <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
                     data-campo="8" data-bs-toggle="tooltip" title="Agregar comentario">
@@ -175,7 +191,7 @@
                 <div class="row g-3">
                     <div class="col-6">
                         <label class="form-label small text-muted mb-1">Recurso Federal</label>
-                        <select required @(!ViewBag.EsAdministrador ? "disabled" : "") class="form-control select2-simple" id="selectFederal" data-campo="9">
+                        <select required @(!ViewBag.EsAdministrador && Model.Estatus != 4 ? "disabled" : "") class="form-control select2-simple" id="selectFederal" data-campo="9">
                             <option value="">Seleccione</option>
                             <option value="Si" selected="@(Model.RecursoFederal == "Si")">Sí</option>
                             <option value="No" selected="@(Model.RecursoFederal == "No")">No</option>
@@ -183,7 +199,7 @@
                     </div>
                     <div class="col-6">
                         <label class="form-label small text-muted mb-1">Recurso Estatal</label>
-                        <select required @(!ViewBag.EsAdministrador ? "disabled" : "") class="form-control select2-simple" id="selectEstatal" data-campo="9">
+                        <select required @(!ViewBag.EsAdministrador && Model.Estatus != 4 ? "disabled" : "") class="form-control select2-simple" id="selectEstatal" data-campo="9">
                             <option value="">Seleccione</option>
                             <option value="Si" selected="@(Model.RecursoEstatal == "Si")">Sí</option>
                             <option value="No" selected="@(Model.RecursoEstatal == "No")">No</option>
@@ -207,7 +223,7 @@
         <div class="campo-ficha">
             <div class="campo-ficha-label">10. PROGRAMA SOCIAL, SERVICIO Y/O PROYECTO</div>
             <div class="campo-ficha-control">
-                <textarea required id="inputPrograma" @(!ViewBag.EsAdministrador ? "disabled" : "") class="form-control" rows="2">@Model.ProgramaSocial</textarea>
+                <textarea required id="inputPrograma" @(!ViewBag.EsAdministrador && Model.Estatus != 4 ? "disabled" : "") class="form-control" rows="2">@Model.ProgramaSocial</textarea>
             </div>
             <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
                     data-campo="10" data-bs-toggle="tooltip" title="Agregar comentario">
@@ -217,7 +233,7 @@
         <div class="campo-ficha">
             <div class="campo-ficha-label">11. DESCRIPCIÓN DE LA ACTIVIDAD</div>
             <div class="campo-ficha-control">
-                <textarea required id="inputDescripcion" @(!ViewBag.EsAdministrador ? "disabled" : "") class="form-control" rows="2">@Model.DescripcionActividad</textarea>
+                <textarea required id="inputDescripcion" @(!ViewBag.EsAdministrador && Model.Estatus != 4 ? "disabled" : "") class="form-control" rows="2">@Model.DescripcionActividad</textarea>
             </div>
             <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
                     data-campo="11" data-bs-toggle="tooltip" title="Agregar comentario">
@@ -227,7 +243,7 @@
         <div class="campo-ficha">
             <div class="campo-ficha-label">12. NOMBRE DEL INDICADOR</div>
             <div class="campo-ficha-control">
-                <textarea required id="inputIndicador" @(!ViewBag.EsAdministrador ? "disabled" : "") class="form-control" rows="2">@Model.NombreIndicador</textarea>
+                <textarea required id="inputIndicador" @(!ViewBag.EsAdministrador && Model.Estatus != 4 ? "disabled" : "") class="form-control" rows="2">@Model.NombreIndicador</textarea>
             </div>
             <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
                     data-campo="12" data-bs-toggle="tooltip" title="Agregar comentario">
@@ -237,7 +253,7 @@
         <div class="campo-ficha">
             <div class="campo-ficha-label">13. DEFINICIÓN DEL INDICADOR</div>
             <div class="campo-ficha-control">
-                <textarea required id="inputDefinicion" @(!ViewBag.EsAdministrador ? "disabled" : "") class="form-control" rows="2">@Model.DefinicionIndicador</textarea>
+                <textarea required id="inputDefinicion" @(!ViewBag.EsAdministrador && Model.Estatus != 4 ? "disabled" : "") class="form-control" rows="2">@Model.DefinicionIndicador</textarea>
             </div>
             <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
                     data-campo="13" data-bs-toggle="tooltip" title="Agregar comentario">
@@ -299,7 +315,7 @@
         <div class="campo-ficha">
             <div class="campo-ficha-label">15. UNIDAD DE MEDIDA</div>
             <div class="campo-ficha-control">
-                <select required @(!ViewBag.EsAdministrador ? "disabled" : "")
+                <select required @(!ViewBag.EsAdministrador && Model.Estatus != 4 ? "disabled" : "")
                         class="form-control select2-simple"
                         id="selectMedida"
                         data-campo="15">
@@ -329,7 +345,7 @@
         <div class="campo-ficha">
             <div class="campo-ficha-label">16. MEDIOS DE VERIFICACIÓN</div>
             <div class="campo-ficha-control">
-                <textarea required id="inputMedios" @(!ViewBag.EsAdministrador ? "disabled" : "") class="form-control" rows="2">@Model.MediosVerificacion</textarea>
+                <textarea required id="inputMedios" @(!ViewBag.EsAdministrador && Model.Estatus != 4 ? "disabled" : "") class="form-control" rows="2">@Model.MediosVerificacion</textarea>
             </div>
             <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
                     data-campo="16" data-bs-toggle="tooltip" title="Agregar comentario">
@@ -343,7 +359,7 @@
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label small text-muted mb-1">Desde</label>
-                        <select required @(!ViewBag.EsAdministrador ? "disabled" : "")
+                        <select required @(!ViewBag.EsAdministrador && Model.Estatus != 4 ? "disabled" : "")
                                 class="form-control select2-simple"
                                 id="selectDesde"
                                 data-campo="17">
@@ -364,7 +380,7 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label small text-muted mb-1">Hasta</label>
-                        <select @(!ViewBag.EsAdministrador ? "disabled" : "")
+                        <select @(!ViewBag.EsAdministrador && Model.Estatus != 4 ? "disabled" : "")
                                 class="form-control select2-simple"
                                 id="selectHasta"
                                 data-campo="17">
@@ -391,7 +407,7 @@
         <div class="campo-ficha">
             <div class="campo-ficha-label">18. FUENTES DE INFORMACIÓN</div>
             <div class="campo-ficha-control">
-                <textarea required id="inputFuentes" @(!ViewBag.EsAdministrador ? "disabled" : "") class="form-control" rows="2">@Model.FuenteInformacion</textarea>
+                <textarea required id="inputFuentes" @(!ViewBag.EsAdministrador && Model.Estatus != 4 ? "disabled" : "") class="form-control" rows="2">@Model.FuenteInformacion</textarea>
             </div>
             <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
                     data-campo="18" data-bs-toggle="tooltip" title="Agregar comentario">
@@ -404,7 +420,7 @@
                 <div class="campo-ficha" style="border-bottom:none;">
                     <div class="campo-ficha-label campo-ficha-label-corta">19. INTERVIENEN DELEGACIONES REGIONALES</div>
                     <div class="campo-ficha-control">
-                        <select id="selectDelegaciones" @(!ViewBag.EsAdministrador ? "disabled" : "") class="form-control select2-simple">
+                        <select id="selectDelegaciones" @(!ViewBag.EsAdministrador && Model.Estatus != 4 ? "disabled" : "") class="form-control select2-simple">
                             <option value="">Seleccione</option>
                             <option value="Si" selected="@(Model.IntervienenDelegaciones == "Si")">Sí</option>
                             <option value="No" selected="@(Model.IntervienenDelegaciones == "No")">No</option>
@@ -420,7 +436,7 @@
                 <div class="campo-ficha" style="border-bottom:none;">
                     <div class="campo-ficha-label campo-ficha-label-corta">20. ¿DE QUÉ MANERA?</div>
                     <div class="campo-ficha-control">
-                        <textarea @(!ViewBag.EsAdministrador ? "disabled" : "") id="inputDelegaciones" class="form-control" rows="2">@Model.IntervienenDelegacionesManera</textarea>
+                        <textarea @(!ViewBag.EsAdministrador && Model.Estatus != 4 ? "disabled" : "") id="inputDelegaciones" class="form-control" rows="2">@Model.IntervienenDelegacionesManera</textarea>
                     </div>
                     <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
                             data-campo="20" data-bs-toggle="tooltip" title="Agregar comentario">
@@ -442,7 +458,7 @@
                 <div class="campo-ficha">
                     <div class="campo-ficha-label campo-ficha-label-corta">21. AÑO</div>
                     <div class="campo-ficha-control">
-                        <select @(!ViewBag.EsAdministrador ? "disabled" : "")
+                        <select @(!ViewBag.EsAdministrador && Model.Estatus != 4 ? "disabled" : "")
                                 class="form-control select2-simple"
                                 id="selectAnoBase"
                                 data-campo="21">
@@ -467,7 +483,7 @@
                 <div class="campo-ficha">
                     <div class="campo-ficha-label campo-ficha-label-corta">22. PORCENTAJE DE CUMPLIMIENTO</div>
                     <div class="campo-ficha-control">
-                        <input id="inputPorcentajeBase" @(!ViewBag.EsAdministrador ? "disabled" : "") type="text" inputmode="decimal" class="form-control text-center" value="@Model.PorcentajeBase">
+                        <input id="inputPorcentajeBase" @(!ViewBag.EsAdministrador && Model.Estatus != 4 ? "disabled" : "") type="text" inputmode="decimal" class="form-control text-center" value="@Model.PorcentajeBase">
                     </div>
                     <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
                             data-campo="22" data-bs-toggle="tooltip" title="Agregar comentario">
@@ -478,7 +494,7 @@
                 <div class="campo-ficha">
                     <div class="campo-ficha-label campo-ficha-label-corta">23. NO. DE BIEN O SERVICIO ENTREGADO</div>
                     <div class="campo-ficha-control">
-                        <input @(!ViewBag.EsAdministrador ? "disabled" : "") id="inputServicioBase" type="text" class="form-control text-center formato-miles" value="@Model.ServicioBase" min="0">
+                        <input @(!ViewBag.EsAdministrador && Model.Estatus != 4 ? "disabled" : "") id="inputServicioBase" type="text" class="form-control text-center formato-miles" value="@Model.ServicioBase" min="0">
                     </div>
                     <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
                             data-campo="23" data-bs-toggle="tooltip" title="Agregar comentario">
@@ -489,7 +505,7 @@
                 <div class="campo-ficha" style="border-bottom:none;">
                     <div class="campo-ficha-label campo-ficha-label-corta">24. NO. DE PERSONAS ATENDIDAS</div>
                     <div class="campo-ficha-control">
-                        <input @(!ViewBag.EsAdministrador ? "disabled" : "") id="inputPersonasBase" type="text" class="form-control text-center formato-miles" value="@Model.PersonasBase" min="0">
+                        <input @(!ViewBag.EsAdministrador && Model.Estatus != 4 ? "disabled" : "") id="inputPersonasBase" type="text" class="form-control text-center formato-miles" value="@Model.PersonasBase" min="0">
                     </div>
                     <button type="button" class="btn btn-sm btn-comentario btn-comentario-sin"
                             data-campo="24" data-bs-toggle="tooltip" title="Agregar comentario">
@@ -552,7 +568,7 @@
                 <div class="campo-ficha" style="padding-top:0;">
                     <div class="campo-ficha-label campo-ficha-label-corta">30. PERSONAS</div>
                     <div class="campo-ficha-control">
-                        <select @(!ViewBag.EsAdministrador ? "disabled" : "") class="form-control select2-simple" id="selectPersonas">
+                        <select @(!ViewBag.EsAdministrador && Model.Estatus != 4 ? "disabled" : "") class="form-control select2-simple" id="selectPersonas">
                             <option value="">Seleccione Personas / Instituciones</option>
                             <option value="Personas" selected="@(Model.Beneficiarios == "Personas")">Personas</option>
                             <option value="Instituciones" selected="@(Model.Beneficiarios == "Instituciones")">Instituciones</option>
@@ -566,7 +582,7 @@
                 <div class="campo-ficha" style="border-bottom:none;">
                     <div class="campo-ficha-label campo-ficha-label-corta">Acumulable</div>
                     <div class="campo-ficha-control">
-                        <select @(!ViewBag.EsAdministrador ? "disabled" : "") class="form-control select2-simple" id="selectAcumulable">
+                        <select @(!ViewBag.EsAdministrador && Model.Estatus != 4 ? "disabled" : "") class="form-control select2-simple" id="selectAcumulable">
                             <option value="">Seleccione opción</option>
                             <option value="no" selected="@(Model.SelectAcumulable == "no")">No</option>
                             <option value="si" selected="@(Model.SelectAcumulable == "si")">Sí</option>
@@ -595,7 +611,7 @@
                         @for (int i = 0; i < 6; i++)
                         {
                             <div class="col-2 p-1">
-                                <input @(!ViewBag.EsAdministrador ? "disabled" : "") type="text" class="form-control text-center mes-grupo1 formato-miles"
+                                <input @(!ViewBag.EsAdministrador && Model.Estatus != 4 ? "disabled" : "") type="text" class="form-control text-center mes-grupo1 formato-miles"
                                        value="@(Model.MesesServicios != null && Model.MesesServicios.Count > i ? Model.MesesServicios[i] : 0)"
                                        min="0" data-mes="@mesesPrimerSemestre[i]">
                             </div>
@@ -613,7 +629,7 @@
                         {
                             var index = i + 6;
                             <div class="col-2 p-1">
-                                <input @(!ViewBag.EsAdministrador ? "disabled" : "") type="text" class="form-control text-center mes-grupo1 formato-miles"
+                                <input @(!ViewBag.EsAdministrador && Model.Estatus != 4 ? "disabled" : "") type="text" class="form-control text-center mes-grupo1 formato-miles"
                                        value="@(Model.MesesServicios != null && Model.MesesServicios.Count > index ? Model.MesesServicios[index] : 0)"
                                        min="0" data-mes="@mesesSegundoSemestre[i]">
                             </div>
@@ -632,7 +648,7 @@
                         @for (int i = 0; i < 6; i++)
                         {
                             <div class="col-2 p-1">
-                                <input @(!ViewBag.EsAdministrador ? "disabled" : "") type="text" class="form-control text-center mes-grupo2 formato-miles"
+                                <input @(!ViewBag.EsAdministrador && Model.Estatus != 4 ? "disabled" : "") type="text" class="form-control text-center mes-grupo2 formato-miles"
                                        value="@(Model.MesesPersonas != null && Model.MesesPersonas.Count > i ? Model.MesesPersonas[i] : 0)"
                                        min="0" data-mes="@mesesPrimerSemestre[i]">
                             </div>
@@ -650,7 +666,7 @@
                         {
                             var index = i + 6;
                             <div class="col-2 p-1">
-                                <input @(!ViewBag.EsAdministrador ? "disabled" : "") type="text" class="form-control text-center mes-grupo2 formato-miles"
+                                <input @(!ViewBag.EsAdministrador && Model.Estatus != 4 ? "disabled" : "") type="text" class="form-control text-center mes-grupo2 formato-miles"
                                        value="@(Model.MesesPersonas != null && Model.MesesPersonas.Count > index ? Model.MesesPersonas[index] : 0)"
                                        min="0" data-mes="@mesesSegundoSemestre[i]">
                             </div>
@@ -683,7 +699,7 @@
                 <div class="mt-4" style="display:none;">
                     <div class="row align-items-center g-2">
                         <div class="col-md-8">
-                            <select @(!ViewBag.EsAdministrador ? "disabled" : "") class="form-control select2-simple" id="selectEstadoGrupo1">
+                            <select @(!ViewBag.EsAdministrador && Model.Estatus != 4 ? "disabled" : "") class="form-control select2-simple" id="selectEstadoGrupo1">
                                 <option value="">Seleccione un municipio</option>
                                 @if (Model.ListaMunicipios != null)
                                 {
@@ -695,13 +711,13 @@
                             </select>
                         </div>
                         <div class="col-md-4">
-                            <input type="text" @(!ViewBag.EsAdministrador ? "disabled" : "") class="form-control text-center formato-miles"
+                            <input type="text" @(!ViewBag.EsAdministrador && Model.Estatus != 4 ? "disabled" : "") class="form-control text-center formato-miles"
                                    id="personasAtendidasGrupo1" value="0" min="0" placeholder="Número">
                         </div>
                     </div>
 
                     <div class="text-center mt-3">
-                        <button class="btn-app-gris" id="btnAgregarGrupo1" type="button" @(!ViewBag.EsAdministrador ? "disabled" : "")>
+                        <button class="btn-app-gris" id="btnAgregarGrupo1" type="button" @(!ViewBag.EsAdministrador && Model.Estatus != 4 ? "disabled" : "")>
                             <i class="fas fa-plus"></i> Agregar
                         </button>
                     </div>
@@ -753,7 +769,7 @@
                 <div class="mt-4" style="display:none;">
                     <div class="row align-items-center g-2">
                         <div class="col-md-8">
-                            <select @(!ViewBag.EsAdministrador ? "disabled" : "") class="form-control select2-simple" id="selectEstadoGrupo2">
+                            <select @(!ViewBag.EsAdministrador && Model.Estatus != 4 ? "disabled" : "") class="form-control select2-simple" id="selectEstadoGrupo2">
                                 <option value="">Seleccione un municipio</option>
                                 @if (Model.ListaMunicipios != null)
                                 {
@@ -765,13 +781,13 @@
                             </select>
                         </div>
                         <div class="col-md-4">
-                            <input type="text" @(!ViewBag.EsAdministrador ? "disabled" : "") class="form-control text-center formato-miles"
+                            <input type="text" @(!ViewBag.EsAdministrador && Model.Estatus != 4 ? "disabled" : "") class="form-control text-center formato-miles"
                                    id="personasAtendidasGrupo2" value="0" min="0" placeholder="Número">
                         </div>
                     </div>
 
                     <div class="text-center mt-3">
-                        <button class="btn-app-gris" id="btnAgregarGrupo2" type="button" @(!ViewBag.EsAdministrador ? "disabled" : "")>
+                        <button class="btn-app-gris" id="btnAgregarGrupo2" type="button" @(!ViewBag.EsAdministrador && Model.Estatus != 4 ? "disabled" : "")>
                             <i class="fas fa-plus"></i> Agregar
                         </button>
                     </div>
@@ -827,14 +843,14 @@
                         <div class="row mb-3">
                             <div class="col-md-12">
                                 <label class="form-label fw-semibold small">DESCRIPCIÓN DE LA ACCIÓN</label>
-                                <textarea class="form-control" rows="3" @(!ViewBag.EsAdministrador ? "disabled" : "")>@accion.Descripcion</textarea>
+                                <textarea class="form-control" rows="3" @(!ViewBag.EsAdministrador && Model.Estatus != 4 ? "disabled" : "")>@accion.Descripcion</textarea>
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="col-md-4">
                                 <label class="form-label fw-semibold small">FRECUENCIA DE REALIZACIÓN</label>
-                                <select class="form-control select2-simple" @(!ViewBag.EsAdministrador ? "disabled" : "")>
+                                <select class="form-control select2-simple" @(!ViewBag.EsAdministrador && Model.Estatus != 4 ? "disabled" : "")>
                                     <option value="">Seleccione la frecuencia</option>
                                     <option value="mensual" selected="@(accion.Frecuencia == "mensual")">MENSUAL</option>
                                     <option value="trimestral" selected="@(accion.Frecuencia == "trimestral")">TRIMESTRAL</option>
@@ -844,7 +860,7 @@
                             <div class="col-md-8">
                                 <label class="form-label fw-semibold small">FECHA INICIO</label>
                                 <input type="date" class="form-control fecha-inicio"
-                                       value="@accion.FechaInicio?.ToString("yyyy-MM-dd")" @(!ViewBag.EsAdministrador ? "disabled" : "")>
+                                       value="@accion.FechaInicio?.ToString("yyyy-MM-dd")" @(!ViewBag.EsAdministrador && Model.Estatus != 4 ? "disabled" : "")>
                             </div>
                         </div>
                     </div>
@@ -855,6 +871,18 @@
                 <p class="text-muted text-center">No hay acciones registradas</p>
             }
         </div>
+
+        @if (ViewBag.EsAdministrador || Model.Estatus == 4)
+        {
+            <div class="d-flex justify-content-center gap-2 mt-3">
+                <button type="button" class="btn-accion" id="btnAgregarAccion" title="Agregar acción" data-bs-toggle="tooltip" data-bs-placement="top">
+                    <i class="fas fa-plus"></i>
+                </button>
+                <button type="button" class="btn-accion" id="btnEliminarAccion" title="Quitar última acción" data-bs-toggle="tooltip" data-bs-placement="top">
+                    <i class="fas fa-minus"></i>
+                </button>
+            </div>
+        }
     </div>
 
     @* Sección de Firmas *@
@@ -863,24 +891,24 @@
             <div class="col-md-4 border-end">
                 <div class="ficha-firma">
                     <label class="ficha-firma-label">Elaboró</label>
-                    <input type="text" @(!ViewBag.EsAdministrador ? "disabled" : "") id="inputElaboro" class="form-control text-center mb-2" value="@Model.ElaboraNombre" />
-                    <input type="text" @(!ViewBag.EsAdministrador ? "disabled" : "") id="inputElaboroCargo" class="form-control text-center" value="@Model.ElaboroCargo" />
+                    <input type="text" @(!ViewBag.EsAdministrador && Model.Estatus != 4 ? "disabled" : "") id="inputElaboro" class="form-control text-center mb-2" value="@Model.ElaboraNombre" placeholder="Nombre" />
+                    <input type="text" @(!ViewBag.EsAdministrador && Model.Estatus != 4 ? "disabled" : "") id="inputElaboroCargo" class="form-control text-center" value="@Model.ElaboroCargo" placeholder="Cargo" />
                 </div>
             </div>
 
             <div class="col-md-4 border-end">
                 <div class="ficha-firma">
                     <label class="ficha-firma-label">Revisó</label>
-                    <input type="text" @(!ViewBag.EsAdministrador ? "disabled" : "") id="inputReviso" class="form-control text-center mb-2" value="@Model.RevisionNombre" />
-                    <input type="text" @(!ViewBag.EsAdministrador ? "disabled" : "") id="inputRevisoCargo" class="form-control text-center" value="@Model.RevisionCargo" />
+                    <input type="text" @(!ViewBag.EsAdministrador && Model.Estatus != 4 ? "disabled" : "") id="inputReviso" class="form-control text-center mb-2" value="@Model.RevisionNombre" placeholder="Nombre" />
+                    <input type="text" @(!ViewBag.EsAdministrador && Model.Estatus != 4 ? "disabled" : "") id="inputRevisoCargo" class="form-control text-center" value="@Model.RevisionCargo" placeholder="Cargo" />
                 </div>
             </div>
 
             <div class="col-md-4">
                 <div class="ficha-firma">
                     <label class="ficha-firma-label">Autorizó</label>
-                    <input type="text" @(!ViewBag.EsAdministrador ? "disabled" : "") id="inputAutorizo" class="form-control text-center mb-2" value="@Model.AutorizacionNombre" />
-                    <input type="text" @(!ViewBag.EsAdministrador ? "disabled" : "") id="inputAutorizoCargo" class="form-control text-center" value="@Model.AutorizacionCargo" />
+                    <input type="text" @(!ViewBag.EsAdministrador && Model.Estatus != 4 ? "disabled" : "") id="inputAutorizo" class="form-control text-center mb-2" value="@Model.AutorizacionNombre" placeholder="Nombre" />
+                    <input type="text" @(!ViewBag.EsAdministrador && Model.Estatus != 4 ? "disabled" : "") id="inputAutorizoCargo" class="form-control text-center" value="@Model.AutorizacionCargo" placeholder="Cargo" />
                 </div>
             </div>
         </div>
@@ -903,11 +931,14 @@
     }
     else
     {
-        @if (Model.Estatus == 2)
+        @if (Model.Estatus == 2 || Model.Estatus == 4)
         {
-            <div class="text-center mb-5 mt-4">
+            <div class="text-center mb-5 mt-4 d-flex justify-content-center gap-2">
+                <button class="btn-app-gris" id="btnGuardarBorrador" style="@(Model.Estatus != 4 ? "display:none;" : "")">
+                    <i class="fas fa-save"></i> Guardar Borrador
+                </button>
                 <button class="btn-app-rosa" id="btnGuardarCambiosUsuario">
-                    <i class="fas fa-save"></i> Guardar Cambios
+                    <i class="fas fa-save"></i> @(Model.Estatus == 4 ? "Enviar a Revisión" : "Guardar Cambios")
                 </button>
             </div>
         }
@@ -950,6 +981,7 @@
 
 <input type="hidden" id="esAdministrador" value="@User.IsInRole("Administrador").ToString().ToLower()">
 <input type="hidden" id="idProgramacionHidden" value="@ViewData["IdProgramacion"]">
+<input type="hidden" id="estatusActual" value="@Model.Estatus">
 
 @* Datos de municipios existentes *@
 <script>
@@ -1203,10 +1235,14 @@
             cargarComentariosExistentes().then(() => {
                 const adminCheck = document.getElementById('esAdministrador');
                 const esAdmin = adminCheck?.value?.toLowerCase() === 'true';
+                const estatusActual = parseInt(document.getElementById('estatusActual')?.value || '0');
+                const esBorrador = estatusActual === 4;
 
                 if (!esAdmin) {
-                    setTimeout(bloquearCamposSinComentarios, 300);
-                    setTimeout(configurarEventosEdicionCampos, 400);
+                    // Si es borrador no se bloquea ningún campo (el servidor ya los dejó editables)
+                    if (!esBorrador) {
+                        setTimeout(bloquearCamposSinComentarios, 300);
+                    }
                 } else {
                     actualizarEstadoBotonValidar();
                 }
@@ -1342,68 +1378,6 @@
             }
 
             return elementos;
-        }
-
-        // ========================================
-        // CONFIGURAR EVENTOS EDICIÓN CAMPOS
-        // ========================================
-        function configurarEventosEdicionCampos() {
-            for (let campo = 4; campo <= 30; campo++) {
-                if (!comentariosTemp[campo]?.texto) continue;
-
-                const elementosEditables = obtenerElementosPorCampo(campo);
-
-                elementosEditables.forEach(elemento => {
-                    if (elemento.disabled) return;
-
-                    const valorOriginal = elemento.value;
-                    elemento.setAttribute('data-valor-original', valorOriginal);
-
-                    const eventoChange = function() {
-                        const valorNuevo = this.value;
-                        const valorOriginalGuardado = this.getAttribute('data-valor-original');
-
-                        if (valorOriginalGuardado !== valorNuevo) {
-                            borrarComentarioAlEditar(campo);
-
-                            this.disabled = true;
-                            this.style.backgroundColor = '#f8f9fa';
-                            this.style.cursor = 'not-allowed';
-                            this.style.opacity = '0.7';
-                            this.style.borderColor = '';
-                            this.style.borderWidth = '';
-                        }
-                    };
-
-                    if (elemento.tagName === 'SELECT') {
-                        // Select2 dispara 'change' mediante jQuery.trigger(), que no es capturado
-                        // por addEventListener nativo. Hay que suscribirse con jQuery.
-                        $(elemento).on('change', eventoChange);
-                    } else {
-                        elemento.addEventListener('blur', eventoChange);
-                    }
-                });
-            }
-        }
-
-        // ========================================
-        // BORRAR COMENTARIO AL EDITAR
-        // ========================================
-            function borrarComentarioAlEditar(campo) {
-                if (comentariosTemp[campo]) {
-                    delete comentariosTemp[campo];
-                    actualizarBotonComentario(campo, false);
-
-                    Swal.fire({
-                        title: 'Comentario eliminado',
-                        html: `El comentario de <strong>${descripcionesCampos[campo]}</strong> se eliminó porque editaste este campo.<br><br>
-                               <small class="text-muted">Recuerda guardar los cambios cuando termines.</small>`,
-                    icon: 'info',
-                    timer: 4000,
-                    showConfirmButton: true,
-                    confirmButtonText: 'Entendido'
-                });
-            }
         }
 
         // ========================================
@@ -1697,7 +1671,7 @@
                     mesesPersonas: [],
                     municipiosServicios: [],
                     municipiosPersonas: [],
-                    acciones: [],
+                    acciones: recolectarAcciones(),
                     comentarios: [] 
                 };
 
@@ -1722,20 +1696,6 @@
                     const cantidad = parseInt(fila.getAttribute('data-cantidad')) || 0;
                     if (idMunicipio > 0 && cantidad > 0) {
                         datosCompletos.municipiosPersonas.push({ idMunicipio, cantidad });
-                    }
-                });
-
-                // Acciones
-                document.querySelectorAll('.accion-item').forEach(accion => {
-                    const descripcion = accion.querySelector('textarea')?.value || '';
-                    const frecuencia = accion.querySelector('select')?.value || '';
-                    const fechaStr = accion.querySelector('.fecha-inicio')?.value || '';
-                    if (descripcion.trim() !== '') {
-                        datosCompletos.acciones.push({
-                            descripcion,
-                            frecuencia,
-                            fechaInicio: fechaStr || null
-                        });
                     }
                 });
 
@@ -1800,6 +1760,140 @@
         }
 
         // ========================================
+        // ACCIONES NECESARIAS (EDITABLES)
+        // ========================================
+        function getAccionTemplateRevisar() {
+            return `
+                <div class="ficha-accion-item accion-item">
+                    <h6 class="ficha-accion-titulo">Acción</h6>
+
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold small">DESCRIPCIÓN DE LA ACCIÓN</label>
+                            <textarea class="form-control" rows="3" placeholder="Describa la acción necesaria..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold small">FRECUENCIA DE REALIZACIÓN</label>
+                            <select class="form-control select2-simple">
+                                <option value="">Seleccione la frecuencia</option>
+                                <option value="mensual">MENSUAL</option>
+                                <option value="trimestral">TRIMESTRAL</option>
+                                <option value="anual">ANUAL</option>
+                            </select>
+                        </div>
+                        <div class="col-md-8">
+                            <label class="form-label fw-semibold small">FECHA INICIO</label>
+                            <input type="date" class="form-control fecha-inicio">
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function recolectarAcciones() {
+            const acciones = [];
+            document.querySelectorAll('#accionesList .accion-item').forEach(accion => {
+                const descripcion = accion.querySelector('textarea')?.value.trim() || '';
+                if (!descripcion) return;
+                acciones.push({
+                    descripcion,
+                    frecuencia: accion.querySelector('select')?.value || '',
+                    fechaInicio: accion.querySelector('.fecha-inicio')?.value || null
+                });
+            });
+            return acciones;
+        }
+
+        function configurarAccionesRevisar() {
+            const accionesList = document.getElementById('accionesList');
+            const btnAgregar = document.getElementById('btnAgregarAccion');
+            const btnEliminar = document.getElementById('btnEliminarAccion');
+            if (!accionesList || !btnAgregar || !btnEliminar) return;
+
+            const MAX_ACCIONES = 5;
+
+            function contarItems() {
+                return accionesList.querySelectorAll('.accion-item').length;
+            }
+
+            function actualizarMensajeVacio() {
+                const mensaje = accionesList.querySelector(':scope > .text-muted');
+                const count = contarItems();
+                if (count === 0 && !mensaje) {
+                    const p = document.createElement('p');
+                    p.className = 'text-muted text-center';
+                    p.textContent = 'No hay acciones registradas';
+                    accionesList.appendChild(p);
+                } else if (count > 0 && mensaje) {
+                    mensaje.remove();
+                }
+            }
+
+            function actualizarBotones() {
+                const count = contarItems();
+                btnAgregar.disabled = count >= MAX_ACCIONES;
+                btnEliminar.disabled = count <= 0;
+            }
+
+            btnAgregar.addEventListener('click', function() {
+                if (contarItems() < MAX_ACCIONES) {
+                    accionesList.insertAdjacentHTML('beforeend', getAccionTemplateRevisar());
+                    $(accionesList).find('.accion-item:last-child select.select2-simple:not(.select2-hidden-accessible)')
+                        .select2({ width: '100%', language: 'es', minimumResultsForSearch: 8, dropdownParent: $('.app-content') });
+                    actualizarMensajeVacio();
+                    actualizarBotones();
+                }
+            });
+
+            btnEliminar.addEventListener('click', function() {
+                if (contarItems() > 0) {
+                    const items = accionesList.querySelectorAll('.accion-item');
+                    items[items.length - 1].remove();
+                    actualizarMensajeVacio();
+                    actualizarBotones();
+                }
+            });
+
+            actualizarMensajeVacio();
+            actualizarBotones();
+        }
+
+        // ========================================
+        // CAMPO 19 - INTERVIENEN DELEGACIONES (habilitar campo 20)
+        // ========================================
+        function configurarSelectDelegaciones() {
+            const selectDelegaciones = document.getElementById('selectDelegaciones');
+            const inputDelegaciones = document.getElementById('inputDelegaciones');
+            if (!selectDelegaciones || !inputDelegaciones) return;
+
+            const delegacionesEditables = @(ViewBag.EsAdministrador || Model.Estatus == 4 ? "true" : "false");
+
+            function aplicarEstado(esCambio) {
+                const valorSeleccionado = selectDelegaciones.value;
+
+                if (valorSeleccionado === 'No') {
+                    inputDelegaciones.value = 'N/A';
+                    inputDelegaciones.disabled = true;
+                } else if (valorSeleccionado === 'Si') {
+                    if (esCambio) inputDelegaciones.value = '';
+                    inputDelegaciones.disabled = !delegacionesEditables;
+                } else {
+                    if (esCambio) inputDelegaciones.value = '';
+                    inputDelegaciones.disabled = true;
+                }
+            }
+
+            $(selectDelegaciones).on('change', function() {
+                aplicarEstado(true);
+            });
+
+            aplicarEstado(false);
+        }
+
+        // ========================================
         // GUARDAR CAMBIOS ADMIN
         // ========================================
         async function guardarCambiosAdmin() {
@@ -1813,6 +1907,23 @@
             }
 
             if (!validarCamposRequeridos(obtenerCamposObligatoriosFicha())) return;
+
+            // ========================================
+            // CONFIRMACIÓN ANTES DE GUARDAR
+            // ========================================
+            const confirmacion = await Swal.fire({
+                title: '¿Guardar cambios?',
+                html: '<p>Se guardarán los cambios realizados en la programación.</p><p class="text-muted"><small>No cambiará el estatus actual.</small></p>',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#dc3545',
+                confirmButtonText: '<i class="fas fa-check"></i> Sí, guardar',
+                cancelButtonText: '<i class="fas fa-times"></i> No, revisar',
+                reverseButtons: true
+            });
+
+            if (!confirmacion.isConfirmed) return;
 
             try {
                 btnGuardar.disabled = true;
@@ -1915,7 +2026,7 @@
                     mesesPersonas: [],
                     municipiosServicios: [],
                     municipiosPersonas: [],
-                    acciones: [],
+                    acciones: recolectarAcciones(),
                     comentarios: comentariosArray
                 };
 
@@ -1996,20 +2107,49 @@
         // ========================================
         // GUARDAR CAMBIOS USUARIO
         // ========================================
-        async function guardarCambiosUsuario() {
+        async function guardarCambiosUsuario(enviar = false) {
             const btnGuardar = document.getElementById('btnGuardarCambiosUsuario');
+            const btnGuardarBorrador = document.getElementById('btnGuardarBorrador');
             const textoOriginal = btnGuardar.innerHTML;
+            const btnsParaDeshabilitar = [btnGuardar, btnGuardarBorrador].filter(Boolean);
             const idProgramacion = document.getElementById('idProgramacionHidden')?.value;
+            const esBorrador = !enviar && parseInt(document.getElementById('estatusActual')?.value || '0') === 4;
 
             if (!idProgramacion) {
                 await Swal.fire({ title: 'Error', text: 'No se encontró el ID de programación', icon: 'error' });
                 return;
             }
 
-            if (!validarCamposRequeridos(obtenerCamposObligatoriosFicha())) return;
+            // Solo validar campos obligatorios si NO es borrador
+            if (!esBorrador && !validarCamposRequeridos(obtenerCamposObligatoriosFicha())) return;
+
+            // ========================================
+            // CONFIRMACIÓN ANTES DE GUARDAR
+            // ========================================
+            const tituloConfirmacion = esBorrador ? '¿Guardar borrador?' : '¿Enviar a revisión?';
+            const htmlConfirmacion = esBorrador
+                ? '<p>Se guardará esta información como borrador.</p><p class="text-muted"><small>Podrá continuar editando después.</small></p>'
+                : '<p>Está a punto de enviar su registro a revisión.</p><p class="text-muted"><small>Una vez enviada, el administrador revisará su información.</small></p>';
+            const textoConfirmar = esBorrador
+                ? '<i class="fas fa-check"></i> Sí, guardar'
+                : '<i class="fas fa-check"></i> Sí, enviar';
+
+            const confirmacion = await Swal.fire({
+                title: tituloConfirmacion,
+                html: htmlConfirmacion,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#dc3545',
+                confirmButtonText: textoConfirmar,
+                cancelButtonText: '<i class="fas fa-times"></i> No, revisar datos',
+                reverseButtons: true
+            });
+
+            if (!confirmacion.isConfirmed) return;
 
             try {
-                btnGuardar.disabled = true;
+                btnsParaDeshabilitar.forEach(b => b.disabled = true);
                 btnGuardar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
 
                 const obtenerValor = (id, valorDefault = '') => {
@@ -2057,6 +2197,7 @@
 
                 const datosCompletos = {
                     id: parseInt(idProgramacion),
+                    esBorrador: esBorrador,
                     area: obtenerValor('inputArea'),
                     departamento: obtenerValor('inputDepartamento'),
                     correoContacto: obtenerValor('inputCorreo'),
@@ -2109,7 +2250,7 @@
                     mesesPersonas: [],
                     municipiosServicios: [],
                     municipiosPersonas: [],
-                    acciones: [],
+                    acciones: recolectarAcciones(),
                     comentarios: comentariosRestantes
                 };
 
@@ -2160,7 +2301,9 @@
                 if (resultado.success) {
                     await Swal.fire({
                         title: '¡Éxito!',
-                        text: 'Cambios guardados correctamente. La programación fue enviada a revisión.',
+                        text: esBorrador
+                            ? 'El borrador se guardó correctamente.'
+                            : 'Cambios guardados correctamente. La programación fue enviada a revisión.',
                         icon: 'success',
                         confirmButtonText: 'Aceptar'
                     });
@@ -2171,7 +2314,7 @@
 
             } catch (error) {
                 console.error('Error al guardar:', error);
-                btnGuardar.disabled = false;
+                btnsParaDeshabilitar.forEach(b => b.disabled = false);
                 btnGuardar.innerHTML = textoOriginal;
 
                 await Swal.fire({
@@ -2520,6 +2663,8 @@
         document.addEventListener('DOMContentLoaded', async function() {
             $('.select2-simple').select2({ width: '100%', language: 'es', minimumResultsForSearch: 8, dropdownParent: $('.app-content') });
 
+            configurarAccionesRevisar();
+
             const selectCorreo = document.getElementById('selectCorreo');
             if (selectCorreo) {
                 var inputCorreo = document.getElementById('inputCorreo');
@@ -2541,6 +2686,7 @@
             configurarSelectProgramaComponente();
             configurarSelectPersonas();
             configurarSelectAcumulable();
+            configurarSelectDelegaciones();
 
             configurarAgregarPersonas('Grupo1');
             configurarAgregarPersonas('Grupo2');
@@ -2565,7 +2711,12 @@
 
             const btnGuardarUsuario = document.getElementById('btnGuardarCambiosUsuario');
             if (btnGuardarUsuario) {
-                btnGuardarUsuario.addEventListener('click', guardarCambiosUsuario);
+                btnGuardarUsuario.addEventListener('click', () => guardarCambiosUsuario(true));
+            }
+
+            const btnGuardarBorrador = document.getElementById('btnGuardarBorrador');
+            if (btnGuardarBorrador) {
+                btnGuardarBorrador.addEventListener('click', () => guardarCambiosUsuario(false));
             }
 
             // Calcular valores iniciales

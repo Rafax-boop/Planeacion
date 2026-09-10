@@ -149,7 +149,7 @@ namespace Metas.BLL.Implementacion
                     AutorizoNombre = modelo.AutorizacionNombre,
                     AutorizoCargo = modelo.AutorizacionCargo,
 
-                    IdEstatus = 1,
+                    IdEstatus = modelo.EsBorrador ? 4 : 1,
                     Acumulable = modelo.SelectAcumulable,
                     Totalanos = modelo.TotalAnos,
                     Totalanos2 = modelo.TotalAnos2,
@@ -197,7 +197,7 @@ namespace Metas.BLL.Implementacion
                     OctubrePersona = modelo.MesesPersonas[9],
                     NoviembrePersona = modelo.MesesPersonas[10],
                     DiciembrePersona = modelo.MesesPersonas[11],
-                    Idpp = idPp
+                    Idpp = idPp > 0 ? idPp : null
                 };
 
                 await _repositorioLlenadoInterno.Crear(llenadoInterno);
@@ -579,8 +579,11 @@ namespace Metas.BLL.Implementacion
                 var programacion = await _repositorioProgramacion.Obtener(p => p.IdRegistro == idProgramacion);
                 if (programacion != null)
                 {
-                    programacion.IdEstatus = tieneComentarios ? 2 : 1; // 2=Comentarios, 1=En Revisión
-                    await _repositorioProgramacion.Editar(programacion);
+                    if (programacion.IdEstatus != 4)
+                    {
+                        programacion.IdEstatus = tieneComentarios ? 2 : 1; // 2=Comentarios, 1=En Revisión
+                        await _repositorioProgramacion.Editar(programacion);
+                    }
                 }
 
                 // Resto del código para guardar comentarios...
