@@ -155,6 +155,24 @@
     gap: 4px;
     padding: 4px 8px;
     overflow-x: hidden;
+    overflow-y: auto;
+    /* Barra de scroll delgada y rosa (Firefox) */
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary) transparent;
+}
+
+/* Barra de scroll delgada y rosa (Chrome/Edge/Safari) */
+.sidebar-nav::-webkit-scrollbar {
+    width: 2px;
+}
+
+.sidebar-nav::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb {
+    background-color: var(--primary);
+    border-radius: 4px;
 }
 
 .sidebar-nav-item {
