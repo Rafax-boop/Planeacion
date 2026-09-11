@@ -1533,7 +1533,10 @@
                 { label: 'Unidad de medida', campoId: 'selectMedida', valido: !!valorSelect('selectMedida') },
                 { label: 'Medios de verificación', campoId: 'inputMedios', valido: !!valorTexto('inputMedios') },
                 { label: 'Serie de información disponible (desde)', campoId: 'selectDesde', valido: !!valorSelect('selectDesde') },
-                { label: 'Fuentes de información', campoId: 'inputFuentes', valido: !!valorTexto('inputFuentes') }
+                { label: 'Fuentes de información', campoId: 'inputFuentes', valido: !!valorTexto('inputFuentes') },
+                { label: 'Mínimo 3 acciones necesarias', campoId: 'accionesList', valido: recolectarAcciones().length >= 3 },
+                { label: 'Nombre de quien elabora', campoId: 'inputElaboro', valido: !!valorTexto('inputElaboro') },
+                { label: 'Cargo de quien elabora', campoId: 'inputElaboroCargo', valido: !!valorTexto('inputElaboroCargo') }
             ];
         }
 
@@ -1814,6 +1817,7 @@
             if (!accionesList || !btnAgregar || !btnEliminar) return;
 
             const MAX_ACCIONES = 5;
+            const MIN_ACCIONES = 3;
 
             function contarItems() {
                 return accionesList.querySelectorAll('.accion-item').length;
@@ -1849,12 +1853,20 @@
             });
 
             btnEliminar.addEventListener('click', function() {
-                if (contarItems() > 0) {
-                    const items = accionesList.querySelectorAll('.accion-item');
-                    items[items.length - 1].remove();
-                    actualizarMensajeVacio();
-                    actualizarBotones();
+                if (contarItems() <= MIN_ACCIONES) {
+                    Swal.fire({
+                        title: 'Acciones necesarias',
+                        text: 'Las acciones mínimas son 3; no puedes quitar acciones.',
+                        icon: 'warning',
+                        confirmButtonText: 'Aceptar'
+                    });
+                    return;
                 }
+
+                const items = accionesList.querySelectorAll('.accion-item');
+                items[items.length - 1].remove();
+                actualizarMensajeVacio();
+                actualizarBotones();
             });
 
             actualizarMensajeVacio();
@@ -2120,8 +2132,14 @@
                 return;
             }
 
-            // Solo validar campos obligatorios si NO es borrador
-            if (!esBorrador && !validarCamposRequeridos(obtenerCamposObligatoriosFicha())) return;
+            // Solo validar campos obligatorios si NO es borrador.
+            // Además de los explícitos, no se permite enviar si algún select
+            // quedó en su opción predeterminada ("Seleccione...").
+            if (!esBorrador) {
+                const camposExplicitos = obtenerCamposObligatoriosFicha();
+                const idsExplicitos = new Set(camposExplicitos.map(c => c.campoId));
+                if (!validarCamposRequeridos([...camposExplicitos, ...obtenerSelectsEnSeleccione(idsExplicitos)])) return;
+            }
 
             // ========================================
             // CONFIRMACIÓN ANTES DE GUARDAR

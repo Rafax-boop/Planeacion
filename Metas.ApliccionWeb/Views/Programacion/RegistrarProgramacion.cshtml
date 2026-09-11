@@ -1238,7 +1238,9 @@
                 // VALIDACIONES (SOLO SI NO ES BORRADOR)
                 // ========================================
                 if (!esBorrador) {
-                    if (!validarCamposRequeridos(obtenerCamposObligatoriosRegistro())) {
+                    const camposExplicitos = obtenerCamposObligatoriosRegistro();
+                    const idsExplicitos = new Set(camposExplicitos.map(c => c.campoId));
+                    if (!validarCamposRequeridos([...camposExplicitos, ...obtenerSelectsEnSeleccione(idsExplicitos)])) {
                         btnGuardar.disabled = false;
                         return;
                     }

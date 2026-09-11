@@ -311,6 +311,9 @@ var resultado = datos.Select(x => new VMDatosInternos
                     if (string.IsNullOrWhiteSpace(modelo.NComponente))
                         return BadRequest(new { success = false, message = "El número de componente es requerido." });
 
+                    if (modelo.Componente <= 0)
+                        return BadRequest(new { success = false, message = "El número de componente es requerido." });
+
                     if (modelo.NActividad <= 0)
                         return BadRequest(new { success = false, message = "El número de actividad debe ser mayor a 0." });
 
@@ -536,6 +539,12 @@ var resultado = datos.Select(x => new VMDatosInternos
                 if (modelo == null || modelo.Id <= 0)
                 {
                     return BadRequest(new { success = false, message = "Datos inválidos" });
+                }
+
+                // Al enviar a revisión debe haberse elegido el componente
+                if (!modelo.EsBorrador && modelo.Componente <= 0)
+                {
+                    return BadRequest(new { success = false, message = "El número de componente es requerido." });
                 }
 
                 // Actualizar la programación

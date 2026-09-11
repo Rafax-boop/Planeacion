@@ -56,6 +56,34 @@ function validarCamposRequeridos(campos) {
     return false;
 }
 
+// Devuelve los <select> que quedaron en su opción predeterminada ("Seleccione..."),
+// para no permitir enviar a revisión con campos sin elegir. Recibe el Set de ids
+// que ya están validados explícitamente por cada vista (para no duplicar avisos).
+function obtenerSelectsEnSeleccione(excluirIds) {
+    const pendientes = [];
+    document.querySelectorAll('select').forEach(select => {
+        if (select.disabled) return;                        // campo bloqueado (solo lectura) no bloquea
+        if (select.id === 'selectCorreo') return;           // "Escribir otro correo..." = escribir manual
+        if (select.id.startsWith('selectEstadoGrupo')) return; // filtros de búsqueda
+        if (excluirIds?.has(select.id)) return;             // ya validado explícitamente por la vista
+        if (select.selectedIndex > 0) return;
+
+        const textoPrimera = (select.options[0]?.text || '').trim();
+        const parecePlaceholder = !textoPrimera
+            || /seleccione|selecciona/i.test(textoPrimera)
+            || textoPrimera.startsWith('--');
+        if (!parecePlaceholder) return;
+
+        const cajaContexto = select.closest('.campo-ficha');
+        const etiqueta = cajaContexto?.querySelector('.campo-ficha-label')?.textContent?.trim()
+            || (select.closest('.accion-item') ? 'Frecuencia de la acción' : '')
+            || select.id;
+
+        pendientes.push({ label: etiqueta, campoId: select.id, valido: false });
+    });
+    return pendientes;
+}
+
 function enfocarCampo(campoId) {
     const campo = document.getElementById(campoId);
     if (!campo) return;
