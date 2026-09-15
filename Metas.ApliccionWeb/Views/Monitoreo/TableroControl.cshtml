@@ -47,9 +47,7 @@
             try {
                 const response = await fetch(`/Monitoreo/ObtenerDatosTableroControl?anoFiscal=${anoFiscal}&departamento=${departamento}`);
 
-                if (!response.ok) {
-                    throw new Error('Error al cargar los datos del servidor');
-                }
+                verificarRespuesta(response);
 
                 const result = await response.json();
 
@@ -82,6 +80,7 @@
 
             } catch (error) {
                 console.error('Error al cargar datos:', error);
+                if (error instanceof SesionExpiradaError) return manejarSesionExpirada();
                 contenedor.html(`
                         <div class="sin-registros">
                             <i class="fa-solid fa-triangle-exclamation text-tablero-error"></i><br>

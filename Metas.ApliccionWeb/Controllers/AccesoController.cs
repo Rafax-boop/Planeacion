@@ -69,10 +69,17 @@ namespace Metas.AplicacionWeb.Controllers
                 properties
             );
 
-            //TempData["LoginExitoso"] = "true";
-            //TempData["NombreUsuario"] = usuarioEncontrado.Usuario1;
-
-            return RedirectToAction("Index", "Home");
+            // Re-direccionar al ReturnUrl (si existe y es local) para continuar el flujo interrumpido
+            string? returnUrl = Request.Query["ReturnUrl"].ToString();
+            if (string.IsNullOrWhiteSpace(returnUrl))
+            {
+                returnUrl = Request.Form["ReturnUrl"].ToString();
+            }
+            if (string.IsNullOrWhiteSpace(returnUrl) || !Url.IsLocalUrl(returnUrl))
+            {
+                returnUrl = Url.Action("Index", "Home");
+            }
+            return Redirect(returnUrl ?? "/Home/Index");
         }
 
         public async Task<IActionResult> CerrarSesion()

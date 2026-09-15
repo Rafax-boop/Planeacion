@@ -1015,7 +1015,7 @@
         async function cargarMunicipios() {
             try {
                 const response = await fetch('/Programacion/ObtenerMunicipiosJson');
-                if (!response.ok) throw new Error('Error al cargar municipios');
+                verificarRespuesta(response);
 
                 const municipios = await response.json();
 
@@ -1031,6 +1031,7 @@
 
             } catch (error) {
                 console.error('Error al cargar municipios:', error);
+                if (error instanceof SesionExpiradaError) return manejarSesionExpirada();
             }
         }
 
@@ -1493,7 +1494,7 @@
                     `/Programacion/ObtenerComentariosPorProgramacion?idProgramacion=${idProgramacion}`
                 );
 
-                if (!response.ok) return;
+                verificarRespuesta(response);
 
                 const comentarioObj = await response.json();
 
@@ -1510,6 +1511,7 @@
 
             } catch (error) {
                 console.error('Error cargando comentarios:', error);
+                if (error instanceof SesionExpiradaError) return manejarSesionExpirada();
             }
         }
 
@@ -2066,27 +2068,13 @@
                     }
                 });
 
-                // Acciones
-                document.querySelectorAll('.accion-item').forEach(accion => {
-                    const descripcion = accion.querySelector('textarea')?.value || '';
-                    const frecuencia = accion.querySelector('select')?.value || '';
-                    const fechaStr = accion.querySelector('.fecha-inicio')?.value || '';
-                    if (descripcion.trim() !== '') {
-                        datosCompletos.acciones.push({
-                            descripcion,
-                            frecuencia,
-                            fechaInicio: fechaStr || null
-                        });
-                    }
-                });
-
                 const response = await fetch('/Programacion/GuardarCambiosAdmin', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(datosCompletos)
                 });
 
-                if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
+                verificarRespuesta(response);
 
                 const resultado = await response.json();
 
@@ -2104,6 +2092,7 @@
 
             } catch (error) {
                 console.error('Error al guardar:', error);
+                if (error instanceof SesionExpiradaError) return manejarSesionExpirada();
                 btnGuardar.disabled = false;
                 btnGuardar.innerHTML = textoOriginal;
 
@@ -2296,23 +2285,13 @@
                     }
                 });
 
-                // Acciones
-                document.querySelectorAll('.accion-item').forEach(accion => {
-                    const descripcion = accion.querySelector('textarea')?.value || '';
-                    const frecuencia = accion.querySelector('select')?.value || '';
-                    const fechaStr = accion.querySelector('.fecha-inicio')?.value || '';
-                    if (descripcion.trim() !== '') {
-                        datosCompletos.acciones.push({ descripcion, frecuencia, fechaInicio: fechaStr || null });
-                    }
-                });
-
                 const response = await fetch('/Programacion/GuardarCambiosUsuario', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(datosCompletos)
                 });
 
-                if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
+                verificarRespuesta(response);
 
                 const resultado = await response.json();
 
@@ -2332,6 +2311,7 @@
 
             } catch (error) {
                 console.error('Error al guardar:', error);
+                if (error instanceof SesionExpiradaError) return manejarSesionExpirada();
                 btnsParaDeshabilitar.forEach(b => b.disabled = false);
                 btnGuardar.innerHTML = textoOriginal;
 

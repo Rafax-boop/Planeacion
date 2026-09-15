@@ -800,7 +800,7 @@
         async function cargarMunicipios() {
             try {
                 const response = await fetch('/Programacion/ObtenerMunicipiosJson');
-                if (!response.ok) throw new Error('Error al cargar municipios');
+                verificarRespuesta(response);
 
                 const municipios = await response.json();
 
@@ -816,6 +816,7 @@
 
             } catch (error) {
                 console.error('Error al cargar municipios:', error);
+                if (error instanceof SesionExpiradaError) return manejarSesionExpirada();
                 Swal.fire({
                     icon: 'error',
                     title: 'Error al cargar los municipios',
@@ -1231,6 +1232,7 @@
             if (btnGuardar.disabled) return;
 
             const textoOriginal = btnGuardar.innerHTML;
+            let payloadPendiente = null;
             btnGuardar.disabled = true;
 
             try {
@@ -1430,6 +1432,8 @@
                     esBorrador: esBorrador
                 };
 
+                payloadPendiente = datosCompletos;
+
                 // ========================================
                 // VALIDACIONES FINALES (SOLO SI NO ES BORRADOR)
                 // ========================================
@@ -1464,9 +1468,7 @@
                     body: JSON.stringify(datosCompletos)
                 });
 
-                if (!response.ok) {
-                    throw new Error(`Error HTTP: ${response.status}`);
-                }
+                verificarRespuesta(response);
 
                 const resultado = await response.json();
 
@@ -1499,6 +1501,26 @@
                     btnGuardar.classList.add('btn-app-gris');
                 } else {
                     btnGuardar.classList.add('btn-app-rosa');
+                }
+
+                if (error instanceof SesionExpiradaError) {
+                    guardarProgramacionPendiente(payloadPendiente);
+                    await Swal.fire({
+                        title: 'Sesión expirada',
+                        html: `
+                            <div style="text-align: left;">
+                                <p>Tu sesión ha expirado por inactividad.</p>
+                                <p>Tus datos se han guardado temporalmente y podrás recuperarlos al volver a iniciar sesión.</p>
+                            </div>
+                        `,
+                        icon: 'warning',
+                        confirmButtonText: 'Iniciar sesión',
+                        confirmButtonColor: '#3085d6',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    });
+                    redirigirLogin();
+                    return;
                 }
 
                 // Mostrar error específico con SweetAlert
@@ -1537,6 +1559,228 @@
                     confirmButtonColor: '#d33',
                     width: '600px'
                 });
+            }
+        }
+
+        // ========================================
+        // GUARDAR DATOS PENDIENTES (SESIÓN EXPIRADA)
+        // ========================================
+        function guardarProgramacionPendiente(datos) {
+            if (!datos) return;
+            try {
+                sessionStorage.setItem('programacionPendiente', JSON.stringify({
+                    datos: datos,
+                    fechaOcurrencia: new Date().toLocaleString()
+                }));
+            } catch (error) {
+                console.error('No se pudo guardar la programación pendiente:', error);
+            }
+        }
+
+        // ========================================
+        // RESTAURAR PROGRAMACIÓN PENDIENTE (SESIÓN EXPIRADA)
+        // ========================================
+        async function verificarRestauracionProgramacion() {
+            let pendiente = null;
+            try {
+                const raw = sessionStorage.getItem('programacionPendiente');
+                if (!raw) return;
+                pendiente = JSON.parse(raw);
+            } catch (error) {
+                console.error('Error al leer programación pendiente:', error);
+                sessionStorage.removeItem('programacionPendiente');
+                return;
+            }
+
+            const datos = pendiente && pendiente.datos;
+            if (!datos) return;
+
+            const resultado = await Swal.fire({
+                title: 'Registro incompleto encontrado',
+                html: `
+                    <div style="text-align: left;">
+                        <p>Encontramos una programación que no terminaste de guardar${pendiente.fechaOcurrencia ? ` (${pendiente.fechaOcurrencia})` : ''}.</p>
+                        <p>¿Deseas restaurarla para continuar? Revisa los datos antes de guardar nuevamente.</p>
+                    </div>
+                `,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, restaurar',
+                cancelButtonText: 'No, descartar',
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#dc3545',
+                reverseButtons: true
+            });
+
+            if (resultado.isConfirmed) {
+                restaurarDatosProgramacion(datos);
+                await Swal.fire({
+                    title: 'Datos restaurados',
+                    text: 'Se restauró la información que estabas llenando. Revisa los datos y guarda nuevamente.',
+                    icon: 'success',
+                    confirmButtonText: 'Aceptar',
+                    confirmButtonColor: '#3085d6'
+                });
+            }
+
+            sessionStorage.removeItem('programacionPendiente');
+        }
+
+        function restaurarDatosProgramacion(d) {
+            const setVal = (id, v) => {
+                const el = document.getElementById(id);
+                if (el && v !== undefined && v !== null) el.value = v;
+            };
+            const setSel = (id, v) => {
+                const el = document.getElementById(id);
+                if (!el || v === undefined || v === null) return;
+                el.value = v;
+                $(el).trigger('change');
+            };
+            const setNum = (id, v) => {
+                const el = document.getElementById(id);
+                if (el && v !== undefined && v !== null) el.value = formatearMiles(Number(v) || 0);
+            };
+            const setSelectPorTexto = (id, texto) => {
+                const el = document.getElementById(id);
+                if (!el || !texto) return;
+                for (const op of el.options) {
+                    if (op.textContent.trim() === String(texto).trim()) {
+                        el.value = op.value;
+                        $(el).trigger('change');
+                        return;
+                    }
+                }
+            };
+
+            // Datos generales
+            setVal('inputArea', d.area);
+            setVal('inputDepartamento', d.departamento);
+            setVal('inputCorreo', d.correoContacto);
+            setSel('selectPrograma', d.pp);
+            setSel('selectComponente', d.componente);
+            setVal('inputActividad', d.nActividad);
+            setVal('inputJustificacion', d.justificacion);
+            setVal('inputDocumentacion', d.descripcionDocumento);
+            setSel('selectFederal', d.recursoFederal);
+            setSel('selectEstatal', d.recursoEstatal);
+            setVal('inputPrograma', d.programaSocial);
+            setVal('inputDescripcion', d.descripcionActividad);
+            setVal('inputIndicador', d.nombreIndicador);
+            setVal('inputDefinicion', d.definicionIndicador);
+            setSelectPorTexto('selectMedida', d.unidadMedida);
+            setVal('inputMedios', d.mediosVerificacion);
+            setSel('selectDesde', d.serieInformacionDesde);
+            setSel('selectHasta', d.serieInformacionHasta);
+            setVal('inputFuentes', d.fuenteInformacion);
+            setSel('selectDelegaciones', d.intervienenDelegaciones);
+            setVal('inputDelegaciones', d.intervienenDelegacionesManera);
+            setSel('selectAcumulable', d.selectAcumulable);
+            setNum('valorServicios', d.totalAnos);
+            setNum('valorPersonas', d.totalAnos2);
+            setSel('selectPersonas', d.beneficiarios);
+
+            // Línea base y meta anual
+            setSel('selectAnoBase', d.anoBase);
+            setVal('inputPorcentajeBase', d.porcentajeBase);
+            setNum('inputServicioBase', d.servicioBase);
+            setNum('inputPersonasBase', d.personasBase);
+            setVal('inputAnoMeta', d.anoMeta);
+            setVal('inputPorcentajeMeta', d.porcentajeMeta);
+            setNum('inputServicioMeta', d.servicioMeta);
+            setNum('inputServicioMetas', d.personasMeta);
+
+            // Trimestres
+            setNum('primerServicio', d.primerServicio);
+            setNum('segundoServicio', d.segundoServicio);
+            setNum('tercerServicio', d.tercerServicio);
+            setNum('cuartoServicio', d.cuartoServicio);
+            setNum('primerPersona', d.primerPersona);
+            setNum('segundoPersona', d.segundoPersona);
+            setNum('tercerPersona', d.tercerPersona);
+            setNum('cuartoPersona', d.cuartoPersona);
+
+            // Meses
+            const mesesOrden = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'];
+            mesesOrden.forEach((mes, i) => {
+                const el1 = document.querySelector(`.mes-grupo1[data-mes="${mes}"]`);
+                if (el1 && d.mesesServicios) el1.value = formatearMiles(Number(d.mesesServicios[i]) || 0);
+                const el2 = document.querySelector(`.mes-grupo2[data-mes="${mes}"]`);
+                if (el2 && d.mesesPersonas) el2.value = formatearMiles(Number(d.mesesPersonas[i]) || 0);
+            });
+
+            // Municipios
+            restaurarMunicipios('Grupo1', d.municipiosServicios);
+            restaurarMunicipios('Grupo2', d.municipiosPersonas);
+
+            // Acciones
+            const accionesList = document.getElementById('accionesList');
+            if (accionesList && Array.isArray(d.acciones)) {
+                accionesList.innerHTML = '';
+                contadorAcciones = Math.max(d.acciones.length, MIN_ACCIONES);
+                d.acciones.forEach((accion, index) => {
+                    accionesList.insertAdjacentHTML('beforeend', getAccionTemplate(index + 1));
+                    const item = accionesList.lastElementChild;
+                    const textarea = item.querySelector('textarea');
+                    const selectFreq = item.querySelector('select');
+                    const fechaInput = item.querySelector('.fecha-inicio');
+                    if (textarea) textarea.value = accion.descripcion || '';
+                    if (selectFreq) selectFreq.value = accion.frecuencia || '';
+                    if (fechaInput) fechaInput.value = accion.fechaInicio || '';
+                });
+                $(accionesList).find('select.select2-simple:not(.select2-hidden-accessible)')
+                    .select2({ width: '100%', language: 'es', minimumResultsForSearch: 8, dropdownParent: $('.app-content') });
+                actualizarNumeros();
+                actualizarBotones(document.getElementById('btnAgregarAccion'), document.getElementById('btnEliminarAccion'));
+            }
+
+            // Firmas
+            setVal('inputElaboro', d.elaboraNombre);
+            setVal('inputElaboroCargo', d.elaboroCargo);
+            setVal('inputReviso', d.revisionNombre);
+            setVal('inputRevisoCargo', d.revisionCargo);
+            setVal('inputAutorizo', d.autorizacionNombre);
+            setVal('inputAutorizoCargo', d.autorizacionCargo);
+
+            // Recalcular derivados
+            calcularSumatorias();
+            calcularTrimestres();
+            actualizarCamposMeta();
+            actualizarServiciosPorMunicipio();
+        }
+
+        function restaurarMunicipios(grupo, municipios) {
+            if (!Array.isArray(municipios)) return;
+            const tbody = document.getElementById(`tbody${grupo}`);
+            const tabla = document.getElementById(`tabla${grupo}`);
+            if (!tbody) return;
+
+            tbody.innerHTML = '';
+            municipios.forEach(m => {
+                if (!m.idMunicipio) return;
+                const datos = datosEstados[m.idMunicipio];
+                const fila = document.createElement('tr');
+                fila.setAttribute('data-id-municipio', m.idMunicipio);
+                fila.setAttribute('data-cantidad', m.cantidad || 0);
+                fila.innerHTML = `
+                    <td>${formatearMiles(m.cantidad || 0)}</td>
+                    <td>${datos?.municipio || 'Municipio'}</td>
+                    <td>${datos?.region || ''}</td>
+                    <td>${datos?.numeroRegion || ''}</td>
+                    <td>${datos?.clave || ''}</td>
+                    <td class="text-center"><button type="button" class="btn-accion btn-accion-eliminar btn-eliminar" title="Eliminar" data-bs-toggle="tooltip" data-bs-placement="top"><i class="fas fa-trash"></i></button></td>
+                `;
+                fila.querySelector('.btn-eliminar').addEventListener('click', function () {
+                    fila.remove();
+                    calcularTotalPersonas(grupo);
+                    actualizarServiciosPorMunicipio();
+                    if (tbody.children.length === 0) tabla.style.display = 'none';
+                });
+                tbody.appendChild(fila);
+            });
+
+            if (tbody.children.length > 0) {
+                tabla.style.display = 'block';
             }
         }
 
@@ -1741,6 +1985,7 @@
             }
 
             await cargarMunicipios();
+            await verificarRestauracionProgramacion();
             configurarAcciones();
             configurarSelectDelegaciones();
             configurarSelectPersonas();

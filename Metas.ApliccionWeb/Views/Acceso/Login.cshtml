@@ -56,6 +56,8 @@
                     <p class="login-subtitle">Ingresa tus credenciales para acceder al sistema</p>
 
                     <form asp-controller="Acceso" asp-action="Login" method="post" novalidate>
+                        <input type="hidden" name="ReturnUrl" value="@Context.Request.Query["ReturnUrl"]" />
+
                         <div class="field">
                             <input asp-for="Usuario" type="text" placeholder=" " autocomplete="username" autofocus />
                             <label asp-for="Usuario">Usuario</label>

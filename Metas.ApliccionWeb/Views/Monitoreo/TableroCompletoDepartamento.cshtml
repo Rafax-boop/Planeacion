@@ -296,7 +296,7 @@
                 const deptoParam = departamento ? `&departamento=${departamento}` : '&departamento=0';
                 const response = await fetch(`/Monitoreo/ObtenerDatosTableroCompletoOptimizado?anoFiscal=${anoFiscal}${deptoParam}`);
 
-                if (!response.ok) throw new Error('Error al cargar datos');
+                verificarRespuesta(response);
 
                 const result = await response.json();
 
@@ -309,6 +309,7 @@
 
             } catch (error) {
                 console.error('Error:', error);
+                if (error instanceof SesionExpiradaError) return manejarSesionExpirada();
                 tbody.innerHTML = `
                     <tr>
                         <td colspan="203" class="text-center py-5 text-danger">

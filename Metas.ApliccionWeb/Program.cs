@@ -17,7 +17,7 @@ builder.Services.AddScoped<IProgramacionService, ProgramacionService>();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(option => {
         option.LoginPath = "/Acceso/Login";
-        option.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+        option.ExpireTimeSpan = TimeSpan.FromHours(1);
     });
 
 builder.Services.InyectarDependencia(builder.Configuration);
