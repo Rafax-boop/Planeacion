@@ -110,10 +110,15 @@ namespace Metas.AplicacionWeb.Controllers
                 .Select(a => new SelectListItem { Value = a, Text = a })
                 .ToList();
 
+            var listaProgramas = (await _departamentoService.ObtenerProgramas())
+                .Select(p => new SelectListItem { Value = p.Clave, Text = p.Clave })
+                .ToList();
+
             var modelo = new VMDepartamentos
             {
                 ListaDepartamentos = listaDepartamentos.ToList(),
-                ListaAreas = listaAreas
+                ListaAreas = listaAreas,
+                ListaProgramas = listaProgramas
             };
 
             return View(modelo);
@@ -1211,6 +1216,10 @@ namespace Metas.AplicacionWeb.Controllers
         {
             var departamentos = await _departamentoService.ObtenerDepartamentos();
 
+            var listaProgramas = (await _departamentoService.ObtenerProgramas())
+                .Select(p => new SelectListItem { Value = p.Clave, Text = p.Clave })
+                .ToList();
+
             var modelo = new VMDepartamentos
             {
                 ListaDepartamentos = departamentos.Select(d => new SelectListItem
@@ -1218,7 +1227,8 @@ namespace Metas.AplicacionWeb.Controllers
                     Value = d.IdDepartamento.ToString(),
                     Text = d.Departamento1
                 }).OrderBy(item => item.Text)
-                .ToList()
+                .ToList(),
+                ListaProgramas = listaProgramas
             };
 
             // Pasar los valores por ViewBag para preseleccionar

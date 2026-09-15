@@ -157,10 +157,15 @@ namespace Metas.AplicacionWeb.Controllers
                 .Select(a => new SelectListItem { Value = a, Text = a })
                 .ToList();
 
+            var listaProgramas = (await _departamentoService.ObtenerProgramas())
+                .Select(p => new SelectListItem { Value = p.Clave, Text = p.Clave })
+                .ToList();
+
             var modelo = new VMDepartamentos
             {
                 ListaDepartamentos = listaDepartamentos.ToList(),
-                ListaAreas = listaAreas
+                ListaAreas = listaAreas,
+                ListaProgramas = listaProgramas
             };
 
             ViewBag.EsAdministrador = esAdmin;

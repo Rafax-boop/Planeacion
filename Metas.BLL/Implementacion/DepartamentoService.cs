@@ -17,13 +17,33 @@ namespace Metas.BLL.Implementacion
         private readonly IGenericRepository<PpCompuesto> _repositorioComponentes;
         private readonly IGenericRepository<UnidadMedidum> _repositorioMedidas;
         private readonly IGenericRepository<Municipio> _repositorioMunicipios;
+        private readonly IGenericRepository<Pp> _repositorioProgramas;
         public DepartamentoService(IGenericRepository<Departamento> repositorio, IGenericRepository<PpCompuesto> repositorioComponentes, IGenericRepository<UnidadMedidum> repositorioMedidas,
-            IGenericRepository<Municipio> repositorioMunicipios)
+            IGenericRepository<Municipio> repositorioMunicipios, IGenericRepository<Pp> repositorioProgramas)
         {
             _repositorio = repositorio;
             _repositorioComponentes = repositorioComponentes;
             _repositorioMedidas = repositorioMedidas;
             _repositorioMunicipios = repositorioMunicipios;
+            _repositorioProgramas = repositorioProgramas;
+        }
+
+        public async Task<List<Pp>> ObtenerProgramas()
+        {
+            var query = await _repositorioProgramas.Consultar();
+
+            var programas = query
+                .Where(p => !string.IsNullOrWhiteSpace(p.Clave))
+                .Select(p => new Pp
+                {
+                    IdPp = p.IdPp,
+                    Clave = p.Clave,
+                    NombrePp = p.NombrePp
+                })
+                .OrderBy(p => p.Clave)
+                .ToList();
+
+            return programas;
         }
 
         public async Task<List<PpCompuesto>> ObtenerComponentes()

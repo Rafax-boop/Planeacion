@@ -85,9 +85,10 @@
                     <label class="form-label fw-semibold small">Programa Presupuestal</label>
                     <select class="form-select select2-simple" id="filtroPrograma">
                         <option value="">Todos</option>
-                        <option value="Agenda">Agenda</option>
-                        <option value="E046">E046</option>
-                        <option value="E047">E047</option>
+                        @foreach (var programa in Model.ListaProgramas)
+                        {
+                            <option value="@programa.Value">@programa.Text</option>
+                        }
                     </select>
                 </div>
                 <div class="col-md-3">
