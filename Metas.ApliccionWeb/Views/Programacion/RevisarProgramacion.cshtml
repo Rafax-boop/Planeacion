@@ -16,12 +16,17 @@
 
     @if (Model.Estatus == 3)
     {
-        <div class="aviso-validado aviso-validado-centrado">
-            <i class="fas fa-check-circle"></i>
-            <div>
-                <h4>Programación Validada</h4>
-                <p>Esta programación ha sido aprobada y validada.</p>
+        <div class="d-flex justify-content-center align-items-center gap-3 flex-wrap mb-4">
+            <div class="aviso-validado aviso-validado-centrado" style="margin-bottom:0;">
+                <i class="fas fa-check-circle"></i>
+                <div>
+                    <h4>Programación Validada</h4>
+                    <p>Esta programación ha sido aprobada y validada.</p>
+                </div>
             </div>
+            <button type="button" class="btn-app-verde" id="btnExportarFicha">
+                <i class="fa-solid fa-file-pdf"></i> Exportar Ficha
+            </button>
         </div>
     }
 
@@ -1812,6 +1817,461 @@
             return acciones;
         }
 
+        // ========================================
+        // EXPORTAR FICHA A PDF
+        // ========================================
+        function obtenerTextoSeleccionado(id) {
+            const el = document.getElementById(id);
+            if (!el) return '';
+            if (el.tagName === 'SELECT') {
+                const opt = el.options[el.selectedIndex];
+                return opt ? opt.text.trim() : '';
+            }
+            return (el.value || '').trim();
+        }
+
+        function obtenerValor(id) {
+            return (document.getElementById(id)?.value || '').trim();
+        }
+
+        function formatearFechaDDMMAAAA(fecha) {
+            const dia = String(fecha.getDate()).padStart(2, '0');
+            const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+            const anio = fecha.getFullYear();
+            return `${dia}/${mes}/${anio}`;
+        }
+
+        function cargarImagenPdf(src) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => resolve(img);
+                img.onerror = () => resolve(null);
+                img.src = src;
+            });
+        }
+
+        async function exportarFichaPDF() {
+            const boton = document.getElementById('btnExportarFicha');
+            const textoOriginal = boton ? boton.innerHTML : '';
+            if (boton) {
+                boton.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generando PDF...';
+                boton.disabled = true;
+            }
+
+            try {
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'letter' });
+
+                const pageWidth = pdf.internal.pageSize.getWidth();
+                const pageHeight = pdf.internal.pageSize.getHeight();
+                const margin = 12;
+                const contentWidth = pageWidth - margin * 2;
+
+                const colorPrimario = [219, 39, 119];
+                const colorPrimarioOscuro = [190, 24, 93];
+                const colorSuave = [253, 231, 239];
+                const colorBorde = [226, 232, 240];
+                const colorTexto = [15, 23, 42];
+                const colorTextoSecundario = [100, 116, 139];
+
+                const anoFiscal = new Date().getFullYear() + 1;
+                const fechaGeneracion = formatearFechaDDMMAAAA(new Date());
+
+                const logoIzq = await cargarImagenPdf('/img/dif2.png');
+                const logoDer = await cargarImagenPdf('/img/corazon.png');
+
+                function dibujarEncabezado() {
+                    const alturaEncabezado = 32;
+                    pdf.setFillColor(255, 255, 255);
+                    pdf.rect(0, 0, pageWidth, alturaEncabezado, 'F');
+                    pdf.setDrawColor(...colorBorde);
+                    pdf.setLineWidth(0.4);
+                    pdf.line(0, alturaEncabezado, pageWidth, alturaEncabezado);
+
+                    if (logoIzq) {
+                        const w = 20, h = w / (logoIzq.width / logoIzq.height);
+                        pdf.addImage(logoIzq, 'PNG', margin, (alturaEncabezado - h) / 2, w, h);
+                    }
+                    if (logoDer) {
+                        const w = 16, h = w / (logoDer.width / logoDer.height);
+                        pdf.addImage(logoDer, 'PNG', pageWidth - margin - w, (alturaEncabezado - h) / 2, w, h);
+                    }
+
+                    pdf.setTextColor(...colorTexto);
+                    pdf.setFont(undefined, 'bold');
+                    pdf.setFontSize(9);
+                    pdf.text('SISTEMA PARA EL DESARROLLO INTEGRAL DE LA FAMILIA DEL ESTADO DE PUEBLA', pageWidth / 2, 11, { align: 'center' });
+                    pdf.setFont(undefined, 'normal');
+                    pdf.setFontSize(8);
+                    pdf.setTextColor(...colorTextoSecundario);
+                    pdf.text('DIRECCIÓN DE PLANEACIÓN Y EVALUACIÓN', pageWidth / 2, 17, { align: 'center' });
+                    pdf.text(`PROCESO DE PROGRAMACIÓN PARA EL EJERCICIO FISCAL ${anoFiscal}`, pageWidth / 2, 22, { align: 'center' });
+                    pdf.setFontSize(7);
+                    pdf.text(`Generado el ${fechaGeneracion}`, pageWidth / 2, 27, { align: 'center' });
+
+                    return alturaEncabezado + 6;
+                }
+
+                let y = dibujarEncabezado();
+
+                function saltoPagina(alturaNecesaria) {
+                    if (y + alturaNecesaria > pageHeight - 15) {
+                        pdf.addPage();
+                        y = dibujarEncabezado();
+                    }
+                }
+
+                // Título principal (solo primera página): texto + línea rosa, sin caja rellena
+                pdf.setFont(undefined, 'bold');
+                pdf.setFontSize(13);
+                pdf.setTextColor(...colorTexto);
+                pdf.text(`FICHA TÉCNICA DE ACTIVIDADES ${anoFiscal}`, pageWidth / 2, y + 6, { align: 'center' });
+                y += 9;
+                pdf.setDrawColor(...colorPrimario);
+                pdf.setLineWidth(0.8);
+                pdf.line(margin, y, pageWidth - margin, y);
+                y += 6;
+
+                function tituloSeccion(texto) {
+                    saltoPagina(12);
+                    pdf.setFont(undefined, 'bold');
+                    pdf.setFontSize(10);
+                    pdf.setTextColor(...colorPrimario);
+                    pdf.text(texto.toUpperCase(), pageWidth / 2, y + 4.5, { align: 'center' });
+                    y += 7;
+                    pdf.setDrawColor(...colorBorde);
+                    pdf.setLineWidth(0.5);
+                    pdf.line(margin, y, pageWidth - margin, y);
+                    y += 5;
+                }
+
+                function subtitulo(texto) {
+                    saltoPagina(9);
+                    pdf.setFont(undefined, 'bold');
+                    pdf.setFontSize(7.5);
+                    pdf.setTextColor(...colorTextoSecundario);
+                    pdf.text(texto.toUpperCase(), pageWidth / 2, y + 3.5, { align: 'center' });
+                    y += 5.5;
+                    pdf.setDrawColor(...colorBorde);
+                    pdf.setLineWidth(0.3);
+                    pdf.line(margin, y, pageWidth - margin, y);
+                    y += 4;
+                }
+
+                const anchoEtiqueta = 62;
+                const anchoValor = contentWidth - anchoEtiqueta;
+
+                function medirFila(label, value, anchoEtq, anchoVal) {
+                    pdf.setFont(undefined, 'bold');
+                    pdf.setFontSize(7.5);
+                    const lineasLabel = pdf.splitTextToSize(label, anchoEtq - 4);
+                    pdf.setFont(undefined, 'normal');
+                    pdf.setFontSize(8.5);
+                    const lineasValor = pdf.splitTextToSize(value && value.length ? value : '—', anchoVal - 4);
+                    const lineas = Math.max(lineasLabel.length, lineasValor.length);
+                    return { alto: Math.max(lineas * 4, 6), lineasLabel, lineasValor };
+                }
+
+                function filaCampo(label, value) {
+                    const { alto, lineasLabel, lineasValor } = medirFila(label, value, anchoEtiqueta, anchoValor);
+                    saltoPagina(alto + 7);
+
+                    pdf.setFont(undefined, 'bold');
+                    pdf.setFontSize(7.5);
+                    pdf.setTextColor(...colorTextoSecundario);
+                    pdf.text(lineasLabel, margin, y + 4);
+
+                    pdf.setFont(undefined, 'normal');
+                    pdf.setFontSize(8.5);
+                    pdf.setTextColor(...colorTexto);
+                    pdf.text(lineasValor, margin + anchoEtiqueta, y + 4);
+
+                    y += alto + 3;
+                    pdf.setDrawColor(...colorBorde);
+                    pdf.setLineWidth(0.2);
+                    pdf.line(margin, y, margin + contentWidth, y);
+                    y += 4;
+                }
+
+                function filaCamposDobles(campos) {
+                    const mitad = contentWidth / campos.length;
+                    const anchoEtiquetaMitad = 38;
+                    const anchoValorMitad = mitad - anchoEtiquetaMitad - 6;
+                    const medidas = campos.map(c => medirFila(c.label, c.value, anchoEtiquetaMitad, anchoValorMitad));
+                    const maxAlto = Math.max(...medidas.map(m => m.alto));
+                    saltoPagina(maxAlto + 7);
+
+                    campos.forEach((c, i) => {
+                        const x = margin + i * mitad;
+                        pdf.setFont(undefined, 'bold');
+                        pdf.setFontSize(7.5);
+                        pdf.setTextColor(...colorTextoSecundario);
+                        pdf.text(medidas[i].lineasLabel, x, y + 4);
+
+                        pdf.setFont(undefined, 'normal');
+                        pdf.setFontSize(8.5);
+                        pdf.setTextColor(...colorTexto);
+                        pdf.text(medidas[i].lineasValor, x + anchoEtiquetaMitad, y + 4);
+
+                        if (i > 0) {
+                            pdf.setDrawColor(...colorBorde);
+                            pdf.setLineWidth(0.2);
+                            pdf.line(x - 3, y, x - 3, y + maxAlto);
+                        }
+                    });
+
+                    y += maxAlto + 3;
+                    pdf.setDrawColor(...colorBorde);
+                    pdf.setLineWidth(0.2);
+                    pdf.line(margin, y, margin + contentWidth, y);
+                    y += 4;
+                }
+
+                function encabezadoCuadricula(encabezados, anchoLabel) {
+                    const cols = encabezados.length;
+                    const anchoCol = (contentWidth - anchoLabel) / cols;
+                    const alto = 6;
+                    saltoPagina(alto + 2);
+                    encabezados.forEach((h, i) => {
+                        const x = margin + anchoLabel + i * anchoCol + 1;
+                        pdf.setFillColor(...colorSuave);
+                        pdf.roundedRect(x, y, anchoCol - 2, alto, 1.4, 1.4, 'F');
+                        pdf.setFont(undefined, 'bold');
+                        pdf.setFontSize(7);
+                        pdf.setTextColor(...colorPrimarioOscuro);
+                        pdf.text(h, x + (anchoCol - 2) / 2, y + 4.1, { align: 'center' });
+                    });
+                    y += alto + 2;
+                }
+
+                function filaCuadricula(labelFila, valores, anchoLabel) {
+                    const cols = valores.length;
+                    const anchoCol = (contentWidth - anchoLabel) / cols;
+                    const alto = 7;
+                    saltoPagina(alto + 3);
+                    if (anchoLabel > 0 && labelFila) {
+                        pdf.setFont(undefined, 'bold');
+                        pdf.setFontSize(7.5);
+                        pdf.setTextColor(...colorTextoSecundario);
+                        pdf.text(labelFila, margin, y + 4.6);
+                    }
+                    valores.forEach((v, i) => {
+                        const x = margin + anchoLabel + i * anchoCol;
+                        pdf.setFont(undefined, 'normal');
+                        pdf.setFontSize(8.5);
+                        pdf.setTextColor(...colorTexto);
+                        pdf.text(String(v && v.length ? v : '0'), x + anchoCol / 2, y + 4.6, { align: 'center' });
+                    });
+                    y += alto;
+                    pdf.setDrawColor(...colorBorde);
+                    pdf.setLineWidth(0.2);
+                    pdf.line(margin, y, margin + contentWidth, y);
+                    y += 3;
+                }
+
+                function tablaAcciones(acciones) {
+                    tituloSeccion('Acciones Necesarias para Realizar la Actividad Principal');
+
+                    const anchoNum = 10, anchoFrec = 30, anchoFecha = 26;
+                    const anchoDesc = contentWidth - anchoNum - anchoFrec - anchoFecha;
+                    const altoHeader = 6;
+                    saltoPagina(altoHeader + 3);
+
+                    pdf.setFont(undefined, 'bold');
+                    pdf.setFontSize(7);
+                    pdf.setTextColor(...colorTextoSecundario);
+                    pdf.text('NÚM', margin + anchoNum / 2, y + 4, { align: 'center' });
+                    pdf.text('ACTIVIDAD', margin + anchoNum, y + 4);
+                    pdf.text('FRECUENCIA', margin + anchoNum + anchoDesc + anchoFrec / 2, y + 4, { align: 'center' });
+                    pdf.text('FECHA', margin + anchoNum + anchoDesc + anchoFrec + anchoFecha / 2, y + 4, { align: 'center' });
+                    y += altoHeader;
+                    pdf.setDrawColor(...colorBorde);
+                    pdf.setLineWidth(0.4);
+                    pdf.line(margin, y, margin + contentWidth, y);
+                    y += 3;
+
+                    acciones.forEach((a, idx) => {
+                        pdf.setFont(undefined, 'normal');
+                        pdf.setFontSize(7.5);
+                        const lineasDesc = pdf.splitTextToSize(a.descripcion || '—', anchoDesc - 4);
+                        const alto = Math.max(lineasDesc.length * 3.8, 6);
+                        saltoPagina(alto + 7);
+
+                        pdf.setTextColor(...colorTexto);
+                        pdf.text(String(idx + 1), margin + anchoNum / 2, y + 3.6, { align: 'center' });
+                        pdf.text(lineasDesc, margin + anchoNum, y + 3.6);
+                        pdf.setTextColor(...colorTextoSecundario);
+                        pdf.text((a.frecuencia || '—').toUpperCase(), margin + anchoNum + anchoDesc + anchoFrec / 2, y + 3.6, { align: 'center' });
+                        const fechaTexto = a.fechaInicio ? formatearFechaDDMMAAAA(new Date(a.fechaInicio + 'T00:00:00')) : '—';
+                        pdf.text(fechaTexto, margin + anchoNum + anchoDesc + anchoFrec + anchoFecha / 2, y + 3.6, { align: 'center' });
+
+                        y += alto + 3;
+                        pdf.setDrawColor(...colorBorde);
+                        pdf.setLineWidth(0.2);
+                        pdf.line(margin, y, margin + contentWidth, y);
+                        y += 3;
+                    });
+                }
+
+                function bloqueFirmas(firmas) {
+                    tituloSeccion('Firmas');
+                    const altoBloque = 24;
+                    saltoPagina(altoBloque + 4);
+                    const anchoCol = contentWidth / firmas.length;
+
+                    firmas.forEach((f, i) => {
+                        const x = margin + i * anchoCol;
+                        const centro = x + anchoCol / 2;
+
+                        if (i > 0) {
+                            pdf.setDrawColor(...colorBorde);
+                            pdf.setLineWidth(0.2);
+                            pdf.line(x, y, x, y + altoBloque);
+                        }
+
+                        pdf.setFont(undefined, 'bold');
+                        pdf.setFontSize(7.5);
+                        pdf.setTextColor(...colorTextoSecundario);
+                        pdf.text(f.titulo.toUpperCase(), centro, y + 5, { align: 'center' });
+
+                        pdf.setDrawColor(...colorTexto);
+                        pdf.setLineWidth(0.3);
+                        pdf.line(x + 10, y + 15, x + anchoCol - 10, y + 15);
+
+                        pdf.setFont(undefined, 'bold');
+                        pdf.setFontSize(8);
+                        pdf.setTextColor(...colorTexto);
+                        const nombreLineas = pdf.splitTextToSize(f.nombre && f.nombre.length ? f.nombre : '—', anchoCol - 14);
+                        pdf.text(nombreLineas, centro, y + 19, { align: 'center' });
+
+                        pdf.setFont(undefined, 'normal');
+                        pdf.setFontSize(7);
+                        pdf.setTextColor(...colorTextoSecundario);
+                        const cargoLineas = pdf.splitTextToSize(f.cargo && f.cargo.length ? f.cargo : '—', anchoCol - 14);
+                        pdf.text(cargoLineas, centro, y + 19 + nombreLineas.length * 3.4, { align: 'center' });
+                    });
+
+                    y += altoBloque;
+                }
+
+                // ===== DATOS DEL SOLICITANTE =====
+                tituloSeccion('Datos del solicitante');
+                filaCampo('1. FECHA DE ELABORACIÓN', formatearFechaDDMMAAAA(new Date()));
+                filaCamposDobles([
+                    { label: '2. ÁREA', value: obtenerValor('inputArea') },
+                    { label: 'DEPARTAMENTO', value: obtenerValor('inputDepartamento') }
+                ]);
+                filaCampo('3. CORREO ELECTRÓNICO', obtenerValor('inputCorreo'));
+
+                // ===== DATOS DE LA SOLICITUD =====
+                tituloSeccion('Datos de la solicitud');
+                filaCampo('4. PROGRAMA PRESUPUESTARIO', obtenerTextoSeleccionado('selectPrograma'));
+                filaCampo('5. NÚMERO DE COMPONENTE', obtenerTextoSeleccionado('selectComponente'));
+                filaCampo('6. NÚMERO DE ACTIVIDAD', obtenerValor('inputActividad'));
+                filaCampo('7. JUSTIFICACIÓN', obtenerValor('inputJustificacion'));
+                filaCampo('8. DOCUMENTACIÓN SOPORTE DE LA JUSTIFICACIÓN', obtenerValor('inputDocumentacion'));
+                filaCamposDobles([
+                    { label: '9. RECURSO FEDERAL', value: obtenerTextoSeleccionado('selectFederal') },
+                    { label: 'RECURSO ESTATAL', value: obtenerTextoSeleccionado('selectEstatal') }
+                ]);
+
+                // ===== DATOS GENERALES =====
+                tituloSeccion('Datos Generales');
+                filaCampo('10. PROGRAMA SOCIAL, SERVICIO Y/O PROYECTO', obtenerValor('inputPrograma'));
+                filaCampo('11. DESCRIPCIÓN DE LA ACTIVIDAD', obtenerValor('inputDescripcion'));
+                filaCampo('12. NOMBRE DEL INDICADOR', obtenerValor('inputIndicador'));
+                filaCampo('13. DEFINICIÓN DEL INDICADOR', obtenerValor('inputDefinicion'));
+
+                subtitulo('14. Calendarización');
+                encabezadoCuadricula(['1ER TRIM.', '2DO. TRIM.', '3ER. TRIM.', '4TO. TRIM.'], 30);
+                filaCuadricula('SERVICIOS', [
+                    obtenerValor('primerServicio'), obtenerValor('segundoServicio'),
+                    obtenerValor('tercerServicio'), obtenerValor('cuartoServicio')
+                ], 30);
+                filaCuadricula('PERSONAS', [
+                    obtenerValor('primerPersona'), obtenerValor('segundoPersona'),
+                    obtenerValor('tercerPersona'), obtenerValor('cuartoPersona')
+                ], 30);
+
+                filaCampo('15. UNIDAD DE MEDIDA', obtenerTextoSeleccionado('selectMedida'));
+                filaCampo('16. MEDIOS DE VERIFICACIÓN', obtenerValor('inputMedios'));
+                filaCamposDobles([
+                    { label: '17. DESDE', value: obtenerTextoSeleccionado('selectDesde') },
+                    { label: 'HASTA', value: obtenerTextoSeleccionado('selectHasta') }
+                ]);
+                filaCampo('18. FUENTES DE INFORMACIÓN', obtenerValor('inputFuentes'));
+                filaCamposDobles([
+                    { label: '19. INTERVIENEN DELEGACIONES REGIONALES', value: obtenerTextoSeleccionado('selectDelegaciones') },
+                    { label: '20. ¿DE QUÉ MANERA?', value: obtenerValor('inputDelegaciones') }
+                ]);
+
+                // ===== DETERMINACIÓN DE METAS =====
+                tituloSeccion('Determinación de Metas');
+                subtitulo('Línea Base');
+                filaCampo('21. AÑO', obtenerTextoSeleccionado('selectAnoBase'));
+                filaCampo('22. PORCENTAJE DE CUMPLIMIENTO', obtenerValor('inputPorcentajeBase'));
+                filaCampo('23. NO. DE BIEN O SERVICIO ENTREGADO', obtenerValor('inputServicioBase'));
+                filaCampo('24. NO. DE PERSONAS ATENDIDAS', obtenerValor('inputPersonasBase'));
+
+                subtitulo('Meta y Periodo de Cumplimiento');
+                filaCampo('25. AÑO', obtenerValor('inputAnoMeta'));
+                filaCampo('26. PORCENTAJE DE CUMPLIMIENTO', obtenerValor('inputPorcentajeMeta'));
+                filaCampo('27. NO. DE BIEN O SERVICIO A ENTREGAR', obtenerValor('inputServicioMeta'));
+                filaCampo('28. NO. DE PERSONAS POR ATENDER', obtenerValor('inputServicioMetas'));
+
+                // ===== META ANUAL =====
+                tituloSeccion('Meta Anual');
+                filaCamposDobles([
+                    { label: '30. PERSONAS/INSTITUCIONES', value: obtenerTextoSeleccionado('selectPersonas') },
+                    { label: 'ACUMULABLE', value: obtenerTextoSeleccionado('selectAcumulable') }
+                ]);
+
+                const mesesPrimerSemestre = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN'];
+                const mesesSegundoSemestre = ['JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'];
+                const valoresServicios = Array.from(document.querySelectorAll('.mes-grupo1')).map(i => i.value);
+                const valoresPersonas = Array.from(document.querySelectorAll('.mes-grupo2')).map(i => i.value);
+
+                subtitulo('29. Bien o Servicio (mensual)');
+                encabezadoCuadricula(mesesPrimerSemestre, 0);
+                filaCuadricula('', valoresServicios.slice(0, 6), 0);
+                encabezadoCuadricula(mesesSegundoSemestre, 0);
+                filaCuadricula('', valoresServicios.slice(6, 12), 0);
+
+                subtitulo('39. Beneficiarios (mensual)');
+                encabezadoCuadricula(mesesPrimerSemestre, 0);
+                filaCuadricula('', valoresPersonas.slice(0, 6), 0);
+                encabezadoCuadricula(mesesSegundoSemestre, 0);
+                filaCuadricula('', valoresPersonas.slice(6, 12), 0);
+
+                filaCamposDobles([
+                    { label: 'VALOR DE SERVICIOS', value: obtenerValor('valorServicios') },
+                    { label: 'VALOR DE PERSONAS', value: obtenerValor('valorPersonas') }
+                ]);
+
+                // ===== ACCIONES NECESARIAS =====
+                const acciones = recolectarAcciones();
+                tablaAcciones(acciones.length ? acciones : [{ descripcion: 'Sin acciones registradas', frecuencia: '', fechaInicio: null }]);
+
+                // ===== FIRMAS =====
+                bloqueFirmas([
+                    { titulo: 'Elaboró', nombre: obtenerValor('inputElaboro'), cargo: obtenerValor('inputElaboroCargo') },
+                    { titulo: 'Revisó', nombre: obtenerValor('inputReviso'), cargo: obtenerValor('inputRevisoCargo') },
+                    { titulo: 'Autorizó', nombre: obtenerValor('inputAutorizo'), cargo: obtenerValor('inputAutorizoCargo') }
+                ]);
+
+                const numeroActividad = obtenerValor('inputActividad') || 'actividad';
+                pdf.save(`Ficha_Tecnica_${numeroActividad}_${anoFiscal}.pdf`);
+            } catch (error) {
+                console.error('Error al generar el PDF de la ficha:', error);
+                Swal.fire({ icon: 'error', title: 'Error', text: 'No se pudo generar el PDF de la ficha.', confirmButtonText: 'Entendido' });
+            } finally {
+                if (boton) {
+                    boton.innerHTML = textoOriginal;
+                    boton.disabled = false;
+                }
+            }
+        }
+
         function configurarAccionesRevisar() {
             const accionesList = document.getElementById('accionesList');
             const btnAgregar = document.getElementById('btnAgregarAccion');
@@ -2715,6 +3175,11 @@
             const btnGuardarBorrador = document.getElementById('btnGuardarBorrador');
             if (btnGuardarBorrador) {
                 btnGuardarBorrador.addEventListener('click', () => guardarCambiosUsuario(false));
+            }
+
+            const btnExportarFicha = document.getElementById('btnExportarFicha');
+            if (btnExportarFicha) {
+                btnExportarFicha.addEventListener('click', exportarFichaPDF);
             }
 
             // Calcular valores iniciales
