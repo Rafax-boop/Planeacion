@@ -393,6 +393,7 @@ namespace Metas.BLL.Implementacion
                 {
                     // Datos generales
                     Id = idProgramacion,
+                    FechaSolicitud = programacionEntidad.FechaSolicitud,
                     Area = programacionEntidad.Area,
                     Departamento = llenadoInterno?.Departamento,
                     CorreoContacto = programacionEntidad.CorreoElectro,

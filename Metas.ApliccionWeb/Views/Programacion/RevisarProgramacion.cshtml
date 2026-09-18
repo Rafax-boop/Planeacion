@@ -55,7 +55,7 @@
         <div class="ficha-solicitante-body">
             <div class="campo-ficha">
                 <div class="campo-ficha-label campo-ficha-label-corta">1. FECHA DE ELABORACIÓN</div>
-                <div class="campo-ficha-control fw-semibold">@DateTime.Now.ToString("dd/MM/yyyy")</div>
+                <div class="campo-ficha-control fw-semibold">@(Model.FechaSolicitud?.ToString("dd/MM/yyyy") ?? DateTime.Now.ToString("dd/MM/yyyy"))</div>
             </div>
 
             <div class="campo-ficha">
@@ -2156,7 +2156,8 @@
 
                 // ===== DATOS DEL SOLICITANTE =====
                 tituloSeccion('Datos del solicitante');
-                filaCampo('1. FECHA DE ELABORACIÓN', formatearFechaDDMMAAAA(new Date()));
+                const fechaElaboracion = '@(Model.FechaSolicitud?.ToString("dd/MM/yyyy") ?? "")' || formatearFechaDDMMAAAA(new Date());
+                filaCampo('1. FECHA DE ELABORACIÓN', fechaElaboracion);
                 filaCamposDobles([
                     { label: '2. ÁREA', value: obtenerValor('inputArea') },
                     { label: 'DEPARTAMENTO', value: obtenerValor('inputDepartamento') }

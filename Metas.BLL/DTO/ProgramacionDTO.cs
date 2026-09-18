@@ -13,6 +13,9 @@ namespace Metas.BLL.DTO
         [JsonPropertyName("id")]
         public int Id { get; set; }
 
+        [JsonPropertyName("fechaSolicitud")]
+        public DateOnly? FechaSolicitud { get; set; }
+
         [JsonPropertyName("area")]
         public string Area { get; set; }
 
