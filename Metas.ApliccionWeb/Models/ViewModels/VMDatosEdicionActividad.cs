@@ -7,6 +7,7 @@ namespace Metas.AplicacionWeb.Models.ViewModels
         // Identificador
         public int IdProceso { get; set; }
         public int AnoFiscal { get; set; }
+        public int? IdDepartamento { get; set; }
         public string Departamento { get; set; }
         public string Area { get; set; }
 

@@ -5,6 +5,7 @@ using Metas.Entity;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,6 +19,12 @@ namespace Metas.BLL.Implementacion
         private readonly IGenericRepository<UnidadMedidum> _repositorioMedidas;
         private readonly IGenericRepository<Municipio> _repositorioMunicipios;
         private readonly IGenericRepository<Pp> _repositorioProgramas;
+
+        // El catalogo esta en espanol y la app fija la cultura en en-US, asi que con un
+        // OrderBy a secas las palabras acentuadas (Area, Numero) caerian despues de la Z.
+        private static readonly StringComparer ComparadorCatalogo =
+            StringComparer.Create(CultureInfo.GetCultureInfo("es-ES"), false);
+
         public DepartamentoService(IGenericRepository<Departamento> repositorio, IGenericRepository<PpCompuesto> repositorioComponentes, IGenericRepository<UnidadMedidum> repositorioMedidas,
             IGenericRepository<Municipio> repositorioMunicipios, IGenericRepository<Pp> repositorioProgramas)
         {
@@ -141,16 +148,22 @@ namespace Metas.BLL.Implementacion
         {
             var query = await _repositorioMedidas.Consultar();
 
+            // Se normaliza antes de agrupar: el Distinct() sobre el POCO comparaba por
+            // referencia y no deduplicaba nada.
             var medidas = query
-                .Select(d => new UnidadMedidum
-                {
-                    IdUnidad = d.IdUnidad,
-                    Valor = d.Valor
-                })
-                .Distinct()
+                .Where(d => !string.IsNullOrWhiteSpace(d.Valor))
+                .Select(d => new { IdUnidad = d.IdUnidad, Valor = d.Valor!.Trim() })
                 .ToList();
 
-            return medidas;
+            return medidas
+                .GroupBy(d => d.Valor, StringComparer.OrdinalIgnoreCase)
+                .OrderBy(g => g.Key, ComparadorCatalogo)
+                .Select(g => new UnidadMedidum
+                {
+                    IdUnidad = g.Min(d => d.IdUnidad),
+                    Valor = g.Key
+                })
+                .ToList();
         }
 
         public async Task<List<Municipio>> ObtenerMunicipios()

@@ -205,9 +205,11 @@
                             <div class="col-md-4">
                                 <label for="selectProgramaPresupuestario" class="form-label small text-muted mb-1">Programa Presupuestario</label>
                                 <select class="form-select select2-simple" id="selectProgramaPresupuestario" name="PP">
-                                    <option value="3">Agenda</option>
-                                    <option value="1">E046</option>
-                                    <option value="2">E047</option>
+                                    <option value="">-- Seleccione un programa --</option>
+                                    @foreach (var programa in Model.ListaProgramasId)
+                                    {
+                                        <option value="@programa.Value">@programa.Text</option>
+                                    }
                                 </select>
                             </div>
                             <div class="col-md-4">
@@ -338,7 +340,16 @@
     <script>
         const esAdmin = @(User.IsInRole("Administrador").ToString().ToLower())
 
-        $('.select2-simple').select2({ width: '100%', language: 'es', minimumResultsForSearch: 8, dropdownParent: $('.app-content') });
+        // Selects de la barra de filtros: el dropdown se adjunta al contenedor con scroll de la app.
+        $('.select2-simple').not('#modalModificarActividad .select2-simple').select2({ width: '100%', language: 'es', minimumResultsForSearch: 8, dropdownParent: $('.app-content') });
+
+        // Selects del modal: el dropdown DEBE quedar dentro de #modalModificarActividad.
+        // Bootstrap 5.3 (FocusTrap) registra 'focusin' en document y, si el foco cae fuera del
+        // modal, lo devuelve al primer elemento enfocable; con el dropdown fuera del modal eso le
+        // roba el foco al buscador de select2 y se vuelve imposible escribir para filtrar.
+        // Se ancla en el .modal y no en .modal-content (overflow:hidden, lo recortaria) ni en
+        // .modal-dialog (pointer-events:none, las opciones dejarian de ser clicables).
+        $('#modalModificarActividad .select2-simple').select2({ width: '100%', language: 'es', minimumResultsForSearch: 8, dropdownParent: $('#modalModificarActividad') });
 
         // ========================================
         // CASCADA ÁREA -> DEPARTAMENTO
@@ -803,7 +814,7 @@
 
             function limpiarFormularioModal() {
                 $('#IdProcesoModal').val('');
-                $('#selectProgramaPresupuestario').val('Agenda').trigger('change');
+                $('#selectProgramaPresupuestario').val('').trigger('change');
                 $('#ComponenteModal').val('');
                 $('#ActividadModal').val('');
                 $('#DescripcionActividadModal').val('');
@@ -965,7 +976,7 @@
                                 );
                             });
                         }
-                        selectMedida.trigger('change');
+                        selectMedida.trigger('change.select2');
                     },
                     error: function() {
                         console.error('Error al cargar las unidades de medida');
@@ -996,7 +1007,7 @@
                 $('#ComponenteModal').val(data.componente);
                 $('#ActividadModal').val(data.actividad);
                 $('#DescripcionActividadModal').val(data.descripcionActividad);
-                selectMedida.val(unidadMedidaActual).trigger('change');
+                selectMedida.val(unidadMedidaActual).trigger('change.select2');
                 $('#ProgramaSocialModal').val(data.programaSocial);
 
                 const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];

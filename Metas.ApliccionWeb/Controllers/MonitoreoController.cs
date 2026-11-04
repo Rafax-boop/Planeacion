@@ -110,15 +110,22 @@ namespace Metas.AplicacionWeb.Controllers
                 .Select(a => new SelectListItem { Value = a, Text = a })
                 .ToList();
 
-            var listaProgramas = (await _departamentoService.ObtenerProgramas())
+            var programas = await _departamentoService.ObtenerProgramas();
+
+            var listaProgramas = programas
                 .Select(p => new SelectListItem { Value = p.Clave, Text = p.Clave })
+                .ToList();
+
+            var listaProgramasId = programas
+                .Select(p => new SelectListItem { Value = p.IdPp.ToString(), Text = p.Clave })
                 .ToList();
 
             var modelo = new VMDepartamentos
             {
                 ListaDepartamentos = listaDepartamentos.ToList(),
                 ListaAreas = listaAreas,
-                ListaProgramas = listaProgramas
+                ListaProgramas = listaProgramas,
+                ListaProgramasId = listaProgramasId
             };
 
             return View(modelo);
@@ -657,6 +664,22 @@ namespace Metas.AplicacionWeb.Controllers
                     return Json(new { success = false, message = "La actividad es requerida." });
                 }
 
+                if (!modelo.IdDepartamento.HasValue || modelo.IdDepartamento.Value <= 0)
+                {
+                    return Json(new { success = false, message = "El departamento es requerido." });
+                }
+
+                // Resolver el departamento seleccionado a su nombre y área reales
+                var departamentos = await _departamentoService.ObtenerDepartamentos();
+                var departamento = departamentos.FirstOrDefault(d => d.IdDepartamento == modelo.IdDepartamento.Value);
+
+                if (departamento == null)
+                {
+                    return Json(new { success = false, message = "El departamento seleccionado no es válido." });
+                }
+
+                modelo.Departamento = departamento.Departamento1;
+                modelo.Area = departamento.Area;
 
                 // Normalizar UnidadMedida antes del mapeo
                 modelo.UnidadMedida = modelo.UnidadMedida?.ToUpperInvariant();
@@ -699,6 +722,12 @@ namespace Metas.AplicacionWeb.Controllers
         {
             var departamentos = await _departamentoService.ObtenerDepartamentos();
             var medidas = await _departamentoService.ObtenerMedidas();
+            var programas = await _departamentoService.ObtenerProgramas();
+
+            var clavesProgramas = programas
+                .Where(p => !string.IsNullOrWhiteSpace(p.Clave))
+                .Select(p => p.Clave!.Trim())
+                .ToList();
 
             using var workbook = new XLWorkbook();
             var hoja = workbook.Worksheets.Add("Actividades");
@@ -732,9 +761,10 @@ namespace Metas.AplicacionWeb.Controllers
             hojaListas.Cell(1, 3).Value = "Departamento";
             hojaListas.Range(1, 1, 1, 3).Style.Font.Bold = true;
 
-            hojaListas.Cell(2, 1).Value = "Agenda";
-            hojaListas.Cell(3, 1).Value = "E046";
-            hojaListas.Cell(4, 1).Value = "E047";
+            for (int i = 0; i < clavesProgramas.Count; i++)
+            {
+                hojaListas.Cell(i + 2, 1).Value = clavesProgramas[i];
+            }
 
             var nombresMedidas = medidas
                 .Where(m => !string.IsNullOrWhiteSpace(m.Valor))
@@ -761,7 +791,7 @@ namespace Metas.AplicacionWeb.Controllers
             string refMedidas = $"'Listas'!$B$2:$B${nombresMedidas.Count + 1}";
             string refDepartamentos = $"'Listas'!$C$2:$C${nombresDepartamentos.Count + 1}";
 
-            hoja.Range(2, 2, FILAS_DATOS, 2).CreateDataValidation().List("'Listas'!$A$2:$A$4");
+            hoja.Range(2, 2, FILAS_DATOS, 2).CreateDataValidation().List($"'Listas'!$A$2:$A${clavesProgramas.Count + 1}");
             if (nombresMedidas.Any())
             {
                 hoja.Range(2, 6, FILAS_DATOS, 6).CreateDataValidation().List(refMedidas);
@@ -785,7 +815,7 @@ namespace Metas.AplicacionWeb.Controllers
             {
                 "1. Llena una fila por cada actividad a registrar. No dejes filas en blanco en medio.",
                 "2. Año Fiscal: año del ejercicio (ej. 2026).",
-                "3. Programa Presupuestario: elige de la lista desplegable (Agenda, E046 o E047).",
+                "3. Programa Presupuestario: elige de la lista desplegable (" + string.Join(", ", clavesProgramas) + ").",
                 "4. Componente y Actividad: números obligatorios mayores a cero.",
                 "5. Descripción Actividad: texto descriptivo de la actividad.",
                 "6. Unidad Medida: elige de la lista desplegable.",
@@ -915,6 +945,12 @@ namespace Metas.AplicacionWeb.Controllers
 
             var departamentos = await _departamentoService.ObtenerDepartamentos();
             var medidas = await _departamentoService.ObtenerMedidas();
+            var programas = await _departamentoService.ObtenerProgramas();
+
+            var clavesProgramas = programas
+                .Where(p => !string.IsNullOrWhiteSpace(p.Clave))
+                .Select(p => p.Clave!.Trim())
+                .ToList();
 
             var medidasValidas = medidas
                 .Where(m => !string.IsNullOrWhiteSpace(m.Valor))
@@ -962,10 +998,10 @@ namespace Metas.AplicacionWeb.Controllers
                             modelo.AnoFiscal = anoFiscal;
 
                             // Programa Presupuestario
-                            var idPP = ResolverProgramaPresupuestario(fila.Cell(2).GetString().Trim());
+                            var idPP = ResolverProgramaPresupuestario(fila.Cell(2).GetString(), programas);
                             if (idPP == null)
                             {
-                                resultado.Errores.Add($"Fila {numeroFila}: Programa Presupuestario inválido. Use Agenda, E046 o E047.");
+                                resultado.Errores.Add($"Fila {numeroFila}: Programa Presupuestario inválido. Use: {string.Join(", ", clavesProgramas)}.");
                                 continue;
                             }
                             modelo.PP = idPP;
@@ -1096,24 +1132,30 @@ namespace Metas.AplicacionWeb.Controllers
             return null;
         }
 
-        private int? ResolverProgramaPresupuestario(string valor)
+        private int? ResolverProgramaPresupuestario(string valor, List<Pp> programas)
         {
-            if (int.TryParse(valor.Trim(), out int id))
+            var texto = valor?.Trim();
+
+            if (string.IsNullOrEmpty(texto))
             {
-                if (id == 1 || id == 2 || id == 3)
-                {
-                    return id;
-                }
                 return null;
             }
 
-            return valor.Trim().ToUpperInvariant() switch
+            var porClave = programas.FirstOrDefault(p =>
+                !string.IsNullOrWhiteSpace(p.Clave) &&
+                string.Equals(p.Clave.Trim(), texto, StringComparison.OrdinalIgnoreCase));
+
+            if (porClave != null)
             {
-                "AGENDA" => 3,
-                "E046" => 1,
-                "E047" => 2,
-                _ => null
-            };
+                return porClave.IdPp;
+            }
+
+            if (int.TryParse(texto, out int id) && programas.Any(p => p.IdPp == id))
+            {
+                return id;
+            }
+
+            return null;
         }
 
         [HttpPost]

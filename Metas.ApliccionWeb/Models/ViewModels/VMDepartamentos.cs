@@ -7,5 +7,6 @@ namespace Metas.AplicacionWeb.Models.ViewModels
         public List<SelectListItem> ListaDepartamentos { get; set; } = new();
         public List<SelectListItem> ListaAreas { get; set; } = new();
         public List<SelectListItem> ListaProgramas { get; set; } = new();
+        public List<SelectListItem> ListaProgramasId { get; set; } = new();
     }
 }

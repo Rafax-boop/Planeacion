@@ -17,17 +17,20 @@ namespace Metas.BLL.Implementacion
         private readonly IGenericRepository<LlenadoInterno> _llenadoInternoRepository;
         private readonly IGenericRepository<LlenadoExterno> _llenadoExternoRepository;
         private readonly IGenericRepository<Programacion> _programacionRepository;
+        private readonly IGenericRepository<Pp> _repositorioProgramas;
         private readonly MetasContext _context;
 
         public MonitoreoService(
         IGenericRepository<LlenadoInterno> llenadoInternoRepository,
         IGenericRepository<LlenadoExterno> llenadoExternoRepository,
         IGenericRepository<Programacion> programacionRepository,
+        IGenericRepository<Pp> repositorioProgramas,
         MetasContext context)
         {
             _llenadoInternoRepository = llenadoInternoRepository;
             _llenadoExternoRepository = llenadoExternoRepository;
             _programacionRepository = programacionRepository;
+            _repositorioProgramas = repositorioProgramas;
             _context = context;
         }
 
@@ -268,7 +271,7 @@ namespace Metas.BLL.Implementacion
 
                 // 2. Mapear los datos
                 registroDb.Idpp = modelo.PP;
-                registroDb.Pp = ObtenerNombreProgramaPresupuestario(modelo.PP);
+                registroDb.Pp = await ObtenerNombreProgramaPresupuestario(modelo.PP);
                 registroDb.Componente = modelo.Componente;
                 registroDb.Actividad = modelo.Actividad;
                 registroDb.DescripcionActividad = modelo.DescripcionActividad;
@@ -448,7 +451,7 @@ namespace Metas.BLL.Implementacion
                     Departamento = modelo.Departamento,
                     Ano = modelo.AnoFiscal,
                     Idpp = modelo.PP,
-                    Pp = ObtenerNombreProgramaPresupuestario(modelo.PP),
+                    Pp = await ObtenerNombreProgramaPresupuestario(modelo.PP),
                     Componente = modelo.Componente,
                     Actividad = modelo.Actividad,
                     DescripcionActividad = modelo.DescripcionActividad,
@@ -545,20 +548,16 @@ namespace Metas.BLL.Implementacion
             };
         }
 
-        private string ObtenerNombreProgramaPresupuestario(int? id)
+        private async Task<string> ObtenerNombreProgramaPresupuestario(int? id)
         {
-
-            switch (id)
+            if (!id.HasValue)
             {
-                case 3:
-                    return "Agenda";
-                case 1:
-                    return "E046";
-                case 2:
-                    return "E047";
-                default:
-                    return string.Empty;
+                return string.Empty;
             }
+
+            var programa = await _repositorioProgramas.Obtener(p => p.IdPp == id.Value);
+
+            return programa?.Clave ?? string.Empty;
         }
 
         public async Task<List<LlenadoExterno>> ObtenerLlenadosPorProcesos(List<int> idsProcesos)
