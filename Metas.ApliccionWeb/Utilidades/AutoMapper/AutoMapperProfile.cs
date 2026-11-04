@@ -23,6 +23,9 @@ namespace Metas.AplicacionWeb.Utilidades.AutoMapper
 
             CreateMap<VMRangoDesempenio, RangoDesempenio>()
                 .ReverseMap();
+
+            CreateMap<VMDepartamentoAdmin, Departamento>()
+                .ReverseMap();
         }
     }
 }

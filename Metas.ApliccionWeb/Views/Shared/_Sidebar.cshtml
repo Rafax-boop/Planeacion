@@ -9,7 +9,7 @@
         return "active";
     }
 
-    var accionesSubmenuAdmin = new[] { "Usuarios", "FechaCaptura", "FechaProgramacion", "Rangos" };
+    var accionesSubmenuAdmin = new[] { "Usuarios", "Areas", "FechaCaptura", "FechaProgramacion", "Rangos" };
     bool submenuAdminActivo = string.Equals(controladorActual, "Admin", StringComparison.OrdinalIgnoreCase)
         && Array.Exists(accionesSubmenuAdmin, a => string.Equals(accionActual, a, StringComparison.OrdinalIgnoreCase));
 }
@@ -76,6 +76,10 @@
         <a class="sidebar-flyout-item @EsActivo("Admin", "Usuarios")" asp-area="" asp-controller="Admin" asp-action="Usuarios">
             <i class="fa-solid fa-user-plus icon"></i>
             <span class="label">Creación de Usuarios</span>
+        </a>
+        <a class="sidebar-flyout-item @EsActivo("Admin", "Areas")" asp-area="" asp-controller="Admin" asp-action="Areas">
+            <i class="fa-solid fa-sitemap icon"></i>
+            <span class="label">Áreas y Departamentos</span>
         </a>
         <a class="sidebar-flyout-item @EsActivo("Admin", "FechaCaptura")" asp-area="" asp-controller="Admin" asp-action="FechaCaptura">
             <i class="fa-solid fa-calendar-day icon"></i>

@@ -241,6 +241,102 @@ namespace Metas.AplicacionWeb.Controllers
             }
         }
 
+        public async Task<IActionResult> Areas()
+        {
+            List<VMDepartamentoAdmin> vmDepartamentos = _mapper.Map<List<VMDepartamentoAdmin>>(await _departamentoService.ObtenerDepartamentosAdmin());
+            return View(vmDepartamentos);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CrearArea(VMDepartamentoAdmin modelo)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(new { mensaje = "Datos inválidos" });
+                }
+
+                var entidad = _mapper.Map<Departamento>(modelo);
+                Departamento resultado = await _departamentoService.CrearDepartamento(entidad);
+
+                if (resultado != null)
+                {
+                    return Ok(new { mensaje = "Área y departamento creados exitosamente" });
+                }
+                else
+                {
+                    return BadRequest(new { mensaje = "No se pudo crear el registro" });
+                }
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { mensaje = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Error al crear el registro", error = ex.Message });
+            }
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> EditarArea(VMDepartamentoAdmin modelo)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(new { mensaje = "Datos inválidos" });
+                }
+
+                var entidad = _mapper.Map<Departamento>(modelo);
+                bool resultado = await _departamentoService.EditarDepartamento(entidad);
+
+                if (resultado)
+                {
+                    return Ok(new { mensaje = "Registro editado exitosamente" });
+                }
+                else
+                {
+                    return BadRequest(new { mensaje = "No se pudo editar el registro" });
+                }
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { mensaje = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Error al editar el registro", error = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CambiarEstadoArea(int id, bool activo)
+        {
+            try
+            {
+                bool resultado = await _departamentoService.CambiarEstadoDepartamento(id, activo);
+
+                if (resultado)
+                {
+                    return Ok(new { mensaje = activo ? "Registro activado exitosamente" : "Registro desactivado exitosamente" });
+                }
+                else
+                {
+                    return BadRequest(new { mensaje = "No se pudo cambiar el estado del registro" });
+                }
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { mensaje = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Error al cambiar el estado", error = ex.Message });
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> GuardarRangos([FromBody] List<VMRangoDesempenio> modelo)
         {

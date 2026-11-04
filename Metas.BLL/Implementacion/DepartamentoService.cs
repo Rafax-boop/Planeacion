@@ -90,6 +90,124 @@ namespace Metas.BLL.Implementacion
             return departamentos;
         }
 
+        public async Task<List<Departamento>> ObtenerDepartamentosAdmin()
+        {
+            var query = await _repositorio.Consultar();
+
+            return query
+                .Select(d => new Departamento
+                {
+                    IdDepartamento = d.IdDepartamento,
+                    Area = d.Area,
+                    Departamento1 = d.Departamento1,
+                    Activo = d.Activo
+                })
+                .ToList()
+                .OrderBy(d => d.Area, ComparadorCatalogo)
+                .ThenBy(d => d.Departamento1, ComparadorCatalogo)
+                .ToList();
+        }
+
+        public async Task<Departamento> CrearDepartamento(Departamento modelo)
+        {
+            var area = modelo.Area?.Trim();
+            var departamento = modelo.Departamento1?.Trim();
+
+            ValidarAreaYDepartamento(area, departamento);
+
+            if (await ExisteAreaDepartamento(area, departamento, null))
+            {
+                throw new InvalidOperationException("Ya existe un registro con esa área y departamento.");
+            }
+
+            var entidad = new Departamento
+            {
+                Area = area,
+                Departamento1 = departamento,
+                Unidad = null,
+                UnidadRepresentante = "N/A",
+                Activo = true
+            };
+
+            var creado = await _repositorio.Crear(entidad);
+
+            if (creado == null || creado.IdDepartamento == 0)
+            {
+                throw new InvalidOperationException("No se pudo crear el registro.");
+            }
+
+            return creado;
+        }
+
+        public async Task<bool> EditarDepartamento(Departamento modelo)
+        {
+            var entidad = await _repositorio.Obtener(d => d.IdDepartamento == modelo.IdDepartamento);
+
+            if (entidad == null)
+            {
+                throw new InvalidOperationException("No se encontró el registro a editar.");
+            }
+
+            var area = modelo.Area?.Trim();
+            var departamento = modelo.Departamento1?.Trim();
+
+            ValidarAreaYDepartamento(area, departamento);
+
+            if (await ExisteAreaDepartamento(area, departamento, modelo.IdDepartamento))
+            {
+                throw new InvalidOperationException("Ya existe un registro con esa área y departamento.");
+            }
+
+            entidad.Area = area;
+            entidad.Departamento1 = departamento;
+            entidad.Activo = modelo.Activo;
+
+            return await _repositorio.Editar(entidad);
+        }
+
+        public async Task<bool> CambiarEstadoDepartamento(int id, bool activo)
+        {
+            var entidad = await _repositorio.Obtener(d => d.IdDepartamento == id);
+
+            if (entidad == null)
+            {
+                throw new InvalidOperationException("No se encontró el registro.");
+            }
+
+            entidad.Activo = activo;
+            return await _repositorio.Editar(entidad);
+        }
+
+        private void ValidarAreaYDepartamento(string area, string departamento)
+        {
+            if (string.IsNullOrWhiteSpace(area))
+            {
+                throw new InvalidOperationException("El área es requerida.");
+            }
+
+            if (string.IsNullOrWhiteSpace(departamento))
+            {
+                throw new InvalidOperationException("El departamento es requerido.");
+            }
+
+            if (area.Length > 200 || departamento.Length > 200)
+            {
+                throw new InvalidOperationException("El área y el departamento no deben exceder 200 caracteres.");
+            }
+        }
+
+        private async Task<bool> ExisteAreaDepartamento(string area, string departamento, int? excluirId)
+        {
+            var query = await _repositorio.Consultar();
+
+            return query
+                .ToList()
+                .Any(d =>
+                    (!excluirId.HasValue || d.IdDepartamento != excluirId.Value) &&
+                    string.Equals(d.Area?.Trim(), area, StringComparison.OrdinalIgnoreCase) &&
+                    string.Equals(d.Departamento1?.Trim(), departamento, StringComparison.OrdinalIgnoreCase));
+        }
+
         public async Task<List<SelectListItem>> ObtenerListaPorTipo(string tipo)
         {
             var query = await _repositorio.Consultar();

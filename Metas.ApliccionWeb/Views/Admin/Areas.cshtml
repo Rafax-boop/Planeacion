@@ -1,0 +1,365 @@
+@using Metas.AplicacionWeb.Models.ViewModels
+@model List<VMDepartamentoAdmin>
+@{
+    ViewData["Title"] = "Áreas y Departamentos";
+
+    var areasDisponibles = (Model ?? new List<VMDepartamentoAdmin>())
+        .Select(d => d.Area)
+        .Where(a => !string.IsNullOrWhiteSpace(a))
+        .Distinct(StringComparer.OrdinalIgnoreCase)
+        .OrderBy(a => a)
+        .ToList();
+}
+
+<div class="titulo-vista-wrap">
+    <h1 class="titulo-vista">Áreas y Departamentos</h1>
+    <span class="subtitulo-vista">- Administra las áreas y departamentos que se usan en el sistema.</span>
+</div>
+
+<div class="d-flex justify-content-between align-items-end flex-wrap gap-2 mb-3">
+    <div class="filtros-container mb-0">
+        <div class="filtro-grupo" style="flex: 0 0 550px; min-width: 550px; max-width: 550px;">
+            <label for="selectAreaFiltro">Área</label>
+            <select id="selectAreaFiltro" class="select2-simple">
+                <option value="">Todas</option>
+                @foreach (var area in areasDisponibles)
+                {
+                    <option value="@area">@area</option>
+                }
+            </select>
+        </div>
+        <div class="filtro-grupo" style="flex: 0 0 250px; min-width: 250px; max-width: 250px;">
+            <label for="selectEstadoFiltro">Estado</label>
+            <select id="selectEstadoFiltro" class="select2-simple">
+                <option value="">Todos</option>
+                <option value="activo">Activos</option>
+                <option value="inactivo">Inactivos</option>
+            </select>
+        </div>
+    </div>
+    <button class="btn-app-rosa" type="button" data-bs-toggle="modal" data-bs-target="#ModalArea">
+        <i class="fa-solid fa-sitemap"></i> Crear Área / Departamento
+    </button>
+</div>
+
+@if (Model == null || !Model.Any())
+{
+    <div class="sin-registros">
+        <i class="bi bi-clipboard2-x"></i><br>
+        <span>Sin áreas ni departamentos registrados.</span>
+    </div>
+}
+else
+{
+    <div class="tabla-datos-wrap">
+        <table class="tabla-datos" id="tablaDatos">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Área</th>
+                    <th>Departamento</th>
+                    <th class="text-center">Estado</th>
+                    <th class="text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var depto in Model)
+                {
+                    var esActivo = depto.Activo != false;
+                    <tr data-area="@depto.Area" data-activo="@(esActivo ? "activo" : "inactivo")">
+                        <td>@depto.IdDepartamento</td>
+                        <td>@depto.Area</td>
+                        <td>@depto.Departamento1</td>
+                        <td class="text-center">
+                            @if (esActivo)
+                            {
+                                <span class="badge bg-success">Activo</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Inactivo</span>
+                            }
+                        </td>
+                        <td>
+                            <div class="acciones-grupo">
+                                <button type="button" class="btn-accion btn-accion-editar btn-editar-area"
+                                        title="Editar" data-bs-toggle="tooltip" data-bs-placement="top"
+                                        data-id="@depto.IdDepartamento"
+                                        data-area="@depto.Area"
+                                        data-departamento="@depto.Departamento1"
+                                        data-activo="@(esActivo.ToString().ToLower())">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </button>
+                                <button type="button" class="btn-accion btn-accion-estado btn-cambiar-estado"
+                                        title="@(esActivo ? "Desactivar" : "Activar")" data-bs-toggle="tooltip" data-bs-placement="top"
+                                        data-id="@depto.IdDepartamento"
+                                        data-activo="@(esActivo.ToString().ToLower())"
+                                        data-nombre="@depto.Area - @depto.Departamento1">
+                                    <i class="fa-solid @(esActivo ? "fa-toggle-on" : "fa-toggle-off")"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div id="tablaDatos-paginacion" class="tabla-paginacion"></div>
+}
+
+<datalist id="listaAreas">
+    @foreach (var area in areasDisponibles)
+    {
+        <option value="@area"></option>
+    }
+</datalist>
+
+<div class="modal fade" id="ModalArea" tabindex="-1" aria-labelledby="modalAreaLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalAreaLabel">Crear Área / Departamento</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="formCrearArea">
+                <div class="modal-body">
+                    <label class="form-label fw-semibold">Área</label>
+                    <input type="text" class="form-control mb-3" id="txtArea" name="Area" list="listaAreas" maxlength="200"
+                           placeholder="Selecciona o escribe una nueva área" autocomplete="off" />
+
+                    <label class="form-label fw-semibold">Departamento</label>
+                    <input type="text" class="form-control mb-3" id="txtDepartamento" name="Departamento1" maxlength="200"
+                           placeholder="Nombre del departamento" autocomplete="off" />
+
+                    <div class="form-check form-switch">
+                        <input type="hidden" id="hiddenActivo" name="Activo" value="true">
+                        <input class="form-check-input" type="checkbox" role="switch" id="chkActivo" checked>
+                        <label class="form-check-label fw-semibold" for="chkActivo">Activo</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-app-gris" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn-app-rosa" id="btnGuardarArea">Crear</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ModalEditarArea" tabindex="-1" aria-labelledby="modalEditarAreaLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalEditarAreaLabel">Editar Área / Departamento</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="formEditarArea">
+                <div class="modal-body">
+                    <input type="hidden" id="txtIdDepartamentoEditar" name="IdDepartamento" />
+
+                    <label class="form-label fw-semibold">Área</label>
+                    <input type="text" class="form-control mb-3" id="txtAreaEditar" name="Area" list="listaAreas" maxlength="200"
+                           autocomplete="off" />
+
+                    <label class="form-label fw-semibold">Departamento</label>
+                    <input type="text" class="form-control mb-3" id="txtDepartamentoEditar" name="Departamento1" maxlength="200"
+                           autocomplete="off" />
+
+                    <div class="form-check form-switch">
+                        <input type="hidden" id="hiddenActivoEditar" name="Activo" value="true">
+                        <input class="form-check-input" type="checkbox" role="switch" id="chkActivoEditar" checked>
+                        <label class="form-check-label fw-semibold" for="chkActivoEditar">Activo</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-app-gris" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn-app-rosa" id="btnGuardarAreaEditar">Guardar cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function filtrarAreas() {
+            var tabla = document.getElementById('tablaDatos');
+            if (!tabla) return;
+
+            var areaFiltro = $('#selectAreaFiltro').val() || '';
+            var estadoFiltro = $('#selectEstadoFiltro').val() || '';
+
+            var filas = tabla.querySelectorAll('tbody tr');
+            filas.forEach(function (fila) {
+                var pasaArea = !areaFiltro || fila.getAttribute('data-area') === areaFiltro;
+                var pasaEstado = !estadoFiltro || fila.getAttribute('data-activo') === estadoFiltro;
+                fila.style.display = (pasaArea && pasaEstado) ? '' : 'none';
+            });
+
+            TablaPaginada.actualizar('tablaDatos');
+        }
+
+        $(document).ready(function () {
+            $('[data-bs-toggle="tooltip"]').each(function () {
+                bootstrap.Tooltip.getOrCreateInstance(this);
+            });
+
+            $('.select2-simple').select2({ width: '100%', language: 'es', minimumResultsForSearch: 8, dropdownParent: $('.app-content') });
+
+            TablaPaginada.iniciar('tablaDatos', { pageSize: 10 });
+
+            $('#selectAreaFiltro').on('change', filtrarAreas);
+            $('#selectEstadoFiltro').on('change', filtrarAreas);
+
+            $('#chkActivo').on('change', function () {
+                $('#hiddenActivo').val($(this).is(':checked'));
+            });
+
+            $('#chkActivoEditar').on('change', function () {
+                $('#hiddenActivoEditar').val($(this).is(':checked'));
+            });
+
+            // Abrir modal de edición con los datos de la fila
+            $(document).on('click', '.btn-editar-area', function () {
+                var boton = $(this);
+
+                $('#txtIdDepartamentoEditar').val(boton.attr('data-id'));
+                $('#txtAreaEditar').val(boton.attr('data-area'));
+                $('#txtDepartamentoEditar').val(boton.attr('data-departamento'));
+
+                var esActivo = boton.attr('data-activo') === 'true';
+                $('#hiddenActivoEditar').val(esActivo);
+                $('#chkActivoEditar').prop('checked', esActivo);
+
+                bootstrap.Modal.getOrCreateInstance(document.getElementById('ModalEditarArea')).show();
+            });
+
+            // Activar / desactivar
+            $(document).on('click', '.btn-cambiar-estado', function () {
+                var boton = $(this);
+                var id = boton.attr('data-id');
+                var activoActual = boton.attr('data-activo') === 'true';
+                var nuevoEstado = !activoActual;
+                var nombre = boton.attr('data-nombre') || 'este registro';
+                var mensaje = nuevoEstado
+                    ? 'Se activará "' + nombre + '".'
+                    : 'Se desactivará "' + nombre + '".';
+
+                confirmarGuardado(mensaje).then(function (confirmado) {
+                    if (!confirmado) return;
+
+                    boton.prop('disabled', true);
+
+                    $.ajax({
+                        type: 'POST',
+                        url: '/Admin/CambiarEstadoArea',
+                        data: { id: id, activo: nuevoEstado },
+                        dataType: 'json',
+                        success: function (response) {
+                            Toast.fire({ icon: 'success', title: response.mensaje || 'Estado actualizado' }).then(() => location.reload());
+                        },
+                        error: function (xhr) {
+                            var error = xhr.responseJSON;
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: error?.mensaje || 'Error al cambiar el estado',
+                                confirmButtonText: 'Entendido'
+                            });
+                        },
+                        complete: function () {
+                            boton.prop('disabled', false);
+                        }
+                    });
+                });
+            });
+
+            // Crear área / departamento
+            $('#formCrearArea').submit(function (e) {
+                e.preventDefault();
+
+                $('#hiddenActivo').val($('#chkActivo').is(':checked'));
+
+                var camposValidos = validarCamposRequeridos([
+                    { label: 'Área', campoId: 'txtArea', valido: !!$('#txtArea').val().trim() },
+                    { label: 'Departamento', campoId: 'txtDepartamento', valido: !!$('#txtDepartamento').val().trim() }
+                ]);
+                if (!camposValidos) return;
+
+                confirmarGuardado('Se creará el nuevo registro de área y departamento.').then(function (confirmado) {
+                    if (!confirmado) return;
+
+                    var formData = $('#formCrearArea').serialize();
+                    $('#btnGuardarArea').prop('disabled', true).text('Guardando...');
+
+                    $.ajax({
+                        type: 'POST',
+                        url: '/Admin/CrearArea',
+                        data: formData,
+                        dataType: 'json',
+                        success: function (response) {
+                            $('#ModalArea').modal('hide');
+                            $('#formCrearArea')[0].reset();
+                            Toast.fire({ icon: 'success', title: response.mensaje || 'Registro creado' }).then(() => location.reload());
+                        },
+                        error: function (xhr) {
+                            var error = xhr.responseJSON;
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: error?.mensaje || 'Error al crear el registro',
+                                confirmButtonText: 'Entendido'
+                            });
+                        },
+                        complete: function () {
+                            $('#btnGuardarArea').prop('disabled', false).text('Crear');
+                        }
+                    });
+                });
+            });
+
+            // Editar área / departamento
+            $('#formEditarArea').submit(function (e) {
+                e.preventDefault();
+
+                $('#hiddenActivoEditar').val($('#chkActivoEditar').is(':checked'));
+
+                var camposValidos = validarCamposRequeridos([
+                    { label: 'Área', campoId: 'txtAreaEditar', valido: !!$('#txtAreaEditar').val().trim() },
+                    { label: 'Departamento', campoId: 'txtDepartamentoEditar', valido: !!$('#txtDepartamentoEditar').val().trim() }
+                ]);
+                if (!camposValidos) return;
+
+                confirmarGuardado('Se actualizarán los datos de este registro.').then(function (confirmado) {
+                    if (!confirmado) return;
+
+                    var formData = $('#formEditarArea').serialize();
+                    $('#btnGuardarAreaEditar').prop('disabled', true).text('Guardando...');
+
+                    $.ajax({
+                        type: 'PUT',
+                        url: '/Admin/EditarArea',
+                        data: formData,
+                        dataType: 'json',
+                        success: function (response) {
+                            $('#ModalEditarArea').modal('hide');
+                            Toast.fire({ icon: 'success', title: response.mensaje || 'Registro actualizado' }).then(() => location.reload());
+                        },
+                        error: function (xhr) {
+                            var error = xhr.responseJSON;
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: error?.mensaje || 'Error al editar el registro',
+                                confirmButtonText: 'Entendido'
+                            });
+                        },
+                        complete: function () {
+                            $('#btnGuardarAreaEditar').prop('disabled', false).text('Guardar cambios');
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+}

@@ -12,6 +12,10 @@ namespace Metas.BLL.Interfaces
     public interface IDepartamentoService
     {
         Task<List<Departamento>> ObtenerDepartamentos();
+        Task<List<Departamento>> ObtenerDepartamentosAdmin();
+        Task<Departamento> CrearDepartamento(Departamento modelo);
+        Task<bool> EditarDepartamento(Departamento modelo);
+        Task<bool> CambiarEstadoDepartamento(int id, bool activo);
         Task<List<SelectListItem>> ObtenerListaPorTipo(string tipo);
         Task<List<Pp>> ObtenerProgramas();
         Task<List<PpCompuesto>> ObtenerComponentes();
